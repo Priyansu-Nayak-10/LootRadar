@@ -26,6 +26,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify required secrets are present
+        env:
+          SUPABASE_URL_PRESENT: ${{ secrets.SUPABASE_URL != '' }}
+          SUPABASE_SECRET_KEY_PRESENT: ${{ secrets.SUPABASE_SECRET_KEY != '' }}
+          TELEGRAM_BOT_TOKEN_PRESENT: ${{ secrets.TELEGRAM_BOT_TOKEN != '' }}
+        run: |
+          echo "SUPABASE_URL present=$SUPABASE_URL_PRESENT"
+          echo "SUPABASE_SECRET_KEY present=$SUPABASE_SECRET_KEY_PRESENT"
+          echo "TELEGRAM_BOT_TOKEN present=$TELEGRAM_BOT_TOKEN_PRESENT"
+          test "$SUPABASE_URL_PRESENT" = "true"
+          test "$SUPABASE_SECRET_KEY_PRESENT" = "true"
+          test "$TELEGRAM_BOT_TOKEN_PRESENT" = "true"
+
       - name: Send due Telegram alerts
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
