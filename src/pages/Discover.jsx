@@ -217,6 +217,17 @@ export default function Discover({ library, wishlist, getGameActions, onNavigate
   }, [])
 
   useEffect(() => {
+    function handleShellSearch(event) {
+      const query = event.detail?.query?.trim()
+      if (!query) return
+      setSearchTerm(query)
+      searchGames(null, query)
+    }
+    window.addEventListener('lootradar-shell-search', handleShellSearch)
+    return () => window.removeEventListener('lootradar-shell-search', handleShellSearch)
+  }, [])
+
+  useEffect(() => {
     let cancelled = false
 
     async function loadSectionCounts() {
@@ -248,9 +259,9 @@ export default function Discover({ library, wishlist, getGameActions, onNavigate
     }
   }, [])
 
-  async function searchGames(event) {
-    event.preventDefault()
-    const query = searchTerm.trim()
+  async function searchGames(event, externalQuery) {
+    if (event?.preventDefault) event.preventDefault()
+    const query = (externalQuery || searchTerm).trim()
     if (!query) return
 
     setSearchSubmitted(true)

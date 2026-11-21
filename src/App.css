@@ -1697,6 +1697,235 @@ textarea:focus-visible {
     padding: 8px 3px;
     font-size: 8px;
   }
+}
+
+/* Redesign: shared top bar, account menu and compact footer */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.header-top {
+  display: grid;
+  grid-template-columns: 210px minmax(280px, 560px) auto;
+  gap: 18px;
+  min-height: 76px;
+}
+
+.shell-search {
+  display: grid;
+  grid-template-columns: 82px minmax(120px, 1fr) 44px;
+  min-height: 46px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.shell-search:focus-within {
+  border-color: rgba(196, 255, 77, 0.32);
+  box-shadow: 0 0 0 3px rgba(196, 255, 77, 0.055);
+}
+
+.shell-category {
+  height: 100%;
+  border-right: 1px solid var(--line);
+}
+
+.shell-category select {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  color: var(--bright);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+}
+
+.shell-category select option {
+  color: var(--bright);
+  background: var(--panel);
+}
+
+.shell-search input {
+  min-width: 0;
+  height: 44px;
+  border: 0;
+  outline: 0;
+  color: var(--bright);
+  background: transparent;
+  padding-inline: 14px;
+  font-size: 13px;
+}
+
+.shell-search input::placeholder {
+  color: #7f8d88;
+}
+
+.shell-search button,
+.shell-icon-button,
+.shell-avatar {
+  min-height: 44px;
+  border: 0;
+  color: var(--bright);
+  background: transparent;
+  cursor: pointer;
+}
+
+.shell-search button {
+  display: grid;
+  width: 44px;
+  place-items: center;
+  color: #11170a;
+  background: var(--lime);
+  border-radius: 50%;
+  transform: scale(.82);
+}
+
+.shell-search button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.shell-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.shell-icon-button {
+  display: grid;
+  width: 44px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.shell-icon-button svg {
+  width: 19px;
+  height: 19px;
+}
+
+.shell-avatar-wrap {
+  position: relative;
+}
+
+.shell-avatar {
+  width: 44px;
+  border: 1px solid rgba(196, 255, 77, 0.22);
+  border-radius: 50%;
+  color: #11170a;
+  background: var(--lime);
+  font-weight: 900;
+}
+
+.shell-avatar-menu {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 190px;
+  display: grid;
+  gap: 3px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(12, 17, 20, 0.98);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.42);
+}
+
+.shell-avatar-menu button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--bright);
+  background: transparent;
+  text-align: left;
+  padding-inline: 12px;
+  cursor: pointer;
+}
+
+.shell-avatar-menu button:hover {
+  color: var(--lime);
+  background: var(--lime-soft);
+}
+
+.bottom-nav {
+  border-radius: 16px;
+  background: rgba(12, 17, 20, 0.96);
+  backdrop-filter: none;
+}
+
+.app-footer {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  border-top: 1px solid var(--line);
+  border-radius: 18px 18px 0 0;
+  background: rgba(12, 17, 20, 0.72);
+  padding-inline: 16px;
+}
+
+@media (max-width: 860px) {
+  .header-top {
+    grid-template-columns: 180px minmax(220px, 1fr) auto;
+    gap: 10px;
+  }
+
+  .shell-category {
+    display: none;
+  }
+
+  .shell-search {
+    grid-template-columns: minmax(120px, 1fr) 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-top {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    min-height: 68px;
+  }
+
+  .header-top .brand {
+    width: 44px;
+  }
+
+  .header-top .brand-copy,
+  .shell-icon-button {
+    display: none;
+  }
+
+  .header-top .brand-mark {
+    width: 44px;
+    height: 44px;
+  }
+
+  .shell-search {
+    grid-template-columns: minmax(0, 1fr) 44px;
+  }
+
+  .shell-actions {
+    width: 44px;
+  }
+
+  .shell-avatar-menu {
+    right: -2px;
+  }
 
   .filter-chip {
     min-height: 34px;

@@ -93,6 +93,9 @@ export default function App() {
   const [availableDeals, setAvailableDeals] = useState([])
   const [dealsAvailabilityLoaded, setDealsAvailabilityLoaded] = useState(false)
   const [session, setSession] = useState(null)
+  const [shellSearch, setShellSearch] = useState('')
+  const [shellCategory, setShellCategory] = useState('All')
+  const [avatarOpen, setAvatarOpen] = useState(false)
   const activeNavTab = ['always', 'coming', 'rumors', 'wishlist', 'news', 'account'].includes(tab) ? 'more' : tab
 
   useEffect(() => {
@@ -171,6 +174,24 @@ export default function App() {
   function navigateTab(nextTab) {
     setTab(nextTab)
     window.location.hash = `/${nextTab}`
+    setAvatarOpen(false)
+  }
+
+  function submitShellSearch(event) {
+    event.preventDefault()
+    const query = shellSearch.trim()
+    navigateTab('discover')
+    if (query) {
+      window.dispatchEvent(new CustomEvent('lootradar-shell-search', {
+        detail: { query, category: shellCategory },
+      }))
+    }
+  }
+
+  async function signOut() {
+    if (!supabase) return
+    await supabase.auth.signOut()
+    setAvatarOpen(false)
   }
 
   const updateAvailableDeals = useCallback((games) => {
@@ -317,7 +338,74 @@ export default function App() {
                 <span className="brand-caption">YOUR GAME INTELLIGENCE</span>
               </span>
             </a>
-            <div className="system-status"><span className="status-light" />YOUR RADAR</div>
+            <form className="shell-search" onSubmit={submitShellSearch} role="search">
+              <label className="shell-category">
+                <span className="sr-only">Search category</span>
+                <select
+                  value={shellCategory}
+                  onChange={(event) => setShellCategory(event.target.value)}
+                  aria-label="Search category"
+                >
+                  {['All', 'PC', 'PlayStation', 'Xbox'].map((category) => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+              </label>
+              <input
+                value={shellSearch}
+                onChange={(event) => setShellSearch(event.target.value)}
+                placeholder="Search games"
+                aria-label="Search games"
+              />
+              <button type="submit" aria-label="Submit game search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                  <circle cx="10.5" cy="10.5" r="6.5" />
+                  <path d="m15.5 15.5 4 4" strokeLinecap="round" />
+                </svg>
+              </button>
+            </form>
+            <div className="shell-actions">
+              <button
+                type="button"
+                className="shell-icon-button shell-bell"
+                aria-label="Notifications: no new alerts"
+                title="Notifications"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+                  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z" />
+                  <path d="M10 20h4" strokeLinecap="round" />
+                </svg>
+              </button>
+              <div className="shell-avatar-wrap">
+                <button
+                  type="button"
+                  className="shell-avatar"
+                  aria-label="Open account menu"
+                  aria-expanded={avatarOpen}
+                  onClick={() => setAvatarOpen((open) => !open)}
+                >
+                  {session?.user?.email?.trim().slice(0, 1).toUpperCase() || 'G'}
+                </button>
+                {avatarOpen && (
+                  <div className="shell-avatar-menu" role="menu">
+                    <button type="button" role="menuitem" onClick={() => navigateTab('library')}>
+                      Library
+                    </button>
+                    <button type="button" role="menuitem" onClick={() => navigateTab('wishlist')}>
+                      Wishlist
+                    </button>
+                    <button type="button" role="menuitem" onClick={() => navigateTab('account')}>
+                      Telegram settings
+                    </button>
+                    {session && (
+                      <button type="button" role="menuitem" onClick={signOut}>
+                        Sign out
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="hero-header" id="top">
