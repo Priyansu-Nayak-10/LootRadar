@@ -34,6 +34,7 @@ const TAB_DESCRIPTIONS = {
   rumors: 'Unconfirmed free-game reports, clearly labelled',
   news: 'Latest gaming headlines and publisher links',
   account: 'Sign in or create a LootRadar account',
+  'not-found': 'The requested LootRadar page was not found',
 }
 
 const TAB_ICONS = {
@@ -164,7 +165,11 @@ export default function App() {
   useEffect(() => {
     function readHash() {
       const hashTab = window.location.hash.replace(/^#\/?/, '')
-      if (hashTab) setTab(hashTab)
+      const knownTabs = [
+        'discover', 'free', 'deals', 'library', 'wishlist', 'more',
+        'always', 'coming', 'rumors', 'news', 'account',
+      ]
+      setTab(hashTab && knownTabs.includes(hashTab) ? hashTab : 'not-found')
     }
     readHash()
     window.addEventListener('hashchange', readHash)
@@ -413,7 +418,7 @@ export default function App() {
               <div className="hero-eyebrow">YOUR PERSONAL GAME RADAR</div>
               <h2 className="hero-title">
                 {TABS.find((item) => item.id === tab)?.label ||
-                  ({ always: 'Always Free', coming: 'Coming Soon', rumors: 'Rumors', news: 'News', wishlist: 'Wishlist', account: 'Account' }[tab])}
+                  ({ always: 'Always Free', coming: 'Coming Soon', rumors: 'Rumors', news: 'News', wishlist: 'Wishlist', account: 'Account', 'not-found': 'Page Not Found' }[tab])}
               </h2>
               <p className="hero-description">{TAB_DESCRIPTIONS[tab]}</p>
             </div>
@@ -516,6 +521,17 @@ export default function App() {
         {tab === 'rumors' && <Rumors />}
         {tab === 'news' && <News />}
         {tab === 'account' && <Account session={session} />}
+        {tab === 'not-found' && (
+          <section className="not-found-redesign" role="alert">
+            <div className="lr-art-fallback" aria-hidden="true">404</div>
+            <span className="lr-section-heading__kicker">RADAR LOST THE SIGNAL</span>
+            <h1>Page <strong>Not Found</strong></h1>
+            <p>That LootRadar page does not exist or the link may be outdated.</p>
+            <button type="button" className="lr-button" onClick={() => navigateTab('discover')}>
+              Back to Home
+            </button>
+          </section>
+        )}
       </main>
 
       <footer className="app-footer">
