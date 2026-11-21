@@ -1257,6 +1257,58 @@ textarea:focus-visible {
   font-weight: 750;
 }
 
+.alert-settings-card {
+  display: grid;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(17, 24, 27, 0.58);
+}
+
+.alert-settings-card h3 {
+  margin: 0;
+  color: var(--bright);
+}
+
+.settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #b5c1bb;
+  font-size: 12px;
+}
+
+.settings-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--lime);
+}
+
+.platform-settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.platform-settings button {
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: #9aa8a2;
+  background: rgba(17, 24, 27, 0.58);
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.platform-settings button.is-selected {
+  border-color: rgba(196, 255, 77, 0.24);
+  color: var(--lime);
+  background: rgba(196, 255, 77, 0.08);
+}
+
 .news-card,
 .news-skeleton {
   min-width: 0;

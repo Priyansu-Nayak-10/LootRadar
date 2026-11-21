@@ -10,6 +10,33 @@ export default function Account({ session }) {
   const [telegramConnection, setTelegramConnection] = useState(null)
   const [telegramLink, setTelegramLink] = useState('')
   const [telegramLoading, setTelegramLoading] = useState(false)
+  const [alertEnabled, setAlertEnabled] = useState(true)
+  const [alertMode, setAlertMode] = useState('all')
+  const [alertPlatforms, setAlertPlatforms] = useState([])
+  const [endingHours, setEndingHours] = useState(6)
+  const [preferencesLoading, setPreferencesLoading] = useState(false)
+
+  useEffect(() => {
+    if (!session || !supabase) return
+    let cancelled = false
+
+    supabase
+      .from('notification_settings')
+      .select('enabled, mode, platforms, ending_hours')
+      .eq('user_id', session.user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled || !data) return
+        setAlertEnabled(data.enabled)
+        setAlertMode(data.mode)
+        setAlertPlatforms(Array.isArray(data.platforms) ? data.platforms : [])
+        setEndingHours(data.ending_hours || 6)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [session])
 
   useEffect(() => {
     if (!session || !supabase) return
@@ -78,6 +105,39 @@ export default function Account({ session }) {
     setTelegramConnection(null)
     setTelegramLink('')
     setMessage('Telegram connection removed.')
+  }
+
+  async function saveAlertPreferences() {
+    if (!session || !supabase) return
+    setPreferencesLoading(true)
+    setMessage('')
+
+    try {
+      const { error } = await supabase
+        .from('notification_settings')
+        .upsert({
+          user_id: session.user.id,
+          enabled: alertEnabled,
+          mode: alertMode,
+          platforms: alertMode === 'platform' ? alertPlatforms : [],
+          timezone: 'Asia/Kolkata',
+          ending_hours: Number(endingHours),
+        }, { onConflict: 'user_id' })
+      if (error) throw error
+      setMessage('Telegram alert preferences saved.')
+    } catch (error) {
+      setMessage(error.message || 'Could not save alert preferences.')
+    } finally {
+      setPreferencesLoading(false)
+    }
+  }
+
+  function togglePlatform(platform) {
+    setAlertPlatforms((current) =>
+      current.includes(platform)
+        ? current.filter((item) => item !== platform)
+        : [...current, platform]
+    )
   }
 
   if (!hasSupabaseConfig || !supabase) {
@@ -166,6 +226,62 @@ export default function Account({ session }) {
               )}
             </>
           )}
+        </div>
+        <div className="alert-settings-card">
+          <h3>Alert preferences</h3>
+          <label className="settings-toggle">
+            <input
+              type="checkbox"
+              checked={alertEnabled}
+              onChange={(event) => setAlertEnabled(event.target.checked)}
+            />
+            Notifications enabled
+          </label>
+          <label className="form-field">
+            Which free games?
+            <select
+              value={alertMode}
+              onChange={(event) => setAlertMode(event.target.value)}
+            >
+              <option value="all">All free games</option>
+              <option value="wishlist">Wishlist games only</option>
+              <option value="platform">Selected platforms</option>
+            </select>
+          </label>
+          {alertMode === 'platform' && (
+            <div className="platform-settings" aria-label="Alert platforms">
+              {['Epic', 'Steam', 'GOG', 'itch.io', 'PlayStation', 'Xbox', 'Other'].map((platform) => (
+                <button
+                  key={platform}
+                  type="button"
+                  className={alertPlatforms.includes(platform) ? 'is-selected' : ''}
+                  aria-pressed={alertPlatforms.includes(platform)}
+                  onClick={() => togglePlatform(platform)}
+                >
+                  {platform}
+                </button>
+              ))}
+            </div>
+          )}
+          <label className="form-field">
+            End reminder
+            <select
+              value={endingHours}
+              onChange={(event) => setEndingHours(Number(event.target.value))}
+            >
+              {[1, 3, 6, 12, 24].map((hours) => (
+                <option key={hours} value={hours}>{hours} hours before it ends</option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            className="form-submit"
+            onClick={saveAlertPreferences}
+            disabled={preferencesLoading}
+          >
+            {preferencesLoading ? 'Saving...' : 'Save alert preferences'}
+          </button>
         </div>
         <button type="button" className="form-submit" onClick={signOut} disabled={loading}>
           {loading ? 'Signing out...' : 'Sign out'}
