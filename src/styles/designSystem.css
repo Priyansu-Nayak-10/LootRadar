@@ -1,0 +1,295 @@
+:root {
+  --lr-bg: #070a0d;
+  --lr-panel: #10161b;
+  --lr-panel-raised: #151e23;
+  --lr-panel-soft: #0d1317;
+  --lr-text: #eff8f1;
+  --lr-muted: #97a59f;
+  --lr-subtle: #72807b;
+  --lr-lime: #c4ff4d;
+  --lr-lime-soft: rgba(196, 255, 77, 0.12);
+  --lr-cyan: #5debd0;
+  --lr-danger: #ff8d8d;
+  --lr-line: rgba(186, 207, 196, 0.12);
+  --lr-line-strong: rgba(196, 255, 77, 0.28);
+  --lr-radius-xs: 8px;
+  --lr-radius-sm: 12px;
+  --lr-radius-md: 16px;
+  --lr-radius-lg: 22px;
+  --lr-radius-pill: 999px;
+  --lr-shadow-card: 0 18px 45px rgba(0, 0, 0, 0.24);
+  --lr-shadow-glow: 0 12px 36px rgba(196, 255, 77, 0.08);
+  --lr-space-1: 4px;
+  --lr-space-2: 8px;
+  --lr-space-3: 12px;
+  --lr-space-4: 16px;
+  --lr-space-5: 20px;
+  --lr-space-6: 24px;
+  --lr-space-8: 32px;
+  --lr-space-10: 40px;
+  --lr-font-xs: 11px;
+  --lr-font-sm: 13px;
+  --lr-font-md: 15px;
+  --lr-font-lg: 18px;
+  --lr-font-xl: 24px;
+  --lr-font-2xl: clamp(28px, 7vw, 44px);
+  --lr-font-3xl: clamp(36px, 9vw, 64px);
+}
+
+.lr-button,
+.lr-chip,
+.lr-badge,
+.lr-card,
+.lr-section-heading,
+.lr-game-card,
+.lr-news-card,
+.lr-empty,
+.lr-skeleton,
+.lr-carousel {
+  font-family: inherit;
+}
+
+.lr-button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--lr-radius-pill);
+  background: var(--lr-lime);
+  color: #10150a;
+  font-size: var(--lr-font-sm);
+  font-weight: 850;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.lr-button:hover {
+  box-shadow: var(--lr-shadow-glow);
+  transform: translateY(-1px);
+}
+
+.lr-button:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.lr-button--secondary {
+  border-color: var(--lr-line);
+  background: var(--lr-panel);
+  color: var(--lr-text);
+}
+
+.lr-button--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--lr-lime);
+}
+
+.lr-chip {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border: 1px solid var(--lr-line);
+  border-radius: var(--lr-radius-pill);
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--lr-muted);
+  font-size: var(--lr-font-xs);
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.lr-chip[aria-pressed="true"],
+.lr-chip.is-active {
+  border-color: var(--lr-line-strong);
+  background: var(--lr-lime);
+  color: #10150a;
+}
+
+.lr-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--lr-space-4);
+  margin-bottom: var(--lr-space-5);
+}
+
+.lr-section-heading__copy {
+  min-width: 0;
+}
+
+.lr-section-heading__kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  color: var(--lr-lime);
+  font-size: var(--lr-font-xs);
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lr-section-heading__kicker::before {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  background: var(--lr-lime);
+  box-shadow: 0 0 16px rgba(196, 255, 77, 0.32);
+  content: "";
+}
+
+.lr-section-heading h2 {
+  margin: 0;
+  color: var(--lr-text);
+  font-size: var(--lr-font-xl);
+  letter-spacing: -0.04em;
+}
+
+.lr-section-heading h2 strong {
+  color: var(--lr-lime);
+  font-weight: inherit;
+}
+
+.lr-card {
+  border: 1px solid var(--lr-line);
+  border-radius: var(--lr-radius-md);
+  background: linear-gradient(145deg, rgba(21, 30, 35, 0.96), rgba(10, 15, 18, 0.96));
+  box-shadow: var(--lr-shadow-card);
+}
+
+.lr-game-card,
+.lr-news-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--lr-line);
+  border-radius: var(--lr-radius-md);
+  background: linear-gradient(145deg, rgba(21, 30, 35, 0.96), rgba(10, 15, 18, 0.96));
+  transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.lr-game-card:hover,
+.lr-news-card:hover {
+  border-color: var(--lr-line-strong);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
+}
+
+.lr-game-card__image,
+.lr-news-card__image {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  background:
+    radial-gradient(circle at 70% 20%, rgba(196, 255, 77, 0.12), transparent 35%),
+    var(--lr-panel-raised);
+}
+
+.lr-game-card__image {
+  aspect-ratio: 16 / 9;
+}
+
+.lr-news-card__image {
+  aspect-ratio: 16 / 8;
+}
+
+.lr-game-card__body,
+.lr-news-card__body {
+  padding: var(--lr-space-4);
+}
+
+.lr-badge {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  padding: 4px 8px;
+  border: 1px solid var(--lr-line);
+  border-radius: var(--lr-radius-pill);
+  color: var(--lr-muted);
+  background: rgba(7, 10, 13, 0.72);
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.lr-badge--lime {
+  border-color: var(--lr-line-strong);
+  color: #10150a;
+  background: var(--lr-lime);
+}
+
+.lr-skeleton {
+  min-height: 180px;
+  border: 1px solid var(--lr-line);
+  border-radius: var(--lr-radius-md);
+  background: linear-gradient(105deg, #101619 20%, #1a2524 40%, #101619 60%);
+  background-size: 200% 100%;
+  animation: lr-shimmer 1.5s ease-in-out infinite alternate;
+}
+
+.lr-empty {
+  min-height: 160px;
+  display: grid;
+  place-items: center;
+  padding: var(--lr-space-6);
+  border: 1px dashed var(--lr-line);
+  border-radius: var(--lr-radius-md);
+  color: var(--lr-muted);
+  background: rgba(17, 24, 27, 0.58);
+  text-align: center;
+}
+
+.lr-carousel {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(235px, 78%);
+  gap: var(--lr-space-4);
+  overflow-x: auto;
+  scroll-padding-inline: 1px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  overscroll-behavior-inline: contain;
+}
+
+.lr-carousel > * {
+  scroll-snap-align: start;
+}
+
+.lr-art-fallback {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--lr-line);
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 72% 20%, rgba(196, 255, 77, 0.14), transparent 24%),
+    linear-gradient(135deg, #182128, #0b1013 72%);
+  color: var(--lr-lime);
+  font-size: var(--lr-font-xs);
+  font-weight: 850;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@keyframes lr-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lr-button,
+  .lr-game-card,
+  .lr-news-card {
+    transition: none;
+  }
+
+  .lr-skeleton {
+    animation: none;
+  }
+}
