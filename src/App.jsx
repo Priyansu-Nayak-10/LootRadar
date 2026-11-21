@@ -7,6 +7,7 @@ import Wishlist from './pages/Wishlist'
 import AlwaysFree from './pages/AlwaysFree'
 import ComingSoon from './pages/ComingSoon'
 import Rumors from './pages/Rumors'
+import News from './pages/News'
 import useLocalStorage from './hooks/useLocalStorage'
 import cachedFetch from './lib/cachedFetch'
 import './App.css'
@@ -29,6 +30,7 @@ const TAB_DESCRIPTIONS = {
   always: 'Free-to-play games that are always available',
   coming: 'Confirmed upcoming Epic free games',
   rumors: 'Unconfirmed free-game reports, clearly labelled',
+  news: 'Latest gaming headlines and publisher links',
 }
 
 const TAB_ICONS = {
@@ -38,6 +40,7 @@ const TAB_ICONS = {
   library: 'M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5v-12ZM4 6h16M8 10h8m-8 4h6',
   wishlist: 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
+  news: 'M4 5h16v14H4V5Zm3 4h10M7 13h6M7 16h8',
 }
 
 function titleKey(title) {
@@ -60,7 +63,22 @@ export default function App() {
   const [availableFreeGames, setAvailableFreeGames] = useState([])
   const [availableDeals, setAvailableDeals] = useState([])
   const [dealsAvailabilityLoaded, setDealsAvailabilityLoaded] = useState(false)
-  const activeNavTab = ['always', 'coming', 'rumors', 'wishlist'].includes(tab) ? 'more' : tab
+  const activeNavTab = ['always', 'coming', 'rumors', 'wishlist', 'news'].includes(tab) ? 'more' : tab
+
+  useEffect(() => {
+    function readHash() {
+      const hashTab = window.location.hash.replace(/^#\/?/, '')
+      if (hashTab) setTab(hashTab)
+    }
+    readHash()
+    window.addEventListener('hashchange', readHash)
+    return () => window.removeEventListener('hashchange', readHash)
+  }, [])
+
+  function navigateTab(nextTab) {
+    setTab(nextTab)
+    window.location.hash = `/${nextTab}`
+  }
 
   const updateAvailableDeals = useCallback((games) => {
     setAvailableDeals(games)
@@ -133,7 +151,7 @@ export default function App() {
               <div className="hero-eyebrow">YOUR PERSONAL GAME RADAR</div>
               <h2 className="hero-title">
                 {TABS.find((item) => item.id === tab)?.label ||
-                  ({ always: 'Always Free', coming: 'Coming Soon', rumors: 'Rumors' }[tab])}
+                  ({ always: 'Always Free', coming: 'Coming Soon', rumors: 'Rumors', news: 'News', wishlist: 'Wishlist' }[tab])}
               </h2>
               <p className="hero-description">{TAB_DESCRIPTIONS[tab]}</p>
             </div>
@@ -158,7 +176,7 @@ export default function App() {
             library={ownedGames}
             wishlist={wishlist}
             getGameActions={saveActions}
-            onNavigate={setTab}
+            onNavigate={navigateTab}
           />
         )}
         {tab === 'deals' && (
@@ -179,32 +197,39 @@ export default function App() {
         {tab === 'more' && (
           <section className="more-section">
             <div className="game-grid">
-              <button type="button" className="game-card more-card" onClick={() => setTab('always')}>
+              <button type="button" className="game-card more-card" onClick={() => navigateTab('always')}>
                 <div className="game-card-content">
                   <span className="discover-kicker">ALWAYS AVAILABLE</span>
                   <h2 className="game-title">Always Free</h2>
                   <p className="game-platform">Free-to-play games from FreeToGame</p>
                 </div>
               </button>
-              <button type="button" className="game-card more-card" onClick={() => setTab('coming')}>
+              <button type="button" className="game-card more-card" onClick={() => navigateTab('coming')}>
                 <div className="game-card-content">
                   <span className="discover-kicker">EPIC CONFIRMATIONS</span>
                   <h2 className="game-title">Coming Soon</h2>
                   <p className="game-platform">Confirmed upcoming free promotions</p>
                 </div>
               </button>
-              <button type="button" className="game-card more-card" onClick={() => setTab('rumors')}>
+              <button type="button" className="game-card more-card" onClick={() => navigateTab('rumors')}>
                 <div className="game-card-content">
                   <span className="discover-kicker">UNCONFIRMED</span>
                   <h2 className="game-title">Rumors</h2>
                   <p className="game-platform">Reports clearly labelled as rumors</p>
                 </div>
               </button>
-              <button type="button" className="game-card more-card" onClick={() => setTab('wishlist')}>
+              <button type="button" className="game-card more-card" onClick={() => navigateTab('wishlist')}>
                 <div className="game-card-content">
                   <span className="discover-kicker">YOUR SAVED GAMES</span>
                   <h2 className="game-title">Wishlist</h2>
                   <p className="game-platform">{wishlist.length} saved</p>
+                </div>
+              </button>
+              <button type="button" className="game-card more-card" onClick={() => navigateTab('news')}>
+                <div className="game-card-content">
+                  <span className="discover-kicker">LATEST HEADLINES</span>
+                  <h2 className="game-title">News</h2>
+                  <p className="game-platform">Newsroom feeds and publisher links</p>
                 </div>
               </button>
             </div>
@@ -213,6 +238,7 @@ export default function App() {
         {tab === 'always' && <AlwaysFree getGameActions={saveActions} />}
         {tab === 'coming' && <ComingSoon />}
         {tab === 'rumors' && <Rumors />}
+        {tab === 'news' && <News />}
       </main>
 
       <footer className="app-footer">
@@ -238,7 +264,7 @@ export default function App() {
         {TABS.map((t) => (
           <button
             key={t.id}
-            onClick={() => setTab(t.id)}
+            onClick={() => navigateTab(t.id)}
             aria-current={activeNavTab === t.id ? 'page' : undefined}
             className={`nav-item ${activeNavTab === t.id ? 'is-active' : ''}`}
           >
