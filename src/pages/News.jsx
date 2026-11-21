@@ -9,6 +9,24 @@ function formatDate(value) {
   }).format(date)
 }
 
+function NewsImage({ article }) {
+  const [failed, setFailed] = useState(false)
+
+  if (!article.image || failed) {
+    return <div className="news-image-fallback" aria-hidden="true">RADAR</div>
+  }
+
+  return (
+    <img
+      src={article.image}
+      alt=""
+      loading="lazy"
+      className="news-image"
+      onError={() => setFailed(true)}
+    />
+  )
+}
+
 export default function News() {
   const [articles, setArticles] = useState([])
   const [generatedAt, setGeneratedAt] = useState('')
@@ -60,11 +78,7 @@ export default function News() {
         <div className="news-grid news-page-grid">
           {articles.map((article) => (
             <article className="news-card" key={article.id || article.link}>
-              {article.image ? (
-                <img src={article.image} alt="" loading="lazy" className="news-image" />
-              ) : (
-                <div className="news-image-fallback" aria-hidden="true">RADAR</div>
-              )}
+              <NewsImage article={article} />
               <div className="news-copy">
                 <div className="news-meta">
                   <span>{article.source || 'Gaming news'}</span>
