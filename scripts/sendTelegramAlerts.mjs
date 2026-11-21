@@ -55,6 +55,12 @@ function istLabel(value) {
   }).format(new Date(value))
 }
 
+function parseUtc(value) {
+  if (!value || value === 'N/A') return null
+  const date = new Date(String(value).replace(' ', 'T') + (String(value).includes('T') ? '' : 'Z'))
+  return Number.isNaN(date.getTime()) ? null : date.toISOString()
+}
+
 async function telegramSend(chatId, text) {
   const response = await fetch(
     `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
@@ -129,9 +135,7 @@ async function main() {
     })
   }
   for (const game of gamerPower.games || []) {
-    const end = game.end_date
-      ? new Date(String(game.end_date).replace(' ', 'T') + 'Z').toISOString()
-      : null
+    const end = parseUtc(game.end_date)
     windows.push({
       game_key: `gamerpower:${game.id}:${end || 'unknown'}`,
       title: game.title,
