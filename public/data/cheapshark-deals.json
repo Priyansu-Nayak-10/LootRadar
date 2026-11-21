@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T06:03:01.804Z",
+  "generatedAt": "2026-11-21T13:57:17.910Z",
   "source": "CheapShark",
   "sourceUrl": "https://www.cheapshark.com",
   "stores": [
@@ -260,7 +260,7 @@
       "metacriticScore": "0",
       "steamRatingText": "Mixed",
       "steamRatingPercent": "57",
-      "steamRatingCount": "334",
+      "steamRatingCount": "335",
       "steamAppID": "267900",
       "releaseDate": 1389830400,
       "lastChange": 1794874544,
@@ -281,7 +281,7 @@
       "metacriticScore": "0",
       "steamRatingText": "Very Positive",
       "steamRatingPercent": "88",
-      "steamRatingCount": "622",
+      "steamRatingCount": "621",
       "steamAppID": "314030",
       "releaseDate": 1409875200,
       "lastChange": 1794874528,
@@ -827,7 +827,7 @@
       "metacriticScore": "75",
       "steamRatingText": "Overwhelmingly Positive",
       "steamRatingPercent": "97",
-      "steamRatingCount": "4038",
+      "steamRatingCount": "4040",
       "steamAppID": "348550",
       "releaseDate": 1432598400,
       "lastChange": 1794909238,
