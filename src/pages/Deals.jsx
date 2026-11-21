@@ -25,9 +25,7 @@ function formatUsd(amount) {
 
 function DealCard({ deal, storeName, getGameActions }) {
   const discount = Math.round(Number(deal.savings))
-  const image = deal.steamAppID
-    ? `https://cdn.cloudflare.steamstatic.com/steam/apps/${deal.steamAppID}/header.jpg`
-    : deal.thumb
+  const image = deal.thumb
   const actions = getGameActions({
     title: deal.title,
     platform: storeName,

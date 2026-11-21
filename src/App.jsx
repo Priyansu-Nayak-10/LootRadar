@@ -192,6 +192,11 @@ export default function App() {
               <path d={TAB_ICONS[t.id]} />
             </svg>
             <span className="nav-label">{t.label}</span>
+            {t.id === 'wishlist' && wishlist.length > 0 && (
+              <span className="nav-count" aria-label={`${wishlist.length} wishlisted games`}>
+                {wishlist.length}
+              </span>
+            )}
           </button>
         ))}
       </nav>

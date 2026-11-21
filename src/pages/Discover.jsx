@@ -91,10 +91,18 @@ function GameTile({ game, badge, getGameActions }) {
 }
 
 function NewsTile({ article }) {
+  const [imageFailed, setImageFailed] = useState(false)
+
   return (
     <article className={`news-card ${article.image ? '' : 'is-no-image'}`}>
-      {article.image ? (
-        <img src={article.image} alt="" loading="lazy" className="news-image" />
+      {article.image && !imageFailed ? (
+        <img
+          src={article.image}
+          alt=""
+          loading="lazy"
+          className="news-image"
+          onError={() => setImageFailed(true)}
+        />
       ) : (
         <div className="news-image-fallback" aria-hidden="true">RADAR</div>
       )}
