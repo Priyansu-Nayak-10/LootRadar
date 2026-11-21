@@ -6,14 +6,7 @@ const BASE = 'https://www.cheapshark.com'
 
 function SkeletonCard() {
   return (
-    <div className="skeleton-card" aria-hidden="true">
-      <div className="skeleton-image" />
-      <div className="skeleton-lines">
-        <div className="skeleton-line" />
-        <div className="skeleton-line" />
-        <div className="skeleton-line" />
-      </div>
-    </div>
+    <div className="lr-skeleton deals-skeleton" aria-hidden="true" />
   )
 }
 
@@ -34,30 +27,33 @@ function DealCard({ deal, storeName, getGameActions }) {
     sourceId: deal.dealID,
   })
   return (
-    <article className="game-card">
-      <img
-        src={image}
-        alt={deal.title}
-        loading="lazy"
-        onError={(e) => {
-          if (e.currentTarget.src !== deal.thumb) e.currentTarget.src = deal.thumb
-        }}
-        className="game-card-image"
-      />
-      <div className="game-card-content">
-        <h2 className="game-title">{deal.title}</h2>
-        <p className="game-platform">
-          {storeName}
+    <article className="lr-game-card deals-card">
+      {image ? (
+        <img
+          src={image}
+          alt={deal.title}
+          loading="lazy"
+          decoding="async"
+          onError={(e) => {
+            if (e.currentTarget.src !== deal.thumb) e.currentTarget.src = deal.thumb
+          }}
+          className="lr-game-card__image"
+        />
+      ) : (
+        <div className="lr-art-fallback">DEAL</div>
+      )}
+      <div className="lr-game-card__body deals-card__body">
+        <div className="deals-card__badges">
+          <span className="lr-badge lr-badge--lime">-{discount}%</span>
           {Number(deal.metacriticScore) > 0 && (
-            <span className="metacritic-badge">
-              Metacritic {deal.metacriticScore}
-            </span>
+            <span className="lr-badge">Metacritic {deal.metacriticScore}</span>
           )}
+        </div>
+        <h2 className="deals-card__title">{deal.title}</h2>
+        <p className="deals-card__store">
+          {storeName}
         </p>
-        <div className="game-price-row">
-          <span className="discount-pill">
-            -{discount}%
-          </span>
+        <div className="deals-card__prices">
           <span className="old-price">
             {formatUsd(deal.normalPrice)}
           </span>
@@ -70,9 +66,9 @@ function DealCard({ deal, storeName, getGameActions }) {
           href={`${BASE}/redirect?dealID=${deal.dealID}`}
           target="_blank"
           rel="noreferrer"
-          className="game-card-cta"
+          className="lr-button lr-button--secondary deals-card__cta"
         >
-          Get deal <span aria-hidden="true">-&gt;</span>
+          Get deal <span aria-hidden="true">→</span>
         </a>
       </div>
     </article>
@@ -162,8 +158,15 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
   }, [onAvailabilityChange, shown])
 
   return (
-    <div>
-      <div className="filter-toolbar" aria-label="Filter deals">
+    <section className="deals-redesign">
+      <header className="redesign-page-header">
+        <div>
+          <span className="lr-section-heading__kicker">PC STORE DEALS</span>
+          <h1>Game <strong>Deals</strong></h1>
+        </div>
+        <span className="lr-badge">{shown.length} deals</span>
+      </header>
+      <div className="deals-filter-grid" aria-label="Filter deals">
         <select className={selectClass} value={store} onChange={(e) => setStore(e.target.value)}>
           <option value="">All stores</option>
           {stores.map((s) => (
@@ -196,7 +199,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
         </select>
       </div>
 
-      <p className="currency-note">Prices are shown in USD, as supplied by CheapShark.</p>
+      <p className="currency-note deals-currency-note">Prices are shown in USD, as supplied by CheapShark.</p>
 
       {error && (
         <div className="inline-error" role="alert">
@@ -207,7 +210,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
         </div>
       )}
 
-      <div className="game-grid">
+      <div className="game-grid deals-grid">
         {loading
           ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
           : shown.map((d) => (
@@ -225,6 +228,6 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
           No deals match these filters. Try a higher price or lower discount.
         </p>
       )}
-    </div>
+    </section>
   )
 }
