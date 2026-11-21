@@ -38,7 +38,14 @@ async function supabase(method, path, body, prefer) {
     const detail = await response.text()
     throw new Error(`Supabase ${method} ${path} failed (${response.status}): ${detail}`)
   }
-  return response.status === 204 ? null : response.json()
+  if (response.status === 204) return null
+  const text = await response.text()
+  if (!text.trim()) return null
+  try {
+    return JSON.parse(text)
+  } catch {
+    throw new Error(`Supabase ${method} ${path} returned invalid JSON`)
+  }
 }
 
 async function loadJson(path) {
