@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchGamingNews, fetchRawgGames, hasRawgKey } from '../lib/discoverApi'
 import GameActions from '../components/GameActions'
+import { lootRadarArt } from '../assets/art'
 
 function dateString(date) {
   return date.toISOString().slice(0, 10)
@@ -33,6 +34,28 @@ function formatNewsDate(value) {
     day: 'numeric',
     month: 'short',
   }).format(date)
+}
+
+function formatRelativeTime(value) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  const minutes = Math.max(0, Math.floor((Date.now() - date.getTime()) / 60000))
+  if (minutes < 60) return `${minutes || 1}m ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  return `${days}d ago`
+}
+
+function formatCountdown(endDate) {
+  if (!endDate) return 'Time TBA'
+  const end = new Date(endDate)
+  if (Number.isNaN(end.getTime())) return 'Time TBA'
+  const diff = end.getTime() - Date.now()
+  if (diff <= 0) return 'Ended'
+  const days = Math.floor(diff / 86400000)
+  const hours = Math.floor((diff % 86400000) / 3600000)
+  return days > 0 ? `${days}d ${hours}h left` : `${hours}h left`
 }
 
 function GameTile({ game, badge, getGameActions }) {
@@ -148,6 +171,235 @@ function decodeText(value) {
   return textArea.value
 }
 
+function HomeRedesign({
+  trending,
+  catalogError,
+  freeGames,
+  upcomingGames,
+  news,
+  newsLoading,
+  newsUpdatedAt,
+  onNavigate,
+  getGameActions,
+  searchSubmitted,
+  searchLoading,
+  searchError,
+  searchTerm,
+  searchResults,
+  hasKey,
+}) {
+  const [platformFilter, setPlatformFilter] = useState('All')
+
+  const filteredPopular = trending.filter((game) => {
+    if (platformFilter === 'All') return true
+    const names = (game.platforms || []).map((item) => item.platform?.name || '')
+    return names.some((name) => name.includes(platformFilter))
+  })
+
+  return (
+    <div className="discover-page home-redesign">
+      {!hasKey && <SetupHint />}
+
+      {searchSubmitted && (
+        <section className="discover-section home-search-results">
+          <div className="lr-section-heading">
+            <div className="lr-section-heading__copy">
+              <span className="lr-section-heading__kicker">SEARCH RESULTS</span>
+              <h2>Results for <strong>{searchTerm}</strong></h2>
+            </div>
+          </div>
+          {searchLoading && <div className="lr-skeleton" />}
+          {searchError && <p className="discover-error" role="alert">{searchError}</p>}
+          {!searchLoading && !searchError && searchResults.length === 0 && (
+            <p className="lr-empty">No games matched that search.</p>
+          )}
+          {searchResults.length > 0 && (
+            <div className="game-grid discover-results">
+              {searchResults.map((game) => (
+                <GameTile key={game.id} game={game} getGameActions={getGameActions} />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      <section className="home-feature-grid">
+        <div className="home-hero-wrap">
+          {catalogError && <p className="discover-error" role="alert">{catalogError}</p>}
+          {trending.length > 0 ? (
+            <>
+              <div className="home-hero-carousel" id="home-hero-carousel" aria-label="Featured games">
+                {trending.slice(0, 5).map((game, index) => (
+                  <article className="home-hero-slide" key={game.id}>
+                    {lootRadarArt.hero.src ? (
+                      <img src={lootRadarArt.hero.src} alt={lootRadarArt.hero.alt} loading={index === 0 ? 'eager' : 'lazy'} />
+                    ) : game.background_image ? (
+                      <img src={game.background_image} alt={game.name} loading={index === 0 ? 'eager' : 'lazy'} />
+                    ) : (
+                      <div className="lr-art-fallback">LOOTRADAR</div>
+                    )}
+                    <div className="home-hero-overlay" />
+                    <div className="home-hero-copy">
+                      <span className="lr-badge lr-badge--lime">
+                        {index === 0 ? 'Latest Release' : 'Trending on PC'}
+                      </span>
+                      <h1>{game.name}</h1>
+                      <p>{formatDate(game.released)}{game.genres?.[0]?.name ? ` · ${game.genres[0].name}` : ''}</p>
+                      <a href={`https://rawg.io/games/${game.slug}`} target="_blank" rel="noreferrer" className="lr-button">
+                        Explore game
+                      </a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <div className="home-hero-controls">
+                <span>01 / 05</span>
+                <button type="button" aria-label="Previous featured game" onClick={() => document.getElementById('home-hero-carousel')?.scrollBy({ left: -420, behavior: 'smooth' })}>←</button>
+                <button type="button" aria-label="Next featured game" onClick={() => document.getElementById('home-hero-carousel')?.scrollBy({ left: 420, behavior: 'smooth' })}>→</button>
+              </div>
+            </>
+          ) : (
+            <div className="lr-skeleton home-hero-skeleton" />
+          )}
+        </div>
+
+        <aside className="home-feature-side">
+          <section className="home-side-card">
+            <div className="lr-section-heading">
+              <div className="lr-section-heading__copy">
+                <span className="lr-section-heading__kicker">LIMITED TIME</span>
+                <h2>Free <strong>Games</strong></h2>
+              </div>
+              <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('free')}>View All</button>
+            </div>
+            {freeGames.length > 0 ? (
+              <button type="button" className="home-feature-free" onClick={() => onNavigate('free')}>
+                {freeGames[0].thumbnail ? <img src={freeGames[0].thumbnail} alt={freeGames[0].title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
+                <span><strong>{freeGames[0].title}</strong><small>{formatCountdown(freeGames[0].end_date)}</small></span>
+              </button>
+            ) : (
+              <div className="lr-skeleton" />
+            )}
+          </section>
+
+          <section className="home-side-card">
+            <div className="lr-section-heading">
+              <div className="lr-section-heading__copy">
+                <span className="lr-section-heading__kicker">EPIC CONFIRMATIONS</span>
+                <h2>Upcoming <strong>Releases</strong></h2>
+              </div>
+              <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('coming')}>View All</button>
+            </div>
+            <div className="home-upcoming-list">
+              {upcomingGames.slice(0, 4).map((game) => (
+                <button type="button" key={game.id} onClick={() => onNavigate('coming')}>
+                  {game.image ? <img src={game.image} alt={game.title} loading="lazy" /> : <span className="home-upcoming-fallback">LR</span>}
+                  <span><strong>{game.title}</strong><small>{formatDate(game.startDate?.slice(0, 10) || 'TBA')}</small></span>
+                </button>
+              ))}
+              {upcomingGames.length === 0 && <div className="lr-skeleton" />}
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <section className="discover-section home-popular">
+        <div className="lr-section-heading">
+          <div className="lr-section-heading__copy">
+            <span className="lr-section-heading__kicker">DISCOVER</span>
+            <h2>Popular <strong>Games</strong></h2>
+          </div>
+        </div>
+        <div className="home-platform-chips" aria-label="Filter popular games by platform">
+          {['All', 'PC', 'PlayStation', 'Xbox'].map((platform) => (
+            <button type="button" key={platform} className={`lr-chip ${platformFilter === platform ? 'is-active' : ''}`} aria-pressed={platformFilter === platform} onClick={() => setPlatformFilter(platform)}>
+              {platform}
+            </button>
+          ))}
+        </div>
+        {filteredPopular.length > 0 ? (
+          <div className="lr-carousel home-popular-row" aria-label="Popular games">
+            {filteredPopular.slice(0, 10).map((game) => {
+              const actions = getGameActions({
+                title: game.name,
+                platform: (game.platforms || []).map((item) => item.platform?.name).filter(Boolean).join(', '),
+                image: game.background_image,
+                source: 'catalog',
+                sourceId: game.id,
+              })
+              return (
+                <article className="lr-game-card home-cover-card" key={game.id}>
+                  {game.background_image ? <img src={game.background_image} alt={game.name} loading="lazy" decoding="async" className="lr-game-card__image" /> : <div className="lr-art-fallback">GAME</div>}
+                  <button type="button" className={`home-heart ${actions.wishlisted ? 'is-active' : ''}`} aria-label={`${actions.wishlisted ? 'Remove' : 'Add'} ${game.name} ${actions.wishlisted ? 'from' : 'to'} wishlist`} onClick={actions.onToggleWishlist}>♥</button>
+                  <div className="lr-game-card__body"><h3>{game.name}</h3><p>{formatDate(game.released)}</p></div>
+                </article>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="lr-empty">No games match this platform.</div>
+        )}
+      </section>
+
+      <section className="discover-section home-news-grid">
+        <div className="lr-section-heading">
+          <div className="lr-section-heading__copy">
+            <span className="lr-section-heading__kicker">LATEST FROM THE INDUSTRY</span>
+            <h2>Latest <strong>News</strong></h2>
+          </div>
+          <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('news')}>View All</button>
+        </div>
+        {newsLoading ? (
+          <div className="lr-skeleton" />
+        ) : news.length > 0 ? (
+          <div className="home-news-layout">
+            <article className="home-news-feature">
+              {news[0].image ? <img src={news[0].image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
+              <div>
+                <span>{news[0].source} · {formatRelativeTime(news[0].publishedAt)}</span>
+                <h3>{decodeText(news[0].title)}</h3>
+                <a href={news[0].link} target="_blank" rel="noreferrer" className="lr-button lr-button--ghost">Read Full Story</a>
+              </div>
+            </article>
+            <div className="home-news-small">
+              {news.slice(1, 3).map((article) => (
+                <article key={article.id || article.link}>
+                  {article.image ? <img src={article.image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
+                  <div><span>{article.source} · {formatRelativeTime(article.publishedAt)}</span><h3>{decodeText(article.title)}</h3></div>
+                  <a href={article.link} target="_blank" rel="noreferrer" aria-label={`Read ${article.title}`} />
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="lr-empty">No recent stories are available.</div>
+        )}
+      </section>
+
+      <section className="home-bottom-grid">
+        <div className="home-quick-access">
+          <div className="lr-section-heading">
+            <div className="lr-section-heading__copy">
+              <span className="lr-section-heading__kicker">EXPLORE</span>
+              <h2>Quick <strong>Access</strong></h2>
+            </div>
+          </div>
+          <div className="home-quick-grid">
+            <button type="button" onClick={() => onNavigate('free')}><span>01</span><strong>Free Games</strong></button>
+            <button type="button" onClick={() => onNavigate('deals')}><span>02</span><strong>Deals</strong></button>
+            <button type="button" onClick={() => onNavigate('coming')}><span>03</span><strong>Upcoming</strong></button>
+            <button type="button" onClick={() => onNavigate('discover')}><span>04</span><strong>Top Charts</strong></button>
+          </div>
+        </div>
+        <button type="button" className="home-promo-banner" onClick={() => onNavigate('account')}>
+          {lootRadarArt.promo.src ? <img src={lootRadarArt.promo.src} alt={lootRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
+          <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Open Telegram settings →</em></span>
+        </button>
+      </section>
+    </div>
+  )
+}
+
 export default function Discover({ library, wishlist, getGameActions, onNavigate }) {
   const [trending, setTrending] = useState([])
   const [catalogError, setCatalogError] = useState('')
@@ -166,6 +418,9 @@ export default function Discover({ library, wishlist, getGameActions, onNavigate
     always: 0,
     coming: 0,
   })
+  const [freeGames, setFreeGames] = useState([])
+  const [upcomingGames, setUpcomingGames] = useState([])
+  const [platformFilter, setPlatformFilter] = useState('All')
   const seedKey = [...wishlist, ...library]
     .map((game) => game.title?.trim().toLowerCase())
     .filter(Boolean)
@@ -239,18 +494,26 @@ export default function Discover({ library, wishlist, getGameActions, onNavigate
       ]
 
       const counts = {}
+      let gamerPowerGames = []
+      let epicUpcoming = []
       await Promise.all(requests.map(async ([key, url, field]) => {
         try {
           const response = await fetch(url)
           if (!response.ok) return
           const data = await response.json()
           counts[key] = Array.isArray(data[field]) ? data[field].length : 0
+          if (key === 'free') gamerPowerGames = Array.isArray(data.games) ? data.games : []
+          if (key === 'coming') epicUpcoming = Array.isArray(data.upcoming) ? data.upcoming : []
         } catch {
           counts[key] = 0
         }
       }))
 
-      if (!cancelled) setSectionCounts((current) => ({ ...current, ...counts }))
+      if (!cancelled) {
+        setSectionCounts((current) => ({ ...current, ...counts }))
+        setFreeGames(gamerPowerGames)
+        setUpcomingGames(epicUpcoming)
+      }
     }
 
     loadSectionCounts()
@@ -282,6 +545,26 @@ export default function Discover({ library, wishlist, getGameActions, onNavigate
       setSearchLoading(false)
     }
   }
+
+  return (
+    <HomeRedesign
+      trending={trending}
+      catalogError={catalogError}
+      freeGames={freeGames}
+      upcomingGames={upcomingGames}
+      news={news}
+      newsLoading={newsLoading}
+      newsUpdatedAt={newsUpdatedAt}
+      onNavigate={onNavigate}
+      getGameActions={getGameActions}
+      searchSubmitted={searchSubmitted}
+      searchLoading={searchLoading}
+      searchError={searchError}
+      searchTerm={searchTerm}
+      searchResults={searchResults}
+      hasKey={hasRawgKey}
+    />
+  )
 
   return (
     <div className="discover-page">
