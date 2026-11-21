@@ -8,8 +8,10 @@ import AlwaysFree from './pages/AlwaysFree'
 import ComingSoon from './pages/ComingSoon'
 import Rumors from './pages/Rumors'
 import News from './pages/News'
+import Account from './pages/Account'
 import useLocalStorage from './hooks/useLocalStorage'
 import cachedFetch from './lib/cachedFetch'
+import { hasSupabaseConfig, supabase } from './lib/supabase'
 import './App.css'
 
 const TABS = [
@@ -31,6 +33,7 @@ const TAB_DESCRIPTIONS = {
   coming: 'Confirmed upcoming Epic free games',
   rumors: 'Unconfirmed free-game reports, clearly labelled',
   news: 'Latest gaming headlines and publisher links',
+  account: 'Sign in or create a LootRadar account',
 }
 
 const TAB_ICONS = {
@@ -41,6 +44,7 @@ const TAB_ICONS = {
   wishlist: 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
   news: 'M4 5h16v14H4V5Zm3 4h10M7 13h6M7 16h8',
+  account: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0',
 }
 
 function titleKey(title) {
@@ -63,7 +67,18 @@ export default function App() {
   const [availableFreeGames, setAvailableFreeGames] = useState([])
   const [availableDeals, setAvailableDeals] = useState([])
   const [dealsAvailabilityLoaded, setDealsAvailabilityLoaded] = useState(false)
-  const activeNavTab = ['always', 'coming', 'rumors', 'wishlist', 'news'].includes(tab) ? 'more' : tab
+  const [session, setSession] = useState(null)
+  const activeNavTab = ['always', 'coming', 'rumors', 'wishlist', 'news', 'account'].includes(tab) ? 'more' : tab
+
+  useEffect(() => {
+    if (!hasSupabaseConfig || !supabase) return undefined
+
+    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession)
+    })
+    return () => data.subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     function readHash() {
@@ -151,7 +166,7 @@ export default function App() {
               <div className="hero-eyebrow">YOUR PERSONAL GAME RADAR</div>
               <h2 className="hero-title">
                 {TABS.find((item) => item.id === tab)?.label ||
-                  ({ always: 'Always Free', coming: 'Coming Soon', rumors: 'Rumors', news: 'News', wishlist: 'Wishlist' }[tab])}
+                  ({ always: 'Always Free', coming: 'Coming Soon', rumors: 'Rumors', news: 'News', wishlist: 'Wishlist', account: 'Account' }[tab])}
               </h2>
               <p className="hero-description">{TAB_DESCRIPTIONS[tab]}</p>
             </div>
@@ -232,6 +247,15 @@ export default function App() {
                   <p className="game-platform">Newsroom feeds and publisher links</p>
                 </div>
               </button>
+              <button type="button" className="game-card more-card" onClick={() => navigateTab('account')}>
+                <div className="game-card-content">
+                  <span className="discover-kicker">YOUR ACCOUNT</span>
+                  <h2 className="game-title">Account</h2>
+                  <p className="game-platform">
+                    {session ? session.user.email : 'Sign in or create an account'}
+                  </p>
+                </div>
+              </button>
             </div>
           </section>
         )}
@@ -239,6 +263,7 @@ export default function App() {
         {tab === 'coming' && <ComingSoon />}
         {tab === 'rumors' && <Rumors />}
         {tab === 'news' && <News />}
+        {tab === 'account' && <Account session={session} />}
       </main>
 
       <footer className="app-footer">

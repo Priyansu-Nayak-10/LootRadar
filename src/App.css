@@ -1196,6 +1196,34 @@ textarea:focus-visible {
   overflow-y: visible;
 }
 
+.auth-mode-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.auth-mode-tabs button {
+  flex: 1;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: #9aa8a2;
+  background: rgba(17, 24, 27, 0.58);
+  cursor: pointer;
+}
+
+.auth-mode-tabs button.is-selected {
+  border-color: rgba(196, 255, 77, 0.24);
+  color: var(--lime);
+  background: rgba(196, 255, 77, 0.08);
+}
+
+.account-email {
+  margin: 12px 0 18px;
+  color: var(--bright);
+  overflow-wrap: anywhere;
+}
+
 .news-card,
 .news-skeleton {
   min-width: 0;
