@@ -100,11 +100,15 @@ export default function Account({ session }) {
           email: email.trim(),
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/#/discover`,
+            emailRedirectTo: `${window.location.origin}/#/account`,
           },
         })
         if (error) throw error
-        setMessage('Check your email and confirm your account before signing in.')
+        setMode('signin')
+        setPassword('')
+        setMessage(
+          'Check your email and confirm the account. Then sign in here to enable Connect Telegram.'
+        )
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
