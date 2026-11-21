@@ -12,6 +12,7 @@
     "fetch:snapshots": "node scripts/fetchDataSnapshots.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
     "@tailwindcss/vite": "^4.3.5",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
