@@ -12,17 +12,16 @@ import cachedFetch from './lib/cachedFetch'
 import './App.css'
 
 const TABS = [
-  { id: 'discover', label: 'Discover' },
+  { id: 'discover', label: 'Home' },
   { id: 'free', label: 'Free Now' },
   { id: 'deals', label: 'Deals' },
   { id: 'library', label: 'Library' },
-  { id: 'wishlist', label: 'Wishlist' },
   { id: 'more', label: 'More' },
 ]
 
 const TAB_DESCRIPTIONS = {
   free: 'Limited-time games you can claim right now',
-  discover: 'New releases, upcoming games, trends, and gaming news',
+  discover: 'Search games, trending PC titles, and the latest gaming news',
   deals: 'Games on sale right now',
   library: 'Games you own',
   wishlist: 'Games you want to play',
@@ -61,6 +60,7 @@ export default function App() {
   const [availableFreeGames, setAvailableFreeGames] = useState([])
   const [availableDeals, setAvailableDeals] = useState([])
   const [dealsAvailabilityLoaded, setDealsAvailabilityLoaded] = useState(false)
+  const activeNavTab = ['always', 'coming', 'rumors', 'wishlist'].includes(tab) ? 'more' : tab
 
   const updateAvailableDeals = useCallback((games) => {
     setAvailableDeals(games)
@@ -158,6 +158,7 @@ export default function App() {
             library={ownedGames}
             wishlist={wishlist}
             getGameActions={saveActions}
+            onNavigate={setTab}
           />
         )}
         {tab === 'deals' && (
@@ -199,6 +200,13 @@ export default function App() {
                   <p className="game-platform">Reports clearly labelled as rumors</p>
                 </div>
               </button>
+              <button type="button" className="game-card more-card" onClick={() => setTab('wishlist')}>
+                <div className="game-card-content">
+                  <span className="discover-kicker">YOUR SAVED GAMES</span>
+                  <h2 className="game-title">Wishlist</h2>
+                  <p className="game-platform">{wishlist.length} saved</p>
+                </div>
+              </button>
             </div>
           </section>
         )}
@@ -231,8 +239,8 @@ export default function App() {
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            aria-current={tab === t.id ? 'page' : undefined}
-            className={`nav-item ${tab === t.id ? 'is-active' : ''}`}
+            aria-current={activeNavTab === t.id ? 'page' : undefined}
+            className={`nav-item ${activeNavTab === t.id ? 'is-active' : ''}`}
           >
             <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d={TAB_ICONS[t.id]} />

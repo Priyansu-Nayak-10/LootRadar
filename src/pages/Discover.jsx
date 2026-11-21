@@ -148,10 +148,8 @@ function decodeText(value) {
   return textArea.value
 }
 
-export default function Discover({ library, wishlist, getGameActions }) {
+export default function Discover({ library, wishlist, getGameActions, onNavigate }) {
   const [trending, setTrending] = useState([])
-  const [upcoming, setUpcoming] = useState([])
-  const [isPersonalized, setIsPersonalized] = useState(false)
   const [catalogError, setCatalogError] = useState('')
   const [news, setNews] = useState([])
   const [newsUpdatedAt, setNewsUpdatedAt] = useState('')
@@ -162,6 +160,12 @@ export default function Discover({ library, wishlist, getGameActions }) {
   const [searchError, setSearchError] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchSubmitted, setSearchSubmitted] = useState(false)
+  const [sectionCounts, setSectionCounts] = useState({
+    free: 0,
+    deals: 0,
+    always: 0,
+    coming: 0,
+  })
   const seedKey = [...wishlist, ...library]
     .map((game) => game.title?.trim().toLowerCase())
     .filter(Boolean)
@@ -172,59 +176,15 @@ export default function Discover({ library, wishlist, getGameActions }) {
     if (!hasRawgKey) return
     setCatalogError('')
     try {
-      const [popularData, upcomingData] = await Promise.all([
+      const [popularData] = await Promise.all([
         fetchRawgGames(
-          { dates: getDateRange(365, 0), ordering: '-added', page_size: '12' },
-          'trending_global'
+          { dates: getDateRange(365, 0), ordering: '-added', platforms: '4', page_size: '12' },
+          'trending_pc'
         ),
-        loadUpcomingGames(),
       ])
       setTrending(Array.isArray(popularData.results) ? popularData.results : [])
-      setUpcoming(upcomingData.games)
-      setIsPersonalized(upcomingData.personalized)
     } catch {
       setCatalogError('Game discovery could not load. Check your connection and try again.')
-    }
-  }
-
-  async function loadUpcomingGames() {
-    const seeds = [...wishlist, ...library]
-      .map((game) => game.title?.trim())
-      .filter(Boolean)
-      .filter((title, index, list) => list.findIndex((item) => item.toLowerCase() === title.toLowerCase()) === index)
-      .slice(0, 3)
-
-    let genreIds = []
-    if (seeds.length > 0) {
-      const genreResults = await Promise.all(
-        seeds.map((title) =>
-          fetchRawgGames({ search: title, page_size: '3' }, `seed_${title.toLowerCase()}`)
-        )
-      )
-      const counts = new Map()
-      for (const result of genreResults) {
-        const games = Array.isArray(result.results) ? result.results : []
-        for (const genre of games[0]?.genres || []) {
-          counts.set(genre.id, (counts.get(genre.id) || 0) + 1)
-        }
-      }
-      genreIds = [...counts.entries()]
-        .sort((first, second) => second[1] - first[1])
-        .slice(0, 3)
-        .map(([id]) => id)
-    }
-
-    const parameters = {
-      dates: getDateRange(30, 365),
-      ordering: '-added',
-      page_size: '12',
-    }
-    if (genreIds.length > 0) parameters.genres = genreIds.join(',')
-
-    const data = await fetchRawgGames(parameters, `upcoming_${genreIds.join('_') || 'all'}`)
-    return {
-      games: Array.isArray(data.results) ? data.results : [],
-      personalized: genreIds.length > 0,
     }
   }
 
@@ -239,7 +199,7 @@ export default function Discover({ library, wishlist, getGameActions }) {
         stories
           .filter((article) => !article.sponsored && article.title && article.link)
           .sort((first, second) => new Date(second.publishedAt) - new Date(first.publishedAt))
-          .slice(0, 6)
+          .slice(0, 5)
       )
     } catch {
       setNewsError('Gaming news could not load right now. Please try again later.')
@@ -254,6 +214,38 @@ export default function Discover({ library, wishlist, getGameActions }) {
 
   useEffect(() => {
     loadNews()
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadSectionCounts() {
+      const requests = [
+        ['free', '/data/gamerpower-free-games.json', 'games'],
+        ['deals', '/data/cheapshark-deals.json', 'deals'],
+        ['always', '/data/always-free-games.json', 'games'],
+        ['coming', '/data/epic-free-games.json', 'upcoming'],
+      ]
+
+      const counts = {}
+      await Promise.all(requests.map(async ([key, url, field]) => {
+        try {
+          const response = await fetch(url)
+          if (!response.ok) return
+          const data = await response.json()
+          counts[key] = Array.isArray(data[field]) ? data[field].length : 0
+        } catch {
+          counts[key] = 0
+        }
+      }))
+
+      if (!cancelled) setSectionCounts((current) => ({ ...current, ...counts }))
+    }
+
+    loadSectionCounts()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   async function searchGames(event) {
@@ -279,8 +271,6 @@ export default function Discover({ library, wishlist, getGameActions }) {
       setSearchLoading(false)
     }
   }
-
-  const personalizedHeading = isPersonalized ? 'Picked from your games' : 'New & upcoming games'
 
   return (
     <div className="discover-page">
@@ -323,15 +313,15 @@ export default function Discover({ library, wishlist, getGameActions }) {
       <section className="discover-section">
         <div className="discover-section-heading">
           <div>
-            <span className="discover-kicker">THE GLOBAL RADAR</span>
-            <h2>Trending games globally</h2>
+            <span className="discover-kicker">THE PC RADAR</span>
+            <h2>Trending on PC</h2>
           </div>
-          <span className="discover-heading-note">Popular worldwide on RAWG</span>
+          <span className="discover-heading-note">Top 5 from RAWG</span>
         </div>
         {catalogError && <p className="discover-error" role="alert">{catalogError}</p>}
         {trending.length > 0 ? (
           <div className="trending-carousel">
-            {trending.map((game, index) => (
+            {trending.slice(0, 5).map((game, index) => (
               <div className="trending-slide" key={game.id}>
                 <GameTile game={game} badge={`0${index + 1}`} getGameActions={getGameActions} />
               </div>
@@ -347,27 +337,33 @@ export default function Discover({ library, wishlist, getGameActions }) {
       <section className="discover-section">
         <div className="discover-section-heading">
           <div>
-            <span className="discover-kicker">NEXT UP FOR YOU</span>
-            <h2>{personalizedHeading}</h2>
+            <span className="discover-kicker">EXPLORE LOOTRADAR</span>
+            <h2>Section radar</h2>
           </div>
-          {isPersonalized && <span className="personalized-mark">Based on your Library & Wishlist</span>}
+          <span className="discover-heading-note">Jump to a full page</span>
         </div>
-        {upcoming.length > 0 ? (
-          <div className="game-grid">
-            {upcoming.map((game) => (
-              <GameTile key={game.id} game={game} badge="UP NEXT" getGameActions={getGameActions} />
-            ))}
-          </div>
-        ) : (
-          <p className="discover-empty">
-            {hasRawgKey
-              ? 'Upcoming releases will appear here when the catalog loads.'
-              : 'Add games to your Library or Wishlist to personalize upcoming picks.'}
-          </p>
-        )}
-        <p className="discover-source-note">
-          Recommendations use the genres associated with games in your Library and Wishlist. Release dates come from RAWG.
-        </p>
+        <div className="home-section-strips">
+          <button type="button" className="home-section-strip" onClick={() => onNavigate('free')}>
+            <span>FREE NOW</span>
+            <strong>{sectionCounts.free}</strong>
+            <small>Limited-time giveaways</small>
+          </button>
+          <button type="button" className="home-section-strip" onClick={() => onNavigate('deals')}>
+            <span>DEALS</span>
+            <strong>{sectionCounts.deals}</strong>
+            <small>PC deals under $15</small>
+          </button>
+          <button type="button" className="home-section-strip" onClick={() => onNavigate('always')}>
+            <span>ALWAYS FREE</span>
+            <strong>{sectionCounts.always}</strong>
+            <small>Free-to-play games</small>
+          </button>
+          <button type="button" className="home-section-strip" onClick={() => onNavigate('coming')}>
+            <span>COMING SOON</span>
+            <strong>{sectionCounts.coming}</strong>
+            <small>Confirmed Epic offers</small>
+          </button>
+        </div>
       </section>
 
       <section className="discover-section news-section">
@@ -376,7 +372,7 @@ export default function Discover({ library, wishlist, getGameActions }) {
             <span className="discover-kicker">LATEST FROM THE INDUSTRY</span>
             <h2>Gaming news</h2>
           </div>
-          <a href="https://gamebeeper.gg" target="_blank" rel="noreferrer" className="discover-heading-link">
+          <a href="/data/gaming-news.json" target="_blank" rel="noreferrer" className="discover-heading-link">
             {newsUpdatedAt ? `Feed updated ${formatNewsDate(newsUpdatedAt)}` : 'Gaming headlines'} <span aria-hidden="true">-&gt;</span>
           </a>
         </div>
@@ -403,7 +399,7 @@ export default function Discover({ library, wishlist, getGameActions }) {
           </p>
         )}
         <p className="discover-source-note">
-          News headlines and summaries from <a href="https://gamebeeper.gg" target="_blank" rel="noreferrer">GameBeeper</a>; stories open at their original publishers.
+          News headlines and summaries from IGN, PC Gamer, and GameSpot RSS feeds; stories open at their original publishers.
         </p>
       </section>
     </div>

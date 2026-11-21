@@ -1146,8 +1146,49 @@ textarea:focus-visible {
 
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
+  max-height: 560px;
+  overflow-y: auto;
   gap: 13px;
+}
+
+.home-section-strips {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home-section-strip {
+  min-height: 112px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--bright);
+  background: linear-gradient(145deg, rgba(19, 27, 30, 0.96), rgba(12, 17, 20, 0.96));
+  text-align: left;
+  cursor: pointer;
+}
+
+.home-section-strip:hover,
+.home-section-strip:focus-visible {
+  border-color: rgba(196, 255, 77, 0.28);
+  background: linear-gradient(145deg, rgba(196, 255, 77, 0.09), rgba(12, 17, 20, 0.96));
+}
+
+.home-section-strip span,
+.home-section-strip small {
+  display: block;
+  color: #87968f;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.home-section-strip strong {
+  display: block;
+  margin: 9px 0 4px;
+  color: var(--lime);
+  font-size: 24px;
 }
 
 .news-card,
@@ -1300,6 +1341,10 @@ textarea:focus-visible {
   }
 
   .news-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-section-strips {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
