@@ -74,12 +74,13 @@ async function saveJson(filename, value) {
 async function main() {
   await mkdir(DATA_DIR, { recursive: true })
 
-  const [freeGames, deals, stores] = await Promise.all([
+  const [freeGames, deals, stores, alwaysFreeGames] = await Promise.all([
     fetchJson('https://www.gamerpower.com/api/giveaways?type=game'),
     fetchJson(
       'https://www.cheapshark.com/api/1.0/deals?onSale=1&pageSize=60&sortBy=Savings&desc=1&upperPrice=15'
     ),
     fetchJson('https://www.cheapshark.com/api/1.0/stores'),
+    fetchJson('https://www.freetogame.com/api/games'),
   ])
 
   const cleanFreeGames = freeGames
@@ -117,6 +118,29 @@ async function main() {
     deals,
   })
 
+  const cleanAlwaysFreeGames = alwaysFreeGames
+    .slice(0, 120)
+    .map((game) => ({
+      id: game.id,
+      title: game.title,
+      description: game.short_description,
+      genre: game.genre,
+      platform: game.platform,
+      publisher: game.publisher,
+      developer: game.developer,
+      releaseDate: game.release_date,
+      thumbnail: game.thumbnail,
+      gameUrl: game.game_url,
+      profileUrl: game.freetogame_profile_url,
+    }))
+
+  await saveJson('always-free-games.json', {
+    generatedAt: new Date().toISOString(),
+    source: 'FreeToGame',
+    sourceUrl: 'https://www.freetogame.com',
+    games: cleanAlwaysFreeGames,
+  })
+
   const feeds = [
     { source: 'IGN', url: 'https://www.ign.com/rss/v2/articles/feed', limit: 12 },
     { source: 'PC Gamer', url: 'https://www.pcgamer.com/feeds.xml', limit: 12 },
@@ -150,7 +174,7 @@ async function main() {
   })
 
   console.log(
-    `Saved ${cleanFreeGames.length} free games, ${deals.length} deals, ${activeStores.length} stores, and ${articles.length} news stories`
+    `Saved ${cleanFreeGames.length} free games, ${deals.length} deals, ${activeStores.length} stores, ${cleanAlwaysFreeGames.length} always-free games, and ${articles.length} news stories`
   )
 }
 

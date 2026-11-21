@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-11-21T05:57:07.388Z",
+  "generatedAt": "2026-11-21T06:03:03.149Z",
   "source": "LootRadar RSS aggregation",
   "articles": [
+    {
+      "id": "https://www.ign.com/articles/how-a-6-beer-in-gta-6-sent-me-into-a-spiral-of-crime-and-anxiety|Sat, 21 Nov 2026 06:00:00 +0000",
+      "title": "How a $6 Beer in GTA 6 Sent Me Into a Spiral of Crime and Anxiety",
+      "link": "https://www.ign.com/articles/how-a-6-beer-in-gta-6-sent-me-into-a-spiral-of-crime-and-anxiety",
+      "summary": "",
+      "publishedAt": "Sat, 21 Nov 2026 06:00:00 +0000",
+      "image": "https://assets-prd.ignimgs.com/2026/11/20/1a1f9e1ef3b55-screenshoturl-1-1795194452766.jpg",
+      "source": "IGN"
+    },
     {
       "id": "https://www.gamespot.com/videos/play-gta-6-in-first-person-with-this-glitch/|Sat, 21 Nov 2026 01:00:00 +0000",
       "title": "Play GTA 6 In First Person With This Glitch",
@@ -189,15 +198,6 @@
       "summary": "Still the best AirPods.",
       "publishedAt": "Fri, 20 Nov 2026 21:45:00 +0000",
       "image": "https://assets-prd.ignimgs.com/2026/11/16/appleairpodspro32-1794849603151.jpg",
-      "source": "IGN"
-    },
-    {
-      "id": "https://www.ign.com/articles/the-playstation-5-pro-console-is-going-in-and-out-of-stock-at-amazon|Fri, 20 Nov 2026 21:45:00 +0000",
-      "title": "The PlayStation 5 Pro Console Is Going In and Out of Stock at Amazon",
-      "link": "https://www.ign.com/articles/the-playstation-5-pro-console-is-going-in-and-out-of-stock-at-amazon",
-      "summary": "You'll need a combination of perseverance and luck to score one.",
-      "publishedAt": "Fri, 20 Nov 2026 21:45:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/19/ps5pro-1795119533259.jpg",
       "source": "IGN"
     },
     {

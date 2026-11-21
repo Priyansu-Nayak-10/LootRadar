@@ -4,6 +4,9 @@ import Discover from './pages/Discover'
 import Deals from './pages/Deals'
 import Library from './pages/Library'
 import Wishlist from './pages/Wishlist'
+import AlwaysFree from './pages/AlwaysFree'
+import ComingSoon from './pages/ComingSoon'
+import Rumors from './pages/Rumors'
 import useLocalStorage from './hooks/useLocalStorage'
 import cachedFetch from './lib/cachedFetch'
 import './App.css'
@@ -14,6 +17,7 @@ const TABS = [
   { id: 'deals', label: 'Deals' },
   { id: 'library', label: 'Library' },
   { id: 'wishlist', label: 'Wishlist' },
+  { id: 'more', label: 'More' },
 ]
 
 const TAB_DESCRIPTIONS = {
@@ -22,6 +26,10 @@ const TAB_DESCRIPTIONS = {
   deals: 'Games on sale right now',
   library: 'Games you own',
   wishlist: 'Games you want to play',
+  more: 'Always Free, Coming Soon, and rumor reports',
+  always: 'Free-to-play games that are always available',
+  coming: 'Confirmed upcoming Epic free games',
+  rumors: 'Unconfirmed free-game reports, clearly labelled',
 }
 
 const TAB_ICONS = {
@@ -30,6 +38,7 @@ const TAB_ICONS = {
   deals: 'm20 13-7 7L3 10V3h7l10 10Zm-12-6h.01',
   library: 'M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5v-12ZM4 6h16M8 10h8m-8 4h6',
   wishlist: 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z',
+  more: 'M5 12h.01M12 12h.01M19 12h.01',
 }
 
 function titleKey(title) {
@@ -122,7 +131,10 @@ export default function App() {
           <div className="hero-header" id="top">
             <div>
               <div className="hero-eyebrow">YOUR PERSONAL GAME RADAR</div>
-              <h2 className="hero-title">{TABS.find((item) => item.id === tab)?.label}</h2>
+              <h2 className="hero-title">
+                {TABS.find((item) => item.id === tab)?.label ||
+                  ({ always: 'Always Free', coming: 'Coming Soon', rumors: 'Rumors' }[tab])}
+              </h2>
               <p className="hero-description">{TAB_DESCRIPTIONS[tab]}</p>
             </div>
             <div className="hero-aside">
@@ -163,6 +175,36 @@ export default function App() {
             deals={availableDeals}
           />
         )}
+        {tab === 'more' && (
+          <section className="more-section">
+            <div className="game-grid">
+              <button type="button" className="game-card more-card" onClick={() => setTab('always')}>
+                <div className="game-card-content">
+                  <span className="discover-kicker">ALWAYS AVAILABLE</span>
+                  <h2 className="game-title">Always Free</h2>
+                  <p className="game-platform">Free-to-play games from FreeToGame</p>
+                </div>
+              </button>
+              <button type="button" className="game-card more-card" onClick={() => setTab('coming')}>
+                <div className="game-card-content">
+                  <span className="discover-kicker">EPIC CONFIRMATIONS</span>
+                  <h2 className="game-title">Coming Soon</h2>
+                  <p className="game-platform">Confirmed upcoming free promotions</p>
+                </div>
+              </button>
+              <button type="button" className="game-card more-card" onClick={() => setTab('rumors')}>
+                <div className="game-card-content">
+                  <span className="discover-kicker">UNCONFIRMED</span>
+                  <h2 className="game-title">Rumors</h2>
+                  <p className="game-platform">Reports clearly labelled as rumors</p>
+                </div>
+              </button>
+            </div>
+          </section>
+        )}
+        {tab === 'always' && <AlwaysFree getGameActions={saveActions} />}
+        {tab === 'coming' && <ComingSoon />}
+        {tab === 'rumors' && <Rumors />}
       </main>
 
       <footer className="app-footer">
@@ -177,6 +219,10 @@ export default function App() {
         and game data from{' '}
         <a href="https://rawg.io" target="_blank" rel="noreferrer" className="underline">
           RAWG
+        </a>{' '}
+        and free-to-play data from{' '}
+        <a href="https://www.freetogame.com" target="_blank" rel="noreferrer" className="underline">
+          FreeToGame
         </a>
       </footer>
 
