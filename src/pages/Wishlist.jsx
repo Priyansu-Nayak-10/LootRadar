@@ -35,10 +35,14 @@ export default function Wishlist({ games, setGames, freeGames, deals }) {
   }
 
   return (
-    <section className="collection-section">
-      <h2 className="section-heading">
-        My wishlist <span className="section-count">({games.length})</span>
-      </h2>
+    <section className="collections-redesign wishlist-redesign">
+      <header className="redesign-page-header">
+        <div>
+          <span className="lr-section-heading__kicker">SAVED FOR LATER</span>
+          <h1>My <strong>Wishlist</strong></h1>
+        </div>
+        <span className="lr-badge">{games.length} games</span>
+      </header>
 
       {games.length === 0 ? (
         <p className="empty-state">
@@ -51,7 +55,7 @@ export default function Wishlist({ games, setGames, freeGames, deals }) {
             return (
               <article
                 key={`${titleKey(game.title)}-${index}`}
-                className="wishlist-card"
+                className="lr-card wishlist-card redesign-collection-card"
               >
               {game.image ? (
                 <img

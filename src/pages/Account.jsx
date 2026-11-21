@@ -195,8 +195,14 @@ export default function Account({ session }) {
 
   if (session) {
     return (
-      <section className="form-panel collection-section">
-        <h2 className="form-heading">Your account</h2>
+      <section className="account-redesign">
+        <header className="redesign-page-header">
+          <div>
+            <span className="lr-section-heading__kicker">YOUR PROFILE</span>
+            <h1>My <strong>Account</strong></h1>
+          </div>
+          <span className="lr-badge">{session.user.email}</span>
+        </header>
         <p className="account-email">{session.user.email}</p>
         {message && <p className="form-message" role="status">{message}</p>}
         <div className="telegram-account-card">
@@ -291,27 +297,44 @@ export default function Account({ session }) {
   }
 
   return (
-    <section className="form-panel collection-section">
-      <h2 className="form-heading">{mode === 'signup' ? 'Create account' : 'Sign in'}</h2>
-      <div className="auth-mode-tabs" aria-label="Account mode">
-        <button
-          type="button"
-          className={mode === 'signin' ? 'is-selected' : ''}
-          aria-pressed={mode === 'signin'}
-          onClick={() => setMode('signin')}
-        >
-          Sign in
-        </button>
-        <button
-          type="button"
-          className={mode === 'signup' ? 'is-selected' : ''}
-          aria-pressed={mode === 'signup'}
-          onClick={() => setMode('signup')}
-        >
-          Sign up
-        </button>
+    <section className="auth-redesign">
+      <div className="auth-redesign__art">
+        <div className="auth-radar-art" aria-hidden="true" />
+        <div className="auth-welcome">
+          <span className="lr-section-heading__kicker">WELCOME TO LOOTRADAR</span>
+          <h1>Track. Discover. <strong>Claim.</strong></h1>
+          <div className="auth-feature-list">
+            <span><b>01</b> Track Your Progress</span>
+            <span><b>02</b> Get Exclusive Deals</span>
+            <span><b>03</b> Claim Free Games</span>
+          </div>
+        </div>
       </div>
-      <form className="form-grid" onSubmit={handleSubmit}>
+      <div className="auth-redesign__card">
+        <div className="auth-logo" aria-label="LootRadar">
+          <span className="brand-mark" aria-hidden="true">LR</span>
+          <strong>Loot<span>Radar</span></strong>
+        </div>
+        <h2>{mode === 'signup' ? 'Create Account' : 'Welcome Back!'}</h2>
+        <div className="auth-mode-tabs" aria-label="Account mode">
+          <button
+            type="button"
+            className={mode === 'signin' ? 'is-selected' : ''}
+            aria-pressed={mode === 'signin'}
+            onClick={() => setMode('signin')}
+          >
+            Sign In
+          </button>
+          <button
+            type="button"
+            className={mode === 'signup' ? 'is-selected' : ''}
+            aria-pressed={mode === 'signup'}
+            onClick={() => setMode('signup')}
+          >
+            Sign Up
+          </button>
+        </div>
+      <form className="form-grid auth-form" onSubmit={handleSubmit}>
         <label className="form-field is-wide">
           Email
           <input
@@ -338,6 +361,7 @@ export default function Account({ session }) {
           {loading ? 'Please wait...' : mode === 'signup' ? 'Create account' : 'Sign in'}
         </button>
       </form>
+      </div>
     </section>
   )
 }

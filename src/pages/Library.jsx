@@ -51,8 +51,15 @@ export default function Library({ games, setGames }) {
   }
 
   return (
-    <div>
-      <section className="form-panel collection-section">
+    <div className="collections-redesign library-redesign">
+      <header className="redesign-page-header">
+        <div>
+          <span className="lr-section-heading__kicker">MY COLLECTION</span>
+          <h1>My <strong>Library</strong></h1>
+        </div>
+        <span className="lr-badge">{games.length} games</span>
+      </header>
+      <section className="form-panel collection-section collection-add-panel">
         <h2 className="form-heading">Add a game manually</h2>
         <form onSubmit={addGame} className="form-grid">
           <label className="form-field">
@@ -130,7 +137,7 @@ export default function Library({ games, setGames }) {
             {games.map((game, index) => (
               <article
                 key={`${titleKey(game.title)}-${index}`}
-                className="collection-card"
+                className="lr-card collection-card redesign-collection-card"
               >
                 {game.image ? (
                   <img

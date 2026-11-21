@@ -1310,6 +1310,421 @@ textarea:focus-visible {
   background: rgba(196, 255, 77, 0.08);
 }
 
+/* Redesign Step 7: collections and Account */
+.collections-redesign {
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+}
+
+.collection-add-panel,
+.account-redesign,
+.telegram-account-card,
+.alert-settings-card {
+  border: 1px solid var(--line);
+  border-radius: var(--lr-radius-lg);
+  background: linear-gradient(145deg, var(--panel-raised), var(--panel));
+  box-shadow: var(--lr-shadow-card);
+}
+
+.collection-add-panel {
+  padding: 18px;
+}
+
+.collection-add-panel .form-heading,
+.collection-section .section-heading {
+  color: var(--bright);
+}
+
+.collection-add-panel .form-grid {
+  margin-top: 14px;
+}
+
+.collection-add-panel .form-field,
+.auth-form .form-field {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.collection-add-panel input,
+.collection-add-panel select,
+.collection-add-panel textarea,
+.auth-form input {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--bright);
+  background: rgba(255, 255, 255, .025);
+  outline: 0;
+}
+
+.collection-add-panel input:focus,
+.collection-add-panel select:focus,
+.collection-add-panel textarea:focus,
+.auth-form input:focus {
+  border-color: var(--lr-line-strong);
+  box-shadow: 0 0 0 3px var(--lr-lime-soft);
+}
+
+.collection-add-panel .form-submit,
+.auth-form .form-submit,
+.account-redesign > .form-submit {
+  min-height: 48px;
+  border: 0;
+  border-radius: var(--lr-radius-pill);
+  color: #10150a;
+  background: var(--lime);
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.collection-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.redesign-collection-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--lr-radius-md);
+  background: linear-gradient(145deg, var(--panel-raised), var(--panel));
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .18);
+}
+
+.redesign-collection-card .collection-image,
+.redesign-collection-card .collection-fallback {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.redesign-collection-card .collection-fallback {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 75% 20%, rgba(196,255,77,.12), transparent 30%),
+    var(--panel-raised);
+  color: var(--lime);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .14em;
+}
+
+.redesign-collection-card .collection-copy,
+.redesign-collection-card .min-w-0 {
+  padding: 13px;
+}
+
+.redesign-collection-card .collection-title {
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.redesign-collection-card .collection-platform,
+.redesign-collection-card .collection-notes {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.redesign-collection-card .remove-button {
+  min-height: 44px;
+  width: 100%;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--lr-radius-pill);
+  color: var(--bright);
+  background: rgba(255, 255, 255, .025);
+  cursor: pointer;
+}
+
+.account-redesign {
+  min-width: 0;
+  max-width: 980px;
+  margin-inline: auto;
+  padding: 18px;
+}
+
+.account-email {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.telegram-account-card,
+.alert-settings-card {
+  box-shadow: none;
+  background: rgba(255, 255, 255, .018);
+}
+
+.auth-redesign {
+  min-height: 620px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, .72fr);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--lr-radius-lg);
+  background: var(--panel);
+  box-shadow: var(--lr-shadow-card);
+}
+
+.auth-redesign__art {
+  position: relative;
+  min-height: 620px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 68% 42%, rgba(196,255,77,.13) 0 90px, transparent 91px),
+    linear-gradient(135deg, rgba(196,255,77,.08), transparent 55%), var(--panel-raised);
+}
+
+.auth-radar-art {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  right: -80px;
+  bottom: -80px;
+  border: 1px solid rgba(196,255,77,.14);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 50px rgba(196,255,77,.025),
+    0 0 0 100px rgba(196,255,77,.018),
+    0 0 70px rgba(196,255,77,.05);
+}
+
+.auth-radar-art::before,
+.auth-radar-art::after {
+  position: absolute;
+  content: "";
+  background: var(--lime);
+  opacity: .18;
+}
+
+.auth-radar-art::before {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+}
+
+.auth-radar-art::after {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+
+.auth-welcome {
+  position: absolute;
+  left: 34px;
+  right: 34px;
+  bottom: 34px;
+  z-index: 2;
+}
+
+.auth-welcome h1 {
+  max-width: 520px;
+  margin: 12px 0 24px;
+  font-size: clamp(36px, 6vw, 68px);
+  line-height: .94;
+  letter-spacing: -.06em;
+}
+
+.auth-welcome h1 strong {
+  color: var(--lime);
+}
+
+.auth-feature-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.auth-feature-list span {
+  min-height: 74px;
+  display: grid;
+  align-content: space-between;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(7, 10, 13, .42);
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+.auth-feature-list b {
+  color: var(--lime);
+  font-size: 9px;
+}
+
+.auth-redesign__card {
+  margin: 22px;
+  align-self: center;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--lr-radius-lg);
+  background: rgba(12, 17, 20, .94);
+  box-shadow: var(--lr-shadow-card);
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.auth-logo .brand-mark {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--lr-line-strong);
+  border-radius: 12px;
+  color: var(--lime);
+  background: var(--lime-soft);
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.auth-logo strong {
+  font-size: 18px;
+  letter-spacing: -.04em;
+}
+
+.auth-logo strong span {
+  color: var(--lime);
+}
+
+.auth-redesign__card h2 {
+  margin: 0 0 14px;
+  font-size: clamp(24px, 3vw, 34px);
+  letter-spacing: -.05em;
+}
+
+.auth-mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--lr-radius-pill);
+  background: rgba(255, 255, 255, .018);
+}
+
+.auth-mode-tabs button {
+  min-height: 44px;
+  border: 0;
+  border-radius: var(--lr-radius-pill);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.auth-mode-tabs button.is-selected {
+  color: #10150a;
+  background: var(--lime);
+}
+
+.auth-form {
+  grid-template-columns: 1fr;
+}
+
+.auth-form .form-field {
+  display: grid;
+  gap: 7px;
+  text-transform: none;
+}
+
+.auth-form input {
+  width: 100%;
+  padding-inline: 12px;
+  text-transform: none;
+}
+
+@media (max-width: 1050px) {
+  .collection-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .auth-redesign {
+    grid-template-columns: minmax(0, .9fr) minmax(330px, 1.1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .collection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .auth-redesign {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-redesign__art {
+    min-height: 250px;
+  }
+
+  .auth-welcome {
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+  }
+
+  .auth-welcome h1 {
+    margin-bottom: 12px;
+    font-size: 38px;
+  }
+
+  .auth-feature-list {
+    display: none;
+  }
+
+  .auth-redesign__card {
+    margin: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .collection-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .redesign-collection-card .collection-image,
+  .redesign-collection-card .collection-fallback {
+    height: 180px;
+  }
+
+  .account-redesign {
+    padding: 12px;
+  }
+
+  .auth-redesign {
+    min-height: 560px;
+  }
+
+  .auth-redesign__art {
+    min-height: 190px;
+  }
+
+  .auth-radar-art {
+    width: 220px;
+    height: 220px;
+  }
+
+  .auth-redesign__card {
+    padding: 18px;
+  }
+}
+
 /* Redesign Step 6: Deals and PC Popular Games */
 .deals-redesign {
   min-width: 0;
