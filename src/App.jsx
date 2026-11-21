@@ -51,13 +51,38 @@ function titleKey(title) {
   return title.trim().toLocaleLowerCase()
 }
 
-function toggleGame(setGames, game) {
-  setGames((current) => {
-    const alreadySaved = current.some((saved) => titleKey(saved.title) === titleKey(game.title))
-    return alreadySaved
-      ? current.filter((saved) => titleKey(saved.title) !== titleKey(game.title))
-      : [...current, game]
-  })
+function mergeSavedGames(localGames, databaseRows, listType) {
+  const merged = new Map()
+
+  for (const game of localGames) {
+    merged.set(titleKey(game.title), { ...game })
+  }
+  for (const row of databaseRows) {
+    if (row.list_type !== listType) continue
+    merged.set(titleKey(row.title), {
+      title: row.title,
+      platform: row.platform || '',
+      image: row.image || '',
+      notes: row.notes || '',
+      source: row.source || '',
+      sourceId: row.source_id || '',
+    })
+  }
+
+  return [...merged.values()]
+}
+
+function toDatabaseRow(game, listType, userId) {
+  return {
+    user_id: userId,
+    list_type: listType,
+    title: game.title,
+    platform: game.platform || '',
+    image: game.image || '',
+    notes: game.notes || '',
+    source: game.source || '',
+    source_id: game.sourceId || '',
+  }
 }
 
 export default function App() {
@@ -79,6 +104,59 @@ export default function App() {
     })
     return () => data.subscription.unsubscribe()
   }, [])
+
+  useEffect(() => {
+    if (!session || !supabase) return undefined
+
+    let cancelled = false
+
+    async function syncSavedGames() {
+      try {
+        const { data: rows, error } = await supabase
+          .from('saved_games')
+          .select('*')
+          .eq('user_id', session.user.id)
+
+        if (error) throw error
+
+        let localLibrary = []
+        let localWishlist = []
+        try {
+          localLibrary = JSON.parse(window.localStorage.getItem('lootradar_library') || '[]')
+          localWishlist = JSON.parse(window.localStorage.getItem('lootradar_wishlist') || '[]')
+        } catch {
+          // Keep database rows when local JSON is unavailable or invalid.
+        }
+
+        const databaseRows = Array.isArray(rows) ? rows : []
+        const mergedLibrary = mergeSavedGames(localLibrary, databaseRows, 'library')
+        const mergedWishlist = mergeSavedGames(localWishlist, databaseRows, 'wishlist')
+
+        if (!cancelled) {
+          setOwnedGames(mergedLibrary)
+          setWishlist(mergedWishlist)
+        }
+
+        const migrationRows = [
+          ...mergedLibrary.map((game) => toDatabaseRow(game, 'library', session.user.id)),
+          ...mergedWishlist.map((game) => toDatabaseRow(game, 'wishlist', session.user.id)),
+        ]
+        if (migrationRows.length > 0) {
+          const { error: upsertError } = await supabase
+            .from('saved_games')
+            .upsert(migrationRows, { onConflict: 'user_id,list_type,title_key' })
+          if (upsertError) throw upsertError
+        }
+      } catch (error) {
+        console.error('Could not sync saved games:', error.message)
+      }
+    }
+
+    syncSavedGames()
+    return () => {
+      cancelled = true
+    }
+  }, [session, setOwnedGames, setWishlist])
 
   useEffect(() => {
     function readHash() {
@@ -134,8 +212,89 @@ export default function App() {
     return {
       owned: gameIsSaved(ownedGames, game.title),
       wishlisted: gameIsSaved(wishlist, game.title),
-      onToggleOwned: () => toggleGame(setOwnedGames, game),
-      onToggleWishlist: () => toggleGame(setWishlist, game),
+      onToggleOwned: () => toggleSavedGame('library', ownedGames, setOwnedGames, game),
+      onToggleWishlist: () => toggleSavedGame('wishlist', wishlist, setWishlist, game),
+    }
+  }
+
+  function syncedSetter(listType, setLocalGames) {
+    return (updater) => {
+      setLocalGames((currentGames) => {
+        const nextGames =
+          typeof updater === 'function' ? updater(currentGames) : updater
+
+        if (session && supabase) {
+          queueMicrotask(async () => {
+            const currentKeys = new Set(
+              currentGames.map((game) => titleKey(game.title))
+            )
+            const nextKeys = new Set(
+              nextGames.map((game) => titleKey(game.title))
+            )
+            const removedKeys = [...currentKeys].filter((key) => !nextKeys.has(key))
+
+            try {
+              if (nextGames.length > 0) {
+                const rows = nextGames.map((game) =>
+                  toDatabaseRow(game, listType, session.user.id)
+                )
+                const { error } = await supabase
+                  .from('saved_games')
+                  .upsert(rows, { onConflict: 'user_id,list_type,title_key' })
+                if (error) throw error
+              }
+
+              for (const removedKey of removedKeys) {
+                const { error } = await supabase
+                  .from('saved_games')
+                  .delete()
+                  .eq('user_id', session.user.id)
+                  .eq('list_type', listType)
+                  .eq('title_key', removedKey)
+                if (error) throw error
+              }
+            } catch (error) {
+              console.error('Could not sync saved games:', error.message)
+            }
+          })
+        }
+
+        return nextGames
+      })
+    }
+  }
+
+  async function toggleSavedGame(listType, currentGames, setGames, game) {
+    const alreadySaved = currentGames.some(
+      (saved) => titleKey(saved.title) === titleKey(game.title)
+    )
+    const nextGames = alreadySaved
+      ? currentGames.filter((saved) => titleKey(saved.title) !== titleKey(game.title))
+      : [...currentGames, game]
+
+    setGames(nextGames)
+
+    if (!session || !supabase) return
+
+    try {
+      if (alreadySaved) {
+        const { error } = await supabase
+          .from('saved_games')
+          .delete()
+          .eq('user_id', session.user.id)
+          .eq('list_type', listType)
+          .eq('title_key', titleKey(game.title))
+        if (error) throw error
+      } else {
+        const { error } = await supabase
+          .from('saved_games')
+          .upsert([toDatabaseRow(game, listType, session.user.id)], {
+            onConflict: 'user_id,list_type,title_key',
+          })
+        if (error) throw error
+      }
+    } catch (error) {
+      console.error('Could not update saved game:', error.message)
     }
   }
 
@@ -200,11 +359,16 @@ export default function App() {
             onAvailabilityChange={updateAvailableDeals}
           />
         )}
-        {tab === 'library' && <Library games={ownedGames} setGames={setOwnedGames} />}
+        {tab === 'library' && (
+          <Library
+            games={ownedGames}
+            setGames={syncedSetter('library', setOwnedGames)}
+          />
+        )}
         {tab === 'wishlist' && (
           <Wishlist
             games={wishlist}
-            setGames={setWishlist}
+            setGames={syncedSetter('wishlist', setWishlist)}
             freeGames={availableFreeGames}
             deals={availableDeals}
           />
