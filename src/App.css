@@ -1224,6 +1224,39 @@ textarea:focus-visible {
   overflow-wrap: anywhere;
 }
 
+.telegram-account-card {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(17, 24, 27, 0.58);
+}
+
+.telegram-account-card h3 {
+  margin: 0;
+  color: var(--bright);
+}
+
+.telegram-account-card p {
+  margin: 0;
+  color: #9aa8a2;
+  font-size: 12px;
+}
+
+.telegram-link {
+  min-height: 42px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(196, 255, 77, 0.24);
+  border-radius: 10px;
+  color: var(--lime);
+  background: rgba(196, 255, 77, 0.08);
+  text-decoration: none;
+  font-weight: 750;
+}
+
 .news-card,
 .news-skeleton {
   min-width: 0;

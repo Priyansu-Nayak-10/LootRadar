@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { hasSupabaseConfig, supabase } from '../lib/supabase'
 
 export default function Account({ session }) {
@@ -7,6 +7,78 @@ export default function Account({ session }) {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [telegramConnection, setTelegramConnection] = useState(null)
+  const [telegramLink, setTelegramLink] = useState('')
+  const [telegramLoading, setTelegramLoading] = useState(false)
+
+  useEffect(() => {
+    if (!session || !supabase) return
+    let cancelled = false
+
+    supabase
+      .from('telegram_connections')
+      .select('chat_id, username, connected_at')
+      .eq('user_id', session.user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setTelegramConnection(data)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [session])
+
+  function createCode() {
+    const bytes = new Uint8Array(6)
+    crypto.getRandomValues(bytes)
+    return [...bytes].map((byte) => byte.toString(36).padStart(2, '0')).join('').slice(0, 8).toUpperCase()
+  }
+
+  async function connectTelegram() {
+    if (!session || !supabase) return
+    setTelegramLoading(true)
+    setMessage('')
+
+    try {
+      const code = createCode()
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString()
+      const { error } = await supabase
+        .from('telegram_link_codes')
+        .upsert({
+          user_id: session.user.id,
+          code,
+          expires_at: expiresAt,
+          used_at: null,
+        }, { onConflict: 'user_id' })
+      if (error) throw error
+
+      setTelegramLink(`https://t.me/GameRadar7_bot?start=${encodeURIComponent(code)}`)
+      setMessage('One-time Telegram link created. It expires in 15 minutes.')
+    } catch (error) {
+      setMessage(error.message || 'Could not create a Telegram link.')
+    } finally {
+      setTelegramLoading(false)
+    }
+  }
+
+  async function disconnectTelegram() {
+    if (!session || !supabase) return
+    setTelegramLoading(true)
+    setMessage('')
+    const { error } = await supabase
+      .from('telegram_connections')
+      .delete()
+      .eq('user_id', session.user.id)
+    setTelegramLoading(false)
+    if (error) {
+      setMessage(error.message)
+      return
+    }
+    setTelegramConnection(null)
+    setTelegramLink('')
+    setMessage('Telegram connection removed.')
+  }
 
   if (!hasSupabaseConfig || !supabase) {
     return (
@@ -63,6 +135,34 @@ export default function Account({ session }) {
         <h2 className="form-heading">Your account</h2>
         <p className="account-email">{session.user.email}</p>
         {message && <p className="form-message" role="status">{message}</p>}
+        <div className="telegram-account-card">
+          <h3>Telegram alerts</h3>
+          {telegramConnection ? (
+            <>
+              <p>Connected{telegramConnection.username ? ` to @${telegramConnection.username}` : ''}.</p>
+              <button type="button" className="form-submit" onClick={disconnectTelegram} disabled={telegramLoading}>
+                {telegramLoading ? 'Removing...' : 'Disconnect Telegram'}
+              </button>
+            </>
+          ) : (
+            <>
+              <p>No Telegram account is connected.</p>
+              <button type="button" className="form-submit" onClick={connectTelegram} disabled={telegramLoading}>
+                {telegramLoading ? 'Creating link...' : 'Connect Telegram'}
+              </button>
+              {telegramLink && (
+                <a
+                  className="telegram-link"
+                  href={telegramLink}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open Telegram bot
+                </a>
+              )}
+            </>
+          )}
+        </div>
         <button type="button" className="form-submit" onClick={signOut} disabled={loading}>
           {loading ? 'Signing out...' : 'Sign out'}
         </button>
