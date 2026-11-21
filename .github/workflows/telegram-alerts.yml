@@ -39,6 +39,26 @@ jobs:
           test "$SUPABASE_SECRET_KEY_PRESENT" = "true"
           test "$TELEGRAM_BOT_TOKEN_PRESENT" = "true"
 
+      - name: Verify required Supabase tables
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          check_table() {
+            name="$1"
+            status=$(curl -sS -o /dev/null -w '%{http_code}' \
+              -H "apikey: $SUPABASE_SECRET_KEY" \
+              -H "Authorization: Bearer $SUPABASE_SECRET_KEY" \
+              "$SUPABASE_URL/rest/v1/$name?select=*&limit=1")
+            echo "$name HTTP=$status"
+            test "$status" = "200"
+          }
+          check_table notification_settings
+          check_table telegram_connections
+          check_table saved_games
+          check_table free_game_windows
+          check_table sent_alerts
+
       - name: Send due Telegram alerts
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
