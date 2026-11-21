@@ -5,6 +5,7 @@ export default function Account({ session }) {
   const [mode, setMode] = useState('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const [telegramConnection, setTelegramConnection] = useState(null)
@@ -193,6 +194,43 @@ export default function Account({ session }) {
     if (error) setMessage(error.message)
   }
 
+  async function forgotPassword() {
+    if (!supabase) return
+    const cleanEmail = email.trim()
+    if (!cleanEmail) {
+      setMessage('Enter your email first, then choose Forgot password.')
+      return
+    }
+
+    setLoading(true)
+    setMessage('')
+    const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+      redirectTo: `${window.location.origin}/#/account`,
+    })
+    setLoading(false)
+    setMessage(
+      error
+        ? error.message
+        : 'Password reset email sent. Check your inbox and spam folder.'
+    )
+  }
+
+  async function signInWithGoogle() {
+    if (!supabase) return
+    setLoading(true)
+    setMessage('')
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/#/account`,
+      },
+    })
+    if (error) {
+      setLoading(false)
+      setMessage(error.message)
+    }
+  }
+
   if (session) {
     return (
       <section className="account-redesign">
@@ -347,19 +385,48 @@ export default function Account({ session }) {
         </label>
         <label className="form-field is-wide">
           Password
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-            minLength={6}
-            required
-          />
+          <span className="auth-password-field">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+              minLength={6}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((visible) => !visible)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </span>
         </label>
+        {mode === 'signin' && (
+          <button type="button" className="auth-forgot" onClick={forgotPassword}>
+            Forgot password?
+          </button>
+        )}
         {message && <p className="form-message" role="status">{message}</p>}
         <button type="submit" className="form-submit" disabled={loading}>
           {loading ? 'Please wait...' : mode === 'signup' ? 'Create account' : 'Sign in'}
         </button>
+        {mode === 'signin' && (
+          <>
+            <div className="auth-divider"><span>or</span></div>
+            <button
+              type="button"
+              className="auth-google"
+              onClick={signInWithGoogle}
+              disabled={loading}
+            >
+              <span aria-hidden="true">G</span>
+              Continue with Google
+            </button>
+          </>
+        )}
       </form>
       </div>
     </section>
