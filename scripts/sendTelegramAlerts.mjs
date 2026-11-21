@@ -100,6 +100,7 @@ function dueAt(now, target, toleranceMs = 45 * 60 * 1000) {
 }
 
 async function main() {
+  console.log('SENDER_PHASE=loading_snapshots')
   const epic = await loadJson(new URL('../public/data/epic-free-games.json', import.meta.url))
   const gamerPower = await loadJson(
     new URL('../public/data/gamerpower-free-games.json', import.meta.url)
@@ -151,6 +152,7 @@ async function main() {
   }
 
   if (windows.length > 0) {
+    console.log('SENDER_PHASE=upserting_free_game_windows')
     await supabase(
       'POST',
       'free_game_windows?on_conflict=game_key',
@@ -165,6 +167,7 @@ async function main() {
     supabase('GET', 'saved_games?select=user_id,title,normalized_title,platform,list_type&list_type=eq.library'),
     supabase('GET', 'sent_alerts?select=*'),
   ])
+  console.log(`SENDER_PHASE=settings_loaded settings=${settings.length} connections=${connections.length}`)
 
   const ownedTitlesByUser = new Map()
   for (const game of library) {
