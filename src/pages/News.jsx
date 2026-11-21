@@ -9,6 +9,30 @@ function formatDate(value) {
   }).format(date)
 }
 
+function formatRelativeTime(value) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  const minutes = Math.max(0, Math.floor((Date.now() - date.getTime()) / 60000))
+  if (minutes < 60) return `${minutes || 1}m ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  return `${Math.floor(hours / 24)}d ago`
+}
+
+function platformFromArticle(article) {
+  if (Array.isArray(article.platforms)) {
+    const platforms = article.platforms.join(' ').toLowerCase()
+    if (platforms.includes('playstation') || platforms.includes('ps5') || platforms.includes('ps4')) return 'PS'
+    if (platforms.includes('xbox')) return 'Xbox'
+    if (platforms.includes('pc') || platforms.includes('steam') || platforms.includes('windows')) return 'PC'
+  }
+  const text = `${article.title} ${article.summary || ''}`.toLowerCase()
+  if (text.includes('playstation') || text.includes('ps5') || text.includes('ps4')) return 'PS'
+  if (text.includes('xbox') || text.includes('series x') || text.includes('series s')) return 'Xbox'
+  if (text.includes('pc game') || text.includes('steam') || text.includes('pc port') || text.includes('pc version')) return 'PC'
+  return 'All'
+}
+
 function NewsImage({ article }) {
   const [failed, setFailed] = useState(false)
 
@@ -32,6 +56,7 @@ export default function News() {
   const [generatedAt, setGeneratedAt] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [filter, setFilter] = useState('All')
 
   async function load() {
     setLoading(true)
@@ -53,15 +78,21 @@ export default function News() {
     load()
   }, [])
 
+  const featured = articles.slice(0, 5)
+  const trending = articles.slice(5, 9)
+  const filteredArticles = articles.filter((article) =>
+    filter === 'All' ? true : platformFromArticle(article) === filter
+  )
+
   return (
-    <section className="news-page">
-      <div className="discover-section-heading">
+    <section className="news-page news-redesign">
+      <header className="news-page-header">
         <div>
-          <span className="discover-kicker">LATEST FROM THE INDUSTRY</span>
-          <h2>Gaming News</h2>
+          <span className="lr-section-heading__kicker">Stay updated</span>
+          <h1>Gaming <strong>News</strong></h1>
         </div>
-        {generatedAt && <span className="discover-heading-note">Updated {formatDate(generatedAt)}</span>}
-      </div>
+        {generatedAt && <span>Updated {formatRelativeTime(generatedAt)}</span>}
+      </header>
       {error && (
         <p className="discover-error" role="alert">
           {error}{' '}
@@ -69,30 +100,91 @@ export default function News() {
         </p>
       )}
       {loading ? (
-        <div className="news-grid">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div className="news-skeleton" key={index} aria-hidden="true" />
-          ))}
-        </div>
+        <div className="lr-skeleton news-feature-skeleton" />
       ) : (
-        <div className="news-grid news-page-grid">
-          {articles.map((article) => (
-            <article className="news-card" key={article.id || article.link}>
-              <NewsImage article={article} />
-              <div className="news-copy">
-                <div className="news-meta">
-                  <span>{article.source || 'Gaming news'}</span>
-                  <span>{formatDate(article.publishedAt)}</span>
+        <>
+          <div className="news-feature-grid">
+            <div className="news-feature-carousel" aria-label="Featured gaming news">
+              {featured.map((article, index) => (
+                <article className="news-feature-slide" key={article.id || article.link}>
+                  <NewsImage article={article} />
+                  <div className="news-feature-overlay" />
+                  <div className="news-feature-copy">
+                    <span className="lr-badge lr-badge--lime">{index === 0 ? 'Trending' : article.source}</span>
+                    <h2>{article.title}</h2>
+                    {article.summary && <p>{article.summary}</p>}
+                    <div>
+                      <a href={article.link} target="_blank" rel="noreferrer" className="lr-button">Read Full Story</a>
+                      <span>{formatRelativeTime(article.publishedAt)}</span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <aside className="news-trending-side">
+              <div className="lr-section-heading">
+                <div className="lr-section-heading__copy">
+                  <span className="lr-section-heading__kicker">MOST FOLLOWED</span>
+                  <h2>Trending <strong>News</strong></h2>
                 </div>
-                <h3>{article.title}</h3>
-                {article.summary && <p>{article.summary}</p>}
-                <a href={article.link} target="_blank" rel="noreferrer" className="news-link">
-                  Read story <span aria-hidden="true">-&gt;</span>
-                </a>
               </div>
-            </article>
-          ))}
-        </div>
+              {trending.map((article) => (
+                <article className="news-trending-item" key={article.id || article.link}>
+                  <NewsImage article={article} />
+                  <div>
+                    <span>{article.source} · {formatRelativeTime(article.publishedAt)}</span>
+                    <h3>{article.title}</h3>
+                  </div>
+                  <a href={article.link} target="_blank" rel="noreferrer" aria-label={`Read ${article.title}`} />
+                </article>
+              ))}
+            </aside>
+          </div>
+
+          <section className="news-latest">
+            <div className="lr-section-heading">
+              <div className="lr-section-heading__copy">
+                <span className="lr-section-heading__kicker">ALL HEADLINES</span>
+                <h2>Latest <strong>News</strong></h2>
+              </div>
+            </div>
+            <div className="news-filter-row" aria-label="Filter news by platform">
+              {['All', 'PS', 'Xbox', 'PC'].map((option) => (
+                <button
+                  type="button"
+                  key={option}
+                  className={`lr-chip ${filter === option ? 'is-active' : ''}`}
+                  aria-pressed={filter === option}
+                  onClick={() => setFilter(option)}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+            {filteredArticles.length > 0 ? (
+              <div className="news-latest-grid">
+                {filteredArticles.map((article) => (
+                  <article className="lr-news-card news-latest-card" key={article.id || article.link}>
+                    <NewsImage article={article} />
+                    <div className="lr-news-card__body">
+                      <div className="news-card-meta">
+                        <span className="lr-badge">{platformFromArticle(article)}</span>
+                        <span>{article.source} · {formatRelativeTime(article.publishedAt)}</span>
+                      </div>
+                      <h3>{article.title}</h3>
+                      {article.summary && <p>{article.summary}</p>}
+                      <a href={article.link} target="_blank" rel="noreferrer" className="lr-button lr-button--ghost">
+                        Read Story →
+                      </a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="lr-empty">No stories match this platform.</div>
+            )}
+          </section>
+        </>
       )}
       {!loading && !error && articles.length === 0 && (
         <p className="discover-empty">No recent stories are available right now.</p>
