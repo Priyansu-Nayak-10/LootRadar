@@ -120,10 +120,23 @@ export default function FreeNow({ getGameActions, onAvailabilityChange }) {
     }
 
     try {
-      const res = await fetch(API)
-      if (!res.ok) throw new Error('Server error')
-      const data = await res.json()
-      const list = Array.isArray(data) ? data : []
+      let list = []
+      try {
+        const snapshotResponse = await fetch('/data/gamerpower-free-games.json')
+        if (snapshotResponse.ok) {
+          const snapshot = await snapshotResponse.json()
+          if (Array.isArray(snapshot.games)) list = snapshot.games
+        }
+      } catch {
+        // Fall through to the public API.
+      }
+
+      if (list.length === 0) {
+        const res = await fetch(API)
+        if (!res.ok) throw new Error('Server error')
+        const data = await res.json()
+        list = Array.isArray(data) ? data : []
+      }
       setGames(list)
       onAvailabilityChange(list)
       try {

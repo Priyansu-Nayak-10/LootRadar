@@ -48,5 +48,21 @@ export async function fetchRawgGames(parameters, cacheLabel) {
 }
 
 export async function fetchGamingNews() {
-  return fetchCachedJson(NEWS_URL, 'lootradar_gaming_news', NEWS_CACHE_MS)
+  try {
+    const response = await fetch('/data/gaming-news.json')
+    if (!response.ok) throw new Error(`Request failed (${response.status})`)
+    const data = await response.json()
+    if (!Array.isArray(data.articles)) throw new Error('News snapshot is invalid')
+    try {
+      sessionStorage.setItem(
+        'lootradar_gaming_news',
+        JSON.stringify({ time: Date.now(), data })
+      )
+    } catch {
+      // Keep the fetched snapshot available even if browser storage is blocked.
+    }
+    return data
+  } catch {
+    return fetchCachedJson(NEWS_URL, 'lootradar_gaming_news', NEWS_CACHE_MS)
+  }
 }

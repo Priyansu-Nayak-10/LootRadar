@@ -95,9 +95,16 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
 
   // load the store list once
   useEffect(() => {
-    cachedFetch(`${BASE}/api/1.0/stores`)
-      .then((list) => setStores(list.filter((s) => Number(s.isActive) === 1)))
-      .catch(() => {})
+    fetch('/data/cheapshark-deals.json')
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((snapshot) => {
+        if (Array.isArray(snapshot.stores)) setStores(snapshot.stores)
+      })
+      .catch(() => {
+        cachedFetch(`${BASE}/api/1.0/stores`)
+          .then((list) => setStores(list.filter((s) => Number(s.isActive) === 1)))
+          .catch(() => {})
+      })
   }, [])
 
   // load deals whenever a filter changes
@@ -115,7 +122,19 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
       })
       if (store) p.set('storeID', store)
       try {
-        const data = await cachedFetch(`${BASE}/api/1.0/deals?${p}`)
+        let data = null
+        if (!store) {
+          try {
+            const snapshotResponse = await fetch('/data/cheapshark-deals.json')
+            if (snapshotResponse.ok) {
+              const snapshot = await snapshotResponse.json()
+              data = Array.isArray(snapshot.deals) ? snapshot.deals : null
+            }
+          } catch {
+            data = null
+          }
+        }
+        if (!data) data = await cachedFetch(`${BASE}/api/1.0/deals?${p}`)
         if (!cancelled) setDeals(Array.isArray(data) ? data : [])
       } catch {
         if (!cancelled)
