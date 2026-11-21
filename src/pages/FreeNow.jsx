@@ -30,14 +30,7 @@ function timeLeft(endDate, now) {
 
 function SkeletonCard() {
   return (
-    <div className="skeleton-card" aria-hidden="true">
-      <div className="skeleton-image" />
-      <div className="skeleton-lines">
-        <div className="skeleton-line" />
-        <div className="skeleton-line" />
-        <div className="skeleton-line" />
-      </div>
-    </div>
+    <div className="lr-skeleton free-now-skeleton" aria-hidden="true" />
   )
 }
 
@@ -51,37 +44,36 @@ function GameCard({ game, now, getGameActions }) {
     sourceId: game.id,
   })
   return (
-    <article className="game-card">
-      <img
-        src={game.thumbnail}
-        alt={game.title}
-        loading="lazy"
-        className="game-card-image"
-      />
-      <div className="game-card-content">
-        <h2 className="game-title">{game.title}</h2>
-        <p className="game-platform">{game.platforms}</p>
-        <div className="game-price-row">
-          {game.worth && game.worth !== 'N/A' && (
-            <span className="old-price">
-              {game.worth} USD
-            </span>
-          )}
-          <span className="game-status-pill">FREE</span>
-          {left && (
-            <span className={`countdown-pill ${left.urgent ? 'is-urgent' : ''}`}>
-              {left.text}
-            </span>
-          )}
+    <article className="lr-game-card free-now-card">
+      {game.thumbnail ? (
+        <img
+          src={game.thumbnail}
+          alt={game.title}
+          loading="lazy"
+          decoding="async"
+          className="lr-game-card__image"
+        />
+      ) : (
+        <div className="lr-art-fallback">FREE GAME</div>
+      )}
+      <div className="lr-game-card__body free-now-card__body">
+        <div className="free-now-card__meta">
+          <span className="lr-badge lr-badge--lime">FREE</span>
+          {left && <span className={`lr-badge ${left.urgent ? 'is-urgent' : ''}`}>{left.text}</span>}
         </div>
+        <h2 className="free-now-card__title">{game.title}</h2>
+        <p className="game-platform">{game.platforms}</p>
+        {game.worth && game.worth !== 'N/A' && (
+          <p className="free-now-card__worth">Usually {game.worth} USD</p>
+        )}
         <GameActions {...actions} />
         <a
           href={game.open_giveaway_url}
           target="_blank"
           rel="noreferrer"
-          className="game-card-cta"
+          className="lr-button free-now-card__cta"
         >
-          Claim now <span aria-hidden="true">-&gt;</span>
+          Claim now <span aria-hidden="true">→</span>
         </a>
       </div>
     </article>
@@ -163,8 +155,15 @@ export default function FreeNow({ getGameActions, onAvailabilityChange }) {
   )
 
   return (
-    <section>
-        <div className="filter-toolbar" aria-label="Filter by platform">
+    <section className="free-now-redesign">
+      <header className="redesign-page-header">
+        <div>
+          <span className="lr-section-heading__kicker">LIMITED-TIME OFFERS</span>
+          <h1>Free <strong>Now</strong></h1>
+        </div>
+        <span className="redesign-result-count">{shown.length} games</span>
+      </header>
+        <div className="filter-toolbar free-now-filters" aria-label="Filter by platform">
           {FILTERS.map((f) => (
             <button
               key={f.label}

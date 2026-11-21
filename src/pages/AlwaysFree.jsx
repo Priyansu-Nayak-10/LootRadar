@@ -36,8 +36,15 @@ export default function AlwaysFree({ getGameActions }) {
   })
 
   return (
-    <section>
-      <div className="filter-toolbar" aria-label="Filter always-free games">
+    <section className="always-free-redesign">
+      <header className="redesign-page-header">
+        <div>
+          <span className="lr-section-heading__kicker">FREE TO PLAY</span>
+          <h1>Always <strong>Free</strong></h1>
+        </div>
+        <span className="lr-badge">{shown.length} games</span>
+      </header>
+      <div className="filter-toolbar always-free-filters" aria-label="Filter always-free games">
         {platforms.map((option) => (
           <button
             key={option}
@@ -52,9 +59,9 @@ export default function AlwaysFree({ getGameActions }) {
       </div>
       {error && <p className="inline-error" role="alert">{error}</p>}
       {loading ? (
-        <p className="empty-state">Loading always-free games...</p>
+        <div className="lr-skeleton" />
       ) : (
-        <div className="game-grid">
+        <div className="game-grid always-free-grid">
           {shown.map((game) => {
             const actions = getGameActions({
               title: game.title,
@@ -64,14 +71,19 @@ export default function AlwaysFree({ getGameActions }) {
               sourceId: game.id,
             })
             return (
-              <article className="game-card" key={game.id}>
-                <img src={game.thumbnail} alt={game.title} loading="lazy" className="game-card-image" />
-                <div className="game-card-content">
-                  <h2 className="game-title">{game.title}</h2>
+              <article className="lr-game-card always-free-card" key={game.id}>
+                {game.thumbnail ? (
+                  <img src={game.thumbnail} alt={game.title} loading="lazy" decoding="async" className="lr-game-card__image" />
+                ) : (
+                  <div className="lr-art-fallback">ALWAYS FREE</div>
+                )}
+                <div className="lr-game-card__body always-free-card__body">
+                  <span className="lr-badge lr-badge--lime">Always Free</span>
+                  <h2 className="always-free-card__title">{game.title}</h2>
                   <p className="game-platform">{game.platform} · {game.genre}</p>
                   <GameActions {...actions} />
-                  <a href={game.gameUrl} target="_blank" rel="noreferrer" className="game-card-cta">
-                    Play game <span aria-hidden="true">-&gt;</span>
+                  <a href={game.gameUrl} target="_blank" rel="noreferrer" className="lr-button lr-button--secondary">
+                    Play game <span aria-hidden="true">→</span>
                   </a>
                 </div>
               </article>
