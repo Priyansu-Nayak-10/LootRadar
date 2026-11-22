@@ -404,10 +404,30 @@ function HomeRedesign({
         )}
       </section>
 
-      {session && wishlist.length > 0 && <section className="home-wishlist-strip">
-        <div className="lr-section-heading"><div className="lr-section-heading__copy"><span className="lr-section-heading__kicker">SAVED FOR LATER</span><h2>Your <strong>Wishlist</strong></h2></div></div>
-        <div>{wishlist.slice(0, 5).map((game) => <span key={game.title}>{game.image && <img src={game.image} alt="" loading="lazy" />}{game.title}</span>)}</div>
-      </section>}
+      {session && wishlist.length > 0 && (
+        <section className="home-wishlist-strip">
+          <div className="lr-section-heading">
+            <div className="lr-section-heading__copy">
+              <span className="lr-section-heading__kicker">SAVED FOR LATER</span>
+              <h2>Your <strong>Wishlist</strong></h2>
+            </div>
+            <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('wishlist')}>View All</button>
+          </div>
+          <div>
+            {wishlist.slice(0, 5).map((game) => (
+              <button
+                type="button"
+                className="home-wishlist-item"
+                key={game.title}
+                onClick={() => onGameOpen(game.title)}
+              >
+                {game.image ? <img src={game.image} alt="" loading="lazy" /> : <div className="lr-art-fallback">{game.title.slice(0, 1).toUpperCase()}</div>}
+                <span>{game.title}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
       <section className="home-promo-banner" style={matchedNewsPanelStyle} onClick={() => onNavigate('account')}>
           {lootRadarArt.promo.src ? <img src={lootRadarArt.promo.src} alt={lootRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
           <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Connect Telegram</em></span>

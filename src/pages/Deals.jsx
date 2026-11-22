@@ -216,6 +216,7 @@ export default function Deals({ getGameActions, onAvailabilityChange, onGameOpen
 
         <select className={selectClass} value={minDiscount} onChange={(e) => setMinDiscount(e.target.value)}>
           <option value="0">Any discount</option>
+          <option value="20">20% off or more</option>
           <option value="25">25% off or more</option>
           <option value="50">50% off or more</option>
           <option value="75">75% off or more</option>
