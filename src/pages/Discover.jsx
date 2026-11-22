@@ -189,6 +189,31 @@ function HomeRedesign({
   hasKey,
 }) {
   const [platformFilter, setPlatformFilter] = useState('All')
+  const [heroIndex, setHeroIndex] = useState(0)
+  const [heroPaused, setHeroPaused] = useState(false)
+
+  useEffect(() => {
+    const carousel = document.getElementById('home-hero-carousel')
+    const count = Math.min(trending.length, 5)
+    if (!carousel || heroPaused || count < 2) return undefined
+    const timer = window.setInterval(() => {
+      setHeroIndex((current) => {
+        const next = (current + 1) % count
+        carousel.scrollTo({ left: next * carousel.clientWidth, behavior: 'smooth' })
+        return next
+      })
+    }, 6000)
+    return () => window.clearInterval(timer)
+  }, [heroPaused, trending.length])
+
+  function moveHero(direction) {
+    const carousel = document.getElementById('home-hero-carousel')
+    const count = Math.min(trending.length, 5)
+    if (!carousel || !count) return
+    const next = (heroIndex + direction + count) % count
+    setHeroIndex(next)
+    carousel.scrollTo({ left: next * carousel.clientWidth, behavior: 'smooth' })
+  }
 
   const filteredPopular = trending.filter((game) => {
     if (platformFilter === 'All') return true
@@ -253,9 +278,9 @@ function HomeRedesign({
                 ))}
               </div>
               <div className="home-hero-controls">
-                <span>01 / 05</span>
-                <button type="button" aria-label="Previous featured game" onClick={() => document.getElementById('home-hero-carousel')?.scrollBy({ left: -420, behavior: 'smooth' })}>←</button>
-                <button type="button" aria-label="Next featured game" onClick={() => document.getElementById('home-hero-carousel')?.scrollBy({ left: 420, behavior: 'smooth' })}>→</button>
+                <span>{String(heroIndex + 1).padStart(2, '0')} / {String(Math.min(trending.length, 5)).padStart(2, '0')}</span>
+                <button type="button" aria-label="Previous featured game" onClick={() => moveHero(-1)}>←</button>
+                <button type="button" aria-label="Next featured game" onClick={() => moveHero(1)}>→</button>
               </div>
             </>
           ) : (
