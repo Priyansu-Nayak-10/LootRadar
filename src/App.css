@@ -2577,6 +2577,14 @@ textarea:focus-visible {
 
 .home-promo-banner em { width: fit-content; min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 13px; color: #11170a; background: var(--lime); font-size: 13px; font-style: normal; font-weight: 850; }
 
+.deals-price-range { min-height: 44px; display: grid; gap: 3px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 11px; color: var(--muted); font-size: 11px; }
+.deals-price-range input { width: 100%; accent-color: var(--lime); }
+.deals-display-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 12px 0; }
+.deals-currency-switch { display: flex; overflow: hidden; border: 1px solid var(--line); border-radius: 999px; }
+.deals-currency-switch button { min-height: 34px; padding: 0 12px; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 11px; font-weight: 800; }
+.deals-currency-switch button.is-selected { color: #11170a; background: var(--lime); }
+@media (max-width: 600px) { .deals-display-controls { align-items: flex-start; flex-direction: column; } }
+
 .free-now-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
 .free-now-tabs button { min-height: 42px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: transparent; cursor: pointer; font-weight: 800; }
 .free-now-tabs button.is-selected { color: #11170a; background: var(--lime); border-color: var(--lime); }

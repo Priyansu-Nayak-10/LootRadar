@@ -10,14 +10,17 @@ function SkeletonCard() {
   )
 }
 
-function formatUsd(amount) {
+function formatPrice(amount, currency, inrRate) {
   const value = Number(amount)
   if (!Number.isFinite(value)) return '-'
-  return `$${value.toFixed(2)} USD`
+  const displayValue = currency === 'INR' && inrRate ? value * inrRate : value
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency === 'INR' && inrRate ? 'INR' : 'USD', maximumFractionDigits: 2 }).format(displayValue)
 }
 
-function DealCard({ deal, storeName, getGameActions }) {
+function DealCard({ deal, storeName, getGameActions, currency, inrRate }) {
   const discount = Math.round(Number(deal.savings))
+  const historicalLow = Number(deal.lowestPrice ?? deal.lowest_price ?? deal.historicalLow)
+  const isHistoricalLow = Number.isFinite(historicalLow) && Math.abs(Number(deal.salePrice) - historicalLow) < 0.005
   const image = deal.thumb
   const actions = getGameActions({
     title: deal.title,
@@ -44,7 +47,8 @@ function DealCard({ deal, storeName, getGameActions }) {
       )}
       <div className="lr-game-card__body deals-card__body">
         <div className="deals-card__badges">
-          <span className="lr-badge lr-badge--lime">-{discount}%</span>
+          {discount >= 5 && <span className="lr-badge lr-badge--lime">-{discount}%</span>}
+          {isHistoricalLow && <span className="lr-badge">Lowest price ever</span>}
           {Number(deal.metacriticScore) > 0 && (
             <span className="lr-badge">Metacritic {deal.metacriticScore}</span>
           )}
@@ -55,10 +59,10 @@ function DealCard({ deal, storeName, getGameActions }) {
         </p>
         <div className="deals-card__prices">
           <span className="old-price">
-            {formatUsd(deal.normalPrice)}
+            {formatPrice(deal.normalPrice, currency, inrRate)}
           </span>
           <span className="sale-price">
-            {formatUsd(deal.salePrice)}
+            {formatPrice(deal.salePrice, currency, inrRate)}
           </span>
         </div>
         <GameActions {...actions} />
@@ -81,8 +85,11 @@ const selectClass =
 export default function Deals({ getGameActions, onAvailabilityChange }) {
   const [stores, setStores] = useState([])
   const [store, setStore] = useState('')
-  const [maxPrice, setMaxPrice] = useState('15')
-  const [minDiscount, setMinDiscount] = useState('0')
+  const [maxPrice, setMaxPrice] = useState(100)
+  const [minDiscount, setMinDiscount] = useState('20')
+  const [showExtras, setShowExtras] = useState(false)
+  const [currency, setCurrency] = useState('USD')
+  const [inrRate, setInrRate] = useState(null)
   const [sort, setSort] = useState('Savings')
   const [deals, setDeals] = useState([])
   const [loading, setLoading] = useState(true)
@@ -101,6 +108,29 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
           .then((list) => setStores(list.filter((s) => Number(s.isActive) === 1)))
           .catch(() => {})
       })
+  }, [])
+
+  useEffect(() => {
+    const cacheKey = 'lootradar_usd_inr_rate'
+    try {
+      const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null')
+      if (cached && Date.now() - cached.time < 24 * 60 * 60 * 1000 && Number(cached.rate) > 0) {
+        setInrRate(Number(cached.rate))
+        return undefined
+      }
+    } catch {}
+    let cancelled = false
+    fetch('https://open.er-api.com/v6/latest/USD')
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((data) => {
+        const rate = Number(data?.rates?.INR)
+        if (!cancelled && rate > 0) {
+          setInrRate(rate)
+          try { localStorage.setItem(cacheKey, JSON.stringify({ time: Date.now(), rate })) } catch {}
+        }
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
   }, [])
 
   // load deals whenever a filter changes
@@ -149,8 +179,11 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
     stores.find((s) => s.storeID === id)?.storeName || 'Store'
 
   const shown = useMemo(
-    () => deals.filter((d) => Number(d.savings) >= Number(minDiscount)),
-    [deals, minDiscount]
+    () => deals.filter((d) => {
+      const isExtra = /(\bdlc\b|downloadable content|upgrade|supporter|bundle|\bpack\b)/i.test(d.title || '')
+      return Number(d.savings) >= Number(minDiscount) && Number(d.salePrice) <= Number(maxPrice) && (showExtras || !isExtra)
+    }),
+    [deals, minDiscount, maxPrice, showExtras]
   )
 
   useEffect(() => {
@@ -176,13 +209,9 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
           ))}
         </select>
 
-        <select className={selectClass} value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)}>
-          {[5, 10, 15, 30, 60, 100].map((p) => (
-            <option key={p} value={p}>
-              Under ${p} USD
-            </option>
-          ))}
-        </select>
+        <label className="deals-price-range">Under ${maxPrice} USD
+          <input type="range" min="5" max="100" step="5" value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} />
+        </label>
 
         <select className={selectClass} value={minDiscount} onChange={(e) => setMinDiscount(e.target.value)}>
           <option value="0">Any discount</option>
@@ -199,7 +228,12 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
         </select>
       </div>
 
-      <p className="currency-note deals-currency-note">Prices are shown in USD, as supplied by CheapShark.</p>
+      <div className="deals-display-controls">
+        <label className="settings-toggle"><input type="checkbox" checked={showExtras} onChange={(event) => setShowExtras(event.target.checked)} /> Show DLC/Extras</label>
+        <div className="deals-currency-switch" aria-label="Display currency"><button type="button" className={currency === 'USD' ? 'is-selected' : ''} onClick={() => setCurrency('USD')}>USD</button><button type="button" className={currency === 'INR' ? 'is-selected' : ''} onClick={() => setCurrency('INR')}>INR</button></div>
+      </div>
+
+      <p className="currency-note deals-currency-note">Prices are supplied by CheapShark in USD{currency === 'INR' && inrRate ? ', converted for display using ExchangeRate-API (cached for 24 hours).' : '.'}</p>
 
       {error && (
         <div className="inline-error" role="alert">
@@ -219,6 +253,8 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
                 deal={d}
                 storeName={storeName(d.storeID)}
                 getGameActions={getGameActions}
+                currency={currency}
+                inrRate={inrRate}
               />
             ))}
       </div>
