@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 export function Button({
   children,
   variant = 'primary',
@@ -54,51 +52,40 @@ export function Card({ className = '', children, ...props }) {
 export function GameCard({ image, title, children, className = '', imageAlt = '' }) {
   return (
     <article className={`lr-game-card ${className}`.trim()}>
-      <ImageWithFallback
-        src={image}
-        alt={imageAlt || title}
-        fallbackLabel={title}
-        className="lr-game-card__image"
-      />
+      {image ? (
+        <img
+          src={image}
+          alt={imageAlt || title}
+          loading="lazy"
+          decoding="async"
+          className="lr-game-card__image"
+        />
+      ) : (
+        <div className="lr-art-fallback" aria-label={`${title} artwork unavailable`}>
+          LootRadar
+        </div>
+      )}
       <div className="lr-game-card__body">{children}</div>
     </article>
-  )
-}
-
-export function ImageWithFallback({
-  src,
-  alternateSrc = [],
-  alt = '',
-  fallbackLabel = '',
-  className = '',
-  loading = 'lazy',
-}) {
-  const sources = [src, ...(Array.isArray(alternateSrc) ? alternateSrc : [alternateSrc])]
-    .filter(Boolean)
-    .filter((value, index, all) => all.indexOf(value) === index)
-  const [sourceIndex, setSourceIndex] = useState(0)
-  const currentSource = sources[sourceIndex]
-
-  if (!currentSource) {
-    return <div className={`lr-art-fallback ${className}`.trim()} aria-hidden="true">{fallbackLabel.trim().slice(0, 1).toUpperCase() || 'LR'}</div>
-  }
-
-  return (
-    <img
-      src={currentSource}
-      alt={alt}
-      loading={loading}
-      decoding="async"
-      className={className}
-      onError={() => setSourceIndex((index) => index + 1)}
-    />
   )
 }
 
 export function NewsCard({ image, title, children, className = '', imageAlt = '' }) {
   return (
     <article className={`lr-news-card ${className}`.trim()}>
-      <ImageWithFallback src={image} alt={imageAlt} fallbackLabel={title} className="lr-news-card__image" />
+      {image ? (
+        <img
+          src={image}
+          alt={imageAlt}
+          loading="lazy"
+          decoding="async"
+          className="lr-news-card__image"
+        />
+      ) : (
+        <div className="lr-art-fallback" aria-label="News artwork unavailable">
+          LootRadar
+        </div>
+      )}
       <div className="lr-news-card__body">{children}</div>
     </article>
   )

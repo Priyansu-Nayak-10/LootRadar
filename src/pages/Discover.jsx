@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fetchGamingNews, fetchRawgGames, hasRawgKey } from '../lib/discoverApi'
 import GameActions from '../components/GameActions'
-import { ImageWithFallback } from '../components/ui'
+import { lootRadarArt } from '../assets/art'
 
 function dateString(date) {
   return date.toISOString().slice(0, 10)
@@ -58,18 +58,6 @@ function formatCountdown(endDate) {
   return days > 0 ? `${days}d ${hours}h left` : `${hours}h left`
 }
 
-function normalizeTitle(value = '') {
-  return String(value)
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '')
-}
-
-function isPcGame(game) {
-  return (game.platforms || []).some((item) => item.platform?.name?.toLowerCase() === 'pc')
-}
-
 function GameTile({ game, badge, getGameActions }) {
   const platform = (game.platforms || [])
     .map((item) => item.platform?.name)
@@ -92,13 +80,11 @@ function GameTile({ game, badge, getGameActions }) {
         rel="noreferrer"
         aria-label={`View ${game.name} on RAWG`}
       >
-        <ImageWithFallback
-          src={game.background_image}
-          alternateSrc={[game.background_image_additional]}
-          alt=""
-          fallbackLabel={game.name}
-          className="game-card-image"
-        />
+          {game.background_image ? (
+          <img src={game.background_image} alt="" loading="lazy" className="game-card-image" />
+        ) : (
+          <div className="game-card-image discovery-no-image">GAME</div>
+        )}
         {badge && <span className="discovery-image-badge">{badge}</span>}
       </a>
       <div className="game-card-content discovery-card-content">
@@ -128,9 +114,21 @@ function GameTile({ game, badge, getGameActions }) {
 }
 
 function NewsTile({ article }) {
+  const [imageFailed, setImageFailed] = useState(false)
+
   return (
-    <article className="news-card">
-      <ImageWithFallback src={article.image} alternateSrc={[article.thumbnail, article.imageUrl]} alt="" fallbackLabel={article.source || article.title} className="news-image" />
+    <article className={`news-card ${article.image ? '' : 'is-no-image'}`}>
+      {article.image && !imageFailed ? (
+        <img
+          src={article.image}
+          alt=""
+          loading="lazy"
+          className="news-image"
+          onError={() => setImageFailed(true)}
+        />
+      ) : (
+        <div className="news-image-fallback" aria-hidden="true">RADAR</div>
+      )}
       <div className="news-copy">
         <div className="news-meta">
           <span>{article.source || 'Gaming news'}</span>
@@ -178,7 +176,6 @@ function HomeRedesign({
   catalogError,
   freeGames,
   upcomingGames,
-  cheapsharkDeals,
   news,
   newsLoading,
   newsUpdatedAt,
@@ -192,59 +189,12 @@ function HomeRedesign({
   hasKey,
 }) {
   const [platformFilter, setPlatformFilter] = useState('All')
-  const [activeHeroIndex, setActiveHeroIndex] = useState(0)
-  const [heroPaused, setHeroPaused] = useState(false)
-  const heroTouchStart = useRef(null)
-  const popularRowRef = useRef(null)
-  const heroGames = useMemo(
-    () => trending.filter((game) => game.background_image).slice(0, 5),
-    [trending]
-  )
-  const dealsByTitle = useMemo(() => {
-    const map = new Map()
-    for (const deal of cheapsharkDeals) {
-      const key = normalizeTitle(deal.title)
-      if (!map.has(key)) map.set(key, deal)
-    }
-    return map
-  }, [cheapsharkDeals])
 
   const filteredPopular = trending.filter((game) => {
     if (platformFilter === 'All') return true
     const names = (game.platforms || []).map((item) => item.platform?.name || '')
     return names.some((name) => name.includes(platformFilter))
   })
-
-  useEffect(() => {
-    setActiveHeroIndex(0)
-  }, [heroGames])
-
-  useEffect(() => {
-    if (heroPaused || heroGames.length < 2) return undefined
-    const timer = window.setInterval(() => {
-      setActiveHeroIndex((index) => (index + 1) % heroGames.length)
-    }, 6000)
-    return () => window.clearInterval(timer)
-  }, [heroGames.length, heroPaused])
-
-  function moveHero(direction) {
-    if (heroGames.length === 0) return
-    setActiveHeroIndex((index) => (index + direction + heroGames.length) % heroGames.length)
-  }
-
-  function handleHeroTouchStart(event) {
-    heroTouchStart.current = event.changedTouches[0]?.clientX ?? null
-    setHeroPaused(true)
-  }
-
-  function handleHeroTouchEnd(event) {
-    const start = heroTouchStart.current
-    const end = event.changedTouches[0]?.clientX
-    heroTouchStart.current = null
-    setHeroPaused(false)
-    if (start == null || end == null || Math.abs(end - start) < 44) return
-    moveHero(end < start ? 1 : -1)
-  }
 
   return (
     <div className="discover-page home-redesign">
@@ -276,29 +226,23 @@ function HomeRedesign({
       <section className="home-feature-grid">
         <div className="home-hero-wrap">
           {catalogError && <p className="discover-error" role="alert">{catalogError}</p>}
-          {heroGames.length > 0 ? (
+          {trending.length > 0 ? (
             <>
-              <div
-                className="home-hero-carousel"
-                aria-label="Featured games"
-                onMouseEnter={() => setHeroPaused(true)}
-                onMouseLeave={() => setHeroPaused(false)}
-                onTouchStart={handleHeroTouchStart}
-                onTouchEnd={handleHeroTouchEnd}
-              >
-                {heroGames.map((game, index) => (
-                  <article className={`home-hero-slide ${index === activeHeroIndex ? 'is-active' : ''}`} key={game.id} aria-hidden={index !== activeHeroIndex}>
-                    <ImageWithFallback
-                      src={game.background_image}
-                      alternateSrc={[game.background_image_additional]}
-                      alt=""
-                      fallbackLabel={game.name}
-                      className="home-hero-image"
-                      loading={index === 0 ? 'eager' : 'lazy'}
-                    />
+              <div className="home-hero-carousel" id="home-hero-carousel" aria-label="Featured games">
+                {trending.slice(0, 5).map((game, index) => (
+                  <article className="home-hero-slide" key={game.id}>
+                    {lootRadarArt.hero.src ? (
+                      <img src={lootRadarArt.hero.src} alt={lootRadarArt.hero.alt} loading={index === 0 ? 'eager' : 'lazy'} />
+                    ) : game.background_image ? (
+                      <img src={game.background_image} alt={game.name} loading={index === 0 ? 'eager' : 'lazy'} />
+                    ) : (
+                      <div className="lr-art-fallback">LOOTRADAR</div>
+                    )}
                     <div className="home-hero-overlay" />
                     <div className="home-hero-copy">
-                      <span className="lr-badge lr-badge--lime">Latest Release</span>
+                      <span className="lr-badge lr-badge--lime">
+                        {index === 0 ? 'Latest Release' : 'Trending on PC'}
+                      </span>
                       <h1>{game.name}</h1>
                       <p>{formatDate(game.released)}{game.genres?.[0]?.name ? ` · ${game.genres[0].name}` : ''}</p>
                       <a href={`https://rawg.io/games/${game.slug}`} target="_blank" rel="noreferrer" className="lr-button">
@@ -309,13 +253,9 @@ function HomeRedesign({
                 ))}
               </div>
               <div className="home-hero-controls">
-                <span>{String(activeHeroIndex + 1).padStart(2, '0')} / {String(heroGames.length).padStart(2, '0')}</span>
+                <span>01 / 05</span>
                 <button type="button" aria-label="Previous featured game" onClick={() => document.getElementById('home-hero-carousel')?.scrollBy({ left: -420, behavior: 'smooth' })}>←</button>
                 <button type="button" aria-label="Next featured game" onClick={() => document.getElementById('home-hero-carousel')?.scrollBy({ left: 420, behavior: 'smooth' })}>→</button>
-              </div>
-              <div className="home-hero-action-controls" aria-label="Featured game controls">
-                <button type="button" aria-label="Previous featured game" onClick={() => moveHero(-1)}>←</button>
-                <button type="button" aria-label="Next featured game" onClick={() => moveHero(1)}>→</button>
               </div>
             </>
           ) : (
@@ -333,13 +273,10 @@ function HomeRedesign({
               <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('free')}>View All</button>
             </div>
             {freeGames.length > 0 ? (
-              <>
-                <button type="button" className="home-feature-free" onClick={() => onNavigate('free')}>
-                  <ImageWithFallback src={freeGames[0].thumbnail} alternateSrc={[freeGames[0].image]} alt="" fallbackLabel={freeGames[0].title} />
-                  <span><strong>{freeGames[0].title}</strong><small><span aria-hidden="true">◷</span> {formatCountdown(freeGames[0].end_date)}</small></span>
-                </button>
-                {freeGames.length > 1 && <div className="home-free-dots" aria-label={`${freeGames.length} free games available`}>{freeGames.slice(0, 4).map((game, index) => <span className={index === 0 ? 'is-active' : ''} key={game.id} />)}</div>}
-              </>
+              <button type="button" className="home-feature-free" onClick={() => onNavigate('free')}>
+                {freeGames[0].thumbnail ? <img src={freeGames[0].thumbnail} alt={freeGames[0].title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
+                <span><strong>{freeGames[0].title}</strong><small>{formatCountdown(freeGames[0].end_date)}</small></span>
+              </button>
             ) : (
               <div className="lr-skeleton" />
             )}
@@ -356,7 +293,7 @@ function HomeRedesign({
             <div className="home-upcoming-list">
               {upcomingGames.slice(0, 4).map((game) => (
                 <button type="button" key={game.id} onClick={() => onNavigate('coming')}>
-                  <ImageWithFallback src={game.image} alternateSrc={[game.thumbnail, game.keyImages?.[0]?.url]} alt="" fallbackLabel={game.title} />
+                  {game.image ? <img src={game.image} alt={game.title} loading="lazy" /> : <span className="home-upcoming-fallback">LR</span>}
                   <span><strong>{game.title}</strong><small>{formatDate(game.startDate?.slice(0, 10) || 'TBA')}</small></span>
                 </button>
               ))}
@@ -370,9 +307,8 @@ function HomeRedesign({
         <div className="lr-section-heading">
           <div className="lr-section-heading__copy">
             <span className="lr-section-heading__kicker">DISCOVER</span>
-            <h2>Recently Added <strong>Games</strong></h2>
+            <h2>Popular <strong>Games</strong></h2>
           </div>
-          <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('discover')}>View All</button>
         </div>
         <div className="home-platform-chips" aria-label="Filter popular games by platform">
           {['All', 'PC', 'PlayStation', 'Xbox'].map((platform) => (
@@ -382,9 +318,7 @@ function HomeRedesign({
           ))}
         </div>
         {filteredPopular.length > 0 ? (
-          <div className="home-popular-carousel-wrap">
-            <button type="button" className="home-row-arrow" aria-label="Scroll games left" onClick={() => popularRowRef.current?.scrollBy({ left: -320, behavior: 'smooth' })}>←</button>
-            <div ref={popularRowRef} className="lr-carousel home-popular-row" aria-label="Recently added games">
+          <div className="lr-carousel home-popular-row" aria-label="Popular games">
             {filteredPopular.slice(0, 10).map((game) => {
               const actions = getGameActions({
                 title: game.name,
@@ -393,17 +327,14 @@ function HomeRedesign({
                 source: 'catalog',
                 sourceId: game.id,
               })
-              const deal = isPcGame(game) ? dealsByTitle.get(normalizeTitle(game.name)) : null
               return (
                 <article className="lr-game-card home-cover-card" key={game.id}>
-                  <ImageWithFallback src={game.background_image} alternateSrc={[game.background_image_additional]} alt="" fallbackLabel={game.name} className="lr-game-card__image" />
+                  {game.background_image ? <img src={game.background_image} alt={game.name} loading="lazy" decoding="async" className="lr-game-card__image" /> : <div className="lr-art-fallback">GAME</div>}
                   <button type="button" className={`home-heart ${actions.wishlisted ? 'is-active' : ''}`} aria-label={`${actions.wishlisted ? 'Remove' : 'Add'} ${game.name} ${actions.wishlisted ? 'from' : 'to'} wishlist`} onClick={actions.onToggleWishlist}>♥</button>
-                  <div className="lr-game-card__body"><h3>{game.name}</h3><p>{formatDate(game.released)}</p>{deal && <div className="home-price-badges"><span>${Number(deal.salePrice).toFixed(2)}</span><b>{Math.round(Number(deal.savings))}% off</b></div>}</div>
+                  <div className="lr-game-card__body"><h3>{game.name}</h3><p>{formatDate(game.released)}</p></div>
                 </article>
               )
             })}
-            </div>
-            <button type="button" className="home-row-arrow" aria-label="Scroll games right" onClick={() => popularRowRef.current?.scrollBy({ left: 320, behavior: 'smooth' })}>→</button>
           </div>
         ) : (
           <div className="lr-empty">No games match this platform.</div>
@@ -423,7 +354,7 @@ function HomeRedesign({
         ) : news.length > 0 ? (
           <div className="home-news-layout">
             <article className="home-news-feature">
-              <ImageWithFallback src={news[0].image} alternateSrc={[news[0].thumbnail, news[0].imageUrl]} alt="" fallbackLabel={news[0].source || news[0].title} className="home-news-image" />
+              {news[0].image ? <img src={news[0].image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
               <div>
                 <span>{news[0].source} · {formatRelativeTime(news[0].publishedAt)}</span>
                 <h3>{decodeText(news[0].title)}</h3>
@@ -433,7 +364,7 @@ function HomeRedesign({
             <div className="home-news-small">
               {news.slice(1, 3).map((article) => (
                 <article key={article.id || article.link}>
-                  <ImageWithFallback src={article.image} alternateSrc={[article.thumbnail, article.imageUrl]} alt="" fallbackLabel={article.source || article.title} className="home-news-image" />
+                  {article.image ? <img src={article.image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
                   <div><span>{article.source} · {formatRelativeTime(article.publishedAt)}</span><h3>{decodeText(article.title)}</h3></div>
                   <a href={article.link} target="_blank" rel="noreferrer" aria-label={`Read ${article.title}`} />
                 </article>
@@ -454,17 +385,16 @@ function HomeRedesign({
             </div>
           </div>
           <div className="home-quick-grid">
-            <button type="button" onClick={() => onNavigate('free')}><span aria-hidden="true">✦</span><strong>Free Games</strong></button>
-            <button type="button" onClick={() => onNavigate('deals')}><span aria-hidden="true">◆</span><strong>Deals</strong></button>
-            <button type="button" onClick={() => onNavigate('coming')}><span aria-hidden="true">◷</span><strong>Upcoming</strong></button>
-            <button type="button" onClick={() => onNavigate('discover')}><span aria-hidden="true">↗</span><strong>Top Charts</strong></button>
+            <button type="button" onClick={() => onNavigate('free')}><span>01</span><strong>Free Games</strong></button>
+            <button type="button" onClick={() => onNavigate('deals')}><span>02</span><strong>Deals</strong></button>
+            <button type="button" onClick={() => onNavigate('coming')}><span>03</span><strong>Upcoming</strong></button>
+            <button type="button" onClick={() => onNavigate('discover')}><span>04</span><strong>Top Charts</strong></button>
           </div>
         </div>
-        <section className="home-promo-banner">
-          <span className="home-promo-radar" aria-hidden="true" />
-          <button type="button" className="home-promo-action lr-button" onClick={() => onNavigate('account')}>Connect Telegram</button>
+        <button type="button" className="home-promo-banner" onClick={() => onNavigate('account')}>
+          {lootRadarArt.promo.src ? <img src={lootRadarArt.promo.src} alt={lootRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
           <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Open Telegram settings →</em></span>
-        </section>
+        </button>
       </section>
     </div>
   )
@@ -490,7 +420,6 @@ export default function Discover({ library, wishlist, getGameActions, onNavigate
   })
   const [freeGames, setFreeGames] = useState([])
   const [upcomingGames, setUpcomingGames] = useState([])
-  const [cheapsharkDeals, setCheapsharkDeals] = useState([])
   const [platformFilter, setPlatformFilter] = useState('All')
   const seedKey = [...wishlist, ...library]
     .map((game) => game.title?.trim().toLowerCase())
@@ -575,7 +504,6 @@ export default function Discover({ library, wishlist, getGameActions, onNavigate
           counts[key] = Array.isArray(data[field]) ? data[field].length : 0
           if (key === 'free') gamerPowerGames = Array.isArray(data.games) ? data.games : []
           if (key === 'coming') epicUpcoming = Array.isArray(data.upcoming) ? data.upcoming : []
-          if (key === 'deals') setCheapsharkDeals(Array.isArray(data.deals) ? data.deals : [])
         } catch {
           counts[key] = 0
         }
@@ -624,7 +552,6 @@ export default function Discover({ library, wishlist, getGameActions, onNavigate
       catalogError={catalogError}
       freeGames={freeGames}
       upcomingGames={upcomingGames}
-      cheapsharkDeals={cheapsharkDeals}
       news={news}
       newsLoading={newsLoading}
       newsUpdatedAt={newsUpdatedAt}
