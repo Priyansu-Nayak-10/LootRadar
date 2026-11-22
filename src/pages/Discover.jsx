@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { fetchGamingNews, fetchRawgGames, hasRawgKey } from '../lib/discoverApi'
 import GameActions from '../components/GameActions'
-import PopularGames from '../components/PopularGames'
+import TopDeals from '../components/TopDeals'
 import { lootRadarArt } from '../assets/art'
 
 function dateString(date) {
@@ -188,6 +188,7 @@ function HomeRedesign({
   searchTerm,
   searchResults,
   hasKey,
+  session,
 }) {
   const [heroIndex, setHeroIndex] = useState(0)
   const [heroPaused, setHeroPaused] = useState(false)
@@ -342,7 +343,7 @@ function HomeRedesign({
           )}
         </div>
 
-        <aside className="home-feature-side">
+        <aside className="home-feature-side home-feature-side--free">
           <section className="home-side-card">
             <div className="lr-section-heading">
               <div className="lr-section-heading__copy">
@@ -351,36 +352,21 @@ function HomeRedesign({
               </div>
             </div>
             {freeGames.length > 0 ? (
-              <div className="home-feature-free">
-                {freeGames[0].thumbnail ? <img src={freeGames[0].thumbnail} alt={freeGames[0].title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
-                <span><strong>{freeGames[0].title}</strong><small>{formatCountdown(freeGames[0].end_date)}</small></span>
+              <div className="home-feature-free-list">
+                {freeGames.slice(0, 5).map((game) => <div className="home-feature-free" key={game.id}>
+                  {game.thumbnail ? <img src={game.thumbnail} alt={game.title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
+                  <span><strong>{game.title}</strong><small>{formatCountdown(game.end_date)}</small></span>
+                </div>)}
+                <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('free')}>View All</button>
               </div>
             ) : (
               <div className="lr-skeleton" />
             )}
           </section>
-
-          <section className="home-side-card">
-            <div className="lr-section-heading">
-              <div className="lr-section-heading__copy">
-                <span className="lr-section-heading__kicker">EPIC CONFIRMATIONS</span>
-                <h2>Upcoming <strong>Releases</strong></h2>
-              </div>
-            </div>
-            <div className="home-upcoming-list">
-              {upcomingGames.slice(0, 4).map((game) => (
-                <div key={game.id}>
-                  {game.image ? <img src={game.image} alt={game.title} loading="lazy" /> : <span className="home-upcoming-fallback">LR</span>}
-                  <span><strong>{game.title}</strong><small>{formatDate(game.startDate?.slice(0, 10) || 'TBA')}</small></span>
-                </div>
-              ))}
-              {upcomingGames.length === 0 && <div className="lr-skeleton" />}
-            </div>
-          </section>
         </aside>
       </section>
 
-      <PopularGames getGameActions={getGameActions} hasRawgKey={hasKey} />
+      <TopDeals getGameActions={getGameActions} onNavigate={onNavigate} />
 
       <section className="discover-section home-news-grid" ref={newsPanelRef}>
         <div className="lr-section-heading">
@@ -417,31 +403,19 @@ function HomeRedesign({
         )}
       </section>
 
-      <>
-        <div className="home-quick-access" style={matchedNewsPanelStyle}>
-          <div className="lr-section-heading">
-            <div className="lr-section-heading__copy">
-              <span className="lr-section-heading__kicker">EXPLORE</span>
-              <h2>Quick <strong>Access</strong></h2>
-            </div>
-          </div>
-          <div className="home-quick-grid">
-            <div className="home-quick-tile"><span>01</span><strong>Free Games</strong></div>
-            <div className="home-quick-tile"><span>02</span><strong>Deals</strong></div>
-            <div className="home-quick-tile"><span>03</span><strong>Upcoming</strong></div>
-            <div className="home-quick-tile"><span>04</span><strong>Top Charts</strong></div>
-          </div>
-        </div>
-        <section className="home-promo-banner" style={matchedNewsPanelStyle}>
+      {session && wishlist.length > 0 && <section className="home-wishlist-strip">
+        <div className="lr-section-heading"><div className="lr-section-heading__copy"><span className="lr-section-heading__kicker">SAVED FOR LATER</span><h2>Your <strong>Wishlist</strong></h2></div></div>
+        <div>{wishlist.slice(0, 5).map((game) => <span key={game.title}>{game.image && <img src={game.image} alt="" loading="lazy" />}{game.title}</span>)}</div>
+      </section>}
+      <section className="home-promo-banner" style={matchedNewsPanelStyle} onClick={() => onNavigate('account')}>
           {lootRadarArt.promo.src ? <img src={lootRadarArt.promo.src} alt={lootRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
-          <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong></span>
-        </section>
-      </>
+          <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Connect Telegram</em></span>
+      </section>
     </div>
   )
 }
 
-export default function Discover({ library, wishlist, getGameActions, onNavigate }) {
+export default function Discover({ library, wishlist, session, getGameActions, onNavigate }) {
   const [trending, setTrending] = useState([])
   const [catalogError, setCatalogError] = useState('')
   const [news, setNews] = useState([])
@@ -604,6 +578,7 @@ export default function Discover({ library, wishlist, getGameActions, onNavigate
       searchTerm={searchTerm}
       searchResults={searchResults}
       hasKey={hasRawgKey}
+      session={session}
     />
   )
 

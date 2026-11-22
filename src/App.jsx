@@ -4,8 +4,6 @@ import Discover from './pages/Discover'
 import Deals from './pages/Deals'
 import Library from './pages/Library'
 import Wishlist from './pages/Wishlist'
-import AlwaysFree from './pages/AlwaysFree'
-import ComingSoon from './pages/ComingSoon'
 import Rumors from './pages/Rumors'
 import News from './pages/News'
 import Account from './pages/Account'
@@ -79,6 +77,7 @@ export default function App() {
   const [shellSearch, setShellSearch] = useState('')
   const [shellCategory, setShellCategory] = useState('All')
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+  const [freeTab, setFreeTab] = useState('claim')
   const activeNavTab = TABS.some((item) => item.id === tab) ? tab : undefined
 
   useEffect(() => {
@@ -158,6 +157,14 @@ export default function App() {
         setTab('discover')
         return
       }
+      if (route === 'coming' || route === 'always') {
+        const nextFreeTab = route === 'coming' ? 'coming' : 'always'
+        window.history.replaceState({}, '', `/free?tab=${nextFreeTab}`)
+        setFreeTab(nextFreeTab)
+        setTab('free')
+        return
+      }
+      setFreeTab(route === 'free' && ['coming', 'always'].includes(new URLSearchParams(window.location.search).get('tab')) ? new URLSearchParams(window.location.search).get('tab') : 'claim')
       setTab(knownTabs.includes(route) ? route : 'not-found')
     }
     readRoute()
@@ -171,8 +178,15 @@ export default function App() {
 
   function navigateTab(nextTab) {
     setAccountMenuOpen(false)
+    if (nextTab === 'free') setFreeTab('claim')
     setTab(nextTab)
     window.history.pushState({}, '', nextTab === 'discover' ? '/' : `/${nextTab}`)
+  }
+
+  function navigateFreeTab(nextFreeTab) {
+    setFreeTab(nextFreeTab)
+    setTab('free')
+    window.history.pushState({}, '', nextFreeTab === 'claim' ? '/free' : `/free?tab=${nextFreeTab}`)
   }
 
   function submitShellSearch(event) {
@@ -418,12 +432,15 @@ export default function App() {
           <FreeNow
             getGameActions={saveActions}
             onAvailabilityChange={setAvailableFreeGames}
+            activeTab={freeTab}
+            onTabChange={navigateFreeTab}
           />
         )}
         {tab === 'discover' && (
           <Discover
             library={ownedGames}
             wishlist={wishlist}
+            session={session}
             getGameActions={saveActions}
             onNavigate={navigateTab}
           />
@@ -448,8 +465,6 @@ export default function App() {
             deals={availableDeals}
           />
         )}
-        {tab === 'always' && <AlwaysFree getGameActions={saveActions} />}
-        {tab === 'coming' && <ComingSoon />}
         {tab === 'rumors' && <Rumors />}
         {tab === 'news' && <News />}
         {tab === 'account' && (
