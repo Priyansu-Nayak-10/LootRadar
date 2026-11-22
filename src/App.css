@@ -4211,6 +4211,7 @@ textarea:focus-visible {
 
   .home-quick-access {
     grid-column: 2;
+    height: 460px;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -4228,7 +4229,9 @@ textarea:focus-visible {
 
   .home-promo-banner {
     grid-column: 3;
+    height: 460px;
     min-height: 0;
+    align-self: start;
   }
 }
 
