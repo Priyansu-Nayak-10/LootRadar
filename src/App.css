@@ -3187,6 +3187,39 @@ textarea:focus-visible {
   cursor: pointer;
 }
 
+.home-hero-controls {
+  padding: 8px 10px;
+}
+
+.home-hero-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.home-hero-dots button {
+  width: 8px;
+  height: 8px;
+  min-height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(239, 248, 241, .42);
+  cursor: pointer;
+  transition: width 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.home-hero-dots button:hover,
+.home-hero-dots button:focus-visible {
+  background: var(--bright);
+  transform: scale(1.15);
+}
+
+.home-hero-dots button.is-active {
+  width: 22px;
+  background: var(--lime);
+}
+
 .home-hero-skeleton {
   height: 430px;
 }

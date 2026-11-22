@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { fetchGamingNews, fetchRawgGames, hasRawgKey } from '../lib/discoverApi'
 import GameActions from '../components/GameActions'
 import PopularGames from '../components/PopularGames'
@@ -191,28 +191,40 @@ function HomeRedesign({
 }) {
   const [heroIndex, setHeroIndex] = useState(0)
   const [heroPaused, setHeroPaused] = useState(false)
+  const heroCarouselRef = useRef(null)
+  const wrapTimerRef = useRef(null)
+  const heroGames = trending.slice(0, 5)
 
   useEffect(() => {
-    const carousel = document.getElementById('home-hero-carousel')
-    const count = Math.min(trending.length, 5)
+    const carousel = heroCarouselRef.current
+    const count = heroGames.length
     if (!carousel || heroPaused || count < 2) return undefined
     const timer = window.setInterval(() => {
       setHeroIndex((current) => {
-        const next = (current + 1) % count
-        carousel.scrollTo({ left: next * carousel.clientWidth, behavior: 'smooth' })
+        const isWrapping = current === count - 1
+        const next = isWrapping ? 0 : current + 1
+        carousel.scrollTo({ left: (isWrapping ? count : next) * carousel.clientWidth, behavior: 'smooth' })
+        if (isWrapping) {
+          window.clearTimeout(wrapTimerRef.current)
+          wrapTimerRef.current = window.setTimeout(() => {
+            carousel.scrollTo({ left: 0, behavior: 'auto' })
+          }, 450)
+        }
         return next
       })
     }, 6000)
-    return () => window.clearInterval(timer)
-  }, [heroPaused, trending.length])
+    return () => {
+      window.clearInterval(timer)
+      window.clearTimeout(wrapTimerRef.current)
+    }
+  }, [heroGames.length, heroPaused])
 
-  function moveHero(direction) {
-    const carousel = document.getElementById('home-hero-carousel')
-    const count = Math.min(trending.length, 5)
-    if (!carousel || !count) return
-    const next = (heroIndex + direction + count) % count
-    setHeroIndex(next)
-    carousel.scrollTo({ left: next * carousel.clientWidth, behavior: 'smooth' })
+  function goToHero(index) {
+    const carousel = heroCarouselRef.current
+    if (!carousel || !heroGames.length) return
+    window.clearTimeout(wrapTimerRef.current)
+    setHeroIndex(index)
+    carousel.scrollTo({ left: index * carousel.clientWidth, behavior: 'smooth' })
   }
 
   return (
@@ -243,12 +255,18 @@ function HomeRedesign({
       )}
 
       <section className="home-feature-grid">
-        <div className="home-hero-wrap">
+        <div
+          className="home-hero-wrap"
+          onMouseEnter={() => setHeroPaused(true)}
+          onMouseLeave={() => setHeroPaused(false)}
+          onTouchStart={() => setHeroPaused(true)}
+          onTouchEnd={() => setHeroPaused(false)}
+        >
           {catalogError && <p className="discover-error" role="alert">{catalogError}</p>}
           {trending.length > 0 ? (
             <>
-              <div className="home-hero-carousel" id="home-hero-carousel" aria-label="Featured games">
-                {trending.slice(0, 5).map((game, index) => (
+              <div className="home-hero-carousel" id="home-hero-carousel" ref={heroCarouselRef} aria-label="Featured games">
+                {heroGames.map((game, index) => (
                   <article className="home-hero-slide" key={game.id}>
                     {lootRadarArt.hero.src ? (
                       <img src={lootRadarArt.hero.src} alt={lootRadarArt.hero.alt} loading={index === 0 ? 'eager' : 'lazy'} />
@@ -270,11 +288,36 @@ function HomeRedesign({
                     </div>
                   </article>
                 ))}
+                <article className="home-hero-slide" aria-hidden="true">
+                  {lootRadarArt.hero.src ? (
+                    <img src={lootRadarArt.hero.src} alt="" loading="lazy" />
+                  ) : heroGames[0].background_image ? (
+                    <img src={heroGames[0].background_image} alt="" loading="lazy" />
+                  ) : (
+                    <div className="lr-art-fallback">LOOTRADAR</div>
+                  )}
+                  <div className="home-hero-overlay" />
+                  <div className="home-hero-copy">
+                    <span className="lr-badge lr-badge--lime">Latest Release</span>
+                    <h1>{heroGames[0].name}</h1>
+                  </div>
+                </article>
               </div>
               <div className="home-hero-controls">
-                <span>{String(heroIndex + 1).padStart(2, '0')} / {String(Math.min(trending.length, 5)).padStart(2, '0')}</span>
-                <button type="button" aria-label="Previous featured game" onClick={() => moveHero(-1)}>←</button>
-                <button type="button" aria-label="Next featured game" onClick={() => moveHero(1)}>→</button>
+                <span className="sr-only">Featured game {heroIndex + 1} of {heroGames.length}</span>
+                <div className="home-hero-dots" role="tablist" aria-label="Choose featured game">
+                  {heroGames.map((game, index) => (
+                    <button
+                      type="button"
+                      key={game.id}
+                      role="tab"
+                      aria-selected={heroIndex === index}
+                      aria-label={`Show featured game ${index + 1}: ${game.name}`}
+                      className={heroIndex === index ? 'is-active' : ''}
+                      onClick={() => goToHero(index)}
+                    />
+                  ))}
+                </div>
               </div>
             </>
           ) : (
