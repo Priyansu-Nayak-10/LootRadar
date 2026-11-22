@@ -2577,6 +2577,32 @@ textarea:focus-visible {
 
 .home-promo-banner em { width: fit-content; min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 13px; color: #11170a; background: var(--lime); font-size: 13px; font-style: normal; font-weight: 850; }
 
+.wishlist-telegram-status { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; padding: 15px 17px; border: 1px solid rgba(196,255,77,.22); border-radius: 16px; background: linear-gradient(110deg, rgba(196,255,77,.09), rgba(17,24,27,.8)); }
+.wishlist-telegram-status div { display: grid; gap: 4px; }
+.wishlist-telegram-status strong { color: var(--bright); font-size: 13px; }
+.wishlist-telegram-status span { color: var(--muted); font-size: 11px; }
+.wishlist-empty-state { gap: 12px; }
+.wishlist-empty-state > div { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; }
+.wishlist-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.wishlist-detail-card { display: grid; grid-template-columns: 122px minmax(0, 1fr); overflow: hidden; border: 1px solid var(--line); border-radius: 17px; background: linear-gradient(145deg, var(--panel-raised), var(--panel)); }
+.wishlist-detail-card > img, .wishlist-detail-card__fallback { width: 122px; height: 100%; min-height: 260px; object-fit: cover; background: linear-gradient(140deg, #294532, #10161b); }
+.wishlist-detail-card__fallback { display: grid; place-items: center; color: var(--lime); font-size: 32px; font-weight: 900; }
+.wishlist-detail-card__content { min-width: 0; padding: 15px; }
+.wishlist-detail-card__heading { display: flex; align-items: start; justify-content: space-between; gap: 10px; }
+.wishlist-detail-card h2 { margin: 0; font-size: 16px; line-height: 1.25; }
+.wishlist-detail-card__platform { margin: 5px 0 12px; color: var(--muted); font-size: 11px; }
+.wishlist-remove { min-height: 30px; border: 1px solid rgba(255,150,150,.24); border-radius: 8px; color: #ffb4b4; background: transparent; cursor: pointer; font-size: 10px; font-weight: 800; }
+.wishlist-detail-card__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 14px; }
+.wishlist-detail-card__facts div { min-width: 0; padding: 8px; border-radius: 9px; background: rgba(255,255,255,.035); }
+.wishlist-detail-card__facts dt { color: var(--muted); font-size: 9px; }
+.wishlist-detail-card__facts dd { overflow: hidden; margin: 4px 0 0; color: var(--bright); font-size: 10px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.wishlist-alert-settings { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 8px; margin: 0; padding: 10px; border: 1px solid var(--line); border-radius: 10px; }
+.wishlist-alert-settings legend { padding: 0 4px; color: var(--lime); font-size: 10px; font-weight: 850; }
+.wishlist-alert-settings label { min-width: 0; color: var(--muted); font-size: 10px; }
+.wishlist-alert-settings input[type="number"] { width: 100%; min-height: 30px; margin-top: 4px; padding: 4px 7px; border: 1px solid var(--line); border-radius: 7px; color: var(--bright); background: rgba(0,0,0,.2); font-size: 11px; }
+@media (max-width: 720px) { .wishlist-detail-grid { grid-template-columns: 1fr; } .wishlist-alert-settings { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .wishlist-telegram-status { align-items: flex-start; flex-direction: column; } .wishlist-detail-card { grid-template-columns: 1fr; } .wishlist-detail-card > img, .wishlist-detail-card__fallback { width: 100%; height: 150px; min-height: 150px; } .wishlist-detail-card__facts { grid-template-columns: 1fr 1fr; } .wishlist-alert-settings { grid-template-columns: 1fr; } }
+
 .deals-price-range { min-height: 44px; display: grid; gap: 3px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 11px; color: var(--muted); font-size: 11px; }
 .deals-price-range input { width: 100%; accent-color: var(--lime); }
 .deals-display-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 12px 0; }

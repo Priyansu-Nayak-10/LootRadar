@@ -47,6 +47,9 @@ function mergeSavedGames(localGames, databaseRows, listType) {
       notes: row.notes || '',
       source: row.source || '',
       sourceId: row.source_id || '',
+      alertOnFree: row.alert_on_free !== false,
+      alertDiscountPercent: row.alert_discount_percent ?? '',
+      alertTargetPrice: row.alert_target_price ?? '',
     })
   }
 
@@ -63,6 +66,9 @@ function toDatabaseRow(game, listType, userId) {
     notes: game.notes || '',
     source: game.source || '',
     source_id: game.sourceId || '',
+    alert_on_free: game.alertOnFree !== false,
+    alert_discount_percent: game.alertDiscountPercent === '' || game.alertDiscountPercent == null ? null : Number(game.alertDiscountPercent),
+    alert_target_price: game.alertTargetPrice === '' || game.alertTargetPrice == null ? null : Number(game.alertTargetPrice),
   }
 }
 
@@ -463,6 +469,8 @@ export default function App() {
             setGames={syncedSetter('wishlist', setWishlist)}
             freeGames={availableFreeGames}
             deals={availableDeals}
+            session={session}
+            onNavigate={navigateTab}
           />
         )}
         {tab === 'rumors' && <Rumors />}
