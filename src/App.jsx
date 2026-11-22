@@ -18,17 +18,14 @@ const TABS = [
   { id: 'discover', label: 'Home' },
   { id: 'free', label: 'Free Now' },
   { id: 'deals', label: 'Deals' },
-  { id: 'library', label: 'Library' },
-  { id: 'more', label: 'More' },
+  { id: 'wishlist', label: 'Wishlist' },
 ]
 
 const TAB_ICONS = {
   free: 'M12 3v2m0 14v2m9-9h-2M5 12H3m15.36-6.36-1.42 1.42M7.06 16.94l-1.42 1.42m12.72 0-1.42-1.42M7.06 7.06 5.64 5.64M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
   discover: 'M12 3 14.8 9.2 21 12l-6.2 2.8L12 21l-2.8-6.2L3 12l6.2-2.8L12 3Zm0 6v6m-3-3h6',
   deals: 'm20 13-7 7L3 10V3h7l10 10Zm-12-6h.01',
-  library: 'M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5v-12ZM4 6h16M8 10h8m-8 4h6',
   wishlist: 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z',
-  more: 'M5 12h.01M12 12h.01M19 12h.01',
   news: 'M4 5h16v14H4V5Zm3 4h10M7 13h6M7 16h8',
   account: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0',
 }
@@ -81,7 +78,8 @@ export default function App() {
   const [session, setSession] = useState(null)
   const [shellSearch, setShellSearch] = useState('')
   const [shellCategory, setShellCategory] = useState('All')
-  const activeNavTab = ['always', 'coming', 'rumors', 'wishlist', 'news'].includes(tab) ? 'more' : tab
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+  const activeNavTab = TABS.some((item) => item.id === tab) ? tab : undefined
 
   useEffect(() => {
     if (!hasSupabaseConfig || !supabase) return undefined
@@ -148,13 +146,18 @@ export default function App() {
 
   useEffect(() => {
     const knownTabs = [
-        'discover', 'free', 'deals', 'library', 'wishlist', 'more',
+        'discover', 'free', 'deals', 'library', 'wishlist',
         'always', 'coming', 'rumors', 'news', 'account',
     ]
     function readRoute() {
       const pathTab = window.location.pathname.replace(/^\/+|\/+$/g, '')
       const hashTab = window.location.hash.replace(/^#\/?/, '')
       const route = pathTab || hashTab || 'discover'
+      if (route === 'more') {
+        window.history.replaceState({}, '', '/')
+        setTab('discover')
+        return
+      }
       setTab(knownTabs.includes(route) ? route : 'not-found')
     }
     readRoute()
@@ -167,6 +170,7 @@ export default function App() {
   }, [])
 
   function navigateTab(nextTab) {
+    setAccountMenuOpen(false)
     setTab(nextTab)
     window.history.pushState({}, '', nextTab === 'discover' ? '/' : `/${nextTab}`)
   }
@@ -185,6 +189,12 @@ export default function App() {
   async function signOut() {
     if (!supabase) return
     await supabase.auth.signOut()
+  }
+
+  async function handleShellSignOut() {
+    setAccountMenuOpen(false)
+    await signOut()
+    navigateTab('account')
   }
 
   const updateAvailableDeals = useCallback((games) => {
@@ -369,14 +379,34 @@ export default function App() {
                   <path d="M10 20h4" strokeLinecap="round" />
                 </svg>
               </button>
-              <button
-                type="button"
-                className="shell-avatar"
-                aria-label={session ? 'Open account' : 'Open sign in'}
-                onClick={() => navigateTab('account')}
-              >
-                {session?.user?.email?.trim().slice(0, 1).toUpperCase() || 'G'}
-              </button>
+              {session ? (
+                <div className="shell-account-menu">
+                  <button
+                    type="button"
+                    className="shell-avatar"
+                    aria-label="Open account menu"
+                    aria-expanded={accountMenuOpen}
+                    aria-controls="account-navigation-menu"
+                    onClick={() => setAccountMenuOpen((open) => !open)}
+                  >
+                    {session.user.email?.trim().slice(0, 1).toUpperCase() || 'A'}
+                  </button>
+                  {accountMenuOpen && (
+                    <div className="shell-account-dropdown" id="account-navigation-menu" role="menu">
+                      <button type="button" role="menuitem" onClick={() => navigateTab('account')}>Profile &amp; Account</button>
+                      <button type="button" role="menuitem" onClick={() => navigateTab('account')}>Connect Telegram</button>
+                      <button type="button" role="menuitem" onClick={() => navigateTab('library')}>Owned Games</button>
+                      <button type="button" role="menuitem" onClick={() => navigateTab('news')}>News</button>
+                      <span className="shell-account-dropdown__divider" role="separator" />
+                      <button type="button" role="menuitem" className="shell-account-dropdown__signout" onClick={handleShellSignOut}>Sign out</button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button type="button" className="shell-sign-in" onClick={() => navigateTab('account')}>
+                  Sign in
+                </button>
+              )}
             </div>
           </div>
 
@@ -418,56 +448,6 @@ export default function App() {
             deals={availableDeals}
           />
         )}
-        {tab === 'more' && (
-          <section className="more-section">
-            <div className="game-grid">
-              <button type="button" className="game-card more-card" onClick={() => navigateTab('always')}>
-                <div className="game-card-content">
-                  <span className="discover-kicker">ALWAYS AVAILABLE</span>
-                  <h2 className="game-title">Always Free</h2>
-                  <p className="game-platform">Free-to-play games from FreeToGame</p>
-                </div>
-              </button>
-              <button type="button" className="game-card more-card" onClick={() => navigateTab('coming')}>
-                <div className="game-card-content">
-                  <span className="discover-kicker">EPIC CONFIRMATIONS</span>
-                  <h2 className="game-title">Coming Soon</h2>
-                  <p className="game-platform">Confirmed upcoming free promotions</p>
-                </div>
-              </button>
-              <button type="button" className="game-card more-card" onClick={() => navigateTab('rumors')}>
-                <div className="game-card-content">
-                  <span className="discover-kicker">UNCONFIRMED</span>
-                  <h2 className="game-title">Rumors</h2>
-                  <p className="game-platform">Reports clearly labelled as rumors</p>
-                </div>
-              </button>
-              <button type="button" className="game-card more-card" onClick={() => navigateTab('wishlist')}>
-                <div className="game-card-content">
-                  <span className="discover-kicker">YOUR SAVED GAMES</span>
-                  <h2 className="game-title">Wishlist</h2>
-                  <p className="game-platform">{wishlist.length} saved</p>
-                </div>
-              </button>
-              <button type="button" className="game-card more-card" onClick={() => navigateTab('news')}>
-                <div className="game-card-content">
-                  <span className="discover-kicker">LATEST HEADLINES</span>
-                  <h2 className="game-title">News</h2>
-                  <p className="game-platform">Newsroom feeds and publisher links</p>
-                </div>
-              </button>
-              <button type="button" className="game-card more-card" onClick={() => navigateTab('account')}>
-                <div className="game-card-content">
-                  <span className="discover-kicker">YOUR ACCOUNT</span>
-                  <h2 className="game-title">Account</h2>
-                  <p className="game-platform">
-                    {session ? session.user.email : 'Sign in or create an account'}
-                  </p>
-                </div>
-              </button>
-            </div>
-          </section>
-        )}
         {tab === 'always' && <AlwaysFree getGameActions={saveActions} />}
         {tab === 'coming' && <ComingSoon />}
         {tab === 'rumors' && <Rumors />}
@@ -475,7 +455,6 @@ export default function App() {
         {tab === 'account' && (
           <Account
             session={session}
-            onNavigate={navigateTab}
           />
         )}
         {tab === 'not-found' && (
@@ -510,7 +489,7 @@ export default function App() {
         </a>
       </footer>
 
-      {tab !== 'not-found' && <nav className="bottom-nav" aria-label="Main navigation">
+      {tab !== 'not-found' && !(tab === 'account' && !session) && <nav className="bottom-nav" aria-label="Main navigation">
         {TABS.map((t) => (
           <button
             key={t.id}

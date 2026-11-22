@@ -289,12 +289,6 @@ textarea:focus-visible {
   font-weight: 800;
 }
 
-.more-card {
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-}
-
 .game-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1392,43 +1386,6 @@ textarea:focus-visible {
   overflow-wrap: anywhere;
 }
 
-.account-links {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin: 20px 0;
-}
-
-.account-link {
-  display: grid;
-  gap: 6px;
-  min-height: 78px;
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  color: var(--bright);
-  background: rgba(255, 255, 255, 0.025);
-  text-align: left;
-  cursor: pointer;
-}
-
-.account-link:hover {
-  border-color: rgba(196, 255, 77, 0.45);
-  background: var(--lime-soft);
-}
-
-.account-link span {
-  color: var(--lime);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.account-link strong {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 500;
-}
-
 .telegram-account-card,
 .alert-settings-card {
   box-shadow: none;
@@ -2484,7 +2441,7 @@ textarea:focus-visible {
   gap: 6px;
 }
 
-.home-upcoming-list > button {
+.home-upcoming-list > div {
   min-height: 47px;
   grid-template-columns: 58px minmax(0, 1fr);
 }
@@ -2604,7 +2561,7 @@ textarea:focus-visible {
   gap: 16px;
 }
 
-.home-quick-grid button {
+.home-quick-tile {
   min-height: 92px;
   place-items: center;
   align-content: center;
@@ -2612,7 +2569,7 @@ textarea:focus-visible {
   text-align: center;
 }
 
-.home-quick-grid button span {
+.home-quick-tile span {
   font-size: 20px;
 }
 
@@ -2638,25 +2595,6 @@ textarea:focus-visible {
 
 .home-promo-banner strong {
   font-size: clamp(20px, 2.1vw, 29px);
-}
-
-.home-promo-banner em {
-  width: fit-content;
-  min-height: 44px;
-  display: inline-grid;
-  align-items: center;
-  padding: 0 16px;
-  border-radius: 13px;
-  color: #11170a;
-  background: var(--lime);
-  font-size: 0;
-  font-style: normal;
-  font-weight: 850;
-}
-
-.home-promo-banner em::before {
-  content: 'Connect Telegram';
-  font-size: 13px;
 }
 
 @media (max-width: 980px) {
@@ -2687,7 +2625,7 @@ textarea:focus-visible {
   .popular-games-section__chips { order: 3; width: 100%; }
   .popular-games-section__row { grid-auto-columns: 43%; }
   .home-news-feature { min-height: 190px; }
-  .home-quick-grid button { min-height: 82px; }
+  .home-quick-tile { min-height: 82px; }
   .home-promo-banner { min-height: 210px; }
 }
 
@@ -3301,7 +3239,7 @@ textarea:focus-visible {
   gap: 7px;
 }
 
-.home-upcoming-list > button {
+.home-upcoming-list > div {
   min-width: 0;
   min-height: 54px;
   display: grid;
@@ -3671,7 +3609,7 @@ textarea:focus-visible {
   gap: 10px;
 }
 
-.home-quick-grid button {
+.home-quick-tile {
   min-height: 88px;
   display: grid;
   align-content: space-between;
@@ -3684,7 +3622,7 @@ textarea:focus-visible {
   cursor: pointer;
 }
 
-.home-quick-grid button span {
+.home-quick-tile span {
   color: var(--lime);
   font-size: 9px;
   font-weight: 850;
@@ -3736,13 +3674,6 @@ textarea:focus-visible {
   max-width: 420px;
   font-size: clamp(18px, 3vw, 30px);
   line-height: 1.1;
-}
-
-.home-promo-banner em {
-  color: var(--lime);
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 800;
 }
 
 @media (max-width: 980px) {
@@ -3958,6 +3889,71 @@ textarea:focus-visible {
   font-weight: 900;
 }
 
+.shell-account-menu {
+  position: relative;
+}
+
+.shell-account-dropdown {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 196px;
+  display: grid;
+  padding: 7px;
+  border: 1px solid rgba(196, 255, 77, 0.2);
+  border-radius: 14px;
+  background: #11181c;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+}
+
+.shell-account-dropdown button {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--bright);
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+  text-align: left;
+}
+
+.shell-account-dropdown button:hover,
+.shell-account-dropdown button:focus-visible {
+  color: #11170a;
+  background: var(--lime);
+}
+
+.shell-account-dropdown__divider {
+  height: 1px;
+  margin: 5px 3px;
+  background: var(--line);
+}
+
+.shell-account-dropdown .shell-account-dropdown__signout {
+  color: #ffb5b5;
+}
+
+.shell-account-dropdown .shell-account-dropdown__signout:hover,
+.shell-account-dropdown .shell-account-dropdown__signout:focus-visible {
+  color: #fff;
+  background: rgba(210, 68, 68, 0.3);
+}
+
+.shell-sign-in {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(196, 255, 77, 0.38);
+  border-radius: 999px;
+  color: #11170a;
+  background: var(--lime);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 850;
+}
+
 .bottom-nav {
   border-radius: 16px;
   background: rgba(12, 17, 20, 0.96);
@@ -3994,7 +3990,7 @@ textarea:focus-visible {
 
 @media (max-width: 600px) {
   .header-top {
-    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
     min-height: 68px;
   }
 
@@ -4017,7 +4013,12 @@ textarea:focus-visible {
   }
 
   .shell-actions {
-    width: 44px;
+    width: auto;
+  }
+
+  .shell-sign-in {
+    padding-inline: 11px;
+    font-size: 11px;
   }
 
   .filter-chip {
@@ -4033,10 +4034,6 @@ textarea:focus-visible {
 
   .form-panel {
     padding: 16px;
-  }
-
-  .account-links {
-    grid-template-columns: 1fr;
   }
 
   .form-grid {
@@ -4223,7 +4220,7 @@ textarea:focus-visible {
     grid-template-rows: repeat(2, minmax(0, 1fr));
   }
 
-  .home-quick-grid button {
+  .home-quick-tile {
     min-height: 0;
   }
 
@@ -4233,23 +4230,4 @@ textarea:focus-visible {
     min-height: 0;
     align-self: start;
   }
-}
-
-/* The Telegram call to action needs visible, usable button text. */
-.home-promo-banner em {
-  width: fit-content;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 16px;
-  border-radius: 13px;
-  color: #11170a;
-  background: var(--lime);
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 850;
-}
-
-.home-promo-banner em::before {
-  content: none;
 }

@@ -349,13 +349,12 @@ function HomeRedesign({
                 <span className="lr-section-heading__kicker">LIMITED TIME</span>
                 <h2>Free <strong>Games</strong></h2>
               </div>
-              <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('free')}>View All</button>
             </div>
             {freeGames.length > 0 ? (
-              <button type="button" className="home-feature-free" onClick={() => onNavigate('free')}>
+              <div className="home-feature-free">
                 {freeGames[0].thumbnail ? <img src={freeGames[0].thumbnail} alt={freeGames[0].title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
                 <span><strong>{freeGames[0].title}</strong><small>{formatCountdown(freeGames[0].end_date)}</small></span>
-              </button>
+              </div>
             ) : (
               <div className="lr-skeleton" />
             )}
@@ -367,14 +366,13 @@ function HomeRedesign({
                 <span className="lr-section-heading__kicker">EPIC CONFIRMATIONS</span>
                 <h2>Upcoming <strong>Releases</strong></h2>
               </div>
-              <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('coming')}>View All</button>
             </div>
             <div className="home-upcoming-list">
               {upcomingGames.slice(0, 4).map((game) => (
-                <button type="button" key={game.id} onClick={() => onNavigate('coming')}>
+                <div key={game.id}>
                   {game.image ? <img src={game.image} alt={game.title} loading="lazy" /> : <span className="home-upcoming-fallback">LR</span>}
                   <span><strong>{game.title}</strong><small>{formatDate(game.startDate?.slice(0, 10) || 'TBA')}</small></span>
-                </button>
+                </div>
               ))}
               {upcomingGames.length === 0 && <div className="lr-skeleton" />}
             </div>
@@ -428,16 +426,16 @@ function HomeRedesign({
             </div>
           </div>
           <div className="home-quick-grid">
-            <button type="button" onClick={() => onNavigate('free')}><span>01</span><strong>Free Games</strong></button>
-            <button type="button" onClick={() => onNavigate('deals')}><span>02</span><strong>Deals</strong></button>
-            <button type="button" onClick={() => onNavigate('coming')}><span>03</span><strong>Upcoming</strong></button>
-            <button type="button" onClick={() => onNavigate('discover')}><span>04</span><strong>Top Charts</strong></button>
+            <div className="home-quick-tile"><span>01</span><strong>Free Games</strong></div>
+            <div className="home-quick-tile"><span>02</span><strong>Deals</strong></div>
+            <div className="home-quick-tile"><span>03</span><strong>Upcoming</strong></div>
+            <div className="home-quick-tile"><span>04</span><strong>Top Charts</strong></div>
           </div>
         </div>
-        <button type="button" className="home-promo-banner" style={matchedNewsPanelStyle} onClick={() => onNavigate('account')}>
+        <section className="home-promo-banner" style={matchedNewsPanelStyle}>
           {lootRadarArt.promo.src ? <img src={lootRadarArt.promo.src} alt={lootRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
-          <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Connect Telegram</em></span>
-        </button>
+          <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong></span>
+        </section>
       </>
     </div>
   )
