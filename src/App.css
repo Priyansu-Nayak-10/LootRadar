@@ -2335,7 +2335,7 @@ textarea:focus-visible {
   }
 
   .home-news-grid {
-    grid-column: 1;
+    grid-column: 1 / span 2;
     align-self: stretch;
   }
 
@@ -4297,6 +4297,49 @@ textarea:focus-visible {
 }
 
 /* Final Home layout overrides: these must follow the base Home rules. */
+/* The free-games panel has one card; do not inherit the two-row sidebar layout. */
+.home-feature-side.home-feature-side--free {
+  grid-template-rows: auto;
+  align-self: start;
+}
+
+.top-deals {
+  min-width: 0;
+}
+
+.top-deals__skeleton {
+  min-height: 218px;
+  border-radius: 16px;
+}
+
+.top-deals__art-fallback {
+  height: 110px;
+  border: 0;
+  border-radius: 0;
+}
+
+.top-deals__empty {
+  grid-column: 1 / -1;
+  min-height: 104px;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.top-deals__empty button {
+  min-height: 44px;
+  border: 0;
+  color: var(--lime);
+  background: transparent;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 @media (min-width: 981px) {
   .home-redesign {
     grid-template-columns: minmax(0, 1.18fr) minmax(260px, .72fr) minmax(260px, .72fr);
@@ -4304,12 +4347,13 @@ textarea:focus-visible {
   }
 
   .home-feature-grid,
-  .popular-games-section {
+  .popular-games-section,
+  .top-deals {
     grid-column: 1 / -1;
   }
 
   .home-news-grid {
-    grid-column: 1;
+    grid-column: 1 / span 2;
     align-self: stretch;
   }
 
@@ -4336,5 +4380,32 @@ textarea:focus-visible {
     height: var(--home-news-panel-height, auto);
     min-height: 0;
     align-self: start;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-feature-side.home-feature-side--free .home-feature-free-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .home-feature-side.home-feature-side--free .home-feature-free {
+    min-height: 64px;
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 8px;
+    padding: 7px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .home-feature-side.home-feature-side--free .home-feature-free img,
+  .home-feature-side.home-feature-side--free .home-feature-free .lr-art-fallback {
+    width: 46px;
+    height: 50px;
+  }
+
+  .home-feature-free-list .lr-button {
+    grid-column: 1 / -1;
   }
 }
