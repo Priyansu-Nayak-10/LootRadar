@@ -168,10 +168,14 @@ async function main() {
     )
   }
 
-  const [settings, connections, library, sentAlerts] = await Promise.all([
+  // Fetch all data needed for alert decisions in a single parallel batch.
+  // Wishlists for all users are loaded once here and grouped by user_id in
+  // memory below, avoiding one Supabase query per (user × game) combination.
+  const [settings, connections, library, wishlistRows, sentAlerts] = await Promise.all([
     supabase('GET', 'notification_settings?select=*'),
     supabase('GET', 'telegram_connections?select=*&active=eq.true'),
     supabase('GET', 'saved_games?select=user_id,title,normalized_title,platform,list_type&list_type=eq.library'),
+    supabase('GET', 'saved_games?select=user_id,title,normalized_title&list_type=eq.wishlist'),
     supabase('GET', 'sent_alerts?select=*'),
   ])
   console.log(`SENDER_PHASE=settings_loaded settings=${settings.length} connections=${connections.length}`)
@@ -182,6 +186,18 @@ async function main() {
       ownedTitlesByUser.set(game.user_id, new Set())
     }
     ownedTitlesByUser
+      .get(game.user_id)
+      .add(normalizeTitle(game.normalized_title || game.title))
+  }
+
+  // Group pre-fetched wishlist rows by user_id so the per-window loop needs
+  // no additional Supabase queries.
+  const wishlistTitlesByUser = new Map()
+  for (const game of wishlistRows) {
+    if (!wishlistTitlesByUser.has(game.user_id)) {
+      wishlistTitlesByUser.set(game.user_id, new Set())
+    }
+    wishlistTitlesByUser
       .get(game.user_id)
       .add(normalizeTitle(game.normalized_title || game.title))
   }
@@ -202,20 +218,14 @@ async function main() {
       if (ownedTitles.has(window.normalized_title)) continue
 
       if (setting.mode === 'wishlist') {
-        const wishlist = await supabase(
-          'GET',
-          `saved_games?select=title,normalized_title&user_id=eq.${setting.user_id}&list_type=eq.wishlist`
-        )
-        const wished = wishlist.some((game) =>
-          normalizeTitle(game.normalized_title || game.title) === window.normalized_title
-        )
-        if (!wished) continue
+        const wishedTitles = wishlistTitlesByUser.get(setting.user_id) || new Set()
+        if (!wishedTitles.has(window.normalized_title)) continue
       }
 
       if (setting.mode === 'platform') {
         const selected = Array.isArray(setting.platforms) ? setting.platforms : []
         const matchesPlatform = selected.some((platform) =>
-          window.platform.toLowerCase().includes(platform.toLower().replace('.io', ''))
+          window.platform.toLowerCase().includes(platform.toLowerCase().replace('.io', ''))
         )
         if (!matchesPlatform) continue
       }
