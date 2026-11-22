@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { hasSupabaseConfig, supabase } from '../lib/supabase'
 
-export default function Account({ session }) {
+export default function Account({ session, onNavigate }) {
   const [mode, setMode] = useState('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -243,6 +243,16 @@ export default function Account({ session }) {
         </header>
         <p className="account-email">{session.user.email}</p>
         {message && <p className="form-message" role="status">{message}</p>}
+        <div className="account-links" aria-label="Account shortcuts">
+          <button type="button" className="account-link" onClick={() => onNavigate('library')}>
+            <span>Library</span>
+            <strong>View your owned games</strong>
+          </button>
+          <button type="button" className="account-link" onClick={() => onNavigate('wishlist')}>
+            <span>Wishlist</span>
+            <strong>View your saved games</strong>
+          </button>
+        </div>
         <div className="telegram-account-card">
           <h3>Telegram alerts</h3>
           {telegramConnection ? (

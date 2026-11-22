@@ -166,9 +166,7 @@ textarea:focus-visible {
 }
 
 .brand-caption,
-.system-status,
-.hero-eyebrow,
-.hero-aside-label {
+.system-status {
   color: var(--muted);
   font-size: 9px;
   font-weight: 750;
@@ -192,69 +190,6 @@ textarea:focus-visible {
   border-radius: 50%;
   background: var(--lime);
   box-shadow: 0 0 12px rgba(196, 255, 77, 0.72);
-}
-
-.hero-header {
-  display: flex;
-  min-height: 192px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 28px;
-  padding-block: 32px 38px;
-}
-
-.hero-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--lime);
-}
-
-.hero-eyebrow::before {
-  width: 22px;
-  height: 1px;
-  background: var(--lime);
-  content: "";
-}
-
-.hero-title {
-  margin: 12px 0 5px;
-  color: var(--bright);
-  font-size: clamp(30px, 4.2vw, 48px);
-  font-weight: 800;
-  letter-spacing: -0.06em;
-  line-height: 1;
-}
-
-.hero-description {
-  margin: 0;
-  color: #94a29f;
-  font-size: 14px;
-}
-
-.hero-aside {
-  display: grid;
-  min-width: 226px;
-  gap: 7px;
-  padding: 18px 20px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: linear-gradient(140deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
-}
-
-.hero-aside-label {
-  font-size: 8px;
-}
-
-.hero-aside strong {
-  color: var(--bright);
-  font-size: 15px;
-  letter-spacing: -0.02em;
-}
-
-.hero-aside span:last-child {
-  color: var(--muted);
-  font-size: 11px;
 }
 
 .main-content {
@@ -1457,6 +1392,43 @@ textarea:focus-visible {
   overflow-wrap: anywhere;
 }
 
+.account-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.account-link {
+  display: grid;
+  gap: 6px;
+  min-height: 78px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--bright);
+  background: rgba(255, 255, 255, 0.025);
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-link:hover {
+  border-color: rgba(196, 255, 77, 0.45);
+  background: var(--lime-soft);
+}
+
+.account-link span {
+  color: var(--lime);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.account-link strong {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
 .telegram-account-card,
 .alert-settings-card {
   box-shadow: none;
@@ -2583,20 +2555,6 @@ textarea:focus-visible {
     min-height: 70px;
   }
 
-  .hero-header {
-    min-height: 150px;
-    padding-block: 25px 28px;
-  }
-
-  .hero-aside {
-    min-width: 176px;
-    padding: 14px;
-  }
-
-  .hero-aside strong {
-    font-size: 13px;
-  }
-
   .main-content {
     padding-top: 22px;
   }
@@ -2681,25 +2639,6 @@ textarea:focus-visible {
     padding: 8px;
     font-size: 7px;
     letter-spacing: 0.1em;
-  }
-
-  .hero-header {
-    align-items: flex-start;
-    padding-block: 23px;
-  }
-
-  .hero-title {
-    margin-top: 10px;
-    font-size: 34px;
-  }
-
-  .hero-description {
-    max-width: 250px;
-    font-size: 12px;
-  }
-
-  .hero-aside {
-    display: none;
   }
 
   .discover-section-heading {
@@ -3520,10 +3459,6 @@ textarea:focus-visible {
   height: 19px;
 }
 
-.shell-avatar-wrap {
-  position: relative;
-}
-
 .shell-avatar {
   width: 44px;
   border: 1px solid rgba(196, 255, 77, 0.22);
@@ -3531,37 +3466,6 @@ textarea:focus-visible {
   color: #11170a;
   background: var(--lime);
   font-weight: 900;
-}
-
-.shell-avatar-menu {
-  position: absolute;
-  z-index: 40;
-  top: calc(100% + 10px);
-  right: 0;
-  width: 190px;
-  display: grid;
-  gap: 3px;
-  padding: 7px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: rgba(12, 17, 20, 0.98);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.42);
-}
-
-.shell-avatar-menu button {
-  min-height: 44px;
-  border: 0;
-  border-radius: 9px;
-  color: var(--bright);
-  background: transparent;
-  text-align: left;
-  padding-inline: 12px;
-  cursor: pointer;
-}
-
-.shell-avatar-menu button:hover {
-  color: var(--lime);
-  background: var(--lime-soft);
 }
 
 .bottom-nav {
@@ -3626,10 +3530,6 @@ textarea:focus-visible {
     width: 44px;
   }
 
-  .shell-avatar-menu {
-    right: -2px;
-  }
-
   .filter-chip {
     min-height: 34px;
     padding-inline: 10px;
@@ -3643,6 +3543,10 @@ textarea:focus-visible {
 
   .form-panel {
     padding: 16px;
+  }
+
+  .account-links {
+    grid-template-columns: 1fr;
   }
 
   .form-grid {

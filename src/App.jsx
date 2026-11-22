@@ -22,21 +22,6 @@ const TABS = [
   { id: 'more', label: 'More' },
 ]
 
-const TAB_DESCRIPTIONS = {
-  free: 'Limited-time games you can claim right now',
-  discover: 'Search games, trending PC titles, and the latest gaming news',
-  deals: 'Games on sale right now',
-  library: 'Games you own',
-  wishlist: 'Games you want to play',
-  more: 'Always Free, Coming Soon, and rumor reports',
-  always: 'Free-to-play games that are always available',
-  coming: 'Confirmed upcoming Epic free games',
-  rumors: 'Unconfirmed free-game reports, clearly labelled',
-  news: 'Latest gaming headlines and publisher links',
-  account: 'Sign in or create a LootRadar account',
-  'not-found': 'The requested LootRadar page was not found',
-}
-
 const TAB_ICONS = {
   free: 'M12 3v2m0 14v2m9-9h-2M5 12H3m15.36-6.36-1.42 1.42M7.06 16.94l-1.42 1.42m12.72 0-1.42-1.42M7.06 7.06 5.64 5.64M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
   discover: 'M12 3 14.8 9.2 21 12l-6.2 2.8L12 21l-2.8-6.2L3 12l6.2-2.8L12 3Zm0 6v6m-3-3h6',
@@ -96,8 +81,7 @@ export default function App() {
   const [session, setSession] = useState(null)
   const [shellSearch, setShellSearch] = useState('')
   const [shellCategory, setShellCategory] = useState('All')
-  const [avatarOpen, setAvatarOpen] = useState(false)
-  const activeNavTab = ['always', 'coming', 'rumors', 'wishlist', 'news', 'account'].includes(tab) ? 'more' : tab
+  const activeNavTab = ['always', 'coming', 'rumors', 'wishlist', 'news'].includes(tab) ? 'more' : tab
 
   useEffect(() => {
     if (!hasSupabaseConfig || !supabase) return undefined
@@ -163,23 +147,28 @@ export default function App() {
   }, [session, setOwnedGames, setWishlist])
 
   useEffect(() => {
-    function readHash() {
-      const hashTab = window.location.hash.replace(/^#\/?/, '')
-      const knownTabs = [
+    const knownTabs = [
         'discover', 'free', 'deals', 'library', 'wishlist', 'more',
         'always', 'coming', 'rumors', 'news', 'account',
-      ]
-      setTab(hashTab && knownTabs.includes(hashTab) ? hashTab : 'not-found')
+    ]
+    function readRoute() {
+      const pathTab = window.location.pathname.replace(/^\/+|\/+$/g, '')
+      const hashTab = window.location.hash.replace(/^#\/?/, '')
+      const route = pathTab || hashTab || 'discover'
+      setTab(knownTabs.includes(route) ? route : 'not-found')
     }
-    readHash()
-    window.addEventListener('hashchange', readHash)
-    return () => window.removeEventListener('hashchange', readHash)
+    readRoute()
+    window.addEventListener('hashchange', readRoute)
+    window.addEventListener('popstate', readRoute)
+    return () => {
+      window.removeEventListener('hashchange', readRoute)
+      window.removeEventListener('popstate', readRoute)
+    }
   }, [])
 
   function navigateTab(nextTab) {
     setTab(nextTab)
-    window.location.hash = `/${nextTab}`
-    setAvatarOpen(false)
+    window.history.pushState({}, '', nextTab === 'discover' ? '/' : `/${nextTab}`)
   }
 
   function submitShellSearch(event) {
@@ -196,7 +185,6 @@ export default function App() {
   async function signOut() {
     if (!supabase) return
     await supabase.auth.signOut()
-    setAvatarOpen(false)
   }
 
   const updateAvailableDeals = useCallback((games) => {
@@ -326,10 +314,10 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <header className="app-header">
+      <header className="app-header" id="top">
         <div className="header-inner">
           <div className="header-top">
-            <a className="brand" href="#top" aria-label="LootRadar home">
+            <a className="brand" href="/" aria-label="LootRadar home">
               <span className="brand-mark" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.7">
                   <circle cx="12" cy="12" r="8.5" />
@@ -381,53 +369,17 @@ export default function App() {
                   <path d="M10 20h4" strokeLinecap="round" />
                 </svg>
               </button>
-              <div className="shell-avatar-wrap">
-                <button
-                  type="button"
-                  className="shell-avatar"
-                  aria-label="Open account menu"
-                  aria-expanded={avatarOpen}
-                  onClick={() => setAvatarOpen((open) => !open)}
-                >
-                  {session?.user?.email?.trim().slice(0, 1).toUpperCase() || 'G'}
-                </button>
-                {avatarOpen && (
-                  <div className="shell-avatar-menu" role="menu">
-                    <button type="button" role="menuitem" onClick={() => navigateTab('library')}>
-                      Library
-                    </button>
-                    <button type="button" role="menuitem" onClick={() => navigateTab('wishlist')}>
-                      Wishlist
-                    </button>
-                    <button type="button" role="menuitem" onClick={() => navigateTab('account')}>
-                      Telegram settings
-                    </button>
-                    {session && (
-                      <button type="button" role="menuitem" onClick={signOut}>
-                        Sign out
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
+              <button
+                type="button"
+                className="shell-avatar"
+                aria-label={session ? 'Open account' : 'Open sign in'}
+                onClick={() => navigateTab('account')}
+              >
+                {session?.user?.email?.trim().slice(0, 1).toUpperCase() || 'G'}
+              </button>
             </div>
           </div>
 
-          <div className="hero-header" id="top">
-            <div>
-              <div className="hero-eyebrow">YOUR PERSONAL GAME RADAR</div>
-              <h2 className="hero-title">
-                {TABS.find((item) => item.id === tab)?.label ||
-                  ({ always: 'Always Free', coming: 'Coming Soon', rumors: 'Rumors', news: 'News', wishlist: 'Wishlist', account: 'Account', 'not-found': 'Page Not Found' }[tab])}
-              </h2>
-              <p className="hero-description">{TAB_DESCRIPTIONS[tab]}</p>
-            </div>
-            <div className="hero-aside">
-              <span className="hero-aside-label">BUILT FOR YOUR BACKLOG</span>
-              <strong>Discover. Save. Play.</strong>
-              <span>Free games, deals, and your collection.</span>
-            </div>
-          </div>
         </div>
       </header>
 
@@ -520,7 +472,12 @@ export default function App() {
         {tab === 'coming' && <ComingSoon />}
         {tab === 'rumors' && <Rumors />}
         {tab === 'news' && <News />}
-        {tab === 'account' && <Account session={session} />}
+        {tab === 'account' && (
+          <Account
+            session={session}
+            onNavigate={navigateTab}
+          />
+        )}
         {tab === 'not-found' && (
           <section className="not-found-redesign" role="alert">
             <div className="lr-art-fallback" aria-hidden="true">404</div>
@@ -553,7 +510,7 @@ export default function App() {
         </a>
       </footer>
 
-      <nav className="bottom-nav" aria-label="Main navigation">
+      {tab !== 'not-found' && <nav className="bottom-nav" aria-label="Main navigation">
         {TABS.map((t) => (
           <button
             key={t.id}
@@ -572,7 +529,7 @@ export default function App() {
             )}
           </button>
         ))}
-      </nav>
+      </nav>}
     </div>
   )
 }
