@@ -1246,7 +1246,6 @@ textarea:focus-visible {
   gap: 18px;
 }
 
-.collection-add-panel,
 .account-redesign,
 .telegram-account-card,
 .alert-settings-card {
@@ -1256,20 +1255,6 @@ textarea:focus-visible {
   box-shadow: var(--lr-shadow-card);
 }
 
-.collection-add-panel {
-  padding: 18px;
-}
-
-.collection-add-panel .form-heading,
-.collection-section .section-heading {
-  color: var(--bright);
-}
-
-.collection-add-panel .form-grid {
-  margin-top: 14px;
-}
-
-.collection-add-panel .form-field,
 .auth-form .form-field {
   color: var(--muted);
   font-size: 10px;
@@ -1278,9 +1263,6 @@ textarea:focus-visible {
   text-transform: uppercase;
 }
 
-.collection-add-panel input,
-.collection-add-panel select,
-.collection-add-panel textarea,
 .auth-form input {
   min-height: 44px;
   border: 1px solid var(--line);
@@ -1290,15 +1272,11 @@ textarea:focus-visible {
   outline: 0;
 }
 
-.collection-add-panel input:focus,
-.collection-add-panel select:focus,
-.collection-add-panel textarea:focus,
 .auth-form input:focus {
   border-color: var(--lr-line-strong);
   box-shadow: 0 0 0 3px var(--lr-lime-soft);
 }
 
-.collection-add-panel .form-submit,
 .auth-form .form-submit,
 .account-redesign > .form-submit {
   min-height: 48px;
@@ -4055,6 +4033,10 @@ textarea:focus-visible {
   margin: 5px 3px;
   background: var(--line);
 }
+
+.shell-owned-games { display: grid; gap: 4px; padding: 8px 10px; color: var(--muted); font-size: 10px; }
+.shell-owned-games strong { color: var(--lime); font-size: 10px; }
+.shell-owned-games span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .shell-account-dropdown .shell-account-dropdown__signout {
   color: #ffb5b5;

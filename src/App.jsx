@@ -2,9 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import FreeNow from './pages/FreeNow'
 import Discover from './pages/Discover'
 import Deals from './pages/Deals'
-import Library from './pages/Library'
 import Wishlist from './pages/Wishlist'
-import Rumors from './pages/Rumors'
 import News from './pages/News'
 import Account from './pages/Account'
 import GameDetail from './pages/GameDetail'
@@ -153,8 +151,7 @@ export default function App() {
 
   useEffect(() => {
     const knownTabs = [
-        'discover', 'free', 'deals', 'library', 'wishlist',
-        'always', 'coming', 'rumors', 'news', 'account',
+        'discover', 'free', 'deals', 'wishlist', 'news', 'account',
     ]
     function readRoute() {
       const pathTab = window.location.pathname.replace(/^\/+|\/+$/g, '')
@@ -165,7 +162,7 @@ export default function App() {
         setTab('game')
         return
       }
-      if (route === 'more') {
+      if (route === 'more' || route === 'library' || route === 'rumors') {
         window.history.replaceState({}, '', '/')
         setTab('discover')
         return
@@ -429,7 +426,7 @@ export default function App() {
                     <div className="shell-account-dropdown" id="account-navigation-menu" role="menu">
                       <button type="button" role="menuitem" onClick={() => navigateTab('account')}>Profile &amp; Account</button>
                       <button type="button" role="menuitem" onClick={() => navigateTab('account')}>Connect Telegram</button>
-                      <button type="button" role="menuitem" onClick={() => navigateTab('library')}>Owned Games</button>
+                      <div className="shell-owned-games" role="group" aria-label="Owned games"><strong>Owned Games ({ownedGames.length})</strong>{ownedGames.length ? ownedGames.slice(0, 4).map((game) => <span key={game.title}>{game.title}</span>) : <span>No owned games yet</span>}</div>
                       <button type="button" role="menuitem" onClick={() => navigateTab('news')}>News</button>
                       <span className="shell-account-dropdown__divider" role="separator" />
                       <button type="button" role="menuitem" className="shell-account-dropdown__signout" onClick={handleShellSignOut}>Sign out</button>
@@ -474,12 +471,6 @@ export default function App() {
             onGameOpen={navigateGame}
           />
         )}
-        {tab === 'library' && (
-          <Library
-            games={ownedGames}
-            setGames={syncedSetter('library', setOwnedGames)}
-          />
-        )}
         {tab === 'wishlist' && (
           <Wishlist
             games={wishlist}
@@ -492,7 +483,6 @@ export default function App() {
           />
         )}
         {tab === 'game' && <GameDetail gameId={gameId} getGameActions={saveActions} wishlist={wishlist} setWishlist={syncedSetter('wishlist', setWishlist)} />}
-        {tab === 'rumors' && <Rumors />}
         {tab === 'news' && <News />}
         {tab === 'account' && (
           <Account
