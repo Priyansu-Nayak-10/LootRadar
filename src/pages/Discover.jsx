@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchGamingNews, fetchRawgGames, hasRawgKey } from '../lib/discoverApi'
 import GameActions from '../components/GameActions'
+import PopularGames from '../components/PopularGames'
 import { lootRadarArt } from '../assets/art'
 
 function dateString(date) {
@@ -188,7 +189,6 @@ function HomeRedesign({
   searchResults,
   hasKey,
 }) {
-  const [platformFilter, setPlatformFilter] = useState('All')
   const [heroIndex, setHeroIndex] = useState(0)
   const [heroPaused, setHeroPaused] = useState(false)
 
@@ -214,12 +214,6 @@ function HomeRedesign({
     setHeroIndex(next)
     carousel.scrollTo({ left: next * carousel.clientWidth, behavior: 'smooth' })
   }
-
-  const filteredPopular = trending.filter((game) => {
-    if (platformFilter === 'All') return true
-    const names = (game.platforms || []).map((item) => item.platform?.name || '')
-    return names.some((name) => name.includes(platformFilter))
-  })
 
   return (
     <div className="discover-page home-redesign">
@@ -328,43 +322,7 @@ function HomeRedesign({
         </aside>
       </section>
 
-      <section className="discover-section home-popular">
-        <div className="lr-section-heading">
-          <div className="lr-section-heading__copy">
-            <span className="lr-section-heading__kicker">DISCOVER</span>
-            <h2>Popular <strong>Games</strong></h2>
-          </div>
-        </div>
-        <div className="home-platform-chips" aria-label="Filter popular games by platform">
-          {['All', 'PC', 'PlayStation', 'Xbox'].map((platform) => (
-            <button type="button" key={platform} className={`lr-chip ${platformFilter === platform ? 'is-active' : ''}`} aria-pressed={platformFilter === platform} onClick={() => setPlatformFilter(platform)}>
-              {platform}
-            </button>
-          ))}
-        </div>
-        {filteredPopular.length > 0 ? (
-          <div className="lr-carousel home-popular-row" aria-label="Popular games">
-            {filteredPopular.slice(0, 10).map((game) => {
-              const actions = getGameActions({
-                title: game.name,
-                platform: (game.platforms || []).map((item) => item.platform?.name).filter(Boolean).join(', '),
-                image: game.background_image,
-                source: 'catalog',
-                sourceId: game.id,
-              })
-              return (
-                <article className="lr-game-card home-cover-card" key={game.id}>
-                  {game.background_image ? <img src={game.background_image} alt={game.name} loading="lazy" decoding="async" className="lr-game-card__image" /> : <div className="lr-art-fallback">GAME</div>}
-                  <button type="button" className={`home-heart ${actions.wishlisted ? 'is-active' : ''}`} aria-label={`${actions.wishlisted ? 'Remove' : 'Add'} ${game.name} ${actions.wishlisted ? 'from' : 'to'} wishlist`} onClick={actions.onToggleWishlist}>♥</button>
-                  <div className="lr-game-card__body"><h3>{game.name}</h3><p>{formatDate(game.released)}</p></div>
-                </article>
-              )
-            })}
-          </div>
-        ) : (
-          <div className="lr-empty">No games match this platform.</div>
-        )}
-      </section>
+      <PopularGames getGameActions={getGameActions} hasRawgKey={hasKey} />
 
       <section className="discover-section home-news-grid">
         <div className="lr-section-heading">

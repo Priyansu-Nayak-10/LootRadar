@@ -36,7 +36,7 @@ async function fetchCachedJson(url, cacheKey, cacheMs) {
   }
 }
 
-export async function fetchRawgGames(parameters, cacheLabel) {
+export async function fetchRawgGames(parameters, cacheLabel, cacheMs = RAWG_CACHE_MS) {
   if (!rawgKey) {
     throw new Error('Add your free RAWG API key to .env.local to load game discovery data.')
   }
@@ -44,7 +44,7 @@ export async function fetchRawgGames(parameters, cacheLabel) {
   const query = new URLSearchParams(parameters)
   query.set('key', rawgKey)
   const cacheKey = `lootradar_rawg_${cacheLabel}`
-  return fetchCachedJson(`${RAWG_BASE}?${query}`, cacheKey, RAWG_CACHE_MS)
+  return fetchCachedJson(`${RAWG_BASE}?${query}`, cacheKey, cacheMs)
 }
 
 export async function fetchGamingNews() {

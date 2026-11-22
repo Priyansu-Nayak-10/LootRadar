@@ -3073,6 +3073,158 @@ textarea:focus-visible {
   font-size: 10px;
 }
 
+.popular-games-section {
+  position: relative;
+  min-width: 0;
+}
+
+.popular-games-section__header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.popular-games-section__kicker {
+  display: block;
+  color: var(--lime);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.popular-games-section h2 {
+  margin: 4px 0 3px;
+  color: var(--bright);
+  font-size: 22px;
+  letter-spacing: -.04em;
+}
+
+.popular-games-section h2 strong { color: var(--lime); }
+
+.popular-games-section__header p,
+.popular-game-card__body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.popular-games-section__controls,
+.popular-games-section__chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.popular-games-section__chips button,
+.popular-games-section__arrow {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, .025);
+  cursor: pointer;
+}
+
+.popular-games-section__chips button { padding: 0 11px; font-size: 10px; }
+.popular-games-section__chips button.is-active { color: #11170a; border-color: var(--lime); background: var(--lime); }
+.popular-games-section__arrow { width: 34px; color: var(--bright); font-size: 22px; line-height: 1; }
+
+.popular-games-section__row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(175px, 1fr);
+  gap: 12px;
+  overflow-x: auto;
+  padding: 2px 2px 8px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.popular-games-section__row::-webkit-scrollbar { display: none; }
+
+.popular-games-section::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 54px;
+  height: 78%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--bg));
+  content: "";
+}
+
+.popular-game-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  scroll-snap-align: start;
+  outline: none;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.popular-game-card:focus-visible,
+.popular-game-card:hover {
+  border-color: rgba(196, 255, 77, .65);
+  box-shadow: 0 0 22px rgba(196, 255, 77, .14);
+  transform: translateY(-3px);
+}
+
+.popular-game-card__art {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: linear-gradient(135deg, #19271b, #07100b 60%, #243414);
+}
+
+.popular-game-card__art img,
+.popular-game-card__fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .25s ease;
+}
+
+.popular-game-card__fallback { display: grid; place-items: center; color: var(--lime); font-size: 38px; font-weight: 800; }
+.popular-game-card:hover img { transform: scale(1.045); }
+.popular-game-card__fade { position: absolute; inset: 45% 0 0; background: linear-gradient(transparent, rgba(5, 9, 10, .9)); }
+
+.popular-game-card__rank,
+.popular-game-card__rating,
+.popular-game-card__prices { position: absolute; z-index: 1; }
+.popular-game-card__rank { top: 9px; left: 9px; padding: 4px 7px; border-radius: 6px; color: var(--bright); background: rgba(5, 9, 10, .76); font-size: 10px; font-weight: 800; }
+.popular-game-card__rating { bottom: 9px; left: 9px; padding: 4px 6px; border-radius: 5px; color: var(--bright); background: rgba(5, 9, 10, .76); font-size: 10px; }
+.popular-game-card__heart { position: absolute; z-index: 2; top: 8px; right: 8px; width: 36px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 50%; color: var(--bright); background: rgba(5, 9, 10, .74); cursor: pointer; font-size: 17px; }
+.popular-game-card__heart.is-active { color: var(--lime); border-color: var(--lime); }
+.popular-game-card__prices { right: 9px; bottom: 9px; display: flex; align-items: center; gap: 5px; font-size: 10px; }
+.popular-game-card__discount,
+.popular-game-card__free { padding: 4px 6px; border-radius: 5px; color: #11170a; background: var(--lime); font-weight: 800; }
+.popular-game-card__prices del { color: #b1b9b5; }
+.popular-game-card__prices strong { color: var(--bright); }
+
+.popular-game-card__body { min-height: 65px; padding: 10px; }
+.popular-game-card__body h3 { display: -webkit-box; min-height: 32px; margin: 0 0 4px; overflow: hidden; color: var(--bright); font-size: 13px; line-height: 1.24; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.popular-games-section__skeleton { aspect-ratio: 4 / 3; border-radius: 14px; background: linear-gradient(105deg, #101619 20%, #1a2524 40%, #101619 60%); background-size: 200% 100%; animation: lr-shimmer 1.5s ease-in-out infinite alternate; }
+.popular-games-section__message { margin: 0; padding: 24px; border: 1px solid var(--line); border-radius: 14px; color: var(--muted); text-align: center; }
+
+@media (max-width: 720px) {
+  .popular-games-section__header { align-items: flex-start; flex-direction: column; }
+  .popular-games-section__controls { width: 100%; }
+  .popular-games-section__chips { min-width: 0; flex: 1; overflow-x: auto; scrollbar-width: none; }
+  .popular-games-section__chips::-webkit-scrollbar { display: none; }
+  .popular-games-section__row { grid-auto-columns: 42%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popular-game-card,
+  .popular-game-card__art img { transition: none; }
+  .popular-game-card:focus-visible,
+  .popular-game-card:hover { transform: none; }
+}
+
 .home-news-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(280px, .55fr);
