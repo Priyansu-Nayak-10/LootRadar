@@ -71,7 +71,9 @@ export default function TopDeals({ getGameActions, onNavigate, onGameOpen }) {
             <article className="top-deals__card" key={deal.dealID} onClick={() => onGameOpen(deal.title)}>
               <DealArt deal={deal} />
               <div>
-                <span className="lr-badge lr-badge--lime">-{Math.round(Number(deal.savings))}%</span>
+                {Math.round(Number(deal.savings)) >= 5 && (
+                  <span className="lr-badge lr-badge--lime">-{Math.round(Number(deal.savings))}%</span>
+                )}
                 <h3>{deal.title}</h3>
                 <p><del>{money(deal.normalPrice)}</del> <strong>{money(deal.salePrice)}</strong></p>
                 <button type="button" className={`top-deals__wishlist ${actions.wishlisted ? 'is-active' : ''}`} onClick={(event) => { event.stopPropagation(); actions.onToggleWishlist() }} aria-label={`Toggle ${deal.title} wishlist`}>♥</button>

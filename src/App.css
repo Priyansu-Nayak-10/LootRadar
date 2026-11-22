@@ -2461,16 +2461,16 @@ textarea:focus-visible {
 .popular-games-section__kicker {
   grid-column: 1;
   grid-row: 1 / span 2;
-  width: 12px;
-  overflow: hidden;
-  color: transparent;
+  width: auto;
+  overflow: visible;
+  color: var(--lime);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .14em;
 }
 
 .popular-games-section__kicker::after {
-  display: block;
-  color: var(--lime);
-  content: '✦';
-  font-size: 18px;
+  content: none;
 }
 
 .popular-games-section h2 {
@@ -4430,3 +4430,23 @@ textarea:focus-visible {
   min-height: 48px;
   font-size: 13px;
 }
+
+/* Ensure all page containers have ~100px bottom padding so floating bottom nav never covers buttons */
+.free-now-redesign,
+.deals-redesign,
+.discover-page,
+.home-redesign,
+.collections-redesign,
+.wishlist-redesign,
+.game-detail,
+.news-redesign,
+.account-redesign,
+.not-found-redesign {
+  padding-bottom: 100px;
+}
+
+/* Hide floating bottom nav on sign-in / sign-up page */
+body:has(.auth-redesign) .bottom-nav {
+  display: none !important;
+}
+

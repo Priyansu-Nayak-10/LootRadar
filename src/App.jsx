@@ -167,6 +167,11 @@ export default function App() {
         setTab('discover')
         return
       }
+      if (route === 'signin' || route === 'signup') {
+        window.history.replaceState({}, '', '/account')
+        setTab('account')
+        return
+      }
       if (route === 'coming' || route === 'always') {
         const nextFreeTab = route === 'coming' ? 'coming' : 'always'
         window.history.replaceState({}, '', `/free?tab=${nextFreeTab}`)
@@ -521,7 +526,7 @@ export default function App() {
         </a>
       </footer>
 
-      {tab !== 'not-found' && !(tab === 'account' && !session) && <nav className="bottom-nav" aria-label="Main navigation">
+      {tab !== 'not-found' && !(tab === 'account' && !session) && tab !== 'signin' && tab !== 'signup' && <nav className="bottom-nav" aria-label="Main navigation">
         {TABS.map((t) => (
           <button
             key={t.id}

@@ -18,8 +18,153 @@ function alertSummary(game) {
   return alerts.length ? alerts.join(' · ') : 'No price alerts'
 }
 
-export default function Wishlist({ games, setGames, freeGames, deals, session, onNavigate, onGameOpen }) {
+function WishlistCard({
+  game,
+  deal,
+  freeGame,
+  storeMap,
+  onGameOpen,
+  onRemove,
+  onUpdate,
+}) {
+  const [imgFailed, setImgFailed] = useState(false)
+  const isFree = Boolean(freeGame)
+  const coverImage = (!imgFailed && (game.image || deal?.thumb || freeGame?.thumbnail)) || ''
+
+  const priceLabel = isFree
+    ? 'Free now'
+    : deal
+      ? formatUsd(deal.salePrice)
+      : 'Not released'
+
+  const storeLabel = deal
+    ? (deal.storeName || storeMap.get(String(deal.storeID)) || 'Steam')
+    : isFree
+      ? (freeGame?.platforms || game.platform || 'Current giveaway')
+      : (game.platform || 'Store TBA')
+
+  return (
+    <article
+      className="wishlist-detail-card"
+      onClick={() => onGameOpen(game.title)}
+    >
+      {coverImage ? (
+        <img
+          src={coverImage}
+          alt={game.title}
+          loading="lazy"
+          decoding="async"
+          onError={() => setImgFailed(true)}
+          className="wishlist-detail-card__image"
+        />
+      ) : (
+        <div className="wishlist-detail-card__fallback" aria-hidden="true">
+          {game.title.slice(0, 1).toUpperCase()}
+        </div>
+      )}
+      <div className="wishlist-detail-card__content">
+        <div className="wishlist-detail-card__heading">
+          <h2>{game.title}</h2>
+          <button
+            type="button"
+            className="wishlist-remove"
+            onClick={(event) => {
+              event.stopPropagation()
+              onRemove(game.title)
+            }}
+          >
+            Remove
+          </button>
+        </div>
+        <p className="wishlist-detail-card__platform">{game.platform || 'Platform not set'}</p>
+        <dl className="wishlist-detail-card__facts">
+          <div>
+            <dt>Best price</dt>
+            <dd style={{ color: isFree || deal ? 'var(--lime)' : 'inherit', fontWeight: 750 }}>
+              {priceLabel}
+            </dd>
+          </div>
+          <div>
+            <dt>Store</dt>
+            <dd>{storeLabel}</dd>
+          </div>
+          <div>
+            <dt>Alerts</dt>
+            <dd>{alertSummary(game)}</dd>
+          </div>
+        </dl>
+        <fieldset
+          className="wishlist-alert-settings"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <legend>Alert settings</legend>
+          <label>
+            <input
+              type="checkbox"
+              checked={game.alertOnFree !== false}
+              onChange={(event) => onUpdate(game.title, { alertOnFree: event.target.checked })}
+            />{' '}
+            Notify when free
+          </label>
+          <label>
+            Discount at least{' '}
+            <input
+              type="number"
+              min="1"
+              max="100"
+              placeholder="%"
+              value={game.alertDiscountPercent ?? ''}
+              onChange={(event) => onUpdate(game.title, { alertDiscountPercent: event.target.value })}
+            />
+          </label>
+          <label>
+            Target price{' '}
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="USD"
+              value={game.alertTargetPrice ?? ''}
+              onChange={(event) => onUpdate(game.title, { alertTargetPrice: event.target.value })}
+            />
+          </label>
+        </fieldset>
+      </div>
+    </article>
+  )
+}
+
+export default function Wishlist({ games, setGames, freeGames = [], deals = [], session, onNavigate, onGameOpen }) {
   const [telegramConnected, setTelegramConnected] = useState(false)
+  const [snapshotStores, setSnapshotStores] = useState([])
+  const [snapshotDeals, setSnapshotDeals] = useState([])
+  const [snapshotFree, setSnapshotFree] = useState([])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/data/cheapshark-deals.json')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && data) {
+          if (Array.isArray(data.stores)) setSnapshotStores(data.stores)
+          if (Array.isArray(data.deals)) setSnapshotDeals(data.deals)
+        }
+      })
+      .catch(() => {})
+
+    fetch('/data/gamerpower-free-games.json')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && data && Array.isArray(data.games)) {
+          setSnapshotFree(data.games)
+        }
+      })
+      .catch(() => {})
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     if (!session || !supabase) {
@@ -33,17 +178,47 @@ export default function Wishlist({ games, setGames, freeGames, deals, session, o
     return () => { cancelled = true }
   }, [session])
 
+  const storeMap = useMemo(() => {
+    const map = new Map()
+    snapshotStores.forEach((s) => map.set(String(s.storeID), s.storeName))
+    return map
+  }, [snapshotStores])
+
+  const combinedDeals = useMemo(() => {
+    const list = Array.isArray(deals) ? [...deals] : []
+    const existing = new Set(list.map((d) => d.dealID))
+    for (const d of snapshotDeals) {
+      if (!existing.has(d.dealID)) list.push(d)
+    }
+    return list
+  }, [deals, snapshotDeals])
+
+  const combinedFreeGames = useMemo(() => {
+    const list = Array.isArray(freeGames) ? [...freeGames] : []
+    const existing = new Set(list.map((g) => g.id))
+    for (const g of snapshotFree) {
+      if (!existing.has(g.id)) list.push(g)
+    }
+    return list
+  }, [freeGames, snapshotFree])
+
   const dealsByTitle = useMemo(() => {
     const match = new Map()
-    deals.forEach((deal) => {
+    combinedDeals.forEach((deal) => {
       const key = titleKey(deal.title)
       const existing = match.get(key)
       if (!existing || Number(deal.salePrice) < Number(existing.salePrice)) match.set(key, deal)
     })
     return match
-  }, [deals])
+  }, [combinedDeals])
 
-  const freeTitles = useMemo(() => new Set(freeGames.map((game) => titleKey(game.title))), [freeGames])
+  const freeByTitle = useMemo(() => {
+    const match = new Map()
+    combinedFreeGames.forEach((game) => {
+      match.set(titleKey(game.title), game)
+    })
+    return match
+  }, [combinedFreeGames])
 
   function updateGame(title, updates) {
     setGames((current) => current.map((game) => titleKey(game.title) === titleKey(title) ? { ...game, ...updates } : game))
@@ -71,22 +246,19 @@ export default function Wishlist({ games, setGames, freeGames, deals, session, o
         <div className="wishlist-detail-grid">
           {games.map((game, index) => {
             const deal = dealsByTitle.get(titleKey(game.title))
-            const isFree = freeTitles.has(titleKey(game.title))
-            const priceLabel = isFree ? 'Free now' : deal ? formatUsd(deal.salePrice) : 'Not released'
-            const storeLabel = isFree ? 'Current giveaway' : deal ? 'CheapShark deal' : 'No current store price'
-            return <article key={`${titleKey(game.title)}-${index}`} className="wishlist-detail-card" onClick={() => onGameOpen(game.title)}>
-              {game.image ? <img src={game.image} alt="" loading="lazy" /> : <div className="wishlist-detail-card__fallback" aria-hidden="true">{game.title.slice(0, 1).toUpperCase()}</div>}
-              <div className="wishlist-detail-card__content">
-                <div className="wishlist-detail-card__heading"><h2>{game.title}</h2><button type="button" className="wishlist-remove" onClick={(event) => { event.stopPropagation(); removeGame(game.title) }}>Remove</button></div>
-                <p className="wishlist-detail-card__platform">{game.platform || 'Platform not set'}</p>
-                <dl className="wishlist-detail-card__facts"><div><dt>Best price</dt><dd>{priceLabel}</dd></div><div><dt>Store</dt><dd>{storeLabel}</dd></div><div><dt>Alerts</dt><dd>{alertSummary(game)}</dd></div></dl>
-                <fieldset className="wishlist-alert-settings" onClick={(event) => event.stopPropagation()}><legend>Alert settings</legend>
-                  <label><input type="checkbox" checked={game.alertOnFree !== false} onChange={(event) => updateGame(game.title, { alertOnFree: event.target.checked })} /> Notify when free</label>
-                  <label>Discount at least <input type="number" min="1" max="100" placeholder="%" value={game.alertDiscountPercent ?? ''} onChange={(event) => updateGame(game.title, { alertDiscountPercent: event.target.value })} /></label>
-                  <label>Target price <input type="number" min="0" step="0.01" placeholder="USD" value={game.alertTargetPrice ?? ''} onChange={(event) => updateGame(game.title, { alertTargetPrice: event.target.value })} /></label>
-                </fieldset>
-              </div>
-            </article>
+            const freeGame = freeByTitle.get(titleKey(game.title))
+            return (
+              <WishlistCard
+                key={`${titleKey(game.title)}-${index}`}
+                game={game}
+                deal={deal}
+                freeGame={freeGame}
+                storeMap={storeMap}
+                onGameOpen={onGameOpen}
+                onRemove={removeGame}
+                onUpdate={updateGame}
+              />
+            )
           })}
         </div>
       )}
