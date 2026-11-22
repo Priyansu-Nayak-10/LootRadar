@@ -4158,3 +4158,27 @@ textarea:focus-visible {
   color: var(--muted);
   line-height: 1.55;
 }
+
+/* Keep the command-center grid after the base Home rules so desktop wins the cascade. */
+@media (min-width: 981px) {
+  .home-redesign {
+    grid-template-columns: minmax(0, 1.18fr) minmax(260px, .72fr) minmax(260px, .72fr);
+    gap: 16px;
+  }
+
+  .home-feature-grid,
+  .popular-games-section {
+    grid-column: 1 / -1;
+  }
+
+  .home-news-grid {
+    grid-column: 1;
+    align-self: stretch;
+  }
+
+  .home-bottom-grid {
+    grid-column: 2 / -1;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-self: stretch;
+  }
+}
