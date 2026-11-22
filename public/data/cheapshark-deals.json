@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T00:32:56.932Z",
+  "generatedAt": "2026-11-22T07:39:42.203Z",
   "source": "CheapShark",
   "sourceUrl": "https://www.cheapshark.com",
   "stores": [
@@ -291,7 +291,7 @@
     {
       "internalName": "IHAS",
       "title": "IHAS",
-      "metacriticLink": "/game/ihas/",
+      "metacriticLink": "/game/ihas-2/",
       "dealID": "sq6itR7%2FJPk%2BQzQJ2qTalr3yaYqsTIJaTmE2SioZikM%3D",
       "storeID": "23",
       "gameID": "295038",
@@ -304,7 +304,7 @@
       "steamRatingPercent": "0",
       "steamRatingCount": "0",
       "steamAppID": null,
-      "releaseDate": 1732147200,
+      "releaseDate": 1750118400,
       "lastChange": 1734089890,
       "dealRating": "0.0",
       "thumb": "https://sttc.gamersgate.com/images/product/ihas/cover-180-8b9dc5.jpg"
@@ -827,11 +827,11 @@
       "metacriticScore": "75",
       "steamRatingText": "Overwhelmingly Positive",
       "steamRatingPercent": "97",
-      "steamRatingCount": "4039",
+      "steamRatingCount": "4038",
       "steamAppID": "348550",
       "releaseDate": 1432598400,
       "lastChange": 1794909238,
-      "dealRating": "0.6",
+      "dealRating": "0.5",
       "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/348550/capsule_231x87.jpg?t=1667365243"
     },
     {
@@ -917,27 +917,6 @@
       "lastChange": 1793701168,
       "dealRating": "0.0",
       "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2488890/capsule_231x87.jpg?t=1705075467"
-    },
-    {
-      "internalName": "DOKIMON",
-      "title": "Dokimon",
-      "metacriticLink": null,
-      "dealID": "yiHo5EtzmYPHt1716UnfmLwVWZBIO%2BuiuDDRbL5L%2B9Q%3D",
-      "storeID": "15",
-      "gameID": "323838",
-      "salePrice": "14.69",
-      "normalPrice": "14.99",
-      "isOnSale": "1",
-      "savings": "2.001334",
-      "metacriticScore": "0",
-      "steamRatingText": null,
-      "steamRatingPercent": "0",
-      "steamRatingCount": "0",
-      "steamAppID": null,
-      "releaseDate": 0,
-      "lastChange": 1793700837,
-      "dealRating": "0.0",
-      "thumb": "https://sttc.gamersgate.com/images/product/dokimon/cover-180-9b952a.jpg"
     },
     {
       "internalName": "PANPAN",
@@ -1316,6 +1295,27 @@
       "lastChange": 1793701591,
       "dealRating": "0.0",
       "thumb": "https://cdn.fanatical.com/production/product/400x225/9ddb4181-738e-4c28-8d99-46b7b066e1e6.jpg"
+    },
+    {
+      "internalName": "SHELTER",
+      "title": "Shelter",
+      "metacriticLink": "/game/shelter/",
+      "dealID": "1IbniFx8AnZaBmm%2FGnTLJ36Bn7d9JPlybdbsJB2K9Zw%3D",
+      "storeID": "15",
+      "gameID": "101185",
+      "salePrice": "9.79",
+      "normalPrice": "9.99",
+      "isOnSale": "1",
+      "savings": "2.002002",
+      "metacriticScore": "69",
+      "steamRatingText": "Very Positive",
+      "steamRatingPercent": "85",
+      "steamRatingCount": "1538",
+      "steamAppID": "244710",
+      "releaseDate": 1377648000,
+      "lastChange": 1793701523,
+      "dealRating": "0.0",
+      "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/244710/capsule_231x87.jpg?t=1737643204"
     }
   ]
 }

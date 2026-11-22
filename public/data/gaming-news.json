@@ -1,7 +1,25 @@
 {
-  "generatedAt": "2026-11-22T00:32:57.195Z",
+  "generatedAt": "2026-11-22T07:39:42.338Z",
   "source": "LootRadar RSS aggregation",
   "articles": [
+    {
+      "id": "https://www.ign.com/articles/piranha-plant-slippers-amazon-black-friday-deal-2026|Sun, 22 Nov 2026 05:08:36 +0000",
+      "title": "These Piranha Plant Slippers Double as Mario-themed Decor When You Put Them Away",
+      "link": "https://www.ign.com/articles/piranha-plant-slippers-amazon-black-friday-deal-2026",
+      "summary": "",
+      "publishedAt": "Sun, 22 Nov 2026 05:08:36 +0000",
+      "image": "https://assets-prd.ignimgs.com/2026/11/22/ign-headline-template-2026-9-2-1795323508266.jpg",
+      "source": "IGN"
+    },
+    {
+      "id": "https://www.pcgamer.com/games/baldurs-gate/astarions-baldurs-gate-3-prequel-novel-infuriated-fans-now-its-shadowhearts-turn/|Sun, 22 Nov 2026 03:03:45 +0000",
+      "title": "Astarion's Baldur's Gate 3 prequel novel infuriated fans, now it's Shadowheart's turn",
+      "link": "https://www.pcgamer.com/games/baldurs-gate/astarions-baldurs-gate-3-prequel-novel-infuriated-fans-now-its-shadowhearts-turn/",
+      "summary": "Her book's being written by award-winning author Tasha Suri.",
+      "publishedAt": "Sun, 22 Nov 2026 03:03:45 +0000",
+      "image": "https://cdn.mos.cms.futurecdn.net/ZzLc6TsxfGskr3J8FoCT7G-1920-80.jpg",
+      "source": "PC Gamer"
+    },
     {
       "id": "https://www.ign.com/articles/the-binding-of-isaac-dev-removes-undisclosed-ai-generated-music-from-repentance-following-creator-response-review-bombing|Sat, 21 Nov 2026 23:42:05 +0000",
       "title": "The Binding of Isaac Dev Removes Undisclosed AI-Generated Music From Repentance+ Following Creator Response, Review-Bombing",
@@ -67,9 +85,9 @@
     },
     {
       "id": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-protective-custody-choice-proceed-or-postpone-meet-abe/|Sat, 21 Nov 2026 20:32:43 +0000",
-      "title": "Should you proceed or postpone when you meet Abe in the Protective Custody mission in GTA 6?",
+      "title": "GTA 6 Protective Custody: Should you choose proceed or postpone when you go to meet Abe?",
       "link": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-protective-custody-choice-proceed-or-postpone-meet-abe/",
-      "summary": "In the Chapter 5 mission, should you meet with your lawyer now or wait and do it later?",
+      "summary": "Meet with your lawyer or wait and do it later?",
       "publishedAt": "Sat, 21 Nov 2026 20:32:43 +0000",
       "image": "https://cdn.mos.cms.futurecdn.net/7KiM9WgPTcRophKnNZkU8k-1920-80.jpg",
       "source": "PC Gamer"
@@ -183,15 +201,6 @@
       "source": "PC Gamer"
     },
     {
-      "id": "https://www.pcgamer.com/games/as-a-kid-i-didnt-have-a-monster-in-my-attic-i-had-a-lan/|Sat, 21 Nov 2026 16:00:00 +0000",
-      "title": "As a kid, I didn't have a monster in my attic, I had a LAN",
-      "link": "https://www.pcgamer.com/games/as-a-kid-i-didnt-have-a-monster-in-my-attic-i-had-a-lan/",
-      "summary": "I'm not boasting. OK, I am a bit.",
-      "publishedAt": "Sat, 21 Nov 2026 16:00:00 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/Kc7gddwixwFSdNyg4DfmM9-1920-80.jpg",
-      "source": "PC Gamer"
-    },
-    {
       "id": "https://www.ign.com/articles/gta-6s-weirdest-cow-shows-why-you-should-pause-the-story-early-to-explore-its-vast-map|Sat, 21 Nov 2026 13:30:00 +0000",
       "title": "GTA 6’s Weirdest Cow Shows Why You Should Pause the Story Early To Explore Its Vast Map",
       "link": "https://www.ign.com/articles/gta-6s-weirdest-cow-shows-why-you-should-pause-the-story-early-to-explore-its-vast-map",
@@ -216,15 +225,6 @@
       "summary": "The Hunger Games: Sunrise on the Reaping ending explained: We take a look at the latest entry in the franchise and examine the cardinal sin of prequels.",
       "publishedAt": "Sat, 21 Nov 2026 13:00:00 +0000",
       "image": "https://assets-prd.ignimgs.com/2026/11/21/hunger-games-sunrise-thumb-1795219248912.jpg",
-      "source": "IGN"
-    },
-    {
-      "id": "https://www.ign.com/articles/gta-6-players-are-running-into-npcs-who-fight-back-so-hard-you-probably-should-just-leave-them-alone|Sat, 21 Nov 2026 12:17:40 +0000",
-      "title": "GTA 6 Players Are Running Into NPCs Who Fight Back So Hard You Probably Should Just Leave Them Alone",
-      "link": "https://www.ign.com/articles/gta-6-players-are-running-into-npcs-who-fight-back-so-hard-you-probably-should-just-leave-them-alone",
-      "summary": "Just like in real life, there are some people you really shouldn’t mess with in GTA 6. It’s not always easy to tell at a glance either. Books, covers, and all that.",
-      "publishedAt": "Sat, 21 Nov 2026 12:17:40 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/21/gtavi-56-1795263173286.jpg",
       "source": "IGN"
     },
     {
