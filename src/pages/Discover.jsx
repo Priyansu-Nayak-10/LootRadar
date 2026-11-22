@@ -193,6 +193,8 @@ function HomeRedesign({
   const [heroPaused, setHeroPaused] = useState(false)
   const heroCarouselRef = useRef(null)
   const wrapTimerRef = useRef(null)
+  const newsPanelRef = useRef(null)
+  const [newsPanelHeight, setNewsPanelHeight] = useState(null)
   const heroGames = trending.slice(0, 5)
 
   useEffect(() => {
@@ -226,6 +228,21 @@ function HomeRedesign({
     setHeroIndex(index)
     carousel.scrollTo({ left: index * carousel.clientWidth, behavior: 'smooth' })
   }
+
+  useEffect(() => {
+    const panel = newsPanelRef.current
+    if (!panel || typeof ResizeObserver === 'undefined') return undefined
+
+    const syncPanelHeight = () => setNewsPanelHeight(Math.ceil(panel.getBoundingClientRect().height))
+    const observer = new ResizeObserver(syncPanelHeight)
+    syncPanelHeight()
+    observer.observe(panel)
+    return () => observer.disconnect()
+  }, [])
+
+  const matchedNewsPanelStyle = newsPanelHeight
+    ? { '--home-news-panel-height': `${newsPanelHeight}px` }
+    : undefined
 
   return (
     <div className="discover-page home-redesign">
@@ -367,7 +384,7 @@ function HomeRedesign({
 
       <PopularGames getGameActions={getGameActions} hasRawgKey={hasKey} />
 
-      <section className="discover-section home-news-grid">
+      <section className="discover-section home-news-grid" ref={newsPanelRef}>
         <div className="lr-section-heading">
           <div className="lr-section-heading__copy">
             <span className="lr-section-heading__kicker">LATEST FROM THE INDUSTRY</span>
@@ -403,7 +420,7 @@ function HomeRedesign({
       </section>
 
       <>
-        <div className="home-quick-access">
+        <div className="home-quick-access" style={matchedNewsPanelStyle}>
           <div className="lr-section-heading">
             <div className="lr-section-heading__copy">
               <span className="lr-section-heading__kicker">EXPLORE</span>
@@ -417,7 +434,7 @@ function HomeRedesign({
             <button type="button" onClick={() => onNavigate('discover')}><span>04</span><strong>Top Charts</strong></button>
           </div>
         </div>
-        <button type="button" className="home-promo-banner" onClick={() => onNavigate('account')}>
+        <button type="button" className="home-promo-banner" style={matchedNewsPanelStyle} onClick={() => onNavigate('account')}>
           {lootRadarArt.promo.src ? <img src={lootRadarArt.promo.src} alt={lootRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
           <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Connect Telegram</em></span>
         </button>
