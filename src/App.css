@@ -4204,10 +4204,6 @@ textarea:focus-visible {
     grid-column: 1 / -1;
   }
 
-  .home-bottom-grid {
-    display: contents;
-  }
-
   .home-news-grid {
     grid-column: 1;
     align-self: stretch;

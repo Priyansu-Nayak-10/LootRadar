@@ -402,7 +402,7 @@ function HomeRedesign({
         )}
       </section>
 
-      <section className="home-bottom-grid">
+      <>
         <div className="home-quick-access">
           <div className="lr-section-heading">
             <div className="lr-section-heading__copy">
@@ -421,7 +421,7 @@ function HomeRedesign({
           {lootRadarArt.promo.src ? <img src={lootRadarArt.promo.src} alt={lootRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
           <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Connect Telegram</em></span>
         </button>
-      </section>
+      </>
     </div>
   )
 }
