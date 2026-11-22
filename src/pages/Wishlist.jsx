@@ -18,7 +18,7 @@ function alertSummary(game) {
   return alerts.length ? alerts.join(' · ') : 'No price alerts'
 }
 
-export default function Wishlist({ games, setGames, freeGames, deals, session, onNavigate }) {
+export default function Wishlist({ games, setGames, freeGames, deals, session, onNavigate, onGameOpen }) {
   const [telegramConnected, setTelegramConnected] = useState(false)
 
   useEffect(() => {
@@ -74,13 +74,13 @@ export default function Wishlist({ games, setGames, freeGames, deals, session, o
             const isFree = freeTitles.has(titleKey(game.title))
             const priceLabel = isFree ? 'Free now' : deal ? formatUsd(deal.salePrice) : 'Not released'
             const storeLabel = isFree ? 'Current giveaway' : deal ? 'CheapShark deal' : 'No current store price'
-            return <article key={`${titleKey(game.title)}-${index}`} className="wishlist-detail-card">
+            return <article key={`${titleKey(game.title)}-${index}`} className="wishlist-detail-card" onClick={() => onGameOpen(game.title)}>
               {game.image ? <img src={game.image} alt="" loading="lazy" /> : <div className="wishlist-detail-card__fallback" aria-hidden="true">{game.title.slice(0, 1).toUpperCase()}</div>}
               <div className="wishlist-detail-card__content">
-                <div className="wishlist-detail-card__heading"><h2>{game.title}</h2><button type="button" className="wishlist-remove" onClick={() => removeGame(game.title)}>Remove</button></div>
+                <div className="wishlist-detail-card__heading"><h2>{game.title}</h2><button type="button" className="wishlist-remove" onClick={(event) => { event.stopPropagation(); removeGame(game.title) }}>Remove</button></div>
                 <p className="wishlist-detail-card__platform">{game.platform || 'Platform not set'}</p>
                 <dl className="wishlist-detail-card__facts"><div><dt>Best price</dt><dd>{priceLabel}</dd></div><div><dt>Store</dt><dd>{storeLabel}</dd></div><div><dt>Alerts</dt><dd>{alertSummary(game)}</dd></div></dl>
-                <fieldset className="wishlist-alert-settings"><legend>Alert settings</legend>
+                <fieldset className="wishlist-alert-settings" onClick={(event) => event.stopPropagation()}><legend>Alert settings</legend>
                   <label><input type="checkbox" checked={game.alertOnFree !== false} onChange={(event) => updateGame(game.title, { alertOnFree: event.target.checked })} /> Notify when free</label>
                   <label>Discount at least <input type="number" min="1" max="100" placeholder="%" value={game.alertDiscountPercent ?? ''} onChange={(event) => updateGame(game.title, { alertDiscountPercent: event.target.value })} /></label>
                   <label>Target price <input type="number" min="0" step="0.01" placeholder="USD" value={game.alertTargetPrice ?? ''} onChange={(event) => updateGame(game.title, { alertTargetPrice: event.target.value })} /></label>

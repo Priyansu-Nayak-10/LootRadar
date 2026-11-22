@@ -5,7 +5,7 @@ function money(value) {
   return Number.isFinite(amount) ? `$${amount.toFixed(2)}` : ''
 }
 
-export default function TopDeals({ getGameActions, onNavigate }) {
+export default function TopDeals({ getGameActions, onNavigate, onGameOpen }) {
   const [deals, setDeals] = useState([])
 
   useEffect(() => {
@@ -35,13 +35,13 @@ export default function TopDeals({ getGameActions, onNavigate }) {
         {topDeals.map((deal) => {
           const actions = getGameActions({ title: deal.title, platform: 'PC', image: deal.thumb, source: 'deal', sourceId: deal.dealID })
           return (
-            <article className="top-deals__card" key={deal.dealID}>
+            <article className="top-deals__card" key={deal.dealID} onClick={() => onGameOpen(deal.title)}>
               {deal.thumb ? <img src={deal.thumb} alt="" loading="lazy" /> : <div className="lr-art-fallback">DEAL</div>}
               <div>
                 <span className="lr-badge lr-badge--lime">-{Math.round(Number(deal.savings))}%</span>
                 <h3>{deal.title}</h3>
                 <p><del>{money(deal.normalPrice)}</del> <strong>{money(deal.salePrice)}</strong></p>
-                <button type="button" className={`top-deals__wishlist ${actions.wishlisted ? 'is-active' : ''}`} onClick={actions.onToggleWishlist} aria-label={`Toggle ${deal.title} wishlist`}>♥</button>
+                <button type="button" className={`top-deals__wishlist ${actions.wishlisted ? 'is-active' : ''}`} onClick={(event) => { event.stopPropagation(); actions.onToggleWishlist() }} aria-label={`Toggle ${deal.title} wishlist`}>♥</button>
               </div>
             </article>
           )

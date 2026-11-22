@@ -189,6 +189,7 @@ function HomeRedesign({
   searchResults,
   hasKey,
   session,
+  onGameOpen,
 }) {
   const [heroIndex, setHeroIndex] = useState(0)
   const [heroPaused, setHeroPaused] = useState(false)
@@ -353,10 +354,10 @@ function HomeRedesign({
             </div>
             {freeGames.length > 0 ? (
               <div className="home-feature-free-list">
-                {freeGames.slice(0, 5).map((game) => <div className="home-feature-free" key={game.id}>
+                {freeGames.slice(0, 5).map((game) => <button type="button" className="home-feature-free" key={game.id} onClick={() => onGameOpen(game.title)}>
                   {game.thumbnail ? <img src={game.thumbnail} alt={game.title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
                   <span><strong>{game.title}</strong><small>{formatCountdown(game.end_date)}</small></span>
-                </div>)}
+                </button>)}
                 <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('free')}>View All</button>
               </div>
             ) : (
@@ -366,7 +367,7 @@ function HomeRedesign({
         </aside>
       </section>
 
-      <TopDeals getGameActions={getGameActions} onNavigate={onNavigate} />
+      <TopDeals getGameActions={getGameActions} onNavigate={onNavigate} onGameOpen={onGameOpen} />
 
       <section className="discover-section home-news-grid" ref={newsPanelRef}>
         <div className="lr-section-heading">
@@ -415,7 +416,7 @@ function HomeRedesign({
   )
 }
 
-export default function Discover({ library, wishlist, session, getGameActions, onNavigate }) {
+export default function Discover({ library, wishlist, session, getGameActions, onNavigate, onGameOpen }) {
   const [trending, setTrending] = useState([])
   const [catalogError, setCatalogError] = useState('')
   const [news, setNews] = useState([])
@@ -579,6 +580,7 @@ export default function Discover({ library, wishlist, session, getGameActions, o
       searchResults={searchResults}
       hasKey={hasRawgKey}
       session={session}
+      onGameOpen={onGameOpen}
     />
   )
 

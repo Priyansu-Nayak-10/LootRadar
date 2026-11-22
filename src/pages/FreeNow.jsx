@@ -31,7 +31,7 @@ function SkeletonCard() {
   )
 }
 
-function GameCard({ game, now, getGameActions }) {
+function GameCard({ game, now, getGameActions, onGameOpen }) {
   const left = timeLeft(game.end_date, now)
   const actions = getGameActions({
     title: game.title,
@@ -41,7 +41,7 @@ function GameCard({ game, now, getGameActions }) {
     sourceId: game.id,
   })
   return (
-    <article className="lr-game-card free-now-card">
+    <article className="lr-game-card free-now-card" onClick={() => onGameOpen(game.title)}>
       {game.thumbnail ? (
         <img
           src={game.thumbnail}
@@ -64,11 +64,12 @@ function GameCard({ game, now, getGameActions }) {
           <p className="free-now-card__worth">Usually {game.worth} USD</p>
         )}
         <div className="free-now-card__actions">
-          <button type="button" className={`free-now-owned-icon ${actions.owned ? 'is-owned' : ''}`} onClick={actions.onToggleOwned} aria-label={actions.owned ? `Remove ${game.title} from owned games` : `Mark ${game.title} as owned`} title={actions.owned ? 'Owned' : 'Mark as owned'}>✓</button>
-          <button type="button" className="game-action" onClick={actions.onToggleWishlist}>{actions.wishlisted ? 'Wishlisted' : 'Add to wishlist'}</button>
+          <button type="button" className={`free-now-owned-icon ${actions.owned ? 'is-owned' : ''}`} onClick={(event) => { event.stopPropagation(); actions.onToggleOwned() }} aria-label={actions.owned ? `Remove ${game.title} from owned games` : `Mark ${game.title} as owned`} title={actions.owned ? 'Owned' : 'Mark as owned'}>✓</button>
+          <button type="button" className="game-action" onClick={(event) => { event.stopPropagation(); actions.onToggleWishlist() }}>{actions.wishlisted ? 'Wishlisted' : 'Add to wishlist'}</button>
         </div>
         <a
           href={game.open_giveaway_url}
+          onClick={(event) => event.stopPropagation()}
           target="_blank"
           rel="noreferrer"
           className="lr-button free-now-card__cta"
@@ -80,7 +81,7 @@ function GameCard({ game, now, getGameActions }) {
   )
 }
 
-export default function FreeNow({ getGameActions, onAvailabilityChange, activeTab = 'claim', onTabChange }) {
+export default function FreeNow({ getGameActions, onAvailabilityChange, activeTab = 'claim', onTabChange, onGameOpen }) {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -209,6 +210,7 @@ export default function FreeNow({ getGameActions, onAvailabilityChange, activeTa
                   game={g}
                   now={now}
                   getGameActions={getGameActions}
+                  onGameOpen={onGameOpen}
                 />
               ))}
         </div>

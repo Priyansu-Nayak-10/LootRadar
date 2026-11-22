@@ -17,7 +17,7 @@ function formatPrice(amount, currency, inrRate) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency === 'INR' && inrRate ? 'INR' : 'USD', maximumFractionDigits: 2 }).format(displayValue)
 }
 
-function DealCard({ deal, storeName, getGameActions, currency, inrRate }) {
+function DealCard({ deal, storeName, getGameActions, currency, inrRate, onGameOpen }) {
   const discount = Math.round(Number(deal.savings))
   const historicalLow = Number(deal.lowestPrice ?? deal.lowest_price ?? deal.historicalLow)
   const isHistoricalLow = Number.isFinite(historicalLow) && Math.abs(Number(deal.salePrice) - historicalLow) < 0.005
@@ -30,7 +30,7 @@ function DealCard({ deal, storeName, getGameActions, currency, inrRate }) {
     sourceId: deal.dealID,
   })
   return (
-    <article className="lr-game-card deals-card">
+    <article className="lr-game-card deals-card" onClick={() => onGameOpen(deal.title)}>
       {image ? (
         <img
           src={image}
@@ -65,9 +65,10 @@ function DealCard({ deal, storeName, getGameActions, currency, inrRate }) {
             {formatPrice(deal.salePrice, currency, inrRate)}
           </span>
         </div>
-        <GameActions {...actions} />
+        <div onClick={(event) => event.stopPropagation()}><GameActions {...actions} /></div>
         <a
           href={`${BASE}/redirect?dealID=${deal.dealID}`}
+          onClick={(event) => event.stopPropagation()}
           target="_blank"
           rel="noreferrer"
           className="lr-button lr-button--secondary deals-card__cta"
@@ -82,7 +83,7 @@ function DealCard({ deal, storeName, getGameActions, currency, inrRate }) {
 const selectClass =
   'filter-select'
 
-export default function Deals({ getGameActions, onAvailabilityChange }) {
+export default function Deals({ getGameActions, onAvailabilityChange, onGameOpen }) {
   const [stores, setStores] = useState([])
   const [store, setStore] = useState('')
   const [maxPrice, setMaxPrice] = useState(100)
@@ -255,6 +256,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
                 getGameActions={getGameActions}
                 currency={currency}
                 inrRate={inrRate}
+                onGameOpen={onGameOpen}
               />
             ))}
       </div>
