@@ -419,7 +419,7 @@ function HomeRedesign({
         </div>
         <button type="button" className="home-promo-banner" onClick={() => onNavigate('account')}>
           {lootRadarArt.promo.src ? <img src={lootRadarArt.promo.src} alt={lootRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
-          <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Open Telegram settings →</em></span>
+          <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Connect Telegram</em></span>
         </button>
       </section>
     </div>
