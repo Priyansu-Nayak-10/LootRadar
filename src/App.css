@@ -2410,58 +2410,6 @@ textarea:focus-visible {
   }
 }
 
-/* Make the three panels beneath Popular Games share one desktop row and height. */
-@media (min-width: 981px) {
-  .home-bottom-grid {
-    display: contents;
-  }
-
-  .home-news-grid {
-    grid-column: 1;
-  }
-
-  .home-quick-access {
-    grid-column: 2;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .home-quick-grid {
-    min-height: 0;
-    flex: 1;
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-  }
-
-  .home-quick-grid button {
-    min-height: 0;
-  }
-
-  .home-promo-banner {
-    grid-column: 3;
-    min-height: 0;
-  }
-}
-
-/* The Telegram call to action needs visible, usable button text. */
-.home-promo-banner em {
-  width: fit-content;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 16px;
-  border-radius: 13px;
-  color: #11170a;
-  background: var(--lime);
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 850;
-}
-
-.home-promo-banner em::before {
-  content: none;
-}
-
 .home-redesign {
   gap: 16px;
 }
@@ -4244,7 +4192,7 @@ textarea:focus-visible {
   line-height: 1.55;
 }
 
-/* Keep the command-center grid after the base Home rules so desktop wins the cascade. */
+/* Final Home layout overrides: these must follow the base Home rules. */
 @media (min-width: 981px) {
   .home-redesign {
     grid-template-columns: minmax(0, 1.18fr) minmax(260px, .72fr) minmax(260px, .72fr);
@@ -4256,14 +4204,53 @@ textarea:focus-visible {
     grid-column: 1 / -1;
   }
 
+  .home-bottom-grid {
+    display: contents;
+  }
+
   .home-news-grid {
     grid-column: 1;
     align-self: stretch;
   }
 
-  .home-bottom-grid {
-    grid-column: 2 / -1;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-self: stretch;
+  .home-quick-access {
+    grid-column: 2;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
+
+  .home-quick-grid {
+    min-height: 0;
+    flex: 1;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-quick-grid button {
+    min-height: 0;
+  }
+
+  .home-promo-banner {
+    grid-column: 3;
+    min-height: 0;
+  }
+}
+
+/* The Telegram call to action needs visible, usable button text. */
+.home-promo-banner em {
+  width: fit-content;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 13px;
+  color: #11170a;
+  background: var(--lime);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.home-promo-banner em::before {
+  content: none;
 }
