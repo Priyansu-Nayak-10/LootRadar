@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
 import { fetchGamingNews, fetchRawgGames, hasRawgKey } from '../lib/discoverApi'
 import GameActions from '../components/GameActions'
 import TopDeals from '../components/TopDeals'
@@ -92,8 +92,8 @@ function GameTile({ game, badge, getGameActions }) {
         <h3 className="game-title">{game.name}</h3>
         <p className="game-platform">
           {formatDate(game.released)}
-          {platform && <span className="discovery-platforms"> · {platform}</span>}
-          {Number(game.rating) > 0 && <span className="discovery-rating">★ {game.rating}</span>}
+          {platform && <span className="discovery-platforms"> Â· {platform}</span>}
+          {Number(game.rating) > 0 && <span className="discovery-rating">â˜… {game.rating}</span>}
         </p>
         <div className="discovery-genres">
           {(game.genres || []).slice(0, 2).map((genre) => (
@@ -300,7 +300,7 @@ function HomeRedesign({
                         {index === 0 ? 'Latest Release' : 'Trending on PC'}
                       </span>
                       <h1>{game.name}</h1>
-                      <p>{formatDate(game.released)}{game.genres?.[0]?.name ? ` · ${game.genres[0].name}` : ''}</p>
+                      <p>{formatDate(game.released)}{game.genres?.[0]?.name ? ` Â· ${game.genres[0].name}` : ''}</p>
                       <a href={`https://rawg.io/games/${game.slug}`} target="_blank" rel="noreferrer" className="lr-button">
                         Explore game
                       </a>
@@ -384,7 +384,7 @@ function HomeRedesign({
             <article className="home-news-feature">
               {news[0].image ? <img src={news[0].image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
               <div>
-                <span>{news[0].source} · {formatRelativeTime(news[0].publishedAt)}</span>
+                <span>{news[0].source} Â· {formatRelativeTime(news[0].publishedAt)}</span>
                 <h3>{decodeText(news[0].title)}</h3>
                 <a href={news[0].link} target="_blank" rel="noreferrer" className="lr-button lr-button--ghost">Read Full Story</a>
               </div>
@@ -393,7 +393,7 @@ function HomeRedesign({
               {news.slice(1, 3).map((article) => (
                 <article key={article.id || article.link}>
                   {article.image ? <img src={article.image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
-                  <div><span>{article.source} · {formatRelativeTime(article.publishedAt)}</span><h3>{decodeText(article.title)}</h3></div>
+                  <div><span>{article.source} Â· {formatRelativeTime(article.publishedAt)}</span><h3>{decodeText(article.title)}</h3></div>
                   <a href={article.link} target="_blank" rel="noreferrer" aria-label={`Read ${article.title}`} />
                 </article>
               ))}
@@ -436,7 +436,6 @@ export default function Discover({ library, wishlist, session, getGameActions, o
   })
   const [freeGames, setFreeGames] = useState([])
   const [upcomingGames, setUpcomingGames] = useState([])
-  const [platformFilter, setPlatformFilter] = useState('All')
   const seedKey = [...wishlist, ...library]
     .map((game) => game.title?.trim().toLowerCase())
     .filter(Boolean)
@@ -582,138 +581,5 @@ export default function Discover({ library, wishlist, session, getGameActions, o
       session={session}
       onGameOpen={onGameOpen}
     />
-  )
-
-  return (
-    <div className="discover-page">
-      {!hasRawgKey && <SetupHint />}
-
-      <section className="discover-section search-section">
-        <div className="discover-section-heading">
-          <div>
-            <span className="discover-kicker">FIND YOUR NEXT FAVORITE</span>
-            <h2>Search games</h2>
-          </div>
-          <span className="discover-heading-note">Search a catalog of 500,000+ games</span>
-        </div>
-        <form className="discover-search" onSubmit={searchGames}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-            <circle cx="10.8" cy="10.8" r="6.8" />
-            <path d="m16 16 4.5 4.5" strokeLinecap="round" />
-          </svg>
-          <input
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search by game title..."
-            aria-label="Search games by title"
-          />
-          <button type="submit" disabled={searchLoading}>
-            {searchLoading ? 'Searching...' : 'Search'}
-          </button>
-        </form>
-        {searchError && <p className="discover-error" role="alert">{searchError}</p>}
-        {searchSubmitted && !searchLoading && !searchError && searchResults.length === 0 && (
-          <p className="discover-empty">No games matched that search. Try another title.</p>
-        )}
-        {searchResults.length > 0 && (
-          <div className="game-grid discover-results">
-            {searchResults.map((game) => <GameTile key={game.id} game={game} getGameActions={getGameActions} />)}
-          </div>
-        )}
-      </section>
-
-      <section className="discover-section">
-        <div className="discover-section-heading">
-          <div>
-            <span className="discover-kicker">THE PC RADAR</span>
-            <h2>Trending on PC</h2>
-          </div>
-          <span className="discover-heading-note">Top 5 from RAWG</span>
-        </div>
-        {catalogError && <p className="discover-error" role="alert">{catalogError}</p>}
-        {trending.length > 0 ? (
-          <div className="trending-carousel">
-            {trending.slice(0, 5).map((game, index) => (
-              <div className="trending-slide" key={game.id}>
-                <GameTile game={game} badge={`0${index + 1}`} getGameActions={getGameActions} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="discover-empty">
-            {hasRawgKey ? 'Trending games will appear here when the catalog loads.' : 'Add your RAWG key to load global trends.'}
-          </p>
-        )}
-      </section>
-
-      <section className="discover-section">
-        <div className="discover-section-heading">
-          <div>
-            <span className="discover-kicker">EXPLORE LOOTRADAR</span>
-            <h2>Section radar</h2>
-          </div>
-          <span className="discover-heading-note">Jump to a full page</span>
-        </div>
-        <div className="home-section-strips">
-          <button type="button" className="home-section-strip" onClick={() => onNavigate('free')}>
-            <span>FREE NOW</span>
-            <strong>{sectionCounts.free}</strong>
-            <small>Limited-time giveaways</small>
-          </button>
-          <button type="button" className="home-section-strip" onClick={() => onNavigate('deals')}>
-            <span>DEALS</span>
-            <strong>{sectionCounts.deals}</strong>
-            <small>PC deals under $15</small>
-          </button>
-          <button type="button" className="home-section-strip" onClick={() => onNavigate('always')}>
-            <span>ALWAYS FREE</span>
-            <strong>{sectionCounts.always}</strong>
-            <small>Free-to-play games</small>
-          </button>
-          <button type="button" className="home-section-strip" onClick={() => onNavigate('coming')}>
-            <span>COMING SOON</span>
-            <strong>{sectionCounts.coming}</strong>
-            <small>Confirmed Epic offers</small>
-          </button>
-        </div>
-      </section>
-
-      <section className="discover-section news-section">
-        <div className="discover-section-heading">
-          <div>
-            <span className="discover-kicker">LATEST FROM THE INDUSTRY</span>
-            <h2>Gaming news</h2>
-          </div>
-          <a href="/data/gaming-news.json" target="_blank" rel="noreferrer" className="discover-heading-link">
-            {newsUpdatedAt ? `Feed updated ${formatNewsDate(newsUpdatedAt)}` : 'Gaming headlines'} <span aria-hidden="true">-&gt;</span>
-          </a>
-        </div>
-        {newsError && <p className="discover-error" role="alert">{newsError}</p>}
-        {newsLoading && news.length === 0 ? (
-          <div className="news-grid">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div className="news-skeleton" key={index} aria-hidden="true" />
-            ))}
-          </div>
-        ) : news.length > 0 ? (
-          <div className="news-grid">
-            {news.map((article) => (
-              <NewsTile
-                key={article.id || article.link}
-                article={{ ...article, title: decodeText(article.title), summary: decodeText(article.summary) }}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="discover-empty">
-            {newsLoading ? 'Loading recent stories...' : 'No recent stories are available right now.'}
-            {!newsLoading && <button type="button" onClick={loadNews}>Retry</button>}
-          </p>
-        )}
-        <p className="discover-source-note">
-          News headlines and summaries from IGN, PC Gamer, and GameSpot RSS feeds; stories open at their original publishers.
-        </p>
-      </section>
-    </div>
   )
 }
