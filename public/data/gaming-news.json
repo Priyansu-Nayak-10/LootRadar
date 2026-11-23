@@ -1,7 +1,43 @@
 {
-  "generatedAt": "2026-11-23T01:53:14.066Z",
+  "generatedAt": "2026-11-23T10:02:42.277Z",
   "source": "LootRadar RSS aggregation",
   "articles": [
+    {
+      "id": "https://www.ign.com/articles/naughty-dog-dev-gta-6-appears-to-him-as-as-a-bugatti-veyron-would-to-a-nervous-victorian-child|Mon, 23 Nov 2026 07:58:42 +0000",
+      "title": "Naughty Dog Dev: GTA 6 Appears to Him ‘as a Bugatti Veyron Would to a Nervous Victorian Child’",
+      "link": "https://www.ign.com/articles/naughty-dog-dev-gta-6-appears-to-him-as-as-a-bugatti-veyron-would-to-a-nervous-victorian-child",
+      "summary": "Developers are stunned at how dramatically advanced GTA 6 is.",
+      "publishedAt": "Mon, 23 Nov 2026 07:58:42 +0000",
+      "image": "https://assets-prd.ignimgs.com/2026/11/18/g-blog-6-1795002008156.jpg",
+      "source": "IGN"
+    },
+    {
+      "id": "https://www.ign.com/articles/robbing-banks-is-a-blast-but-i-wish-there-were-more-houses-to-repair-in-gta-6|Mon, 23 Nov 2026 06:50:14 +0000",
+      "title": "Robbing Banks is a Blast, But I Wish There Were More Houses to Repair in GTA 6",
+      "link": "https://www.ign.com/articles/robbing-banks-is-a-blast-but-i-wish-there-were-more-houses-to-repair-in-gta-6",
+      "summary": "Forget sticking things up with a shotgun, I want to fix things up with a nailgun.",
+      "publishedAt": "Mon, 23 Nov 2026 06:50:14 +0000",
+      "image": "https://assets-prd.ignimgs.com/2026/11/23/gta6-roofrepair-blogroll-1795414510325.jpg",
+      "source": "IGN"
+    },
+    {
+      "id": "https://www.ign.com/articles/the-marvel-art-of-peach-momoko-preview|Mon, 23 Nov 2026 05:00:00 +0000",
+      "title": "The Marvel Art of Peach Momoko Offers an Exclusive First-Look Preview",
+      "link": "https://www.ign.com/articles/the-marvel-art-of-peach-momoko-preview",
+      "summary": "There's no artist at Marvel Comics who compares to Ultimate X-Men's Peach Momoko. Find out why in this exclusive preview of The Marvel Art of Peach Momoko.",
+      "publishedAt": "Mon, 23 Nov 2026 05:00:00 +0000",
+      "image": "https://assets-prd.ignimgs.com/2026/11/17/mixcollage-17-nov-2026-04-11-pm-7321-1794949897996.jpg",
+      "source": "IGN"
+    },
+    {
+      "id": "https://www.ign.com/articles/kate-bishop-actress-hailee-steinfeld-confirmed-for-avengers-doomsday|Mon, 23 Nov 2026 01:50:13 +0000",
+      "title": "Kate Bishop Actress Hailee Steinfeld Confirmed for Avengers: Doomsday",
+      "link": "https://www.ign.com/articles/kate-bishop-actress-hailee-steinfeld-confirmed-for-avengers-doomsday",
+      "summary": "Marvel Studios has confirmed Kate Bishop actress Hailee Steinfeld as a last-minute addition to the cast of Avengers: Doomsday.",
+      "publishedAt": "Mon, 23 Nov 2026 01:50:13 +0000",
+      "image": "https://assets-prd.ignimgs.com/2026/11/23/hailee-steinfeld-kate-bishop-1795398586995.png",
+      "source": "IGN"
+    },
     {
       "id": "https://www.pcgamer.com/games/roguelike/binding-of-isaac-dlc-adds-ai-music-in-gta-6-parodying-update-despite-not-having-an-ai-disclosure-steam-reviews-drop-to-overwhelmingly-negative-music-gets-pulled/|Mon, 23 Nov 2026 01:11:23 +0000",
       "title": "Binding of Isaac DLC adds AI music in GTA 6-parodying update despite not having an AI disclosure, Steam reviews drop to Overwhelmingly Negative, music gets pulled",
@@ -93,15 +129,6 @@
       "source": "IGN"
     },
     {
-      "id": "https://www.ign.com/articles/pink-bose-quietcomfort-noise-canceling-headphone-deal-november-2026|Sun, 22 Nov 2026 22:45:00 +0000",
-      "title": "The Bose QuietComfort Noise Canceling Headphone in Petal Pink Drop to a Mere $125 for Black Friday",
-      "link": "https://www.ign.com/articles/pink-bose-quietcomfort-noise-canceling-headphone-deal-november-2026",
-      "summary": "Beats the previous lowest price by nearly 25%.",
-      "publishedAt": "Sun, 22 Nov 2026 22:45:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/22/bosequietcomfortpink-1795387147603.jpg",
-      "source": "IGN"
-    },
-    {
       "id": "https://www.pcgamer.com/hardware/graphics-cards/nvidia-released-a-hotfix-for-its-driver-hammering-your-ssd-but-it-doesnt-actually-work/|Sun, 22 Nov 2026 22:31:50 +0000",
       "title": "Nvidia released a hotfix for its driver hammering your SSD, but it doesn't actually work",
       "link": "https://www.pcgamer.com/hardware/graphics-cards/nvidia-released-a-hotfix-for-its-driver-hammering-your-ssd-but-it-doesnt-actually-work/",
@@ -120,24 +147,6 @@
       "source": "PC Gamer"
     },
     {
-      "id": "https://www.ign.com/articles/apple-airpods-pro-3-deal-black-friday-sale-2026|Sun, 22 Nov 2026 22:15:00 +0000",
-      "title": "The Apple AirPods Pro 3 Wireless Noise Canceling Earbuds Drops to Its Final Black Friday Price on Amazon",
-      "link": "https://www.ign.com/articles/apple-airpods-pro-3-deal-black-friday-sale-2026",
-      "summary": "New price low.",
-      "publishedAt": "Sun, 22 Nov 2026 22:15:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/16/appleairpodspro32-1794849603151.jpg",
-      "source": "IGN"
-    },
-    {
-      "id": "https://www.ign.com/articles/ecovacs-deebot-x12s-omnicyclone-black-friday-2026|Sun, 22 Nov 2026 22:05:00 +0000",
-      "title": "Save $400 on Ecovacs' Flagship Robot Vacuum, the Deebot X12S OmniCyclone, for Black Friday",
-      "link": "https://www.ign.com/articles/ecovacs-deebot-x12s-omnicyclone-black-friday-2026",
-      "summary": "Continuously self-cleaning mops, a self-sufficient base, and more leave floors sparkling while you enjoy the holiday season.",
-      "publishedAt": "Sun, 22 Nov 2026 22:05:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/ecovacsdeebotx12s-1795213592517.jpg",
-      "source": "IGN"
-    },
-    {
       "id": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-endings-end-of-the-road-swim-for-it-no-surrender/|Sun, 22 Nov 2026 21:58:17 +0000",
       "title": "GTA 6 The End of the Road: Should you swim for it, or choose no surrender?",
       "link": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-endings-end-of-the-road-swim-for-it-no-surrender/",
@@ -145,15 +154,6 @@
       "publishedAt": "Sun, 22 Nov 2026 21:58:17 +0000",
       "image": "https://cdn.mos.cms.futurecdn.net/ooNF6qro8WPDSucqdaz76W-1920-80.jpg",
       "source": "PC Gamer"
-    },
-    {
-      "id": "https://www.ign.com/articles/rockstar-says-darts-were-cut-from-gta-6-because-it-didnt-have-unlimited-money-or-time-to-make-it-feel-proper|Sun, 22 Nov 2026 20:37:59 +0000",
-      "title": "Rockstar Says Darts Were Cut From GTA 6 Because It Didn't Have 'Unlimited Money or Time' to Make It 'Feel Proper'",
-      "link": "https://www.ign.com/articles/rockstar-says-darts-were-cut-from-gta-6-because-it-didnt-have-unlimited-money-or-time-to-make-it-feel-proper",
-      "summary": "Rockstar Games crammed a lot of content into GTA 6, but fan-favorite mini-games like darts and bowling didn't make the cut because the team didn't have \"unlimited money or unlimited time\" to do those activities justice.",
-      "publishedAt": "Sun, 22 Nov 2026 20:37:59 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/ultimate-edition-wyman-car-collection-01-1795168394633.jpg",
-      "source": "IGN"
     },
     {
       "id": "https://www.pcgamer.com/gaming-industry/unreal-engine-6-to-jettison-key-scripting-feature-earlier-than-planned-in-favor-of-ai-coding/|Sun, 22 Nov 2026 20:33:57 +0000",

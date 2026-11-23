@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T01:53:13.671Z",
+  "generatedAt": "2026-11-23T10:02:41.968Z",
   "source": "CheapShark",
   "sourceUrl": "https://www.cheapshark.com",
   "stores": [
@@ -831,7 +831,7 @@
       "steamAppID": "348550",
       "releaseDate": 1432598400,
       "lastChange": 1794909238,
-      "dealRating": "0.5",
+      "dealRating": "0.3",
       "thumb": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/348550/capsule_231x87.jpg?t=1667365243"
     },
     {
