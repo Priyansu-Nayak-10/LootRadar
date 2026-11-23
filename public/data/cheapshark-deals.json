@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T10:02:41.968Z",
+  "generatedAt": "2026-11-23T22:08:14.711Z",
   "source": "CheapShark",
   "sourceUrl": "https://www.cheapshark.com",
   "stores": [
@@ -18,10 +18,6 @@
     {
       "storeID": "7",
       "storeName": "GOG"
-    },
-    {
-      "storeID": "11",
-      "storeName": "Humble Store"
     },
     {
       "storeID": "13",
@@ -113,7 +109,7 @@
       "metacriticScore": "0",
       "steamRatingText": "Mostly Positive",
       "steamRatingPercent": "78",
-      "steamRatingCount": "2599",
+      "steamRatingCount": "2600",
       "steamAppID": "295790",
       "releaseDate": 0,
       "lastChange": 1793701608,
@@ -134,7 +130,7 @@
       "metacriticScore": "80",
       "steamRatingText": "Very Positive",
       "steamRatingPercent": "92",
-      "steamRatingCount": "1341",
+      "steamRatingCount": "1342",
       "steamAppID": "275390",
       "releaseDate": 1408579200,
       "lastChange": 1793701758,
@@ -433,7 +429,7 @@
       "releaseDate": 1570060800,
       "lastChange": 1711066592,
       "dealRating": "0.0",
-      "thumb": "https://cdn.humblebundle.com/misc/files/hashed/6094c434d331a4dca2f223a971952366a9c8ec1c.jpg"
+      "thumb": "https://cdn.fanatical.com/production/product/400x225/a9abde9e-3da0-4623-988a-4cb9a9b1a10e.jpeg"
     },
     {
       "internalName": "TOMCLANCYSTHEDIVISIONMILITARYSPECIALISTSOUTFITSPACK",
@@ -454,7 +450,7 @@
       "releaseDate": 0,
       "lastChange": 1769683881,
       "dealRating": "0.0",
-      "thumb": "https://cdn.humblebundle.com/misc/files/hashed/17cce458d87529cec2638c182aebe51e7eb4c081.jpg"
+      "thumb": "https://store.ubisoft.com/dw/image/v2/ABBS_PRD/on/demandware.static/-/Sites-masterCatalog/default/dwd024dd9a/images/large/57062ec588a7e316728b46b4.jpg?sw=197&amp;sh=261&amp;sm=fit"
     },
     {
       "internalName": "STAFFERREBORN",
