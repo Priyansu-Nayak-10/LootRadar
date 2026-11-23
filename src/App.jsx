@@ -5,7 +5,7 @@ import Deals from './pages/Deals'
 import Wishlist from './pages/Wishlist'
 import News from './pages/News'
 import Account from './pages/Account'
-import GameDetail from './pages/GameDetail'
+import Library from './pages/Library'
 import Footer from './components/Footer'
 import useLocalStorage from './hooks/useLocalStorage'
 import cachedFetch from './lib/cachedFetch'
@@ -23,6 +23,7 @@ const TAB_ICONS = {
   free: 'M12 3v2m0 14v2m9-9h-2M5 12H3m15.36-6.36-1.42 1.42M7.06 16.94l-1.42 1.42m12.72 0-1.42-1.42M7.06 7.06 5.64 5.64M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
   discover: 'M12 3 14.8 9.2 21 12l-6.2 2.8L12 21l-2.8-6.2L3 12l6.2-2.8L12 3Zm0 6v6m-3-3h6',
   deals: 'm20 13-7 7L3 10V3h7l10 10Zm-12-6h.01',
+  library: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
   wishlist: 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z',
   news: 'M4 5h16v14H4V5Zm3 4h10M7 13h6M7 16h8',
   account: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0',
@@ -84,7 +85,6 @@ export default function App() {
   const [shellCategory, setShellCategory] = useState('All')
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
   const [freeTab, setFreeTab] = useState('claim')
-  const [gameId, setGameId] = useState('')
   const activeNavTab = TABS.some((item) => item.id === tab) ? tab : undefined
 
   useEffect(() => {
@@ -152,35 +152,18 @@ export default function App() {
 
   useEffect(() => {
     const knownTabs = [
-        'discover', 'free', 'deals', 'wishlist', 'news', 'account',
+      'discover', 'free', 'deals', 'library', 'wishlist', 'news', 'account',
     ]
     function readRoute() {
       const pathTab = window.location.pathname.replace(/^\/+|\/+$/g, '')
       const hashTab = window.location.hash.replace(/^#\/?/, '')
       const route = pathTab || hashTab || 'discover'
-      if (route.startsWith('game/')) {
-        setGameId(route.slice(5))
-        setTab('game')
-        return
-      }
-      if (route === 'more' || route === 'library' || route === 'rumors') {
-        window.history.replaceState({}, '', '/')
-        setTab('discover')
-        return
-      }
-      if (route === 'signin' || route === 'signup') {
-        window.history.replaceState({}, '', '/account')
-        setTab('account')
-        return
-      }
-      if (route === 'coming' || route === 'always') {
-        const nextFreeTab = route === 'coming' ? 'coming' : 'always'
-        window.history.replaceState({}, '', `/free?tab=${nextFreeTab}`)
-        setFreeTab(nextFreeTab)
-        setTab('free')
-        return
-      }
-      setFreeTab(route === 'free' && ['coming', 'always'].includes(new URLSearchParams(window.location.search).get('tab')) ? new URLSearchParams(window.location.search).get('tab') : 'claim')
+
+      setFreeTab(
+        route === 'free' && ['coming', 'always'].includes(new URLSearchParams(window.location.search).get('tab'))
+          ? new URLSearchParams(window.location.search).get('tab')
+          : 'claim'
+      )
       setTab(knownTabs.includes(route) ? route : 'not-found')
     }
     readRoute()
@@ -203,13 +186,6 @@ export default function App() {
     setFreeTab(nextFreeTab)
     setTab('free')
     window.history.pushState({}, '', nextFreeTab === 'claim' ? '/free' : `/free?tab=${nextFreeTab}`)
-  }
-
-  function navigateGame(title) {
-    const id = encodeURIComponent(title.trim())
-    setGameId(id)
-    setTab('game')
-    window.history.pushState({}, '', `/game/${id}`)
   }
 
   function submitShellSearch(event) {
@@ -431,8 +407,9 @@ export default function App() {
                   {accountMenuOpen && (
                     <div className="shell-account-dropdown" id="account-navigation-menu" role="menu">
                       <button type="button" role="menuitem" onClick={() => navigateTab('account')}>Profile &amp; Account</button>
+                      <button type="button" role="menuitem" onClick={() => navigateTab('library')}>My Library ({ownedGames.length})</button>
                       <button type="button" role="menuitem" onClick={() => navigateTab('account')}>Connect Telegram</button>
-                      <div className="shell-owned-games" role="group" aria-label="Owned games"><strong>Owned Games ({ownedGames.length})</strong>{ownedGames.length ? ownedGames.slice(0, 4).map((game) => <span key={game.title}>{game.title}</span>) : <span>No owned games yet</span>}</div>
+                      <div className="shell-owned-games" role="group" aria-label="Owned games"><strong>Recent Owned ({ownedGames.length})</strong>{ownedGames.length ? ownedGames.slice(0, 4).map((game) => <span key={game.title}>{game.title}</span>) : <span>No owned games yet</span>}</div>
                       <button type="button" role="menuitem" onClick={() => navigateTab('news')}>News</button>
                       <span className="shell-account-dropdown__divider" role="separator" />
                       <button type="button" role="menuitem" className="shell-account-dropdown__signout" onClick={handleShellSignOut}>Sign out</button>
@@ -457,7 +434,7 @@ export default function App() {
             onAvailabilityChange={setAvailableFreeGames}
             activeTab={freeTab}
             onTabChange={navigateFreeTab}
-            onGameOpen={navigateGame}
+            onGameOpen={() => {}}
           />
         )}
         {tab === 'discover' && (
@@ -467,14 +444,19 @@ export default function App() {
             session={session}
             getGameActions={saveActions}
             onNavigate={navigateTab}
-            onGameOpen={navigateGame}
           />
         )}
         {tab === 'deals' && (
           <Deals
             getGameActions={saveActions}
             onAvailabilityChange={updateAvailableDeals}
-            onGameOpen={navigateGame}
+          />
+        )}
+        {tab === 'library' && (
+          <Library
+            games={ownedGames}
+            onRemove={(title) => toggleSavedGame('library', ownedGames, setOwnedGames, { title })}
+            onNavigate={navigateTab}
           />
         )}
         {tab === 'wishlist' && (
@@ -485,10 +467,8 @@ export default function App() {
             deals={availableDeals}
             session={session}
             onNavigate={navigateTab}
-            onGameOpen={navigateGame}
           />
         )}
-        {tab === 'game' && <GameDetail gameId={gameId} getGameActions={saveActions} wishlist={wishlist} setWishlist={syncedSetter('wishlist', setWishlist)} />}
         {tab === 'news' && <News />}
         {tab === 'account' && (
           <Account

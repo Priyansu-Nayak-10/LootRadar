@@ -23,7 +23,6 @@ function WishlistCard({
   deal,
   freeGame,
   storeMap,
-  onGameOpen,
   onRemove,
   onUpdate,
 }) {
@@ -46,7 +45,6 @@ function WishlistCard({
   return (
     <article
       className="wishlist-detail-card"
-      onClick={() => onGameOpen(game.title)}
     >
       {coverImage ? (
         <img
@@ -134,7 +132,7 @@ function WishlistCard({
   )
 }
 
-export default function Wishlist({ games, setGames, freeGames = [], deals = [], session, onNavigate, onGameOpen }) {
+export default function Wishlist({ games, setGames, freeGames = [], deals = [], session, onNavigate }) {
   const [telegramConnected, setTelegramConnected] = useState(false)
   const [snapshotStores, setSnapshotStores] = useState([])
   const [snapshotDeals, setSnapshotDeals] = useState([])
@@ -254,7 +252,6 @@ export default function Wishlist({ games, setGames, freeGames = [], deals = [], 
                 deal={deal}
                 freeGame={freeGame}
                 storeMap={storeMap}
-                onGameOpen={onGameOpen}
                 onRemove={removeGame}
                 onUpdate={updateGame}
               />

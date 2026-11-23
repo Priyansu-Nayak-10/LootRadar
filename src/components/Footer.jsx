@@ -130,9 +130,9 @@ export default function Footer({ onNavigate, onNavigateFreeTab }) {
               </li>
               <li>
                 <a
-                  href="/wishlist"
+                  href="/library"
                   className="footer-link"
-                  onClick={(e) => handleInternalClick(e, 'wishlist')}
+                  onClick={(e) => handleInternalClick(e, 'library')}
                 >
                   Library
                 </a>

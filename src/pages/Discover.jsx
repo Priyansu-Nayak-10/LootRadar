@@ -238,7 +238,6 @@ export function HomeRedesign({
   searchResults,
   hasKey,
   session,
-  onGameOpen,
   wishlist = [],
 }) {
   const [heroIndex, setHeroIndex] = useState(0)
@@ -768,10 +767,16 @@ export function HomeRedesign({
             {(freeGames?.length || 0) > 0 ? (
               <div className="home-feature-free-list">
                 {freeGames.slice(0, 5).map((game) => (
-                  <button type="button" className="home-feature-free" key={game.id} onClick={() => onGameOpen(game.title)}>
+                  <a
+                    key={game.id}
+                    href={game.open_giveaway_url || game.gamerpower_url || '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="home-feature-free"
+                  >
                     {game.thumbnail ? <img src={game.thumbnail} alt={game.title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
                     <span><strong>{game.title}</strong><small>{formatCountdown(game.end_date, now)}</small></span>
-                  </button>
+                  </a>
                 ))}
               </div>
             ) : (
@@ -781,7 +786,7 @@ export function HomeRedesign({
         </aside>
       </section>
 
-      <TopDeals getGameActions={getGameActions} onNavigate={onNavigate} onGameOpen={onGameOpen} />
+      <TopDeals getGameActions={getGameActions} onNavigate={onNavigate} />
 
       <section className="discover-section home-news-grid" ref={newsPanelRef}>
         <div className="lr-section-heading">
@@ -833,7 +838,7 @@ export function HomeRedesign({
                 type="button"
                 className="home-wishlist-item"
                 key={game.title}
-                onClick={() => onGameOpen(game.title)}
+                onClick={() => onNavigate('wishlist')}
               >
                 {game.image ? <img src={game.image} alt="" loading="lazy" /> : <div className="lr-art-fallback">{game.title.slice(0, 1).toUpperCase()}</div>}
                 <span>{game.title}</span>
@@ -850,7 +855,7 @@ export function HomeRedesign({
   )
 }
 
-export default function Discover({ library, wishlist, session, getGameActions, onNavigate, onGameOpen }) {
+export default function Discover({ library, wishlist, session, getGameActions, onNavigate }) {
   const {
     deals,
     stores: dealsStores,
@@ -995,7 +1000,6 @@ export default function Discover({ library, wishlist, session, getGameActions, o
       searchResults={searchResults}
       hasKey={hasRawgKey}
       session={session}
-      onGameOpen={onGameOpen}
       wishlist={wishlist}
     />
   )

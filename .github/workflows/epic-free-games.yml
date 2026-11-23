@@ -31,7 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/data/epic-free-games.json public/data/gamerpower-free-games.json public/data/cheapshark-deals.json public/data/gaming-news.json public/data/always-free-games.json public/data/rumored-free-games.json
+          git add public/data/epic-free-games.json public/data/gamerpower-free-games.json public/data/cheapshark-deals.json public/data/gaming-news.json public/data/always-free-games.json
           git diff --cached --quiet && exit 0
           git commit -m "Update LootRadar data snapshots"
           git push

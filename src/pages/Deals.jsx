@@ -17,7 +17,7 @@ function formatPrice(amount, currency, inrRate) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: currency === 'INR' && inrRate ? 'INR' : 'USD', maximumFractionDigits: 2 }).format(displayValue)
 }
 
-function DealCard({ deal, storeName, getGameActions, currency, inrRate, onGameOpen }) {
+function DealCard({ deal, storeName, getGameActions, currency, inrRate }) {
   const discount = Math.round(Number(deal.savings))
   const historicalLow = Number(deal.lowestPrice ?? deal.lowest_price ?? deal.historicalLow)
   const isHistoricalLow = Number.isFinite(historicalLow) && Math.abs(Number(deal.salePrice) - historicalLow) < 0.005
@@ -30,7 +30,7 @@ function DealCard({ deal, storeName, getGameActions, currency, inrRate, onGameOp
     sourceId: deal.dealID,
   })
   return (
-    <article className="lr-game-card deals-card" onClick={() => onGameOpen(deal.title)}>
+    <article className="lr-game-card deals-card">
       {image ? (
         <img
           src={image}
@@ -83,7 +83,7 @@ function DealCard({ deal, storeName, getGameActions, currency, inrRate, onGameOp
 const selectClass =
   'filter-select'
 
-export default function Deals({ getGameActions, onAvailabilityChange, onGameOpen }) {
+export default function Deals({ getGameActions, onAvailabilityChange }) {
   const [stores, setStores] = useState([])
   const [store, setStore] = useState('')
   const [maxPrice, setMaxPrice] = useState(100)
@@ -257,7 +257,6 @@ export default function Deals({ getGameActions, onAvailabilityChange, onGameOpen
                 getGameActions={getGameActions}
                 currency={currency}
                 inrRate={inrRate}
-                onGameOpen={onGameOpen}
               />
             ))}
       </div>
