@@ -1,3 +1,8 @@
+import {
+  shouldSendWishlistAlert,
+  isConsoleGame,
+} from '../src/lib/wishlistAlerts.js'
+
 const SUPABASE_URL = process.env.SUPABASE_URL
 const SUPABASE_KEY =
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
@@ -112,6 +117,26 @@ async function main() {
   const gamerPower = await loadJson(
     new URL('../public/data/gamerpower-free-games.json', import.meta.url)
   )
+  let cheapshark = { deals: [], stores: [] }
+  try {
+    cheapshark = await loadJson(new URL('../public/data/cheapshark-deals.json', import.meta.url))
+  } catch {
+    console.warn('CheapShark deals snapshot unavailable for wishlist matching')
+  }
+
+  const storeMap = new Map()
+  for (const s of cheapshark.stores || []) {
+    storeMap.set(String(s.storeID), s.storeName)
+  }
+
+  const cheapsharkDealsMap = new Map()
+  for (const d of cheapshark.deals || []) {
+    const key = normalizeTitle(d.title)
+    const existing = cheapsharkDealsMap.get(key)
+    if (!existing || Number(d.salePrice) < Number(existing.salePrice)) {
+      cheapsharkDealsMap.set(key, d)
+    }
+  }
 
   const windows = []
   for (const game of epic.current || []) {
@@ -175,7 +200,7 @@ async function main() {
     supabase('GET', 'notification_settings?select=*'),
     supabase('GET', 'telegram_connections?select=*&active=eq.true'),
     supabase('GET', 'saved_games?select=user_id,title,normalized_title,platform,list_type&list_type=eq.library'),
-    supabase('GET', 'saved_games?select=user_id,title,normalized_title&list_type=eq.wishlist'),
+    supabase('GET', 'saved_games?select=id,user_id,title,normalized_title,platform,notify,last_alerted_at,last_alerted_discount,last_alerted_price,alert_count_this_week,alert_week_start&list_type=eq.wishlist'),
     supabase('GET', 'sent_alerts?select=*'),
   ])
   console.log(`SENDER_PHASE=settings_loaded settings=${settings.length} connections=${connections.length}`)
@@ -193,13 +218,16 @@ async function main() {
   // Group pre-fetched wishlist rows by user_id so the per-window loop needs
   // no additional Supabase queries.
   const wishlistTitlesByUser = new Map()
+  const wishlistGamesByUser = new Map()
   for (const game of wishlistRows) {
     if (!wishlistTitlesByUser.has(game.user_id)) {
       wishlistTitlesByUser.set(game.user_id, new Set())
+      wishlistGamesByUser.set(game.user_id, [])
     }
     wishlistTitlesByUser
       .get(game.user_id)
       .add(normalizeTitle(game.normalized_title || game.title))
+    wishlistGamesByUser.get(game.user_id).push(game)
   }
   const sentKeys = new Set(
     sentAlerts.map((alert) =>
@@ -292,6 +320,86 @@ async function main() {
   }
 
   console.log(`Processed ${windows.length} free-game windows`)
+
+  // ─── Process Wishlist Price Drop Deals ──────────────────────────────────────
+  console.log('SENDER_PHASE=evaluating_wishlist_deals')
+  let wishlistAlertsSent = 0
+  for (const setting of settings) {
+    if (!setting.enabled) continue
+    const connection = connections.find((item) => item.user_id === setting.user_id)
+    if (!connection) continue
+
+    const userWishlist = wishlistGamesByUser.get(setting.user_id) || []
+    const ownedTitles = ownedTitlesByUser.get(setting.user_id) || new Set()
+    const sensitivity = setting.alert_sensitivity || 'good'
+
+    for (const game of userWishlist) {
+      if (game.notify === false) continue
+      if (isConsoleGame(game.platform)) continue
+      const normTitle = normalizeTitle(game.normalized_title || game.title)
+      if (ownedTitles.has(normTitle)) continue
+
+      const deal = cheapsharkDealsMap.get(normTitle)
+      if (deal && (deal.isOnSale === '1' || Number(deal.savings) >= 15)) {
+        const decision = shouldSendWishlistAlert({
+          gameRecord: game,
+          deal,
+          sensitivity,
+          now,
+        })
+
+        if (decision.shouldAlert) {
+          const storeName = storeMap.get(String(deal.storeID)) || 'PC Store'
+          const discountPercent = Math.round(Number(deal.savings))
+          const salePriceStr = Number(deal.salePrice).toFixed(2)
+          const normalPriceStr = Number(deal.normalPrice).toFixed(2)
+          const dealLink = `https://www.cheapshark.com/redirect?dealID=${deal.dealID}`
+
+          const text = [
+            `🎯 Wishlist Deal Alert: ${game.title}`,
+            `Discount: -${discountPercent}% (${decision.reason})`,
+            `Price: $${salePriceStr} USD (was $${normalPriceStr})`,
+            `Store: ${storeName}`,
+            dealLink,
+          ].join('\n')
+
+          const result = await telegramSend(connection.chat_id, text)
+          if (result.status === 429) {
+            await new Promise((resolve) => setTimeout(resolve, (result.retryAfter + 1) * 1000))
+            continue
+          }
+          if (result.status === 200) {
+            wishlistAlertsSent++
+            await supabase(
+              'PATCH',
+              `saved_games?id=eq.${game.id}`,
+              {
+                last_alerted_at: now.toISOString(),
+                last_alerted_discount: discountPercent,
+                last_alerted_price: Number(deal.salePrice),
+                alert_count_this_week: decision.currentWeekCount,
+                alert_week_start: decision.isNewWeek ? now.toISOString() : game.alert_week_start,
+              },
+              'return=minimal'
+            ).catch((err) => console.error('Error updating saved game alert state:', err.message))
+          }
+        }
+      } else if (game.last_alerted_at && (!deal || deal.isOnSale !== '1' || Number(deal.savings) < 15)) {
+        // Sale has ended; reset last_alerted state so next sale can alert fresh
+        await supabase(
+          'PATCH',
+          `saved_games?id=eq.${game.id}`,
+          {
+            last_alerted_discount: null,
+            last_alerted_price: null,
+          },
+          'return=minimal'
+        ).catch(() => {})
+      }
+    }
+  }
+
+  console.log(`Processed wishlist deals, sent ${wishlistAlertsSent} wishlist alerts`)
 }
 
 main().catch((error) => {

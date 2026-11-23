@@ -40,7 +40,7 @@ function mergeSavedGames(localGames, databaseRows, listType) {
   const merged = new Map()
 
   for (const game of localGames) {
-    merged.set(titleKey(game.title), { ...game })
+    merged.set(titleKey(game.title), { ...game, notify: game.notify !== false })
   }
   for (const row of databaseRows) {
     if (row.list_type !== listType) continue
@@ -51,9 +51,10 @@ function mergeSavedGames(localGames, databaseRows, listType) {
       notes: row.notes || '',
       source: row.source || '',
       sourceId: row.source_id || '',
-      alertOnFree: row.alert_on_free !== false,
-      alertDiscountPercent: row.alert_discount_percent ?? '',
-      alertTargetPrice: row.alert_target_price ?? '',
+      notify: row.notify !== false,
+      lastAlertedAt: row.last_alerted_at || null,
+      lastAlertedDiscount: row.last_alerted_discount ?? null,
+      lastAlertedPrice: row.last_alerted_price ?? null,
     })
   }
 
@@ -70,9 +71,7 @@ function toDatabaseRow(game, listType, userId) {
     notes: game.notes || '',
     source: game.source || '',
     source_id: game.sourceId || '',
-    alert_on_free: game.alertOnFree !== false,
-    alert_discount_percent: game.alertDiscountPercent === '' || game.alertDiscountPercent == null ? null : Number(game.alertDiscountPercent),
-    alert_target_price: game.alertTargetPrice === '' || game.alertTargetPrice == null ? null : Number(game.alertTargetPrice),
+    notify: game.notify !== false,
   }
 }
 
@@ -657,6 +656,7 @@ export default function App() {
           <Wishlist
             games={wishlist}
             setGames={syncedSetter('wishlist', setWishlist)}
+            ownedGames={ownedGames}
             freeGames={availableFreeGames}
             deals={availableDeals}
             session={session}
