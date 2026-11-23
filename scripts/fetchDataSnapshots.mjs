@@ -12,7 +12,9 @@ async function fetchJson(url) {
 async function fetchText(url) {
   const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT } })
   if (!response.ok) throw new Error(`Request failed (${response.status}) for ${url}`)
-  return response.text()
+  const buffer = await response.arrayBuffer()
+  const decoder = new TextDecoder('utf-8')
+  return decoder.decode(buffer)
 }
 
 function decodeXml(value = '') {
@@ -23,6 +25,11 @@ function decodeXml(value = '') {
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, "'")
     .replace(/&amp;/g, '&')
+    .replace(/&middot;|&#183;/g, '\u00b7')
+    .replace(/&bull;|&#8226;/g, '•')
+    .replace(/&ndash;|&#8211;/g, '–')
+    .replace(/&mdash;|&#8212;/g, '—')
+    .replace(/&hellip;|&#8230;/g, '…')
     .replace(/<[^>]+>/g, '')
     .replace(/\s+/g, ' ')
     .trim()
@@ -77,7 +84,7 @@ async function main() {
   const [freeGames, deals, stores, alwaysFreeGames] = await Promise.all([
     fetchJson('https://www.gamerpower.com/api/giveaways?type=game'),
     fetchJson(
-      'https://www.cheapshark.com/api/1.0/deals?onSale=1&pageSize=60&sortBy=Savings&desc=1&upperPrice=15'
+      'https://www.cheapshark.com/api/1.0/deals?onSale=1&pageSize=60&sortBy=Savings&desc=0&upperPrice=15'
     ),
     fetchJson('https://www.cheapshark.com/api/1.0/stores'),
     fetchJson('https://www.freetogame.com/api/games'),

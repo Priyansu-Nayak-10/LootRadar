@@ -243,7 +243,7 @@ export default function Account({ session }) {
         </header>
         <p className="account-email">{session.user.email}</p>
         {message && <p className="form-message" role="status">{message}</p>}
-        <div className="telegram-account-card">
+        <div className="telegram-account-card" id="telegram-settings">
           <h3>Telegram alerts</h3>
           {telegramConnection ? (
             <>

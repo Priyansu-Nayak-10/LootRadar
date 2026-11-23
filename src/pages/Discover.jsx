@@ -1,7 +1,16 @@
-﻿import { useEffect, useRef, useState } from 'react'
+import { Component, useEffect, useMemo, useRef, useState } from 'react'
 import { fetchGamingNews, fetchRawgGames, hasRawgKey } from '../lib/discoverApi'
 import GameActions from '../components/GameActions'
 import TopDeals from '../components/TopDeals'
+import SafeImage from '../components/SafeImage'
+import {
+  STORE_NAMES,
+  formatStoreName,
+  money,
+  getDealImageUrl,
+  selectHeroDeals,
+  useTopDeals,
+} from '../lib/dealsData'
 import { lootRadarArt } from '../assets/art'
 
 function dateString(date) {
@@ -48,15 +57,19 @@ function formatRelativeTime(value) {
   return `${days}d ago`
 }
 
-function formatCountdown(endDate) {
-  if (!endDate) return 'Time TBA'
-  const end = new Date(endDate)
-  if (Number.isNaN(end.getTime())) return 'Time TBA'
-  const diff = end.getTime() - Date.now()
+function formatCountdown(endDate, now) {
+  if (!endDate || endDate === 'N/A') return 'Limited Time'
+  const cleanDate = endDate.includes('T') ? endDate : endDate.replace(' ', 'T') + 'Z'
+  const end = new Date(cleanDate).getTime()
+  if (Number.isNaN(end)) return 'Limited Time'
+  const diff = end - (now || Date.now())
   if (diff <= 0) return 'Ended'
   const days = Math.floor(diff / 86400000)
   const hours = Math.floor((diff % 86400000) / 3600000)
-  return days > 0 ? `${days}d ${hours}h left` : `${hours}h left`
+  const mins = Math.floor((diff % 3600000) / 60000)
+  if (days > 0) return `${days}d ${hours}h left`
+  if (hours > 0) return `${hours}h ${mins}m left`
+  return `${mins}m left`
 }
 
 function GameTile({ game, badge, getGameActions }) {
@@ -92,8 +105,8 @@ function GameTile({ game, badge, getGameActions }) {
         <h3 className="game-title">{game.name}</h3>
         <p className="game-platform">
           {formatDate(game.released)}
-          {platform && <span className="discovery-platforms"> Â· {platform}</span>}
-          {Number(game.rating) > 0 && <span className="discovery-rating">â˜… {game.rating}</span>}
+          {platform && <span className="discovery-platforms"> {'\u00b7'} {platform}</span>}
+          {Number(game.rating) > 0 && <span className="discovery-rating">{'\u2605'} {game.rating}</span>}
         </p>
         <div className="discovery-genres">
           {(game.genres || []).slice(0, 2).map((genre) => (
@@ -172,9 +185,45 @@ function decodeText(value) {
   return textArea.value
 }
 
-function HomeRedesign({
-  trending,
-  catalogError,
+class HeroErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error, errorInfo) {
+    if (import.meta.env?.DEV) {
+      console.error('HeroErrorBoundary caught an error:', error, errorInfo)
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="home-hero-wrap">
+          <div className="lr-art-fallback">LOOTRADAR</div>
+          <div className="home-hero-overlay" />
+          <div className="home-hero-copy">
+            <span className="lr-badge lr-badge--lime">LOOTRADAR</span>
+            <h1>Featured Gaming Radar</h1>
+            <p>Track PC deals, free giveaways, and upcoming game alerts.</p>
+          </div>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
+export function HomeRedesign({
+  deals,
+  dealsStores,
+  dealsLoading,
+  dealsError,
   freeGames,
   upcomingGames,
   news,
@@ -190,45 +239,258 @@ function HomeRedesign({
   hasKey,
   session,
   onGameOpen,
+  wishlist = [],
 }) {
   const [heroIndex, setHeroIndex] = useState(0)
-  const [heroPaused, setHeroPaused] = useState(false)
   const heroCarouselRef = useRef(null)
-  const wrapTimerRef = useRef(null)
+  const heroIndexRef = useRef(0)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+  const [isTouching, setIsTouching] = useState(false)
+  const [isTabHidden, setIsTabHidden] = useState(false)
+  const [reducedMotion, setReducedMotion] = useState(false)
+  const [now, setNow] = useState(Date.now())
+
   const newsPanelRef = useRef(null)
   const [newsPanelHeight, setNewsPanelHeight] = useState(null)
-  const heroGames = trending.slice(0, 5)
 
+  // Live countdown ticker every 60s
   useEffect(() => {
-    const carousel = heroCarouselRef.current
-    const count = heroGames.length
-    if (!carousel || heroPaused || count < 2) return undefined
-    const timer = window.setInterval(() => {
-      setHeroIndex((current) => {
-        const isWrapping = current === count - 1
-        const next = isWrapping ? 0 : current + 1
-        carousel.scrollTo({ left: (isWrapping ? count : next) * carousel.clientWidth, behavior: 'smooth' })
-        if (isWrapping) {
-          window.clearTimeout(wrapTimerRef.current)
-          wrapTimerRef.current = window.setTimeout(() => {
-            carousel.scrollTo({ left: 0, behavior: 'auto' })
-          }, 450)
-        }
-        return next
-      })
-    }, 6000)
-    return () => {
-      window.clearInterval(timer)
-      window.clearTimeout(wrapTimerRef.current)
+    const id = setInterval(() => setNow(Date.now()), 60000)
+    return () => clearInterval(id)
+  }, [])
+
+  // Listen to prefers-reduced-motion and tab visibility changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReducedMotion(mediaQuery.matches)
+    const handleMotion = (e) => setReducedMotion(e.matches)
+    mediaQuery.addEventListener?.('change', handleMotion)
+
+    const handleVisibility = () => {
+      setIsTabHidden(document.visibilityState === 'hidden')
     }
-  }, [heroGames.length, heroPaused])
+    document.addEventListener('visibilitychange', handleVisibility)
+
+    return () => {
+      mediaQuery.removeEventListener?.('change', handleMotion)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
+  }, [])
+
+  // Build the 5 normalized hero slides: [deal #1, free, deal #2, deal #3, upcoming]
+  const heroSlides = useMemo(() => {
+    try {
+      if (!Array.isArray(deals) || deals.length === 0) return []
+
+      const heroDeals = selectHeroDeals(deals, 5)
+      if (!Array.isArray(heroDeals) || heroDeals.length === 0) return []
+
+      const slides = []
+      let nextDealIdx = 0
+
+      const makeDealSlide = (deal, idPrefix = 'deal') => {
+        if (!deal || typeof deal !== 'object' || !deal.title) return null
+        const dealID = String(deal.dealID || idPrefix)
+        const rawStore =
+          (Array.isArray(dealsStores)
+            ? dealsStores.find((s) => String(s?.storeID) === String(deal.storeID))?.storeName
+            : null) ||
+          STORE_NAMES[String(deal.storeID)] ||
+          'PC Store'
+        const store = formatStoreName(rawStore)
+        const salePrice = Number(deal.salePrice || 0)
+        const normalPrice = Number(deal.normalPrice || 0)
+        const savings = Math.max(0, Math.round(Number(deal.savings || 0)))
+
+        return {
+          id: `${idPrefix}-${dealID}`,
+          type: 'deal',
+          title: deal.title,
+          imageUrl: getDealImageUrl(deal) || deal.thumb || '',
+          steamAppID: deal.steamAppID && deal.steamAppID !== '0' && deal.steamAppID !== 'null' ? String(deal.steamAppID) : null,
+          badgeText: 'TOP DEAL',
+          subtitle: store,
+          price: {
+            sale: Number.isFinite(salePrice) ? salePrice : 0,
+            regular: Number.isFinite(normalPrice) ? normalPrice : 0,
+            savings: Number.isFinite(savings) ? savings : 0,
+          },
+          actionLabel: 'View deal',
+          actionUrl: `https://www.cheapshark.com/redirect?dealID=${dealID}`,
+          isExternal: true,
+          store,
+          rawItem: deal,
+        }
+      }
+
+      // 1. Deal #1
+      if (heroDeals[nextDealIdx]) {
+        const slide = makeDealSlide(heroDeals[nextDealIdx], 'deal-1')
+        if (slide) slides.push(slide)
+        nextDealIdx++
+      }
+
+      // 2. Free game (or 4th deal fallback)
+      const activeFreeGames = (Array.isArray(freeGames) ? freeGames : [])
+        .filter((game) => {
+          if (!game || typeof game !== 'object' || !game.title) return false
+          if (!game.thumbnail || !game.thumbnail.trim()) return false
+          if (!game.end_date || game.end_date === 'N/A') return true
+          const cleanDate = game.end_date.includes('T') ? game.end_date : game.end_date.replace(' ', 'T') + 'Z'
+          const end = new Date(cleanDate).getTime()
+          return Number.isNaN(end) || end > now
+        })
+        .sort((a, b) => {
+          const parseTime = (dateStr) => {
+            if (!dateStr || dateStr === 'N/A') return Infinity
+            const clean = dateStr.includes('T') ? dateStr : dateStr.replace(' ', 'T') + 'Z'
+            const t = new Date(clean).getTime()
+            return Number.isNaN(t) ? Infinity : t
+          }
+          return parseTime(a.end_date) - parseTime(b.end_date)
+        })
+
+      const chosenFree = activeFreeGames[0]
+      if (chosenFree && chosenFree.title) {
+        slides.push({
+          id: `free-${chosenFree.id || 'giveaway'}`,
+          type: 'free',
+          title: chosenFree.title,
+          imageUrl: chosenFree.thumbnail || '',
+          badgeText: 'FREE NOW',
+          subtitle: chosenFree.platforms || 'PC / DRM-Free',
+          countdownEnd: chosenFree.end_date || '',
+          actionLabel: 'Claim now',
+          actionUrl: chosenFree.open_giveaway_url || chosenFree.gamerpower_url || 'https://www.gamerpower.com',
+          isExternal: true,
+          store: 'Giveaway',
+          rawItem: chosenFree,
+        })
+      } else if (heroDeals[3]) {
+        const slide = makeDealSlide(heroDeals[3], 'deal-fallback-free')
+        if (slide) slides.push(slide)
+      }
+
+      // 3. Deal #2
+      if (heroDeals[nextDealIdx]) {
+        const slide = makeDealSlide(heroDeals[nextDealIdx], 'deal-2')
+        if (slide) slides.push(slide)
+        nextDealIdx++
+      }
+
+      // 4. Deal #3
+      if (heroDeals[nextDealIdx]) {
+        const slide = makeDealSlide(heroDeals[nextDealIdx], 'deal-3')
+        if (slide) slides.push(slide)
+        nextDealIdx++
+      }
+
+      // 5. Upcoming release (or 4th/5th deal fallback)
+      const validUpcoming = (Array.isArray(upcomingGames) ? upcomingGames : [])
+        .filter((game) => game && typeof game === 'object' && game.title && game.image && game.image.trim())
+        .sort((a, b) => {
+          const timeA = a.startDate ? new Date(a.startDate).getTime() : Infinity
+          const timeB = b.startDate ? new Date(b.startDate).getTime() : Infinity
+          return (Number.isNaN(timeA) ? Infinity : timeA) - (Number.isNaN(timeB) ? Infinity : timeB)
+        })
+
+      const chosenUpcoming = validUpcoming[0]
+      if (chosenUpcoming && chosenUpcoming.title) {
+        const releaseStr = formatDate(chosenUpcoming.startDate ? String(chosenUpcoming.startDate).slice(0, 10) : '')
+        slides.push({
+          id: `upcoming-${chosenUpcoming.id || 'upcoming'}`,
+          type: 'upcoming',
+          title: chosenUpcoming.title,
+          imageUrl: chosenUpcoming.image || '',
+          badgeText: 'COMING SOON',
+          subtitle: releaseStr ? `Coming ${releaseStr}` : 'Coming Soon',
+          actionLabel: 'Add to wishlist',
+          actionUrl: chosenUpcoming.slug ? `https://store.epicgames.com/p/${chosenUpcoming.slug}` : 'https://store.epicgames.com',
+          isExternal: false,
+          store: 'Epic Games Store',
+          rawItem: chosenUpcoming,
+        })
+      } else if (heroDeals[nextDealIdx] || heroDeals[4]) {
+        const fallbackDeal = heroDeals[nextDealIdx] || heroDeals[4]
+        const slide = makeDealSlide(fallbackDeal, 'deal-fallback-upcoming')
+        if (slide) slides.push(slide)
+      }
+
+      return slides
+    } catch (err) {
+      if (import.meta.env?.DEV) {
+        console.error('Error normalizing heroSlides:', err)
+      }
+      return []
+    }
+  }, [deals, dealsStores, freeGames, upcomingGames, now])
+
+  const isPaused = isHovered || isFocused || isTouching || isTabHidden || reducedMotion
 
   function goToHero(index) {
     const carousel = heroCarouselRef.current
-    if (!carousel || !heroGames.length) return
-    window.clearTimeout(wrapTimerRef.current)
-    setHeroIndex(index)
-    carousel.scrollTo({ left: index * carousel.clientWidth, behavior: 'smooth' })
+    if (!carousel || !heroSlides.length) return
+    const safeIndex = (index + heroSlides.length) % heroSlides.length
+    heroIndexRef.current = safeIndex
+    setHeroIndex(safeIndex)
+    carousel.scrollTo({
+      left: safeIndex * carousel.clientWidth,
+      behavior: 'smooth',
+    })
+  }
+
+  // Autoplay every 6s, loops back to 0 smoothly
+  useEffect(() => {
+    const carousel = heroCarouselRef.current
+    const count = heroSlides.length
+    if (!carousel || isPaused || count < 2) return undefined
+
+    const timer = window.setInterval(() => {
+      const current = heroIndexRef.current
+      const next = (current + 1) % count
+      goToHero(next)
+    }, 6000)
+
+    return () => window.clearInterval(timer)
+  }, [heroSlides.length, isPaused])
+
+  // Sync heroIndex with actual scroll position
+  useEffect(() => {
+    const carousel = heroCarouselRef.current
+    if (!carousel || typeof IntersectionObserver === 'undefined') return undefined
+
+    const slideElements = carousel.querySelectorAll('.home-hero-slide')
+    if (!slideElements.length) return undefined
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.getAttribute('data-slide-index'))
+            if (!Number.isNaN(index) && heroIndexRef.current !== index) {
+              heroIndexRef.current = index
+              setHeroIndex(index)
+            }
+          }
+        }
+      },
+      { root: carousel, threshold: 0.55 }
+    )
+
+    slideElements.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [heroSlides])
+
+  function handleKeyDown(event) {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      goToHero(heroIndex - 1)
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      goToHero(heroIndex + 1)
+    }
   }
 
   useEffect(() => {
@@ -260,10 +522,10 @@ function HomeRedesign({
           </div>
           {searchLoading && <div className="lr-skeleton" />}
           {searchError && <p className="discover-error" role="alert">{searchError}</p>}
-          {!searchLoading && !searchError && searchResults.length === 0 && (
+          {!searchLoading && !searchError && (searchResults?.length || 0) === 0 && (
             <p className="lr-empty">No games matched that search.</p>
           )}
-          {searchResults.length > 0 && (
+          {(searchResults?.length || 0) > 0 && (
             <div className="game-grid discover-results">
               {searchResults.map((game) => (
                 <GameTile key={game.id} game={game} getGameActions={getGameActions} />
@@ -274,75 +536,225 @@ function HomeRedesign({
       )}
 
       <section className="home-feature-grid">
+        <HeroErrorBoundary>
         <div
           className="home-hero-wrap"
-          onMouseEnter={() => setHeroPaused(true)}
-          onMouseLeave={() => setHeroPaused(false)}
-          onTouchStart={() => setHeroPaused(true)}
-          onTouchEnd={() => setHeroPaused(false)}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Featured deals and games"
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onFocusCapture={() => setIsFocused(true)}
+          onBlurCapture={() => setIsFocused(false)}
+          onTouchStart={() => setIsTouching(true)}
+          onTouchEnd={() => setIsTouching(false)}
         >
-          {catalogError && <p className="discover-error" role="alert">{catalogError}</p>}
-          {trending.length > 0 ? (
+          {dealsError && !heroSlides.length && (
+            <p className="discover-error" role="alert">Could not load featured deals right now.</p>
+          )}
+
+          {dealsLoading && !heroSlides.length ? (
+            <div className="lr-skeleton home-hero-skeleton" />
+          ) : heroSlides.length > 0 ? (
             <>
-              <div className="home-hero-carousel" id="home-hero-carousel" ref={heroCarouselRef} aria-label="Featured games">
-                {heroGames.map((game, index) => (
-                  <article className="home-hero-slide" key={game.id}>
-                    {lootRadarArt.hero.src ? (
-                      <img src={lootRadarArt.hero.src} alt={lootRadarArt.hero.alt} loading={index === 0 ? 'eager' : 'lazy'} />
-                    ) : game.background_image ? (
-                      <img src={game.background_image} alt={game.name} loading={index === 0 ? 'eager' : 'lazy'} />
-                    ) : (
-                      <div className="lr-art-fallback">LOOTRADAR</div>
-                    )}
-                    <div className="home-hero-overlay" />
-                    <div className="home-hero-copy">
-                      <span className="lr-badge lr-badge--lime">
-                        {index === 0 ? 'Latest Release' : 'Trending on PC'}
-                      </span>
-                      <h1>{game.name}</h1>
-                      <p>{formatDate(game.released)}{game.genres?.[0]?.name ? ` Â· ${game.genres[0].name}` : ''}</p>
-                      <a href={`https://rawg.io/games/${game.slug}`} target="_blank" rel="noreferrer" className="lr-button">
-                        Explore game
-                      </a>
-                    </div>
-                  </article>
-                ))}
-                <article className="home-hero-slide" aria-hidden="true">
-                  {lootRadarArt.hero.src ? (
-                    <img src={lootRadarArt.hero.src} alt="" loading="lazy" />
-                  ) : heroGames[0].background_image ? (
-                    <img src={heroGames[0].background_image} alt="" loading="lazy" />
-                  ) : (
-                    <div className="lr-art-fallback">LOOTRADAR</div>
-                  )}
-                  <div className="home-hero-overlay" />
-                  <div className="home-hero-copy">
-                    <span className="lr-badge lr-badge--lime">Latest Release</span>
-                    <h1>{heroGames[0].name}</h1>
-                  </div>
-                </article>
+              <div
+                className="home-hero-carousel"
+                id="home-hero-carousel"
+                ref={heroCarouselRef}
+              >
+                {heroSlides.map((slide, index) => {
+                  const isActive = heroIndex === index
+                  const upcomingActions =
+                    slide.type === 'upcoming' && getGameActions
+                      ? getGameActions({
+                          title: slide.title,
+                          platform: slide.store || 'Epic Games Store',
+                          image: slide.imageUrl,
+                          source: 'upcoming',
+                          sourceId: slide.rawItem?.id || slide.id,
+                        })
+                      : null
+
+                  return (
+                    <article
+                      className="home-hero-slide"
+                      key={slide.id}
+                      data-slide-index={index}
+                      role="group"
+                      aria-roledescription="slide"
+                      aria-label={`${index + 1} of ${heroSlides.length}`}
+                      aria-hidden={!isActive}
+                    >
+                      <SafeImage
+                        src={slide.imageUrl}
+                        steamAppID={slide.steamAppID}
+                        alt={slide.title}
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        className="home-hero-bg"
+                      />
+                      <div className="home-hero-overlay" />
+                      <div className="home-hero-copy">
+                        <span className="lr-badge lr-badge--lime">
+                          {slide.badgeText}
+                        </span>
+                        <h1>{slide.title}</h1>
+
+                        {slide.type === 'deal' && slide.price && (
+                          <div className="home-hero-deal-info">
+                            <div className="home-hero-prices">
+                              {slide.price.savings > 0 && (
+                                <span className="home-hero-discount">
+                                  -{slide.price.savings}%
+                                </span>
+                              )}
+                              <strong className="home-hero-sale-price">
+                                {money(slide.price.sale)}
+                              </strong>
+                              {slide.price.regular > slide.price.sale && (
+                                <del className="home-hero-old-price">
+                                  {money(slide.price.regular)}
+                                </del>
+                              )}
+                              {slide.store && (
+                                <span className="home-hero-store-chip">
+                                  {slide.store}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {slide.type === 'free' && (
+                          <p className="home-hero-meta">
+                            <span className="home-hero-countdown">
+                              {formatCountdown(slide.countdownEnd, now)}
+                            </span>
+                            <span className="home-hero-sep"> {'\u00b7'} </span>
+                            <span>{slide.subtitle}</span>
+                          </p>
+                        )}
+
+                        {slide.type === 'upcoming' && (
+                          <p className="home-hero-meta">
+                            <span>{slide.subtitle}</span>
+                            {slide.store && (
+                              <>
+                                <span className="home-hero-sep"> {'\u00b7'} </span>
+                                <span className="home-hero-store-chip">
+                                  {slide.store}
+                                </span>
+                              </>
+                            )}
+                          </p>
+                        )}
+
+                        <div className="home-hero-action-row">
+                          {slide.type === 'deal' && (
+                            <a
+                              href={slide.actionUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="lr-button"
+                              tabIndex={isActive ? 0 : -1}
+                            >
+                              {slide.actionLabel}
+                            </a>
+                          )}
+
+                          {slide.type === 'free' && (
+                            <a
+                              href={slide.actionUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="lr-button"
+                              tabIndex={isActive ? 0 : -1}
+                            >
+                              {slide.actionLabel}
+                            </a>
+                          )}
+
+                          {slide.type === 'upcoming' && (
+                            upcomingActions ? (
+                              <button
+                                type="button"
+                                className={`lr-button ${upcomingActions.wishlisted ? 'is-active' : ''}`}
+                                tabIndex={isActive ? 0 : -1}
+                                onClick={() => upcomingActions.onToggleWishlist()}
+                              >
+                                {upcomingActions.wishlisted ? 'In Wishlist' : 'Add to wishlist'}
+                              </button>
+                            ) : (
+                              <a
+                                href={slide.actionUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="lr-button"
+                                tabIndex={isActive ? 0 : -1}
+                              >
+                                View details
+                              </a>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  )
+                })}
               </div>
+
               <div className="home-hero-controls">
-                <span className="sr-only">Featured game {heroIndex + 1} of {heroGames.length}</span>
-                <div className="home-hero-dots" role="tablist" aria-label="Choose featured game">
-                  {heroGames.map((game, index) => (
+                <button
+                  type="button"
+                  className="home-hero-arrow home-hero-arrow--prev"
+                  aria-label="Previous slide"
+                  onClick={() => goToHero(heroIndex - 1)}
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+                </button>
+
+                <div className="home-hero-dots" role="tablist" aria-label="Choose featured slide">
+                  {heroSlides.map((slide, index) => (
                     <button
                       type="button"
-                      key={game.id}
+                      key={slide.id}
                       role="tab"
                       aria-selected={heroIndex === index}
-                      aria-label={`Show featured game ${index + 1}: ${game.name}`}
+                      aria-label={`Slide ${index + 1}: ${slide.title}`}
                       className={heroIndex === index ? 'is-active' : ''}
                       onClick={() => goToHero(index)}
                     />
                   ))}
                 </div>
+
+                <span className="home-hero-counter" aria-hidden="true">
+                  {heroIndex + 1} / {heroSlides.length}
+                </span>
+
+                <button
+                  type="button"
+                  className="home-hero-arrow home-hero-arrow--next"
+                  aria-label="Next slide"
+                  onClick={() => goToHero(heroIndex + 1)}
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="sr-only" aria-live={isPaused ? 'polite' : 'off'}>
+                Slide {heroIndex + 1} of {heroSlides.length}: {heroSlides[heroIndex]?.title}
               </div>
             </>
           ) : (
             <div className="lr-skeleton home-hero-skeleton" />
           )}
         </div>
+        </HeroErrorBoundary>
 
         <aside className="home-feature-side home-feature-side--free">
           <section className="home-side-card">
@@ -351,14 +763,16 @@ function HomeRedesign({
                 <span className="lr-section-heading__kicker">LIMITED TIME</span>
                 <h2>Free <strong>Games</strong></h2>
               </div>
+              <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('free')}>View All</button>
             </div>
-            {freeGames.length > 0 ? (
+            {(freeGames?.length || 0) > 0 ? (
               <div className="home-feature-free-list">
-                {freeGames.slice(0, 5).map((game) => <button type="button" className="home-feature-free" key={game.id} onClick={() => onGameOpen(game.title)}>
-                  {game.thumbnail ? <img src={game.thumbnail} alt={game.title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
-                  <span><strong>{game.title}</strong><small>{formatCountdown(game.end_date)}</small></span>
-                </button>)}
-                <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('free')}>View All</button>
+                {freeGames.slice(0, 5).map((game) => (
+                  <button type="button" className="home-feature-free" key={game.id} onClick={() => onGameOpen(game.title)}>
+                    {game.thumbnail ? <img src={game.thumbnail} alt={game.title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
+                    <span><strong>{game.title}</strong><small>{formatCountdown(game.end_date, now)}</small></span>
+                  </button>
+                ))}
               </div>
             ) : (
               <div className="lr-skeleton" />
@@ -379,12 +793,12 @@ function HomeRedesign({
         </div>
         {newsLoading ? (
           <div className="lr-skeleton" />
-        ) : news.length > 0 ? (
+        ) : (news?.length || 0) > 0 ? (
           <div className="home-news-layout">
             <article className="home-news-feature">
               {news[0].image ? <img src={news[0].image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
               <div>
-                <span>{news[0].source} Â· {formatRelativeTime(news[0].publishedAt)}</span>
+                <span>{news[0].source} {'\u00b7'} {formatRelativeTime(news[0].publishedAt)}</span>
                 <h3>{decodeText(news[0].title)}</h3>
                 <a href={news[0].link} target="_blank" rel="noreferrer" className="lr-button lr-button--ghost">Read Full Story</a>
               </div>
@@ -393,7 +807,7 @@ function HomeRedesign({
               {news.slice(1, 3).map((article) => (
                 <article key={article.id || article.link}>
                   {article.image ? <img src={article.image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
-                  <div><span>{article.source} Â· {formatRelativeTime(article.publishedAt)}</span><h3>{decodeText(article.title)}</h3></div>
+                  <div><span>{article.source} {'\u00b7'} {formatRelativeTime(article.publishedAt)}</span><h3>{decodeText(article.title)}</h3></div>
                   <a href={article.link} target="_blank" rel="noreferrer" aria-label={`Read ${article.title}`} />
                 </article>
               ))}
@@ -404,7 +818,7 @@ function HomeRedesign({
         )}
       </section>
 
-      {session && wishlist.length > 0 && (
+      {session && (wishlist?.length || 0) > 0 && (
         <section className="home-wishlist-strip">
           <div className="lr-section-heading">
             <div className="lr-section-heading__copy">
@@ -437,8 +851,13 @@ function HomeRedesign({
 }
 
 export default function Discover({ library, wishlist, session, getGameActions, onNavigate, onGameOpen }) {
-  const [trending, setTrending] = useState([])
-  const [catalogError, setCatalogError] = useState('')
+  const {
+    deals,
+    stores: dealsStores,
+    loading: dealsLoading,
+    error: dealsError,
+  } = useTopDeals()
+
   const [news, setNews] = useState([])
   const [newsUpdatedAt, setNewsUpdatedAt] = useState('')
   const [newsError, setNewsError] = useState('')
@@ -456,27 +875,6 @@ export default function Discover({ library, wishlist, session, getGameActions, o
   })
   const [freeGames, setFreeGames] = useState([])
   const [upcomingGames, setUpcomingGames] = useState([])
-  const seedKey = [...wishlist, ...library]
-    .map((game) => game.title?.trim().toLowerCase())
-    .filter(Boolean)
-    .sort()
-    .join('|')
-
-  async function loadCatalog() {
-    if (!hasRawgKey) return
-    setCatalogError('')
-    try {
-      const [popularData] = await Promise.all([
-        fetchRawgGames(
-          { dates: getDateRange(365, 0), ordering: '-added', platforms: '4', page_size: '12' },
-          'trending_pc'
-        ),
-      ])
-      setTrending(Array.isArray(popularData.results) ? popularData.results : [])
-    } catch {
-      setCatalogError('Game discovery could not load. Check your connection and try again.')
-    }
-  }
 
   async function loadNews() {
     setNewsLoading(true)
@@ -497,10 +895,6 @@ export default function Discover({ library, wishlist, session, getGameActions, o
       setNewsLoading(false)
     }
   }
-
-  useEffect(() => {
-    loadCatalog()
-  }, [seedKey])
 
   useEffect(() => {
     loadNews()
@@ -583,8 +977,10 @@ export default function Discover({ library, wishlist, session, getGameActions, o
 
   return (
     <HomeRedesign
-      trending={trending}
-      catalogError={catalogError}
+      deals={deals}
+      dealsStores={dealsStores}
+      dealsLoading={dealsLoading}
+      dealsError={dealsError}
       freeGames={freeGames}
       upcomingGames={upcomingGames}
       news={news}
@@ -600,6 +996,7 @@ export default function Discover({ library, wishlist, session, getGameActions, o
       hasKey={hasRawgKey}
       session={session}
       onGameOpen={onGameOpen}
+      wishlist={wishlist}
     />
   )
 }

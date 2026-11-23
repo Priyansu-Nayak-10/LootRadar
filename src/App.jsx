@@ -6,6 +6,7 @@ import Wishlist from './pages/Wishlist'
 import News from './pages/News'
 import Account from './pages/Account'
 import GameDetail from './pages/GameDetail'
+import Footer from './components/Footer'
 import useLocalStorage from './hooks/useLocalStorage'
 import cachedFetch from './lib/cachedFetch'
 import { hasSupabaseConfig, supabase } from './lib/supabase'
@@ -507,24 +508,7 @@ export default function App() {
         )}
       </main>
 
-      <footer className="app-footer">
-        Data from{' '}
-        <a href="https://www.gamerpower.com" target="_blank" rel="noreferrer" className="underline">
-          GamerPower
-        </a>{' '}
-        and{' '}
-        <a href="https://www.cheapshark.com" target="_blank" rel="noreferrer" className="underline">
-          CheapShark
-        </a>{' '}
-        and game data from{' '}
-        <a href="https://rawg.io" target="_blank" rel="noreferrer" className="underline">
-          RAWG
-        </a>{' '}
-        and free-to-play data from{' '}
-        <a href="https://www.freetogame.com" target="_blank" rel="noreferrer" className="underline">
-          FreeToGame
-        </a>
-      </footer>
+      <Footer onNavigate={navigateTab} onNavigateFreeTab={navigateFreeTab} />
 
       {tab !== 'not-found' && !(tab === 'account' && !session) && tab !== 'signin' && tab !== 'signup' && <nav className="bottom-nav" aria-label="Main navigation">
         {TABS.map((t) => (
