@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "test": "node --test",
     "fetch:epic": "node scripts/fetchEpicFreeGames.mjs",
     "fetch:snapshots": "node scripts/fetchDataSnapshots.mjs",
     "send:telegram-alerts": "node scripts/sendTelegramAlerts.mjs"

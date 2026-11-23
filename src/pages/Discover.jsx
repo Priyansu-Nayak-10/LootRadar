@@ -1,5 +1,5 @@
-import { Component, useEffect, useMemo, useRef, useState } from 'react'
-import { fetchGamingNews, fetchRawgGames, hasRawgKey } from '../lib/discoverApi'
+import { Component, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { fetchGamingNews, fetchRawgGames, searchGamesMulti, hasRawgKey } from '../lib/discoverApi'
 import GameActions from '../components/GameActions'
 import TopDeals from '../components/TopDeals'
 import SafeImage from '../components/SafeImage'
@@ -72,58 +72,259 @@ function formatCountdown(endDate, now) {
   return `${mins}m left`
 }
 
+function PlatformIcons({ platforms }) {
+  if (!Array.isArray(platforms)) return null
+  const slugs = platforms.map((p) => (p.platform?.slug || p.platform?.name || '').toLowerCase())
+
+  const icons = []
+  const hasPC = slugs.some((s) => s.includes('pc') || s.includes('windows') || s.includes('linux') || s.includes('mac'))
+  const hasPS = slugs.some((s) => s.includes('playstation') || s.includes('ps'))
+  const hasXbox = slugs.some((s) => s.includes('xbox'))
+  const hasNintendo = slugs.some((s) => s.includes('nintendo') || s.includes('switch') || s.includes('wii'))
+
+  if (hasPC) {
+    icons.push(
+      <svg key="pc" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="platform-icon" title="PC" aria-label="PC">
+        <rect x="2" y="3" width="20" height="14" rx="2" />
+        <path d="M8 21h8M12 17v4" />
+      </svg>
+    )
+  }
+  if (hasPS) {
+    icons.push(
+      <svg key="ps" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="platform-icon" title="PlayStation" aria-label="PlayStation">
+        <rect x="2" y="6" width="20" height="12" rx="4" />
+        <path d="M6 12h4m-2-2v4m7-3h.01m2.99 2h.01" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    )
+  }
+  if (hasXbox) {
+    icons.push(
+      <svg key="xbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="platform-icon" title="Xbox" aria-label="Xbox">
+        <circle cx="12" cy="12" r="9" />
+        <path d="m8.5 8.5 7 7m0-7-7 7" strokeLinecap="round" />
+      </svg>
+    )
+  }
+  if (hasNintendo) {
+    icons.push(
+      <svg key="nintendo" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="platform-icon" title="Nintendo" aria-label="Nintendo">
+        <rect x="5" y="4" width="6" height="16" rx="3" />
+        <rect x="13" y="4" width="6" height="16" rx="3" />
+        <circle cx="8" cy="8" r="1" fill="currentColor" />
+        <circle cx="16" cy="14" r="1" fill="currentColor" />
+      </svg>
+    )
+  }
+
+  return <>{icons.slice(0, 3)}</>
+}
+
 function GameTile({ game, badge, getGameActions }) {
-  const platform = (game.platforms || [])
+  const platformNames = (game.platforms || [])
     .map((item) => item.platform?.name)
     .filter(Boolean)
     .slice(0, 3)
     .join(', ')
-  const actions = getGameActions({
+
+  const actions = getGameActions ? getGameActions({
     title: game.name,
-    platform: platform || 'Multiple platforms',
+    platform: platformNames || 'Multiple platforms',
     image: game.background_image,
     source: 'catalog',
     sourceId: game.id,
-  })
+  }) : { owned: false, wishlisted: false, onToggleOwned: () => {}, onToggleWishlist: () => {} }
+
+  const releaseYear = game.released ? game.released.slice(0, 4) : ''
+
   return (
-    <article className="game-card discovery-game-card">
+    <article className="search-game-card">
       <a
-        className="discovery-art"
+        className="search-tile__main-link"
         href={`https://rawg.io/games/${game.slug}`}
         target="_blank"
         rel="noreferrer"
         aria-label={`View ${game.name} on RAWG`}
       >
-          {game.background_image ? (
-          <img src={game.background_image} alt="" loading="lazy" className="game-card-image" />
-        ) : (
-          <div className="game-card-image discovery-no-image">GAME</div>
-        )}
-        {badge && <span className="discovery-image-badge">{badge}</span>}
-      </a>
-      <div className="game-card-content discovery-card-content">
-        <h3 className="game-title">{game.name}</h3>
-        <p className="game-platform">
-          {formatDate(game.released)}
-          {platform && <span className="discovery-platforms"> {'\u00b7'} {platform}</span>}
-          {Number(game.rating) > 0 && <span className="discovery-rating">{'\u2605'} {game.rating}</span>}
-        </p>
-        <div className="discovery-genres">
-          {(game.genres || []).slice(0, 2).map((genre) => (
-            <span key={genre.id || genre.name}>{genre.name}</span>
-          ))}
+        <div className="search-tile__media">
+          <SafeImage
+            src={game.background_image}
+            alt=""
+            loading="lazy"
+            className="search-tile__image"
+          />
+          {badge && <span className="discovery-image-badge">{badge}</span>}
         </div>
-        <GameActions {...actions} />
-        <a
-          href={`https://rawg.io/games/${game.slug}`}
-          target="_blank"
-          rel="noreferrer"
-          className="game-card-cta"
+        <div className="search-tile__content">
+          <div className="search-tile__meta">
+            {releaseYear && <span className="search-tile__year">{releaseYear}</span>}
+            {releaseYear && Number(game.rating) > 0 && <span className="search-tile__sep">·</span>}
+            {Number(game.rating) > 0 && (
+              <span className="search-tile__rating">
+                <span aria-hidden="true">★</span> {Number(game.rating).toFixed(1)}
+              </span>
+            )}
+            <div className="search-tile__platforms" aria-label="Platforms">
+              <PlatformIcons platforms={game.platforms} />
+            </div>
+          </div>
+          <h3 className="search-tile__title" title={game.name}>
+            {game.name}
+          </h3>
+          <div className="search-tile__genres">
+            {(game.genres || []).slice(0, 2).map((genre) => (
+              <span key={genre.id || genre.name} className="search-tile__genre-chip">
+                {genre.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </a>
+      <div className="search-tile__actions">
+        <button
+          type="button"
+          className={`search-tile__action-btn search-tile__action-btn--wishlist ${actions.wishlisted ? 'is-active' : ''}`}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            actions.onToggleWishlist()
+          }}
+          aria-label={actions.wishlisted ? `Remove ${game.name} from wishlist` : `Add ${game.name} to wishlist`}
+          title={actions.wishlisted ? 'In wishlist' : 'Add to wishlist'}
         >
-          Game details <span aria-hidden="true">-&gt;</span>
-        </a>
+          <svg viewBox="0 0 24 24" fill={actions.wishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          className={`search-tile__action-btn search-tile__action-btn--owned ${actions.owned ? 'is-active' : ''}`}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            actions.onToggleOwned()
+          }}
+          aria-label={actions.owned ? `Remove ${game.name} from library` : `Mark ${game.name} as owned`}
+          title={actions.owned ? 'In library' : 'Mark as owned'}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </div>
     </article>
+  )
+}
+
+const SUGGESTED_SEARCHES = ['Spider-Man', 'Grand Theft Auto V', 'Elden Ring']
+const SEARCH_PLATFORMS = ['All', 'PC', 'PlayStation', 'Xbox']
+
+function SearchResultsView({
+  searchTerm,
+  searchResults,
+  searchLoading,
+  searchError,
+  activePlatform,
+  onSelectPlatform,
+  onClearSearch,
+  onSelectSuggestion,
+  onRetry,
+  getGameActions,
+  hasKey,
+}) {
+  return (
+    <div className="search-results-page">
+      {!hasKey && <SetupHint />}
+
+      <div className="search-results-header">
+        <div className="search-results-heading">
+          <span className="lr-section-heading__kicker">SEARCH RESULTS</span>
+          <div className="search-results-title-row">
+            <h1>
+              Results for <strong>&ldquo;{searchTerm}&rdquo;</strong>
+            </h1>
+            <button
+              type="button"
+              className="search-clear-button"
+              onClick={onClearSearch}
+            >
+              Clear search &times;
+            </button>
+          </div>
+          {!searchLoading && !searchError && (
+            <p className="search-results-meta">
+              {searchResults.length} {searchResults.length === 1 ? 'game' : 'games'} found
+              {activePlatform !== 'All' ? ` for ${activePlatform}` : ''}
+            </p>
+          )}
+        </div>
+
+        <div className="search-platform-filters" role="tablist" aria-label="Platform filters">
+          {SEARCH_PLATFORMS.map((platform) => (
+            <button
+              key={platform}
+              type="button"
+              role="tab"
+              aria-selected={activePlatform === platform}
+              className={`search-filter-pill ${activePlatform === platform ? 'is-active' : ''}`}
+              onClick={() => onSelectPlatform(platform)}
+            >
+              {platform}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {searchLoading && (
+        <div className="search-grid-loading" aria-label="Loading search results">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={i} className="search-tile-skeleton lr-skeleton" />
+          ))}
+        </div>
+      )}
+
+      {searchError && (
+        <div className="search-error-state" role="alert">
+          <p>{searchError}</p>
+          <button type="button" className="lr-button" onClick={onRetry}>
+            Retry search
+          </button>
+        </div>
+      )}
+
+      {!searchLoading && !searchError && searchResults.length === 0 && (
+        <div className="search-empty-state">
+          <div className="lr-art-fallback" aria-hidden="true">?</div>
+          <h2>No games matched.</h2>
+          <p>Try the full title or check the spelling.</p>
+          <div className="search-suggestions">
+            <span>Popular searches:</span>
+            {SUGGESTED_SEARCHES.map((query) => (
+              <button
+                key={query}
+                type="button"
+                className="search-suggestion-link"
+                onClick={() => onSelectSuggestion(query)}
+              >
+                {query}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!searchLoading && !searchError && searchResults.length > 0 && (
+        <div className="search-results-grid">
+          {searchResults.map((game) => (
+            <GameTile
+              key={game.id}
+              game={game}
+              getGameActions={getGameActions}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -511,29 +712,6 @@ export function HomeRedesign({
     <div className="discover-page home-redesign">
       {!hasKey && <SetupHint />}
 
-      {searchSubmitted && (
-        <section className="discover-section home-search-results">
-          <div className="lr-section-heading">
-            <div className="lr-section-heading__copy">
-              <span className="lr-section-heading__kicker">SEARCH RESULTS</span>
-              <h2>Results for <strong>{searchTerm}</strong></h2>
-            </div>
-          </div>
-          {searchLoading && <div className="lr-skeleton" />}
-          {searchError && <p className="discover-error" role="alert">{searchError}</p>}
-          {!searchLoading && !searchError && (searchResults?.length || 0) === 0 && (
-            <p className="lr-empty">No games matched that search.</p>
-          )}
-          {(searchResults?.length || 0) > 0 && (
-            <div className="game-grid discover-results">
-              {searchResults.map((game) => (
-                <GameTile key={game.id} game={game} getGameActions={getGameActions} />
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
       <section className="home-feature-grid">
         <HeroErrorBoundary>
         <div
@@ -855,7 +1033,17 @@ export function HomeRedesign({
   )
 }
 
-export default function Discover({ library, wishlist, session, getGameActions, onNavigate }) {
+export default function Discover({
+  library,
+  wishlist,
+  session,
+  getGameActions,
+  onNavigate,
+  isSearchPage = false,
+  searchQuery = '',
+  searchCategory = 'All',
+  onSearchChange,
+}) {
   const {
     deals,
     stores: dealsStores,
@@ -867,11 +1055,15 @@ export default function Discover({ library, wishlist, session, getGameActions, o
   const [newsUpdatedAt, setNewsUpdatedAt] = useState('')
   const [newsError, setNewsError] = useState('')
   const [newsLoading, setNewsLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
+
+  // Search state
+  const [searchTerm, setSearchTerm] = useState(searchQuery || '')
+  const [activePlatform, setActivePlatform] = useState(searchCategory || 'All')
   const [searchResults, setSearchResults] = useState([])
   const [searchError, setSearchError] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
-  const [searchSubmitted, setSearchSubmitted] = useState(false)
+  const [searchSubmitted, setSearchSubmitted] = useState(Boolean(isSearchPage && searchQuery))
+
   const [sectionCounts, setSectionCounts] = useState({
     free: 0,
     deals: 0,
@@ -905,16 +1097,54 @@ export default function Discover({ library, wishlist, session, getGameActions, o
     loadNews()
   }, [])
 
+  const searchGames = useCallback(async (event, queryParam, platformParam) => {
+    if (event?.preventDefault) event.preventDefault()
+    const query = (queryParam !== undefined ? queryParam : searchTerm).trim()
+    const platform = platformParam !== undefined ? platformParam : activePlatform
+    if (!query) return
+
+    setSearchSubmitted(true)
+    setSearchLoading(true)
+    setSearchError('')
+    try {
+      const results = await searchGamesMulti(query, platform)
+      setSearchResults(results)
+    } catch (error) {
+      setSearchError(error.message?.startsWith('Add your free RAWG')
+        ? error.message
+        : 'Search could not load. Check your connection and try again.')
+      setSearchResults([])
+    } finally {
+      setSearchLoading(false)
+    }
+  }, [searchTerm, activePlatform])
+
+  // Sync search state with URL / prop changes
+  useEffect(() => {
+    if (isSearchPage && searchQuery) {
+      setSearchTerm(searchQuery)
+      setActivePlatform(searchCategory || 'All')
+      setSearchSubmitted(true)
+      searchGames(null, searchQuery, searchCategory || 'All')
+    } else if (!isSearchPage && !searchSubmitted) {
+      setSearchTerm('')
+    }
+  }, [isSearchPage, searchQuery, searchCategory, searchGames, searchSubmitted])
+
+  // Listen to search events dispatched from global header
   useEffect(() => {
     function handleShellSearch(event) {
       const query = event.detail?.query?.trim()
+      const category = event.detail?.category || 'All'
       if (!query) return
       setSearchTerm(query)
-      searchGames(null, query)
+      setActivePlatform(category)
+      setSearchSubmitted(true)
+      searchGames(null, query, category)
     }
     window.addEventListener('lootradar-shell-search', handleShellSearch)
     return () => window.removeEventListener('lootradar-shell-search', handleShellSearch)
-  }, [])
+  }, [searchGames])
 
   useEffect(() => {
     let cancelled = false
@@ -956,28 +1186,53 @@ export default function Discover({ library, wishlist, session, getGameActions, o
     }
   }, [])
 
-  async function searchGames(event, externalQuery) {
-    if (event?.preventDefault) event.preventDefault()
-    const query = (externalQuery || searchTerm).trim()
-    if (!query) return
+  function handleSelectPlatform(platform) {
+    setActivePlatform(platform)
+    if (onSearchChange) onSearchChange(searchTerm, platform)
+    window.history.pushState(
+      {},
+      '',
+      `/search?q=${encodeURIComponent(searchTerm)}&platform=${encodeURIComponent(platform)}`
+    )
+    searchGames(null, searchTerm, platform)
+  }
 
-    setSearchSubmitted(true)
-    setSearchLoading(true)
+  function handleClearSearch() {
+    setSearchSubmitted(false)
+    setSearchTerm('')
+    setSearchResults([])
     setSearchError('')
-    try {
-      const data = await fetchRawgGames(
-        { search: query, page_size: '8' },
-        `search_${query.toLowerCase()}`
-      )
-      setSearchResults(Array.isArray(data.results) ? data.results : [])
-    } catch (error) {
-      setSearchError(error.message.startsWith('Add your free RAWG')
-        ? error.message
-        : 'Search could not load. Check your connection and try again.')
-      setSearchResults([])
-    } finally {
-      setSearchLoading(false)
-    }
+    if (onSearchChange) onSearchChange('', 'All')
+    onNavigate('discover')
+  }
+
+  function handleSelectSuggestion(query) {
+    setSearchTerm(query)
+    if (onSearchChange) onSearchChange(query, activePlatform)
+    window.history.pushState(
+      {},
+      '',
+      `/search?q=${encodeURIComponent(query)}&platform=${encodeURIComponent(activePlatform)}`
+    )
+    searchGames(null, query, activePlatform)
+  }
+
+  if (searchSubmitted || isSearchPage) {
+    return (
+      <SearchResultsView
+        searchTerm={searchTerm}
+        searchResults={searchResults}
+        searchLoading={searchLoading}
+        searchError={searchError}
+        activePlatform={activePlatform}
+        onSelectPlatform={handleSelectPlatform}
+        onClearSearch={handleClearSearch}
+        onSelectSuggestion={handleSelectSuggestion}
+        onRetry={() => searchGames(null, searchTerm, activePlatform)}
+        getGameActions={getGameActions}
+        hasKey={hasRawgKey}
+      />
+    )
   }
 
   return (
@@ -993,11 +1248,11 @@ export default function Discover({ library, wishlist, session, getGameActions, o
       newsUpdatedAt={newsUpdatedAt}
       onNavigate={onNavigate}
       getGameActions={getGameActions}
-      searchSubmitted={searchSubmitted}
-      searchLoading={searchLoading}
-      searchError={searchError}
-      searchTerm={searchTerm}
-      searchResults={searchResults}
+      searchSubmitted={false}
+      searchLoading={false}
+      searchError=""
+      searchTerm=""
+      searchResults={[]}
       hasKey={hasRawgKey}
       session={session}
       wishlist={wishlist}

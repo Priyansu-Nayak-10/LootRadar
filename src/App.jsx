@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import FreeNow from './pages/FreeNow'
 import Discover from './pages/Discover'
 import Deals from './pages/Deals'
@@ -10,6 +10,9 @@ import Footer from './components/Footer'
 import useLocalStorage from './hooks/useLocalStorage'
 import cachedFetch from './lib/cachedFetch'
 import { hasSupabaseConfig, supabase } from './lib/supabase'
+import { searchGamesMulti } from './lib/discoverApi'
+import { normalizeQuery } from './lib/searchRank'
+import SafeImage from './components/SafeImage'
 import './App.css'
 
 const TABS = [
@@ -84,6 +87,15 @@ export default function App() {
   const [shellSearch, setShellSearch] = useState('')
   const [shellCategory, setShellCategory] = useState('All')
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+
+  // Typeahead state
+  const [typeaheadResults, setTypeaheadResults] = useState([])
+  const [typeaheadOpen, setTypeaheadOpen] = useState(false)
+  const [typeaheadLoading, setTypeaheadLoading] = useState(false)
+  const [selectedTypeaheadIdx, setSelectedTypeaheadIdx] = useState(-1)
+  const typeaheadAbortRef = useRef(null)
+  const typeaheadTimerRef = useRef(null)
+  const searchFormRef = useRef(null)
   const [freeTab, setFreeTab] = useState('claim')
   const activeNavTab = TABS.some((item) => item.id === tab) ? tab : undefined
 
@@ -152,7 +164,7 @@ export default function App() {
 
   useEffect(() => {
     const knownTabs = [
-      'discover', 'free', 'deals', 'library', 'wishlist', 'news', 'account',
+      'discover', 'free', 'deals', 'library', 'wishlist', 'news', 'account', 'search',
     ]
     function readRoute() {
       const pathTab = window.location.pathname.replace(/^\/+|\/+$/g, '')
@@ -164,6 +176,18 @@ export default function App() {
           ? new URLSearchParams(window.location.search).get('tab')
           : 'claim'
       )
+
+      if (route === 'search') {
+        const params = new URLSearchParams(window.location.search)
+        const q = params.get('q') || ''
+        const platform = params.get('platform') || 'All'
+        if (q.trim()) {
+          setShellSearch(q)
+          setShellCategory(platform)
+          setTab('search')
+          return
+        }
+      }
       setTab(knownTabs.includes(route) ? route : 'not-found')
     }
     readRoute()
@@ -191,13 +215,95 @@ export default function App() {
   function submitShellSearch(event) {
     event.preventDefault()
     const query = shellSearch.trim()
-    navigateTab('discover')
+    closeTypeahead()
     if (query) {
+      setTab('search')
+      window.history.pushState({}, '', `/search?q=${encodeURIComponent(query)}&platform=${encodeURIComponent(shellCategory)}`)
       window.dispatchEvent(new CustomEvent('lootradar-shell-search', {
         detail: { query, category: shellCategory },
       }))
+    } else {
+      navigateTab('discover')
     }
   }
+
+  function closeTypeahead() {
+    setTypeaheadOpen(false)
+    setTypeaheadResults([])
+    setSelectedTypeaheadIdx(-1)
+    if (typeaheadTimerRef.current) clearTimeout(typeaheadTimerRef.current)
+    if (typeaheadAbortRef.current) typeaheadAbortRef.current.abort()
+  }
+
+  function handleSearchInput(value) {
+    setShellSearch(value)
+    setSelectedTypeaheadIdx(-1)
+
+    if (typeaheadTimerRef.current) clearTimeout(typeaheadTimerRef.current)
+    if (typeaheadAbortRef.current) typeaheadAbortRef.current.abort()
+
+    const norm = normalizeQuery(value)
+    if (norm.length < 2) {
+      setTypeaheadOpen(false)
+      setTypeaheadResults([])
+      return
+    }
+
+    typeaheadTimerRef.current = setTimeout(async () => {
+      const controller = new AbortController()
+      typeaheadAbortRef.current = controller
+      setTypeaheadLoading(true)
+      try {
+        const results = await searchGamesMulti(value, shellCategory, controller.signal)
+        if (!controller.signal.aborted) {
+          setTypeaheadResults(results.slice(0, 6))
+          setTypeaheadOpen(true)
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError' && !controller.signal.aborted) {
+          setTypeaheadResults([])
+        }
+      } finally {
+        if (!controller.signal.aborted) setTypeaheadLoading(false)
+      }
+    }, 300)
+  }
+
+  function handleTypeaheadKeyDown(event) {
+    if (!typeaheadOpen || typeaheadResults.length === 0) return
+
+    const maxIdx = typeaheadResults.length // includes "See all" row
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      setSelectedTypeaheadIdx((prev) => (prev + 1) % (maxIdx + 1))
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      setSelectedTypeaheadIdx((prev) => (prev <= 0 ? maxIdx : prev - 1))
+    } else if (event.key === 'Escape') {
+      closeTypeahead()
+    } else if (event.key === 'Enter' && selectedTypeaheadIdx >= 0) {
+      event.preventDefault()
+      if (selectedTypeaheadIdx < typeaheadResults.length) {
+        const game = typeaheadResults[selectedTypeaheadIdx]
+        window.open(`https://rawg.io/games/${game.slug}`, '_blank', 'noreferrer')
+      } else {
+        // "See all results" row
+        submitShellSearch(event)
+      }
+      closeTypeahead()
+    }
+  }
+
+  // Close typeahead on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchFormRef.current && !searchFormRef.current.contains(event.target)) {
+        closeTypeahead()
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   async function signOut() {
     if (!supabase) return
@@ -354,12 +460,17 @@ export default function App() {
                 <span className="brand-caption">YOUR GAME INTELLIGENCE</span>
               </span>
             </a>
-            <form className="shell-search" onSubmit={submitShellSearch} role="search">
+            <form
+              className="shell-search"
+              onSubmit={submitShellSearch}
+              role="search"
+              ref={searchFormRef}
+            >
               <label className="shell-category">
                 <span className="sr-only">Search category</span>
                 <select
                   value={shellCategory}
-                  onChange={(event) => setShellCategory(event.target.value)}
+                  onChange={(event) => { setShellCategory(event.target.value); closeTypeahead() }}
                   aria-label="Search category"
                 >
                   {['All', 'PC', 'PlayStation', 'Xbox'].map((category) => (
@@ -367,12 +478,77 @@ export default function App() {
                   ))}
                 </select>
               </label>
-              <input
-                value={shellSearch}
-                onChange={(event) => setShellSearch(event.target.value)}
-                placeholder="Search games"
-                aria-label="Search games"
-              />
+              <div className="shell-search-combo">
+                <input
+                  value={shellSearch}
+                  onChange={(event) => handleSearchInput(event.target.value)}
+                  onKeyDown={handleTypeaheadKeyDown}
+                  onFocus={() => { if (typeaheadResults.length > 0) setTypeaheadOpen(true) }}
+                  placeholder="Search games"
+                  aria-label="Search games"
+                  role="combobox"
+                  aria-expanded={typeaheadOpen}
+                  aria-controls="shell-typeahead-list"
+                  aria-activedescendant={selectedTypeaheadIdx >= 0 ? `typeahead-opt-${selectedTypeaheadIdx}` : undefined}
+                  autoComplete="off"
+                />
+                {typeaheadOpen && (typeaheadResults.length > 0 || typeaheadLoading) && (
+                  <div className="shell-typeahead" id="shell-typeahead-list" role="listbox" aria-label="Search suggestions">
+                    {typeaheadLoading && typeaheadResults.length === 0 && (
+                      <div className="shell-typeahead-loading">Searching…</div>
+                    )}
+                    {typeaheadResults.map((game, idx) => {
+                      const platform = (game.platforms || [])
+                        .map((p) => p.platform?.name)
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .join(', ')
+                      return (
+                        <a
+                          key={game.id}
+                          id={`typeahead-opt-${idx}`}
+                          role="option"
+                          aria-selected={selectedTypeaheadIdx === idx}
+                          className={`shell-typeahead-item ${selectedTypeaheadIdx === idx ? 'is-active' : ''}`}
+                          href={`https://rawg.io/games/${game.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={() => closeTypeahead()}
+                          onMouseEnter={() => setSelectedTypeaheadIdx(idx)}
+                        >
+                          <SafeImage
+                            src={game.background_image}
+                            alt=""
+                            className="shell-typeahead-thumb"
+                            loading="eager"
+                          />
+                          <div className="shell-typeahead-info">
+                            <strong>{game.name}</strong>
+                            <span>
+                              {game.released ? game.released.slice(0, 4) : ''}
+                              {platform ? ` · ${platform}` : ''}
+                              {Number(game.rating) > 0 ? ` · ★ ${game.rating}` : ''}
+                            </span>
+                          </div>
+                        </a>
+                      )
+                    })}
+                    {typeaheadResults.length > 0 && (
+                      <button
+                        type="button"
+                        id={`typeahead-opt-${typeaheadResults.length}`}
+                        role="option"
+                        aria-selected={selectedTypeaheadIdx === typeaheadResults.length}
+                        className={`shell-typeahead-all ${selectedTypeaheadIdx === typeaheadResults.length ? 'is-active' : ''}`}
+                        onClick={submitShellSearch}
+                        onMouseEnter={() => setSelectedTypeaheadIdx(typeaheadResults.length)}
+                      >
+                        See all results for &ldquo;{shellSearch.trim()}&rdquo;
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
               <button type="submit" aria-label="Submit game search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                   <circle cx="10.5" cy="10.5" r="6.5" />
@@ -437,13 +613,20 @@ export default function App() {
             onGameOpen={() => {}}
           />
         )}
-        {tab === 'discover' && (
+        {(tab === 'discover' || tab === 'search') && (
           <Discover
             library={ownedGames}
             wishlist={wishlist}
             session={session}
             getGameActions={saveActions}
             onNavigate={navigateTab}
+            isSearchPage={tab === 'search'}
+            searchQuery={shellSearch}
+            searchCategory={shellCategory}
+            onSearchChange={(q, cat) => {
+              setShellSearch(q)
+              if (cat) setShellCategory(cat)
+            }}
           />
         )}
         {tab === 'deals' && (
