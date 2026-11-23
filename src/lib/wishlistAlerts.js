@@ -18,6 +18,13 @@ export function formatUsd(value) {
   return `$${amount.toFixed(2)} USD`
 }
 
+export function normalizeFreeTitle(rawTitle = '') {
+  return String(rawTitle || '')
+    .replace(/\s*\([^)]*(?:giveaway|free|epic|gog|steam|itch|prime|pc|ubisoft)[^)]*\)/gi, '')
+    .replace(/\s+giveaway\b/gi, '')
+    .trim()
+}
+
 export function isConsoleGame(input = '') {
   const platform =
     typeof input === 'object' && input !== null ? input.platform || '' : String(input || '')

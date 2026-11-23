@@ -4,6 +4,7 @@ import {
   titleKey,
   formatUsd,
   isConsoleGame,
+  normalizeFreeTitle,
   evaluateWishlistDeal,
   shouldSendWishlistAlert,
 } from '../wishlistAlerts.js';
@@ -13,6 +14,25 @@ describe('wishlistAlerts pure functions', () => {
     assert.equal(titleKey('Spider-Man: Miles Morales'), 'spider man miles morales');
     assert.equal(titleKey('Grand Theft Auto V'), 'grand theft auto v');
     assert.equal(titleKey("Assassin's Creed Valhalla"), 'assassins creed valhalla');
+  });
+
+  it('normalizeFreeTitle strips giveaway and store tags cleanly', () => {
+    assert.equal(
+      normalizeFreeTitle('Mark of the Deep (Epic Games) Giveaway'),
+      'Mark of the Deep'
+    );
+    assert.equal(
+      normalizeFreeTitle('Ghostwire: Tokyo (GOG) Giveaway'),
+      'Ghostwire: Tokyo'
+    );
+    assert.equal(
+      normalizeFreeTitle('Dishonored 2 (Prime Gaming) Giveaway'),
+      'Dishonored 2'
+    );
+    assert.equal(
+      titleKey(normalizeFreeTitle('Mark of the Deep (Epic Games) Giveaway')),
+      titleKey('Mark of the Deep')
+    );
   });
 
   it('formatUsd formats numbers and currency strings correctly', () => {

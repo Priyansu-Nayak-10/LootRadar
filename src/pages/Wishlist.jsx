@@ -4,8 +4,10 @@ import {
   titleKey,
   formatUsd,
   isConsoleGame,
+  normalizeFreeTitle,
   evaluateWishlistDeal,
 } from '../lib/wishlistAlerts'
+import { STORE_NAMES, formatStoreName } from '../lib/dealsData'
 
 function formatCountdown(endDate, now) {
   if (!endDate || endDate === 'N/A') return 'Limited Time'
@@ -130,8 +132,22 @@ function WishlistCard({
 
   const coverImage = (!imgFailed && (game.image || deal?.thumb || freeGame?.thumbnail)) || ''
   const isConsole = isConsoleGame(game.platform)
-  const isFree = Boolean(freeGame)
-  const isOnSale = Boolean(!isConsole && !isFree && deal && (deal.isOnSale === '1' || Number(deal.savings) > 0))
+
+  // A game is free if matched with a GamerPower giveaway OR a CheapShark 100% free deal
+  const isDealFree = Boolean(
+    deal && (
+      deal.isFree ||
+      Number(deal.savings) >= 100 ||
+      Number(deal.salePrice) === 0
+    )
+  )
+  const isFree = Boolean(!isConsole && (freeGame || isDealFree))
+  const isOnSale = Boolean(
+    !isConsole &&
+    !isFree &&
+    deal &&
+    (deal.isOnSale === '1' || Number(deal.savings) > 0)
+  )
 
   // Determine state
   let cardState = 'not_on_sale'
@@ -144,15 +160,29 @@ function WishlistCard({
   const evalResult = isOnSale ? evaluateWishlistDeal(deal, alertSensitivity, cheapestEver) : { fires: false }
 
   const storeLabel = deal
-    ? (deal.storeName || storeMap.get(String(deal.storeID)) || 'PC Store')
+    ? (formatStoreName(deal.storeName || storeMap.get(String(deal.storeID)) || STORE_NAMES[String(deal.storeID)]) || 'PC Store')
     : isFree
-      ? (freeGame?.platforms || 'Giveaway')
-      : (game.platform || 'PC Stores')
+      ? (freeGame?.platforms ? freeGame.platforms.replace('PC, ', '') : 'Epic Games')
+      : (game.platform || 'PC')
 
-  const encodedTitle = encodeURIComponent(game.title)
+  const regularPrice = deal?.normalPrice
+    ? Number(deal.normalPrice)
+    : freeGame?.worth && freeGame.worth !== 'N/A'
+      ? Number(String(freeGame.worth).replace(/[^0-9.]/g, ''))
+      : null
+
+  const claimUrl =
+    freeGame?.open_giveaway_url ||
+    freeGame?.gamerpower_url ||
+    (deal?.dealID ? `https://www.cheapshark.com/redirect?dealID=${deal.dealID}` : null)
+
+  const dealUrl = deal?.dealID
+    ? `https://www.cheapshark.com/redirect?dealID=${deal.dealID}`
+    : null
 
   return (
     <article className="wishlist-card-redesign">
+      {/* Full-bleed Card Background Image */}
       <div className="wishlist-card-media">
         {coverImage ? (
           <img
@@ -168,159 +198,142 @@ function WishlistCard({
             {game.title.slice(0, 1).toUpperCase()}
           </div>
         )}
+        <div className="wishlist-card-vignette" aria-hidden="true" />
       </div>
 
-      <div className="wishlist-card-body">
-        {/* Top Tag & Actions */}
-        <div className="wishlist-card-top">
-          <div className="wishlist-card-tags">
-            {cardState === 'free' && (
-              <span className="wishlist-tag wishlist-tag--free">FREE NOW</span>
-            )}
-            {cardState === 'sale' && (
-              <>
-                <span className="wishlist-tag wishlist-tag--sale">ON SALE</span>
-                {evalResult.fires && evalResult.isNearLow && (
-                  <span className="wishlist-tag wishlist-tag--low">
-                    {evalResult.isAllTimeLow ? 'ALL-TIME LOW' : 'NEAR ALL-TIME LOW'}
-                  </span>
-                )}
-              </>
-            )}
-            {cardState === 'console' && (
-              <span className="wishlist-tag wishlist-tag--console">NO PRICE TRACKING</span>
-            )}
-            {cardState === 'not_on_sale' && (
-              <span className="wishlist-tag wishlist-tag--neutral">NOT ON SALE</span>
-            )}
-          </div>
-
-          <div className="wishlist-card-actions">
-            <button
-              type="button"
-              className={`wishlist-action-btn ${isAlertsOn ? 'is-active' : ''}`}
-              onClick={() => onUpdate(game.title, { notify: !isAlertsOn })}
-              aria-label={isAlertsOn ? 'Turn off price alerts' : 'Turn on price alerts'}
-              title={isAlertsOn ? 'Price alerts ON' : 'Price alerts OFF'}
-            >
-              <BellIcon active={isAlertsOn} />
-            </button>
-            <button
-              type="button"
-              className="wishlist-action-btn wishlist-action-btn--remove"
-              onClick={() => onRemove(game.title)}
-              aria-label={`Remove ${game.title} from wishlist`}
-              title="Remove from wishlist"
-            >
-              <TrashIcon />
-            </button>
-          </div>
+      {/* Floating Top Bar (Tags & Actions) */}
+      <div className="wishlist-card-top">
+        <div className="wishlist-card-tags">
+          {cardState === 'free' && (
+            <span className="wishlist-tag wishlist-tag--free">FREE NOW</span>
+          )}
+          {cardState === 'sale' && (
+            <>
+              <span className="wishlist-tag wishlist-tag--sale">
+                ON SALE {Number(deal.savings) > 0 ? `-${Math.round(Number(deal.savings))}%` : ''}
+              </span>
+              {evalResult.fires && evalResult.isNearLow && (
+                <span className="wishlist-tag wishlist-tag--low">
+                  {evalResult.isAllTimeLow ? 'ALL-TIME LOW' : 'NEAR LOW'}
+                </span>
+              )}
+            </>
+          )}
+          {cardState === 'console' && (
+            <span className="wishlist-tag wishlist-tag--console">CONSOLE</span>
+          )}
+          {cardState === 'not_on_sale' && (
+            <span className="wishlist-tag wishlist-tag--neutral">NOT ON SALE</span>
+          )}
         </div>
 
-        {/* Title & Platforms */}
+        <div className="wishlist-card-actions">
+          <button
+            type="button"
+            className={`wishlist-action-btn ${isAlertsOn ? 'is-active' : ''}`}
+            onClick={() => onUpdate(game.title, { notify: !isAlertsOn })}
+            aria-label={isAlertsOn ? 'Turn off price alerts' : 'Turn on price alerts'}
+            title={isAlertsOn ? 'Price alerts ON' : 'Price alerts OFF'}
+          >
+            <BellIcon active={isAlertsOn} />
+          </button>
+          <button
+            type="button"
+            className="wishlist-action-btn wishlist-action-btn--remove"
+            onClick={() => onRemove(game.title)}
+            aria-label={`Remove ${game.title} from wishlist`}
+            title="Remove from wishlist"
+          >
+            <TrashIcon />
+          </button>
+        </div>
+      </div>
+
+      {/* Bottom Frosted Glass Overlay */}
+      <div className="wishlist-card-bottom-overlay">
         <h2 className="wishlist-card-title" title={game.title}>
           {game.title}
         </h2>
-        <p className="wishlist-card-platform">{game.platform || 'Platform not specified'}</p>
 
-        {/* Card State Specific Details */}
-        <div className="wishlist-card-content">
-          {cardState === 'free' && (
-            <div className="wishlist-free-block">
-              <div className="wishlist-price-row">
-                <span className="wishlist-price-free">Free</span>
-                {deal?.normalPrice && Number(deal.normalPrice) > 0 && (
-                  <del className="wishlist-price-old">{formatUsd(deal.normalPrice)}</del>
-                )}
+        <div className="wishlist-card-meta">
+          <span className="wishlist-store-chip">{storeLabel}</span>
+          {game.platform && game.platform !== storeLabel && (
+            <span className="wishlist-platform-text">{game.platform}</span>
+          )}
+        </div>
+
+        {/* State-specific Pricing & CTAs */}
+        {cardState === 'free' && (
+          <div className="wishlist-details-group">
+            <div className="wishlist-price-row">
+              <span className="wishlist-price-free">Free</span>
+              {regularPrice != null && regularPrice > 0 && (
+                <del className="wishlist-price-old">{formatUsd(regularPrice)}</del>
+              )}
+              {freeGame?.end_date && (
                 <span className="wishlist-countdown-chip">
                   {formatCountdown(freeGame.end_date, now)}
                 </span>
-              </div>
-              <div className="wishlist-card-footer">
-                <a
-                  href={freeGame.open_giveaway_url || freeGame.gamerpower_url || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="lr-button wishlist-cta-btn"
-                >
-                  Claim now <ExternalLinkIcon />
-                </a>
-              </div>
-            </div>
-          )}
-
-          {cardState === 'sale' && (
-            <div className="wishlist-sale-block">
-              <div className="wishlist-price-row">
-                {Number(deal.savings) > 0 && (
-                  <span className="wishlist-discount-badge">
-                    -{Math.round(Number(deal.savings))}%
-                  </span>
-                )}
-                <strong className="wishlist-price-sale">{formatUsd(deal.salePrice)}</strong>
-                {Number(deal.normalPrice) > Number(deal.salePrice) && (
-                  <del className="wishlist-price-old">{formatUsd(deal.normalPrice)}</del>
-                )}
-                <span className="wishlist-store-chip">{storeLabel}</span>
-              </div>
-              {cheapestEver != null && cheapestEver > 0 && (
-                <p className="wishlist-lowest-ever">
-                  Lowest ever: <span>{formatUsd(cheapestEver)}</span>
-                </p>
               )}
-              <div className="wishlist-card-footer">
-                <a
-                  href={`https://www.cheapshark.com/redirect?dealID=${deal.dealID}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="lr-button wishlist-cta-btn"
-                >
-                  View deal <ExternalLinkIcon />
-                </a>
-              </div>
             </div>
-          )}
+            {claimUrl && (
+              <a
+                href={claimUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lr-button wishlist-cta-btn wishlist-cta-btn--free"
+              >
+                Claim now <ExternalLinkIcon />
+              </a>
+            )}
+          </div>
+        )}
 
-          {cardState === 'console' && (
-            <div className="wishlist-console-block">
-              <p className="wishlist-console-note">
-                Price alerts cover PC games only for now. You can still open the store pages below.
-              </p>
-              <div className="wishlist-console-buttons">
-                <a
-                  href={`https://store.playstation.com/en-us/search/${encodedTitle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="wishlist-store-btn"
-                >
-                  PlayStation Store <ExternalLinkIcon />
-                </a>
-                <a
-                  href={`https://www.xbox.com/en-us/search/results/games?q=${encodedTitle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="wishlist-store-btn"
-                >
-                  Xbox Store <ExternalLinkIcon />
-                </a>
-              </div>
-            </div>
-          )}
-
-          {cardState === 'not_on_sale' && (
-            <div className="wishlist-neutral-block">
-              <div className="wishlist-price-row">
-                <span className="wishlist-price-regular">
-                  {deal?.normalPrice ? formatUsd(deal.normalPrice) : 'Tracked on PC'}
+        {cardState === 'sale' && (
+          <div className="wishlist-details-group">
+            <div className="wishlist-price-row">
+              <strong className="wishlist-price-sale">{formatUsd(deal.salePrice)}</strong>
+              {Number(deal.normalPrice) > Number(deal.salePrice) && (
+                <del className="wishlist-price-old">{formatUsd(deal.normalPrice)}</del>
+              )}
+              {cheapestEver != null && cheapestEver > 0 && (
+                <span className="wishlist-lowest-chip" title="Historical lowest price">
+                  Low {formatUsd(cheapestEver)}
                 </span>
-                <span className="wishlist-store-chip">{storeLabel}</span>
-              </div>
-              <p className="wishlist-monitoring-note">
-                Monitoring active PC stores for discounts matching your alert sensitivity.
-              </p>
+              )}
             </div>
-          )}
-        </div>
+            {dealUrl && (
+              <a
+                href={dealUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lr-button wishlist-cta-btn wishlist-cta-btn--deal"
+              >
+                View deal <ExternalLinkIcon />
+              </a>
+            )}
+          </div>
+        )}
+
+        {cardState === 'not_on_sale' && (
+          <div className="wishlist-details-group">
+            <div className="wishlist-price-row">
+              <span className="wishlist-price-regular">
+                {deal?.normalPrice || deal?.salePrice
+                  ? formatUsd(deal.normalPrice || deal.salePrice)
+                  : 'Price tracked on PC'}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {cardState === 'console' && (
+          <div className="wishlist-details-group">
+            <div className="wishlist-price-row">
+              <span className="wishlist-console-badge">Console Exclusive</span>
+            </div>
+          </div>
+        )}
       </div>
     </article>
   )
@@ -340,6 +353,7 @@ export default function Wishlist({
   const [snapshotStores, setSnapshotStores] = useState([])
   const [snapshotDeals, setSnapshotDeals] = useState([])
   const [snapshotFree, setSnapshotFree] = useState([])
+  const [liveDeals, setLiveDeals] = useState({})
   const [now, setNow] = useState(Date.now())
 
   // Header controls state
@@ -484,24 +498,85 @@ export default function Wishlist({
     return match
   }, [combinedDeals])
 
+  // Populate freeByTitle with both full title and cleaned title (stripping "(Epic Games) Giveaway", etc.)
   const freeByTitle = useMemo(() => {
     const match = new Map()
     combinedFreeGames.forEach((game) => {
-      match.set(titleKey(game.title), game)
+      const keyFull = titleKey(game.title)
+      const keyClean = titleKey(normalizeFreeTitle(game.title))
+      if (!match.has(keyFull)) match.set(keyFull, game)
+      if (keyClean && !match.has(keyClean)) match.set(keyClean, game)
     })
     return match
   }, [combinedFreeGames])
 
+  // Helper to find matching free game with fuzzy fallback
+  function findFreeGame(title) {
+    if (!title) return null
+    const key = titleKey(title)
+    if (freeByTitle.has(key)) return freeByTitle.get(key)
+    const cleanKey = titleKey(normalizeFreeTitle(title))
+    if (freeByTitle.has(cleanKey)) return freeByTitle.get(cleanKey)
+
+    // Substring match
+    for (const fg of combinedFreeGames) {
+      const fgClean = titleKey(normalizeFreeTitle(fg.title))
+      if (fgClean && (fgClean.includes(key) || key.includes(fgClean))) {
+        return fg
+      }
+    }
+    return null
+  }
+
+  // Fetch live deals for wishlisted PC games not in top 60 snapshot
+  useEffect(() => {
+    let cancelled = false
+    const pending = games.filter((g) => {
+      if (isConsoleGame(g.platform)) return false
+      const key = titleKey(g.title)
+      return !dealsByTitle.has(key) && !liveDeals[key]
+    })
+
+    if (pending.length === 0) return
+
+    pending.slice(0, 15).forEach(async (g) => {
+      const key = titleKey(g.title)
+      try {
+        const cleanQuery = g.title.replace(/\s*\(.*?\)/g, '').trim()
+        const res = await fetch(
+          `https://www.cheapshark.com/api/1.0/deals?title=${encodeURIComponent(cleanQuery)}&pageSize=1`
+        )
+        if (!res.ok) return
+        const data = await res.json()
+        if (!cancelled && Array.isArray(data) && data[0]) {
+          setLiveDeals((prev) => ({
+            ...prev,
+            [key]: data[0],
+          }))
+        }
+      } catch {}
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [games, dealsByTitle, liveDeals])
+
   // Count games currently on sale or free
   const saleOrFreeCount = useMemo(() => {
     return games.filter((g) => {
+      if (isConsoleGame(g.platform)) return false
       const key = titleKey(g.title)
-      const isFree = freeByTitle.has(key)
-      const deal = dealsByTitle.get(key)
-      const isOnSale = Boolean(deal && (deal.isOnSale === '1' || Number(deal.savings) > 0))
-      return !isConsoleGame(g.platform) && (isFree || isOnSale)
+      const free = findFreeGame(g.title)
+      const deal = dealsByTitle.get(key) || liveDeals[key]
+      const isDealFree = Boolean(
+        deal && (deal.isFree || Number(deal.savings) >= 100 || Number(deal.salePrice) === 0)
+      )
+      const isFree = Boolean(free || isDealFree)
+      const isOnSale = Boolean(!isFree && deal && (deal.isOnSale === '1' || Number(deal.savings) > 0))
+      return isFree || isOnSale
     }).length
-  }, [games, freeByTitle, dealsByTitle])
+  }, [games, freeByTitle, dealsByTitle, liveDeals, combinedFreeGames])
 
   // Sorted games
   const sortedGames = useMemo(() => {
@@ -516,12 +591,12 @@ export default function Wishlist({
     return list.sort((a, b) => {
       const keyA = titleKey(a.title)
       const keyB = titleKey(b.title)
-      const freeA = freeByTitle.has(keyA) ? 1 : 0
-      const freeB = freeByTitle.has(keyB) ? 1 : 0
+      const freeA = findFreeGame(a.title) || (liveDeals[keyA] && Number(liveDeals[keyA].savings) >= 100) ? 1 : 0
+      const freeB = findFreeGame(b.title) || (liveDeals[keyB] && Number(liveDeals[keyB].savings) >= 100) ? 1 : 0
       if (freeA !== freeB) return freeB - freeA
 
-      const dealA = dealsByTitle.get(keyA)
-      const dealB = dealsByTitle.get(keyB)
+      const dealA = dealsByTitle.get(keyA) || liveDeals[keyA]
+      const dealB = dealsByTitle.get(keyB) || liveDeals[keyB]
       const savingsA = dealA ? Number(dealA.savings || 0) : -1
       const savingsB = dealB ? Number(dealB.savings || 0) : -1
       if (savingsA !== savingsB) return savingsB - savingsA
@@ -530,7 +605,7 @@ export default function Wishlist({
       const priceB = dealB ? Number(dealB.salePrice || 9999) : 9999
       return priceA - priceB
     })
-  }, [games, sortBy, freeByTitle, dealsByTitle])
+  }, [games, sortBy, freeByTitle, dealsByTitle, liveDeals, combinedFreeGames])
 
   function updateGame(title, updates) {
     setGames((current) =>
@@ -643,8 +718,7 @@ export default function Wishlist({
             <button
               type="button"
               className="lr-button lr-button--ghost"
-              onClick={() => onNavigate('free')}
-            >
+              onClick={() => onNavigate('free')}>
               See Free Now
             </button>
           </div>
@@ -652,11 +726,12 @@ export default function Wishlist({
       ) : (
         <div className="wishlist-grid-redesign">
           {sortedGames.map((game, index) => {
-            const deal = dealsByTitle.get(titleKey(game.title))
-            const freeGame = freeByTitle.get(titleKey(game.title))
+            const key = titleKey(game.title)
+            const deal = dealsByTitle.get(key) || liveDeals[key] || null
+            const freeGame = findFreeGame(game.title)
             return (
               <WishlistCard
-                key={`${titleKey(game.title)}-${index}`}
+                key={`${key}-${index}`}
                 game={game}
                 deal={deal}
                 freeGame={freeGame}
