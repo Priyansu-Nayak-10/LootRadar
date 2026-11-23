@@ -1126,10 +1126,13 @@ export default function Discover({
       setActivePlatform(searchCategory || 'All')
       setSearchSubmitted(true)
       searchGames(null, searchQuery, searchCategory || 'All')
-    } else if (!isSearchPage && !searchSubmitted) {
+    } else if (!isSearchPage) {
+      setSearchSubmitted(false)
       setSearchTerm('')
+      setSearchResults([])
+      setSearchError('')
     }
-  }, [isSearchPage, searchQuery, searchCategory, searchGames, searchSubmitted])
+  }, [isSearchPage, searchQuery, searchCategory, searchGames])
 
   // Listen to search events dispatched from global header
   useEffect(() => {

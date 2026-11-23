@@ -187,6 +187,8 @@ export default function App() {
           setTab('search')
           return
         }
+      } else {
+        setShellSearch('')
       }
       setTab(knownTabs.includes(route) ? route : 'not-found')
     }
@@ -202,6 +204,7 @@ export default function App() {
   function navigateTab(nextTab) {
     setAccountMenuOpen(false)
     if (nextTab === 'free') setFreeTab('claim')
+    if (nextTab === 'discover') setShellSearch('')
     setTab(nextTab)
     window.history.pushState({}, '', nextTab === 'discover' ? '/' : `/${nextTab}`)
   }
@@ -446,7 +449,15 @@ export default function App() {
       <header className="app-header" id="top">
         <div className="header-inner">
           <div className="header-top">
-            <a className="brand" href="/" aria-label="LootRadar home">
+            <a
+              className="brand"
+              href="/"
+              onClick={(event) => {
+                event.preventDefault()
+                navigateTab('discover')
+              }}
+              aria-label="LootRadar home"
+            >
               <span className="brand-mark" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.7">
                   <circle cx="12" cy="12" r="8.5" />
