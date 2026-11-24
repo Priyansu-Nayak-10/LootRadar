@@ -11,6 +11,7 @@ import {
   selectHeroDeals,
   useTopDeals,
 } from '../lib/dealsData'
+import { cleanTitle, isMobile } from '../lib/freeGames'
 import { lootRadarArt } from '../assets/art'
 
 function dateString(date) {
@@ -536,9 +537,12 @@ export function HomeRedesign({
       const activeFreeGames = (Array.isArray(freeGames) ? freeGames : [])
         .filter((game) => {
           if (!game || typeof game !== 'object' || !game.title) return false
-          if (!game.thumbnail || !game.thumbnail.trim()) return false
-          if (!game.end_date || game.end_date === 'N/A') return true
-          const cleanDate = game.end_date.includes('T') ? game.end_date : game.end_date.replace(' ', 'T') + 'Z'
+          if (isMobile(game)) return false
+          const thumb = game.thumbnail || game.image
+          if (!thumb || !thumb.trim()) return false
+          const endStr = game.end_date || game.endDate
+          if (!endStr || endStr === 'N/A') return true
+          const cleanDate = endStr.includes('T') ? endStr : endStr.replace(' ', 'T') + 'Z'
           const end = new Date(cleanDate).getTime()
           return Number.isNaN(end) || end > now
         })
@@ -549,19 +553,20 @@ export function HomeRedesign({
             const t = new Date(clean).getTime()
             return Number.isNaN(t) ? Infinity : t
           }
-          return parseTime(a.end_date) - parseTime(b.end_date)
+          return parseTime(a.end_date || a.endDate) - parseTime(b.end_date || b.endDate)
         })
 
       const chosenFree = activeFreeGames[0]
       if (chosenFree && chosenFree.title) {
+        const cleanedFreeTitle = cleanTitle(chosenFree.title)
         slides.push({
           id: `free-${chosenFree.id || 'giveaway'}`,
           type: 'free',
-          title: chosenFree.title,
-          imageUrl: chosenFree.thumbnail || '',
+          title: cleanedFreeTitle,
+          imageUrl: chosenFree.image || chosenFree.thumbnail || '',
           badgeText: 'FREE NOW',
           subtitle: chosenFree.platforms || 'PC / DRM-Free',
-          countdownEnd: chosenFree.end_date || '',
+          countdownEnd: chosenFree.end_date || chosenFree.endDate || '',
           actionLabel: 'Claim now',
           actionUrl: chosenFree.open_giveaway_url || chosenFree.gamerpower_url || 'https://www.gamerpower.com',
           isExternal: true,
@@ -944,18 +949,35 @@ export function HomeRedesign({
             </div>
             {(freeGames?.length || 0) > 0 ? (
               <div className="home-feature-free-list">
-                {freeGames.slice(0, 5).map((game) => (
-                  <a
-                    key={game.id}
-                    href={game.open_giveaway_url || game.gamerpower_url || '#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="home-feature-free"
-                  >
-                    {game.thumbnail ? <img src={game.thumbnail} alt={game.title} loading="lazy" /> : <div className="lr-art-fallback">FREE GAME</div>}
-                    <span><strong>{game.title}</strong><small>{formatCountdown(game.end_date, now)}</small></span>
-                  </a>
-                ))}
+                {freeGames
+                  .filter((game) => !isMobile(game))
+                  .slice(0, 5)
+                  .map((game) => {
+                    const cleaned = cleanTitle(game.title)
+                    return (
+                      <a
+                        key={game.id || cleaned}
+                        href={game.open_giveaway_url || game.gamerpower_url || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="home-feature-free"
+                      >
+                        {game.thumbnail || game.image ? (
+                          <SafeImage
+                            src={game.thumbnail || game.image}
+                            alt={cleaned}
+                            fallbackText={cleaned.slice(0, 1)}
+                          />
+                        ) : (
+                          <div className="lr-art-fallback">FREE GAME</div>
+                        )}
+                        <span>
+                          <strong>{cleaned}</strong>
+                          <small>{formatCountdown(game.end_date || game.endDate, now)}</small>
+                        </span>
+                      </a>
+                    )
+                  })}
               </div>
             ) : (
               <div className="lr-skeleton" />

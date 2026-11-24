@@ -170,9 +170,18 @@ export default function App() {
       const hashTab = window.location.hash.replace(/^#\/?/, '')
       const route = pathTab || hashTab || 'discover'
 
+      if (route === 'coming' || route === 'always') {
+        const nextFreeTab = route
+        setFreeTab(nextFreeTab)
+        setTab('free')
+        window.history.replaceState({}, '', `/free?tab=${nextFreeTab}`)
+        return
+      }
+
+      const freeTabQuery = new URLSearchParams(window.location.search).get('tab')
       setFreeTab(
-        route === 'free' && ['coming', 'always'].includes(new URLSearchParams(window.location.search).get('tab'))
-          ? new URLSearchParams(window.location.search).get('tab')
+        route === 'free' && ['claim', 'coming', 'always'].includes(freeTabQuery)
+          ? freeTabQuery
           : 'claim'
       )
 
@@ -621,6 +630,8 @@ export default function App() {
             activeTab={freeTab}
             onTabChange={navigateFreeTab}
             onGameOpen={() => {}}
+            session={session}
+            onNavigate={navigateTab}
           />
         )}
         {(tab === 'discover' || tab === 'search') && (
