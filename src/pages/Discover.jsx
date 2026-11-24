@@ -2,6 +2,8 @@ import { Component, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { fetchGamingNews, fetchRawgGames, searchGamesMulti, hasRawgKey } from '../lib/discoverApi'
 import GameActions from '../components/GameActions'
 import TopDeals from '../components/TopDeals'
+import PopularGamesSection from '../components/PopularGamesSection'
+import ComingSoonSection from '../components/ComingSoonSection'
 import SafeImage from '../components/SafeImage'
 import {
   STORE_NAMES,
@@ -987,6 +989,17 @@ export function HomeRedesign({
       </section>
 
       <TopDeals getGameActions={getGameActions} onNavigate={onNavigate} />
+
+      <PopularGamesSection
+        deals={deals}
+        getGameActions={getGameActions}
+        onNavigate={onNavigate}
+      />
+
+      <ComingSoonSection
+        getGameActions={getGameActions}
+        onNavigate={onNavigate}
+      />
 
       <section className="discover-section home-news-grid" ref={newsPanelRef}>
         <div className="lr-section-heading">
