@@ -86,7 +86,7 @@ textarea:focus-visible {
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  padding-bottom: 116px;
+  padding-bottom: 0;
   background: transparent;
 }
 
@@ -195,7 +195,7 @@ textarea:focus-visible {
 .main-content {
   position: relative;
   padding-top: 30px;
-  padding-bottom: 100px;
+  padding-bottom: 0;
 }
 
 
@@ -5265,7 +5265,7 @@ textarea:focus-visible {
 
 @media (max-width: 480px) {
   .app-shell {
-    padding-bottom: 100px;
+    padding-bottom: 0;
   }
 
   .header-inner,
@@ -6895,10 +6895,10 @@ textarea:focus-visible {
 
 .app-footer {
   width: 100%;
-  margin-top: 56px;
+  margin-top: 28px;
   border-top: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(16, 22, 27, 0.6) 0%, rgba(7, 10, 13, 0.98) 100%);
-  padding-top: 48px;
+  padding-top: 36px;
   padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
 }
 
@@ -7351,6 +7351,7 @@ textarea:focus-visible {
 
   .home-feature-grid,
   .popular-games-section,
+  .coming-soon-section,
   .top-deals {
     grid-column: 1 / -1;
   }
@@ -7415,7 +7416,7 @@ textarea:focus-visible {
   font-size: 13px;
 }
 
-/* Ensure all page containers have ~100px bottom padding so floating bottom nav never covers buttons */
+/* Pages sit above Footer, which has padding-bottom to clear the floating bottom-nav */
 .free-now-redesign,
 .deals-redesign,
 .discover-page,
@@ -7427,7 +7428,7 @@ textarea:focus-visible {
 .news-redesign,
 .account-redesign,
 .not-found-redesign {
-  padding-bottom: 100px;
+  padding-bottom: 0;
 }
 
 /* Hide floating bottom nav on sign-in / sign-up page */
