@@ -12,6 +12,9 @@ jobs:
   update-snapshot:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    concurrency:
+      group: snapshot-update
+      cancel-in-progress: false
 
     steps:
       - name: Check out repository
@@ -34,4 +37,5 @@ jobs:
           git add public/data/epic-free-games.json public/data/gamerpower-free-games.json public/data/cheapshark-deals.json public/data/gaming-news.json public/data/always-free-games.json
           git diff --cached --quiet && exit 0
           git commit -m "Update LootRadar data snapshots"
+          git pull --rebase origin main
           git push

@@ -1014,7 +1014,15 @@ export function HomeRedesign({
         ) : (news?.length || 0) > 0 ? (
           <div className="home-news-layout">
             <article className="home-news-feature">
-              {news[0].image ? <img src={news[0].image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
+              {news[0].image ? (
+                <SafeImage
+                  src={news[0].image}
+                  alt=""
+                  fallbackText="RADAR"
+                />
+              ) : (
+                <div className="lr-art-fallback">RADAR</div>
+              )}
               <div>
                 <span>{news[0].source} {'\u00b7'} {formatRelativeTime(news[0].publishedAt)}</span>
                 <h3>{decodeText(news[0].title)}</h3>
@@ -1024,7 +1032,15 @@ export function HomeRedesign({
             <div className="home-news-small">
               {news.slice(1, 3).map((article) => (
                 <article key={article.id || article.link}>
-                  {article.image ? <img src={article.image} alt="" loading="lazy" /> : <div className="lr-art-fallback">RADAR</div>}
+                  {article.image ? (
+                    <SafeImage
+                      src={article.image}
+                      alt=""
+                      fallbackText="RADAR"
+                    />
+                  ) : (
+                    <div className="lr-art-fallback">RADAR</div>
+                  )}
                   <div><span>{article.source} {'\u00b7'} {formatRelativeTime(article.publishedAt)}</span><h3>{decodeText(article.title)}</h3></div>
                   <a href={article.link} target="_blank" rel="noreferrer" aria-label={`Read ${article.title}`} />
                 </article>

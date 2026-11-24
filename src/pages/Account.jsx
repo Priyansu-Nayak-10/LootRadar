@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { hasSupabaseConfig, supabase } from '../lib/supabase'
 
-export default function Account({ session }) {
+export default function Account({ session, onSignOut }) {
   const [mode, setMode] = useState('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -189,9 +189,17 @@ export default function Account({ session }) {
   async function signOut() {
     setLoading(true)
     setMessage('')
-    const { error } = await supabase.auth.signOut()
+    try {
+      window.localStorage.removeItem('lootradar_library')
+      window.localStorage.removeItem('lootradar_wishlist')
+    } catch {}
+    if (typeof onSignOut === 'function') {
+      await onSignOut()
+    } else {
+      const { error } = await supabase.auth.signOut()
+      if (error) setMessage(error.message)
+    }
     setLoading(false)
-    if (error) setMessage(error.message)
   }
 
   async function forgotPassword() {

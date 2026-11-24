@@ -5021,6 +5021,11 @@ textarea:focus-visible {
 }
 
 @media (max-width: 600px) {
+  .deals-chip,
+  .free-chip {
+    min-height: 44px;
+    padding: 8px 16px;
+  }
   .home-redesign { gap: 14px; }
   .home-hero-carousel,
   .home-hero-skeleton { height: 300px; }

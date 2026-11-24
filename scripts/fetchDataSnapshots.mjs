@@ -81,7 +81,7 @@ async function saveJson(filename, value) {
 async function main() {
   await mkdir(DATA_DIR, { recursive: true })
 
-  const [freeGames, deals, stores, alwaysFreeGames] = await Promise.all([
+  const [freeGamesRes, dealsRes, storesRes, alwaysFreeRes] = await Promise.allSettled([
     fetchJson('https://www.gamerpower.com/api/giveaways?type=game'),
     fetchJson(
       'https://www.cheapshark.com/api/1.0/deals?onSale=1&pageSize=60&sortBy=Savings&desc=0'
@@ -90,63 +90,82 @@ async function main() {
     fetchJson('https://www.freetogame.com/api/games'),
   ])
 
-  const cleanFreeGames = freeGames
-    .filter((game) => game.status === 'Active')
-    .map((game) => ({
-      id: game.id,
-      title: game.title,
-      platforms: game.platforms,
-      thumbnail: game.thumbnail,
-      worth: game.worth,
-      end_date: game.end_date,
-      open_giveaway_url: game.open_giveaway_url,
-      gamerpower_url: game.gamerpower_url,
-    }))
+  let cleanFreeGames = []
+  if (freeGamesRes.status === 'fulfilled' && Array.isArray(freeGamesRes.value)) {
+    cleanFreeGames = freeGamesRes.value
+      .filter((game) => game.status === 'Active')
+      .map((game) => ({
+        id: game.id,
+        title: game.title,
+        platforms: game.platforms,
+        thumbnail: game.thumbnail,
+        worth: game.worth,
+        end_date: game.end_date,
+        open_giveaway_url: game.open_giveaway_url,
+        gamerpower_url: game.gamerpower_url,
+      }))
 
-  const activeStores = stores
-    .filter((store) => Number(store.isActive) === 1)
-    .map((store) => ({
-      storeID: store.storeID,
-      storeName: store.storeName,
-    }))
+    await saveJson('gamerpower-free-games.json', {
+      generatedAt: new Date().toISOString(),
+      source: 'GamerPower',
+      sourceUrl: 'https://www.gamerpower.com',
+      games: cleanFreeGames,
+    })
+  } else {
+    console.warn('GamerPower fetch failed or returned non-array:', freeGamesRes.reason?.message || 'unknown error')
+  }
 
-  await saveJson('gamerpower-free-games.json', {
-    generatedAt: new Date().toISOString(),
-    source: 'GamerPower',
-    sourceUrl: 'https://www.gamerpower.com',
-    games: cleanFreeGames,
-  })
+  let deals = []
+  let activeStores = []
+  if (dealsRes.status === 'fulfilled' && Array.isArray(dealsRes.value)) {
+    deals = dealsRes.value
+    if (storesRes.status === 'fulfilled' && Array.isArray(storesRes.value)) {
+      activeStores = storesRes.value
+        .filter((store) => Number(store.isActive) === 1)
+        .map((store) => ({
+          storeID: store.storeID,
+          storeName: store.storeName,
+        }))
+    }
 
-  await saveJson('cheapshark-deals.json', {
-    generatedAt: new Date().toISOString(),
-    source: 'CheapShark',
-    sourceUrl: 'https://www.cheapshark.com',
-    stores: activeStores,
-    deals,
-  })
+    await saveJson('cheapshark-deals.json', {
+      generatedAt: new Date().toISOString(),
+      source: 'CheapShark',
+      sourceUrl: 'https://www.cheapshark.com',
+      stores: activeStores,
+      deals,
+    })
+  } else {
+    console.warn('CheapShark deals fetch failed:', dealsRes.reason?.message || 'unknown error')
+  }
 
-  const cleanAlwaysFreeGames = alwaysFreeGames
-    .slice(0, 120)
-    .map((game) => ({
-      id: game.id,
-      title: game.title,
-      description: game.short_description,
-      genre: game.genre,
-      platform: game.platform,
-      publisher: game.publisher,
-      developer: game.developer,
-      releaseDate: game.release_date,
-      thumbnail: game.thumbnail,
-      gameUrl: game.game_url,
-      profileUrl: game.freetogame_profile_url,
-    }))
+  let cleanAlwaysFreeGames = []
+  if (alwaysFreeRes.status === 'fulfilled' && Array.isArray(alwaysFreeRes.value)) {
+    cleanAlwaysFreeGames = alwaysFreeRes.value
+      .slice(0, 120)
+      .map((game) => ({
+        id: game.id,
+        title: game.title,
+        description: game.short_description,
+        genre: game.genre,
+        platform: game.platform,
+        publisher: game.publisher,
+        developer: game.developer,
+        releaseDate: game.release_date,
+        thumbnail: game.thumbnail,
+        gameUrl: game.game_url,
+        profileUrl: game.freetogame_profile_url,
+      }))
 
-  await saveJson('always-free-games.json', {
-    generatedAt: new Date().toISOString(),
-    source: 'FreeToGame',
-    sourceUrl: 'https://www.freetogame.com',
-    games: cleanAlwaysFreeGames,
-  })
+    await saveJson('always-free-games.json', {
+      generatedAt: new Date().toISOString(),
+      source: 'FreeToGame',
+      sourceUrl: 'https://www.freetogame.com',
+      games: cleanAlwaysFreeGames,
+    })
+  } else {
+    console.warn('FreeToGame fetch failed:', alwaysFreeRes.reason?.message || 'unknown error')
+  }
 
   const feeds = [
     { source: 'IGN', url: 'https://www.ign.com/rss/v2/articles/feed', limit: 12 },

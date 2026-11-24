@@ -98,15 +98,9 @@ function ChevronRightIcon() {
 // ─── Platform Icons Component ────────────────────────────────────────────────
 function ComingSoonPlatformIcons({ item }) {
   const isGiveaway = item.type === 'giveaway'
-  if (isGiveaway) {
-    return (
-      <div className="coming-game-card__platform-icons" aria-label="Available platforms">
-        <PcIcon />
-      </div>
-    )
-  }
 
   const haystack = useMemo(() => {
+    if (isGiveaway) return ''
     const list = []
     if (Array.isArray(item.parent_platforms)) {
       for (const p of item.parent_platforms) {
@@ -121,7 +115,15 @@ function ComingSoonPlatformIcons({ item }) {
       }
     }
     return list.join(' ')
-  }, [item])
+  }, [item, isGiveaway])
+
+  if (isGiveaway) {
+    return (
+      <div className="coming-game-card__platform-icons" aria-label="Available platforms">
+        <PcIcon />
+      </div>
+    )
+  }
 
   const hasPc = haystack.includes('pc') || haystack.includes('windows')
   const hasPs = haystack.includes('playstation') || haystack.includes('ps')

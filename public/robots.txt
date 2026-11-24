@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lootradar.vercel.app/sitemap.xml

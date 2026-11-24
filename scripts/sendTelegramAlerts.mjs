@@ -323,6 +323,53 @@ async function main() {
 
   // ─── Process Wishlist Price Drop Deals ──────────────────────────────────────
   console.log('SENDER_PHASE=evaluating_wishlist_deals')
+
+  // Find all unique PC wishlisted titles across active users with notifications enabled
+  const activeUserIds = new Set(
+    settings
+      .filter((s) => s.enabled && connections.some((c) => c.user_id === s.user_id))
+      .map((s) => s.user_id)
+  )
+
+  const uniqueWishlistTitles = new Set()
+  for (const game of wishlistRows) {
+    if (!activeUserIds.has(game.user_id)) continue
+    if (game.notify === false) continue
+    if (isConsoleGame(game.platform)) continue
+    const norm = normalizeTitle(game.normalized_title || game.title)
+    const userOwned = ownedTitlesByUser.get(game.user_id) || new Set()
+    if (!userOwned.has(norm)) {
+      uniqueWishlistTitles.add(game.title)
+    }
+  }
+
+  // Fetch live deals for wishlisted titles not found in the global snapshot
+  for (const rawTitle of uniqueWishlistTitles) {
+    const norm = normalizeTitle(rawTitle)
+    if (cheapsharkDealsMap.has(norm)) continue
+
+    try {
+      const cleanQuery = rawTitle.replace(/\s*\(.*?\)/g, '').trim()
+      const searchUrl = `https://www.cheapshark.com/api/1.0/deals?title=${encodeURIComponent(cleanQuery)}&pageSize=1`
+      const res = await fetch(searchUrl, {
+        headers: { 'User-Agent': 'LootRadar/1.0 (free portfolio project)' },
+      })
+      if (res.ok) {
+        const results = await res.json()
+        if (Array.isArray(results) && results[0]) {
+          cheapsharkDealsMap.set(norm, results[0])
+          // Also map by result title's normalized form
+          const resultNorm = normalizeTitle(results[0].title)
+          if (!cheapsharkDealsMap.has(resultNorm)) {
+            cheapsharkDealsMap.set(resultNorm, results[0])
+          }
+        }
+      }
+    } catch (err) {
+      console.warn(`CheapShark lookup failed for "${rawTitle}":`, err.message)
+    }
+  }
+
   let wishlistAlertsSent = 0
   for (const setting of settings) {
     if (!setting.enabled) continue

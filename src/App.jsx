@@ -177,14 +177,23 @@ export default function App() {
     ]
     function readRoute() {
       const pathTab = window.location.pathname.replace(/^\/+|\/+$/g, '')
-      const hashTab = window.location.hash.replace(/^#\/?/, '')
+      const rawHash = window.location.hash.split('&')[0].replace(/^#\/?/, '').split('=')[0]
+      const hashTab = rawHash.replace(/^\/+|\/+$/g, '')
       const route = pathTab || hashTab || 'discover'
 
       if (route === 'coming' || route === 'always') {
         const nextFreeTab = route
         setFreeTab(nextFreeTab)
         setTab('free')
+        document.title = 'Free Games | LootRadar'
         window.history.replaceState({}, '', `/free?tab=${nextFreeTab}`)
+        return
+      }
+
+      if (route === 'signin' || route === 'signup') {
+        setTab('account')
+        document.title = 'Account | LootRadar'
+        window.history.replaceState({}, '', '/account')
         return
       }
 
@@ -203,12 +212,26 @@ export default function App() {
           setShellSearch(q)
           setShellCategory(platform)
           setTab('search')
+          document.title = `Search: ${q} | LootRadar`
           return
         }
       } else {
         setShellSearch('')
       }
       setTab(knownTabs.includes(route) ? route : 'not-found')
+
+      const routeTitles = {
+        discover: 'LootRadar | Your Game Intelligence',
+        free: 'Free Games | LootRadar',
+        deals: 'Game Deals | LootRadar',
+        library: 'Library | LootRadar',
+        wishlist: 'Wishlist | LootRadar',
+        news: 'Gaming News | LootRadar',
+        account: 'Account | LootRadar',
+        search: 'Search | LootRadar',
+        'not-found': 'Page Not Found | LootRadar',
+      }
+      document.title = routeTitles[route] || (knownTabs.includes(route) ? 'LootRadar' : 'Page Not Found | LootRadar')
     }
     readRoute()
     window.addEventListener('hashchange', readRoute)
@@ -224,12 +247,24 @@ export default function App() {
     if (nextTab === 'free') setFreeTab('claim')
     if (nextTab === 'discover') setShellSearch('')
     setTab(nextTab)
+    const titles = {
+      discover: 'LootRadar | Your Game Intelligence',
+      free: 'Free Games | LootRadar',
+      deals: 'Game Deals | LootRadar',
+      library: 'Library | LootRadar',
+      wishlist: 'Wishlist | LootRadar',
+      news: 'Gaming News | LootRadar',
+      account: 'Account | LootRadar',
+      search: 'Search | LootRadar',
+    }
+    document.title = titles[nextTab] || 'LootRadar'
     window.history.pushState({}, '', nextTab === 'discover' ? '/' : `/${nextTab}`)
   }
 
   function navigateFreeTab(nextFreeTab) {
     setFreeTab(nextFreeTab)
     setTab('free')
+    document.title = 'Free Games | LootRadar'
     window.history.pushState({}, '', nextFreeTab === 'claim' ? '/free' : `/free?tab=${nextFreeTab}`)
   }
 
@@ -239,6 +274,7 @@ export default function App() {
     closeTypeahead()
     if (query) {
       setTab('search')
+      document.title = `Search: ${query} | LootRadar`
       window.history.pushState({}, '', `/search?q=${encodeURIComponent(query)}&platform=${encodeURIComponent(shellCategory)}`)
       window.dispatchEvent(new CustomEvent('lootradar-shell-search', {
         detail: { query, category: shellCategory },
@@ -327,6 +363,12 @@ export default function App() {
   }, [])
 
   async function signOut() {
+    try {
+      window.localStorage.removeItem('lootradar_library')
+      window.localStorage.removeItem('lootradar_wishlist')
+    } catch {}
+    setOwnedGames([])
+    setWishlist([])
     if (!supabase) return
     await supabase.auth.signOut()
   }
@@ -514,7 +556,7 @@ export default function App() {
                   onKeyDown={handleTypeaheadKeyDown}
                   onFocus={() => { if (typeaheadResults.length > 0) setTypeaheadOpen(true) }}
                   placeholder="Search games"
-                  aria-label="Search games"
+                  aria-label="Search all games across PC and consoles"
                   role="combobox"
                   aria-expanded={typeaheadOpen}
                   aria-controls="shell-typeahead-list"
@@ -690,6 +732,7 @@ export default function App() {
           {tab === 'account' && (
             <Account
               session={session}
+              onSignOut={signOut}
             />
           )}
           {tab === 'not-found' && (
