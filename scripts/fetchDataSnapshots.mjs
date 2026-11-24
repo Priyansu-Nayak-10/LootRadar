@@ -84,7 +84,7 @@ async function main() {
   const [freeGames, deals, stores, alwaysFreeGames] = await Promise.all([
     fetchJson('https://www.gamerpower.com/api/giveaways?type=game'),
     fetchJson(
-      'https://www.cheapshark.com/api/1.0/deals?onSale=1&pageSize=60&sortBy=Savings&desc=0&upperPrice=15'
+      'https://www.cheapshark.com/api/1.0/deals?onSale=1&pageSize=60&sortBy=Savings&desc=0'
     ),
     fetchJson('https://www.cheapshark.com/api/1.0/stores'),
     fetchJson('https://www.freetogame.com/api/games'),
