@@ -3,7 +3,34 @@ import SafeImage from '../components/SafeImage'
 
 const PLATFORMS = ['All', 'PC', 'Steam', 'Epic Games', 'GOG', 'PlayStation', 'Xbox']
 
-export default function Library({ games = [], onRemove, onNavigate }) {
+const POPULAR_STARTER_GAMES = [
+  {
+    title: 'Cyberpunk 2077',
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg',
+    platform: 'PC / Steam',
+    genre: 'RPG / Open World',
+  },
+  {
+    title: 'The Witcher 3: Wild Hunt',
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg',
+    platform: 'PC / Steam',
+    genre: 'RPG / Action',
+  },
+  {
+    title: 'Grand Theft Auto V',
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg',
+    platform: 'PC / Steam',
+    genre: 'Action / Adventure',
+  },
+  {
+    title: 'Elden Ring',
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg',
+    platform: 'PC / Steam',
+    genre: 'Action RPG',
+  },
+]
+
+export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [activePlatform, setActivePlatform] = useState('All')
   const [sortBy, setSortBy] = useState('recent') // 'recent' | 'az' | 'za'
@@ -151,6 +178,41 @@ export default function Library({ games = [], onRemove, onNavigate }) {
             >
               Browse Deals
             </button>
+          </div>
+
+          <div className="empty-suggestions-shelf">
+            <div className="empty-suggestions-header">
+              <span className="empty-suggestions-kicker">COMMONLY CLAIMED</span>
+              <h3 className="empty-suggestions-title">Add Popular Titles to Library</h3>
+            </div>
+            <div className="empty-suggestions-grid">
+              {POPULAR_STARTER_GAMES.map((item) => {
+                const isOwned = games.some(
+                  (g) => (g.title || '').trim().toLowerCase() === item.title.trim().toLowerCase()
+                )
+                return (
+                  <article key={item.title} className="empty-suggestion-card">
+                    <div className="empty-suggestion-card__media">
+                      <SafeImage src={item.image} alt={item.title} fallbackText={item.title} />
+                    </div>
+                    <div className="empty-suggestion-card__body">
+                      <h4 className="empty-suggestion-card__title" title={item.title}>
+                        {item.title}
+                      </h4>
+                      <span className="empty-suggestion-card__meta">{item.platform}</span>
+                      <button
+                        type="button"
+                        className={`empty-suggestion-card__btn ${isOwned ? 'is-added' : ''}`}
+                        onClick={() => !isOwned && onAdd?.(item)}
+                        disabled={isOwned}
+                      >
+                        {isOwned ? '✓ In Library' : '+ Add to Library'}
+                      </button>
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
           </div>
         </div>
       ) : filteredGames.length === 0 ? (

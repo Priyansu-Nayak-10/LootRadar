@@ -1,11 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import FreeNow from './pages/FreeNow'
-import Discover from './pages/Discover'
-import Deals from './pages/Deals'
-import Wishlist from './pages/Wishlist'
-import News from './pages/News'
-import Account from './pages/Account'
-import Library from './pages/Library'
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react'
 import Footer from './components/Footer'
 import useLocalStorage from './hooks/useLocalStorage'
 import cachedFetch from './lib/cachedFetch'
@@ -14,6 +7,23 @@ import { searchGamesMulti } from './lib/discoverApi'
 import { normalizeQuery } from './lib/searchRank'
 import SafeImage from './components/SafeImage'
 import './App.css'
+
+// Route-level code-splitting: lazy load pages to minimize initial bundle size
+const Discover = lazy(() => import('./pages/Discover'))
+const FreeNow = lazy(() => import('./pages/FreeNow'))
+const Deals = lazy(() => import('./pages/Deals'))
+const Wishlist = lazy(() => import('./pages/Wishlist'))
+const News = lazy(() => import('./pages/News'))
+const Account = lazy(() => import('./pages/Account'))
+const Library = lazy(() => import('./pages/Library'))
+
+function RouteFallback() {
+  return (
+    <div className="lr-page-loader" role="status" aria-label="Loading page">
+      <div className="lr-page-loader__spinner" />
+    </div>
+  )
+}
 
 const TABS = [
   { id: 'discover', label: 'Home' },
@@ -623,74 +633,77 @@ export default function App() {
       </header>
 
       <main className="main-content">
-        {tab === 'free' && (
-          <FreeNow
-            getGameActions={saveActions}
-            onAvailabilityChange={setAvailableFreeGames}
-            activeTab={freeTab}
-            onTabChange={navigateFreeTab}
-            onGameOpen={() => {}}
-            session={session}
-            onNavigate={navigateTab}
-          />
-        )}
-        {(tab === 'discover' || tab === 'search') && (
-          <Discover
-            library={ownedGames}
-            wishlist={wishlist}
-            session={session}
-            getGameActions={saveActions}
-            onNavigate={navigateTab}
-            isSearchPage={tab === 'search'}
-            searchQuery={shellSearch}
-            searchCategory={shellCategory}
-            onSearchChange={(q, cat) => {
-              setShellSearch(q)
-              if (cat) setShellCategory(cat)
-            }}
-          />
-        )}
-        {tab === 'deals' && (
-          <Deals
-            getGameActions={saveActions}
-            onAvailabilityChange={updateAvailableDeals}
-          />
-        )}
-        {tab === 'library' && (
-          <Library
-            games={ownedGames}
-            onRemove={(title) => toggleSavedGame('library', ownedGames, setOwnedGames, { title })}
-            onNavigate={navigateTab}
-          />
-        )}
-        {tab === 'wishlist' && (
-          <Wishlist
-            games={wishlist}
-            setGames={syncedSetter('wishlist', setWishlist)}
-            ownedGames={ownedGames}
-            freeGames={availableFreeGames}
-            deals={availableDeals}
-            session={session}
-            onNavigate={navigateTab}
-          />
-        )}
-        {tab === 'news' && <News />}
-        {tab === 'account' && (
-          <Account
-            session={session}
-          />
-        )}
-        {tab === 'not-found' && (
-          <section className="not-found-redesign" role="alert">
-            <div className="lr-art-fallback" aria-hidden="true">404</div>
-            <span className="lr-section-heading__kicker">RADAR LOST THE SIGNAL</span>
-            <h1>Page <strong>Not Found</strong></h1>
-            <p>That LootRadar page does not exist or the link may be outdated.</p>
-            <button type="button" className="lr-button" onClick={() => navigateTab('discover')}>
-              Back to Home
-            </button>
-          </section>
-        )}
+        <Suspense fallback={<RouteFallback />}>
+          {tab === 'free' && (
+            <FreeNow
+              getGameActions={saveActions}
+              onAvailabilityChange={setAvailableFreeGames}
+              activeTab={freeTab}
+              onTabChange={navigateFreeTab}
+              onGameOpen={() => {}}
+              session={session}
+              onNavigate={navigateTab}
+            />
+          )}
+          {(tab === 'discover' || tab === 'search') && (
+            <Discover
+              library={ownedGames}
+              wishlist={wishlist}
+              session={session}
+              getGameActions={saveActions}
+              onNavigate={navigateTab}
+              isSearchPage={tab === 'search'}
+              searchQuery={shellSearch}
+              searchCategory={shellCategory}
+              onSearchChange={(q, cat) => {
+                setShellSearch(q)
+                if (cat) setShellCategory(cat)
+              }}
+            />
+          )}
+          {tab === 'deals' && (
+            <Deals
+              getGameActions={saveActions}
+              onAvailabilityChange={updateAvailableDeals}
+            />
+          )}
+          {tab === 'library' && (
+            <Library
+              games={ownedGames}
+              onAdd={(game) => toggleSavedGame('library', ownedGames, setOwnedGames, game)}
+              onRemove={(title) => toggleSavedGame('library', ownedGames, setOwnedGames, { title })}
+              onNavigate={navigateTab}
+            />
+          )}
+          {tab === 'wishlist' && (
+            <Wishlist
+              games={wishlist}
+              setGames={syncedSetter('wishlist', setWishlist)}
+              ownedGames={ownedGames}
+              freeGames={availableFreeGames}
+              deals={availableDeals}
+              session={session}
+              onNavigate={navigateTab}
+            />
+          )}
+          {tab === 'news' && <News />}
+          {tab === 'account' && (
+            <Account
+              session={session}
+            />
+          )}
+          {tab === 'not-found' && (
+            <section className="not-found-redesign" role="alert">
+              <div className="lr-art-fallback" aria-hidden="true">404</div>
+              <span className="lr-section-heading__kicker">RADAR LOST THE SIGNAL</span>
+              <h1>Page <strong>Not Found</strong></h1>
+              <p>That LootRadar page does not exist or the link may be outdated.</p>
+              <button type="button" className="lr-button" onClick={() => navigateTab('discover')}>
+                Back to Home
+              </button>
+            </section>
+          )}
+        </Suspense>
       </main>
 
       <Footer onNavigate={navigateTab} onNavigateFreeTab={navigateFreeTab} />

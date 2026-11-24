@@ -360,6 +360,17 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
 
   const hasMore = visibleCount < filteredDeals.length
 
+  const isFiltered = Boolean(
+    store !== '' ||
+    minDiscount !== '0' ||
+    sort !== 'deals' ||
+    debouncedQuery !== '' ||
+    lowestOnly ||
+    maxPrice < 100 ||
+    minRating > 0 ||
+    showExtras
+  )
+
   function handleResetFilters() {
     setStore('')
     setMinDiscount('0')
@@ -565,6 +576,32 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
           >
             More filters <ChevronDownIcon />
           </button>
+
+          {/* Active Reset Filters Button */}
+          {isFiltered && (
+            <button
+              type="button"
+              className="deals-active-reset-btn"
+              onClick={handleResetFilters}
+              title="Reset all filters to default"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+              Reset filters
+            </button>
+          )}
         </div>
 
         {/* Collapsed "More filters" Panel */}

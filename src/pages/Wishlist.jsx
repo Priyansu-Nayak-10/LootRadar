@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import SafeImage from '../components/SafeImage'
 import {
   titleKey,
   formatUsd,
@@ -8,6 +9,33 @@ import {
   evaluateWishlistDeal,
 } from '../lib/wishlistAlerts'
 import { STORE_NAMES, formatStoreName } from '../lib/dealsData'
+
+const POPULAR_STARTER_GAMES = [
+  {
+    title: 'Cyberpunk 2077',
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg',
+    platform: 'PC / Steam',
+    genre: 'RPG / Open World',
+  },
+  {
+    title: 'The Witcher 3: Wild Hunt',
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg',
+    platform: 'PC / Steam',
+    genre: 'RPG / Action',
+  },
+  {
+    title: 'Grand Theft Auto V',
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg',
+    platform: 'PC / Steam',
+    genre: 'Action / Adventure',
+  },
+  {
+    title: 'Elden Ring',
+    image: 'https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg',
+    platform: 'PC / Steam',
+    genre: 'Action RPG',
+  },
+]
 
 function formatCountdown(endDate, now) {
   if (!endDate || endDate === 'N/A') return 'Limited Time'
@@ -611,6 +639,16 @@ export default function Wishlist({
     })
   }, [games, sortBy, freeByTitle, dealsByTitle, liveDeals, combinedFreeGames])
 
+  function addGame(gameToAdd) {
+    if (!gameToAdd || !gameToAdd.title) return
+    const key = titleKey(gameToAdd.title)
+    setGames((current) => {
+      const list = Array.isArray(current) ? current : []
+      if (list.some((g) => titleKey(g.title) === key)) return list
+      return [...list, { ...gameToAdd, notify: true }]
+    })
+  }
+
   function updateGame(title, updates) {
     setGames((current) =>
       current.map((game) =>
@@ -725,6 +763,39 @@ export default function Wishlist({
               onClick={() => onNavigate('free')}>
               See Free Now
             </button>
+          </div>
+
+          <div className="empty-suggestions-shelf">
+            <div className="empty-suggestions-header">
+              <span className="empty-suggestions-kicker">QUICK START</span>
+              <h3 className="empty-suggestions-title">Trending Games to Track</h3>
+            </div>
+            <div className="empty-suggestions-grid">
+              {POPULAR_STARTER_GAMES.map((item) => {
+                const isSaved = games.some((g) => titleKey(g.title) === titleKey(item.title))
+                return (
+                  <article key={item.title} className="empty-suggestion-card">
+                    <div className="empty-suggestion-card__media">
+                      <SafeImage src={item.image} alt={item.title} fallbackText={item.title} />
+                    </div>
+                    <div className="empty-suggestion-card__body">
+                      <h4 className="empty-suggestion-card__title" title={item.title}>
+                        {item.title}
+                      </h4>
+                      <span className="empty-suggestion-card__meta">{item.genre}</span>
+                      <button
+                        type="button"
+                        className={`empty-suggestion-card__btn ${isSaved ? 'is-added' : ''}`}
+                        onClick={() => !isSaved && addGame(item)}
+                        disabled={isSaved}
+                      >
+                        {isSaved ? '✓ Added' : '+ Add to Wishlist'}
+                      </button>
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
           </div>
         </div>
       ) : (

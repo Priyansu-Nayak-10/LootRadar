@@ -857,6 +857,36 @@ export default function FreeNow({
                   </button>
                 </div>
               )}
+
+              {/* Reset Claim Filters Button */}
+              {(store !== 'all' || sort !== 'ending' || showOwned) && (
+                <button
+                  type="button"
+                  className="free-active-reset-btn"
+                  onClick={() => {
+                    handleStoreSelect('all')
+                    handleSortSelect('ending')
+                    setShowOwned(false)
+                  }}
+                  title="Reset filters to default"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                    <path d="M3 3v5h5" />
+                  </svg>
+                  Reset filters
+                </button>
+              )}
             </div>
           </div>
 
@@ -983,6 +1013,21 @@ export default function FreeNow({
                 ))}
               </select>
             </div>
+
+            {Boolean(alwaysSearch.trim() || alwaysGenre !== 'all') && (
+              <button
+                type="button"
+                className="free-active-reset-btn"
+                onClick={() => {
+                  setAlwaysSearch('')
+                  setAlwaysGenre('all')
+                  setAlwaysPage(1)
+                }}
+                title="Reset filters"
+              >
+                Reset filters
+              </button>
+            )}
           </div>
 
           {visibleAlwaysGames.length > 0 ? (
