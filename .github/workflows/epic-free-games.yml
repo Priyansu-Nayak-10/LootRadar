@@ -25,10 +25,14 @@ jobs:
         with:
           node-version: 20
 
-      - name: Fetch game and news snapshots
+      - name: Fetch game snapshots
         run: |
           npm run fetch:epic
-          npm run fetch:snapshots
+          npm run fetch:snapshots -- --skip-news
+
+      - name: Fetch gaming news snapshot
+        continue-on-error: true
+        run: node scripts/fetchDataSnapshots.mjs --news-only
 
       - name: Commit snapshot when changed
         run: |

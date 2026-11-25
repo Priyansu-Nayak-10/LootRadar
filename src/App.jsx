@@ -29,6 +29,7 @@ const TABS = [
   { id: 'discover', label: 'Home' },
   { id: 'free', label: 'Free Now' },
   { id: 'deals', label: 'Deals' },
+  { id: 'news', label: 'News' },
   { id: 'wishlist', label: 'Wishlist' },
 ]
 

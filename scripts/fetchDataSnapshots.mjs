@@ -1,4 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises'
+import { pathToFileURL } from 'node:url'
+import { collectNewsSnapshot } from './lib/news.mjs'
 
 const USER_AGENT = 'LootRadar/1.0 (free portfolio project)'
 const DATA_DIR = new URL('../public/data/', import.meta.url)
@@ -9,73 +11,40 @@ async function fetchJson(url) {
   return response.json()
 }
 
-async function fetchText(url) {
-  const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT } })
-  if (!response.ok) throw new Error(`Request failed (${response.status}) for ${url}`)
-  const buffer = await response.arrayBuffer()
-  const decoder = new TextDecoder('utf-8')
-  return decoder.decode(buffer)
-}
-
-function decodeXml(value = '') {
-  return value
-    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
-    .replace(/&amp;/g, '&')
-    .replace(/&middot;|&#183;/g, '\u00b7')
-    .replace(/&bull;|&#8226;/g, '•')
-    .replace(/&ndash;|&#8211;/g, '–')
-    .replace(/&mdash;|&#8212;/g, '—')
-    .replace(/&hellip;|&#8230;/g, '…')
-    .replace(/<[^>]+>/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
-function firstMatch(xml, pattern) {
-  return xml.match(pattern)?.[1]?.trim() || ''
-}
-
-function parseRssItems(xml, sourceLimit) {
-  return [...xml.matchAll(/<item\b[\s\S]*?<\/item>/gi)]
-    .slice(0, sourceLimit)
-    .map((match) => {
-      const item = match[0]
-      const title = decodeXml(firstMatch(item, /<title[^>]*>([\s\S]*?)<\/title>/i))
-      const link = decodeXml(firstMatch(item, /<link[^>]*>([\s\S]*?)(?:<\/link>|$)/i))
-      const description = decodeXml(
-        firstMatch(item, /<(?:description|summary)[^>]*>([\s\S]*?)<\/(?:description|summary)>/i)
-      )
-      const publishedAt =
-        firstMatch(item, /<(?:pubDate|dc:date|published)[^>]*>([\s\S]*?)<\/(?:pubDate|dc:date|published)>/i) ||
-        ''
-      const mediaUrl =
-        firstMatch(item, /<media:content[^>]*url=["']([^"']+)["']/i) ||
-        firstMatch(item, /<media:thumbnail[^>]*url=["']([^"']+)["']/i) ||
-        firstMatch(item, /<enclosure[^>]*url=["']([^"']+)["'][^>]*type=["']image/i)
-
-      return {
-        id: `${link}|${publishedAt}`,
-        title,
-        link,
-        summary: description.slice(0, 300),
-        publishedAt,
-        image: mediaUrl,
-        source: '',
-      }
-    })
-    .filter((article) => article.title && article.link)
-}
-
-async function saveJson(filename, value) {
+async function saveJson(filename, value, targetDir = DATA_DIR) {
   await writeFile(
-    new URL(filename, DATA_DIR),
+    new URL(filename, targetDir),
     `${JSON.stringify(value, null, 2)}\n`,
     'utf8'
   )
+}
+
+export async function runNewsSnapshot({ outDir = DATA_DIR } = {}) {
+  await mkdir(outDir, { recursive: true })
+  const snapshot = await collectNewsSnapshot()
+
+  if (snapshot.failedSources.length > 0) {
+    for (const failed of snapshot.failedSources) {
+      console.warn(`News feed failed (${failed.source}): ${failed.reason}`)
+    }
+  }
+
+  if (snapshot.articles.length === 0) {
+    console.warn('All news sources failed or returned 0 valid articles. Keeping previous gaming-news.json untouched.')
+    return snapshot
+  }
+
+  await saveJson(
+    'gaming-news.json',
+    {
+      generatedAt: snapshot.generatedAt,
+      sources: snapshot.sources,
+      articles: snapshot.articles,
+    },
+    outDir
+  )
+
+  return snapshot
 }
 
 async function main() {
@@ -167,44 +136,35 @@ async function main() {
     console.warn('FreeToGame fetch failed:', alwaysFreeRes.reason?.message || 'unknown error')
   }
 
-  const feeds = [
-    { source: 'IGN', url: 'https://www.ign.com/rss/v2/articles/feed', limit: 12 },
-    { source: 'PC Gamer', url: 'https://www.pcgamer.com/feeds.xml', limit: 12 },
-    { source: 'GameSpot', url: 'https://www.gamespot.com/feeds/mashup/', limit: 12 },
-  ]
-
-  const newsResults = await Promise.all(
-    feeds.map(async (feed) => {
-      try {
-        const xml = await fetchText(feed.url)
-        return parseRssItems(xml, feed.limit).map((article) => ({
-          ...article,
-          source: feed.source,
-        }))
-      } catch (error) {
-        console.error(`News feed failed: ${feed.source}: ${error.message}`)
-        return []
-      }
-    })
-  )
-
-  const articles = newsResults
-    .flat()
-    .sort((first, second) => new Date(second.publishedAt) - new Date(first.publishedAt))
-    .slice(0, 36)
-
-  await saveJson('gaming-news.json', {
-    generatedAt: new Date().toISOString(),
-    source: 'LootRadar RSS aggregation',
-    articles,
-  })
+  const skipNews = process.argv.includes('--skip-news')
+  const newsSnapshot = skipNews ? { articles: [] } : await runNewsSnapshot()
 
   console.log(
-    `Saved ${cleanFreeGames.length} free games, ${deals.length} deals, ${activeStores.length} stores, ${cleanAlwaysFreeGames.length} always-free games, and ${articles.length} news stories`
+    `Saved ${cleanFreeGames.length} free games, ${deals.length} deals, ${activeStores.length} stores, ${cleanAlwaysFreeGames.length} always-free games, and ${newsSnapshot.articles.length} news stories`
   )
 }
 
-main().catch((error) => {
-  console.error(error.message)
-  process.exit(1)
-})
+const args = process.argv.slice(2)
+const newsOnly = args.includes('--news-only')
+const outIdx = args.indexOf('--out')
+const outArg = outIdx >= 0 ? args[outIdx + 1] : null
+
+if (newsOnly) {
+  const targetDir = outArg
+    ? pathToFileURL(outArg.endsWith('/') || outArg.endsWith('\\') ? outArg : `${outArg}/`)
+    : DATA_DIR
+  runNewsSnapshot({ outDir: targetDir })
+    .then((snapshot) => {
+      console.log(
+        `News-only snapshot: ${snapshot.articles.length} stories from ${snapshot.sources.length} sources (${snapshot.failedSources.length} failed)`
+      )
+    })
+    .catch((error) => {
+      console.warn('News-only snapshot warning:', error.message)
+    })
+} else {
+  main().catch((error) => {
+    console.error(error.message)
+    process.exit(1)
+  })
+}

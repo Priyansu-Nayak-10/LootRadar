@@ -1,330 +1,231 @@
 {
-  "generatedAt": "2026-11-21T06:03:03.149Z",
-  "source": "LootRadar RSS aggregation",
+  "generatedAt": "2026-11-25T04:10:31.405Z",
+  "sources": [
+    "GameSpot",
+    "PC Gamer",
+    "IGN",
+    "Eurogamer",
+    "Rock Paper Shotgun",
+    "VGC",
+    "Push Square",
+    "Pure Xbox",
+    "Kotaku",
+    "GamesRadar+",
+    "Polygon"
+  ],
   "articles": [
     {
-      "id": "https://www.ign.com/articles/how-a-6-beer-in-gta-6-sent-me-into-a-spiral-of-crime-and-anxiety|Sat, 21 Nov 2026 06:00:00 +0000",
-      "title": "How a $6 Beer in GTA 6 Sent Me Into a Spiral of Crime and Anxiety",
-      "link": "https://www.ign.com/articles/how-a-6-beer-in-gta-6-sent-me-into-a-spiral-of-crime-and-anxiety",
-      "summary": "",
-      "publishedAt": "Sat, 21 Nov 2026 06:00:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/1a1f9e1ef3b55-screenshoturl-1-1795194452766.jpg",
-      "source": "IGN"
+      "id": "17a573963f858ef4",
+      "title": "Analyst estimates Call of Duty lost 44% of its players when GTA 6 came out, and unlike fans of its live-service competitors they've been slow to come back",
+      "link": "https://www.pcgamer.com/gaming-industry/analyst-says-call-of-duty-lost-an-estimated-44-percent-of-its-players-when-gta-6-came-out-and-unlike-fans-of-its-live-service-competitors-theyve-been-slow-to-come-back/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-25T03:34:01.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/5EWnGC9pvFVHwRsPbdM4uV-1920-80.jpg",
+      "summary": "Turns out Fortnite players are more loyal.",
+      "platforms": [],
+      "topicKey": "40-hours-max-playing-spent-verstappen",
+      "coverageCount": 11,
+      "stale": false
     },
     {
-      "id": "https://www.gamespot.com/videos/play-gta-6-in-first-person-with-this-glitch/|Sat, 21 Nov 2026 01:00:00 +0000",
-      "title": "Play GTA 6 In First Person With This Glitch",
-      "link": "https://www.gamespot.com/videos/play-gta-6-in-first-person-with-this-glitch/",
-      "summary": "So it turns out you can play GTA 6 in first person mode right now with a glitch. Check out the video on how to play in this mode. (Note it's probably going to get patched so enjoy it while it lasts)",
-      "publishedAt": "Sat, 21 Nov 2026 01:00:00 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/gta6_first_person_glitch_SITE.jpg?w=300",
-      "source": "GameSpot"
+      "id": "b14e21f94b0603b0",
+      "title": "Real-Life GTA 6 Trading Cards Are About to Get Scalped",
+      "link": "https://www.pushsquare.com/news/2026/11/real-life-gta-6-trading-cards-are-about-to-get-scalped",
+      "source": "Push Square",
+      "publishedAt": "2026-11-25T02:00:00.000Z",
+      "image": "https://images.pushsquare.com/46330266e742a/large.jpg",
+      "summary": "You too can add Maleek Rivers to your collection. If you’re having fun finding GTA 6’s collectible cards while out and about in Leonida, then soon you’ll be…",
+      "platforms": [],
+      "topicKey": "40-hours-max-playing-spent-verstappen",
+      "coverageCount": 11,
+      "stale": false
     },
     {
-      "id": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-unique-playlists/|Sat, 21 Nov 2026 00:46:24 +0000",
-      "title": "GTA 6 has secret playlists, and all you have to do is scan a few posters to unlock them",
-      "link": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-unique-playlists/",
-      "summary": "Kodak Black and The Vault nightclub each have their own unique playlist.",
-      "publishedAt": "Sat, 21 Nov 2026 00:46:24 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/rZZ6qHyxFodPwYQ2VrUqT9-1920-80.jpg",
-      "source": "PC Gamer"
+      "id": "507a5f2e091173c5",
+      "title": "PlayStation Secures Marketing Agreement for The Witcher 4",
+      "link": "https://www.ign.com/articles/playstation-secures-marketing-agreement-for-the-witcher-4",
+      "source": "IGN",
+      "publishedAt": "2026-11-24T19:59:13.000Z",
+      "image": "https://assets-prd.ignimgs.com/2024/12/13/tw4-inside-blog-1734053107357.jpg",
+      "summary": "CD Projekt Red has signed a marketing deal with PlayStation for The Witcher 4.",
+      "platforms": [
+        "PlayStation"
+      ],
+      "topicKey": "agreement-marketing-playstation-secures-witcher",
+      "coverageCount": 4,
+      "stale": false
     },
     {
-      "id": "https://www.pcgamer.com/software/ai/i-didnt-realize-etsy-was-selling-bridges-now/|Sat, 21 Nov 2026 00:00:36 +0000",
-      "title": "I didn't realize Etsy was selling bridges now",
-      "link": "https://www.pcgamer.com/software/ai/i-didnt-realize-etsy-was-selling-bridges-now/",
-      "summary": "The company says its new generative AI training agreement will only be used for good. Why would anyone believe that?",
-      "publishedAt": "Sat, 21 Nov 2026 00:00:36 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/xvJ9JBcaybjfFQt9N2mg33-1920-80.jpg",
-      "source": "PC Gamer"
+      "id": "0b7c0508556d9513",
+      "title": "CDPR has entered a marketing agreement with Sony for The Witcher 4",
+      "link": "https://www.videogameschronicle.com/news/cdpr-has-entered-a-marketing-agreement-with-sony-for-the-witcher-4/",
+      "source": "VGC",
+      "publishedAt": "2026-11-24T18:38:48.000Z",
+      "image": "https://www.videogameschronicle.com/files/2024/12/The-Witcher-4-1.jpeg",
+      "summary": "Like GTA 6, Sony has an exclusive marketing deal for The Witcher 4",
+      "platforms": [
+        "PlayStation"
+      ],
+      "topicKey": "agreement-marketing-playstation-secures-witcher",
+      "coverageCount": 4,
+      "stale": false
     },
     {
-      "id": "https://www.ign.com/articles/the-official-lord-of-the-rings-pizza-cutter-drops-to-a-new-low-price-at-amazon-black-friday-2026|Sat, 21 Nov 2026 00:00:00 +0000",
-      "title": "The Official Lord of the Rings Pizza Cutter Drops to a New Low Price at Amazon",
-      "link": "https://www.ign.com/articles/the-official-lord-of-the-rings-pizza-cutter-drops-to-a-new-low-price-at-amazon-black-friday-2026",
-      "summary": "",
-      "publishedAt": "Sat, 21 Nov 2026 00:00:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/81eje-yy66l-ac-sl1500-1795216849076.jpg",
-      "source": "IGN"
+      "id": "a246ea50aee1d525",
+      "title": "Diablo 4's nostalgia-heavy season 15 was so good that Blizzard is making a lot of it permanent",
+      "link": "https://www.gamesradar.com/games/diablo/diablo-4s-nostalgia-heavy-season-15-was-so-good-that-blizzard-is-making-a-lot-of-it-permanent/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-24T22:24:19.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/k4LX9XBgSinGg7vMwHykyb-1920-80.jpg",
+      "summary": "Legacy Uniques, World Boss Diablo summons, and even Moophisto are carrying over into Diablo 4 season 16",
+      "platforms": [
+        "PC",
+        "PlayStation",
+        "Xbox",
+        "Switch"
+      ],
+      "topicKey": "16-biggest-diablo-fixes-one-season",
+      "coverageCount": 3,
+      "stale": false
     },
     {
-      "id": "https://www.gamespot.com/articles/cheeky-malware-linked-to-popular-gacha-game-cracks-city-security/|Fri, 20 Nov 2026 23:54:45 +0000",
-      "title": "Cheeky Malware Linked To Popular Gacha Game Cracks City Security",
-      "link": "https://www.gamespot.com/articles/cheeky-malware-linked-to-popular-gacha-game-cracks-city-security/",
-      "summary": "East Asia--and particularly Japan--has been suffering a rash of cybersecurity incidents as of late, affecting everything from major banks and cellphone service providers to city governments and small businesses. Gaming has been one of many areas targeted: between arcade games on Sega's network going",
-      "publishedAt": "Fri, 20 Nov 2026 23:54:45 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/Clipboard_11-20-2026_02.jpg?w=300",
-      "source": "GameSpot"
+      "id": "1c48c85ac9ebe5ce",
+      "title": "Cyberpunk 2’s development team has grown, with plans to get even bigger next year",
+      "link": "https://www.videogameschronicle.com/news/cyberpunk-2s-development-team-has-grown-with-plans-to-get-even-bigger-next-year/",
+      "source": "VGC",
+      "publishedAt": "2026-11-24T22:14:04.000Z",
+      "image": "https://www.videogameschronicle.com/files/2025/04/cyberpunk.jpg",
+      "summary": "Almost 200 developers are working on Cyberpunk 2",
+      "platforms": [],
+      "topicKey": "cd-cyberpunk-projekt-red-still-ways",
+      "coverageCount": 3,
+      "stale": false
     },
     {
-      "id": "https://www.gamespot.com/articles/gta-6-players-captivated-by-mandy-apparently-include-a-former-nintendo-president/|Fri, 20 Nov 2026 23:33:14 +0000",
-      "title": "GTA 6 Players Captivated By Mandy Apparently Include A Former Nintendo President",
-      "link": "https://www.gamespot.com/articles/gta-6-players-captivated-by-mandy-apparently-include-a-former-nintendo-president/",
-      "summary": "A character named Mandy has the attention of many Grand Theft Auto 6 players--and that appears to include Reggie Fils-Aimé, the man who used to run Nintendo of America. Per GamesRadar, former Nintendo marketing and public relations manager Krysta Yang joked on social media that GTA 6, which is front",
-      "publishedAt": "Fri, 20 Nov 2026 23:33:14 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/GTA-6-Mandy-screenshot.jpg?w=300",
-      "source": "GameSpot"
+      "id": "e8633d9d45198804",
+      "title": "Fan-favorite Diablo 2 anniversary bosses and items won't disappear when Diablo 4's next season starts",
+      "link": "https://www.pcgamer.com/games/rpg/fan-favorite-diablo-2-anniversary-bosses-and-items-wont-disappear-when-diablo-4s-next-season-starts/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-24T21:39:22.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/m2KePNqos3tQNXQw6yUfTc-1920-80.jpg",
+      "summary": "Most of the secrets from the current season aren't going anywhere.",
+      "platforms": [],
+      "topicKey": "16-biggest-diablo-fixes-one-season",
+      "coverageCount": 3,
+      "stale": false
     },
     {
-      "id": "https://www.ign.com/articles/rayneos-black-friday-sale-includes-discounts-on-ar-glasses-and-more|Fri, 20 Nov 2026 23:32:00 +0000",
-      "title": "RayNeo's Black Friday Sale Includes Discounts on AR Glasses, Plus a New Release of GT Max Call of Duty: Modern Warfare 4 Limited Edition AR Glasses",
-      "link": "https://www.ign.com/articles/rayneos-black-friday-sale-includes-discounts-on-ar-glasses-and-more",
-      "summary": "Save $94 on RayNeo GT Max AR Glasses and more.",
-      "publishedAt": "Fri, 20 Nov 2026 23:32:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/rayneo-black-friday-cod-blogroll-1795214311203.png",
-      "source": "IGN"
+      "id": "6b7f10bb4bac897e",
+      "title": "Cyberpunk 2 Is Still a Ways Out, but CD Projekt Red Says Its RPGs Will Come Out Faster in the Future",
+      "link": "https://www.ign.com/articles/cyberpunk-2-is-still-a-ways-out-but-cd-projekt-red-says-its-rpgs-will-come-out-faster-in-the-future",
+      "source": "IGN",
+      "publishedAt": "2026-11-24T20:21:54.000Z",
+      "image": "https://assets-prd.ignimgs.com/2025/11/26/ss-b20689e73e3ac19bcc5fad2c18d0353c769de144-1920x1080-1764175642324.jpg",
+      "summary": "We are still two years out from The Witcher 4, but Ciri's big breakout adventure isn't the only massive RPG cooking at CD Projekt Red. It sounds like…",
+      "platforms": [],
+      "topicKey": "cd-cyberpunk-projekt-red-still-ways",
+      "coverageCount": 3,
+      "stale": false
     },
     {
-      "id": "https://www.ign.com/articles/actor-who-plays-mandy-in-gta-6-excitedly-speaks-out-after-character-goes-viral|Fri, 20 Nov 2026 23:31:35 +0000",
-      "title": "Actor Who Plays Mandy in GTA 6 Excitedly Speaks Out After Character Goes Viral",
-      "link": "https://www.ign.com/articles/actor-who-plays-mandy-in-gta-6-excitedly-speaks-out-after-character-goes-viral",
-      "summary": "Lexie Shoaibi, the actor who plays Mandy in GTA 6, is speaking out now that the game has been officially released worldwide.",
-      "publishedAt": "Fri, 20 Nov 2026 23:31:35 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/mandy-actress-speaks-out-gta6-1795216516675.jpg",
-      "source": "IGN"
+      "id": "49b63a6c6e9f6353",
+      "title": "In Defense Of The Legend Of Zelda: Skyward Sword",
+      "link": "https://kotaku.com/in-defense-of-the-legend-of-zelda-skyward-sword-2001000036",
+      "source": "Kotaku",
+      "publishedAt": "2026-11-24T20:00:55.000Z",
+      "image": "https://kotaku.com/app/uploads/2026/11/link-e1795551032506.jpg",
+      "summary": "In hindsight and with an updated Switch version, this game deserves a re-evaluation",
+      "platforms": [],
+      "topicKey": "dark-deeply-felt-hidetaki-miyazaki-unworthy",
+      "coverageCount": 2,
+      "stale": false
     },
     {
-      "id": "https://www.ign.com/articles/gta-6-triggers-busiest-traffic-day-in-comcast-history|Fri, 20 Nov 2026 23:30:15 +0000",
-      "title": "GTA 6 Triggers Busiest Traffic Day in Comcast History",
-      "link": "https://www.ign.com/articles/gta-6-triggers-busiest-traffic-day-in-comcast-history",
-      "summary": "Comcast has said GTA 6's launch triggered the busiest traffic day the company has seen since it was founded in 1963.",
-      "publishedAt": "Fri, 20 Nov 2026 23:30:15 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/19/early-weapons1-1795092418085.jpg",
-      "source": "IGN"
+      "id": "d446ca4e0198d497",
+      "title": "Hidetaki Miyazaki said he felt \"deeply unworthy\" when Dark Souls was compared to The Legend of Zelda",
+      "link": "https://www.gamesradar.com/games/dark-souls/long-before-elden-ring-director-hidetaka-miyazaki-said-he-felt-deeply-unworthy-when-dark-souls-was-compared-to-the-legend-of-zelda/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-24T17:24:36.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/8jdwBqJxh7r8GHwBaYfURG-1920-80.jpg",
+      "summary": "\"If there are similarities, they probably stem from the fact that The Legend of Zelda became a sort of textbook for 3D action games\"",
+      "platforms": [
+        "PC",
+        "PlayStation",
+        "Xbox",
+        "Switch"
+      ],
+      "topicKey": "dark-deeply-felt-hidetaki-miyazaki-unworthy",
+      "coverageCount": 2,
+      "stale": false
     },
     {
-      "id": "https://www.pcgamer.com/games/grand-theft-auto/15-hidden-gta-6-controls-and-features-you-should-know-about/|Fri, 20 Nov 2026 23:07:57 +0000",
-      "title": "15 hidden GTA 6 controls and features you should know about",
-      "link": "https://www.pcgamer.com/games/grand-theft-auto/15-hidden-gta-6-controls-and-features-you-should-know-about/",
-      "summary": "Flipping the bird, hiding in cars, and listening to tunes on foot.",
-      "publishedAt": "Fri, 20 Nov 2026 23:07:57 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/ALLsYs2cdxDfxnJ6hUVrFC-1920-80.jpg",
-      "source": "PC Gamer"
+      "id": "0466570b377a885f",
+      "title": "Tidal Bans AI-Generated Music, Deleting 29 Million Songs From The App",
+      "link": "https://kotaku.com/tidal-bans-ai-generated-music-deleting-29-million-songs-from-the-app-2001000141",
+      "source": "Kotaku",
+      "publishedAt": "2026-11-25T00:00:12.000Z",
+      "image": "https://kotaku.com/app/uploads/2026/11/tidal-1280x720.jpg",
+      "summary": "Once the policy goes into effect, he app estimates it will reject 80,000 AI-generated songs a day",
+      "platforms": [],
+      "topicKey": "ai-bans-deleting-generated-music-tidal",
+      "coverageCount": 1,
+      "stale": false
     },
     {
-      "id": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-how-long-to-fly-across-map/|Fri, 20 Nov 2026 22:34:25 +0000",
-      "title": "Despite GTA 6's huge map, it only takes about 4 minutes to fly across it in a plane",
-      "link": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-how-long-to-fly-across-map/",
-      "summary": "Someone had to do it.",
-      "publishedAt": "Fri, 20 Nov 2026 22:34:25 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/Lniqu8a87y9qE9LHy43r3F-1920-80.jpg",
-      "source": "PC Gamer"
+      "id": "371c22561e63344c",
+      "title": "PS5 RPG Lords of the Fallen 2 Locks on to April 2027 Release Date Following Lengthy Delay",
+      "link": "https://www.pushsquare.com/news/2026/11/ps5-rpg-lords-of-the-fallen-2-locks-on-to-april-2027-release-date-following-lengthy-delay",
+      "source": "Push Square",
+      "publishedAt": "2026-11-25T00:00:00.000Z",
+      "image": "https://images.pushsquare.com/03dcf5118acb4/large.jpg",
+      "summary": "The Game Awards teased? Lords of the Fallen 2 is officially targeting an April 2027 release date, having been hit with a lengthy delay back in the summer. The…",
+      "platforms": [
+        "PlayStation"
+      ],
+      "topicKey": "april-fallen-locks-lords-ps5-rpg",
+      "coverageCount": 1,
+      "stale": false
     },
     {
-      "id": "https://www.gamespot.com/videos/this-had-my-jaw-on-the-floor-gta-6/|Fri, 20 Nov 2026 22:30:00 +0000",
-      "title": "This Had My Jaw On The Floor | GTA 6",
-      "link": "https://www.gamespot.com/videos/this-had-my-jaw-on-the-floor-gta-6/",
-      "summary": "BOOM! A plane has crashed in the Leonida Grassrivers. Jason races over to the site of the impact to see what he can find, but he isn't the only one interested in the downed plane...",
-      "publishedAt": "Fri, 20 Nov 2026 22:30:00 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/Featured_GTA6LeonidaStories_ThePlane_20201119V2.jpg?w=300",
-      "source": "GameSpot"
+      "id": "d134d46aba91f582",
+      "title": "\"Flood of new AI games\" kills retro homebrew competition",
+      "link": "https://www.gamesradar.com/games/flood-of-new-ai-games-kills-retro-homebrew-competition-this-is-an-extremely-upsetting-conclusion/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-24T23:36:26.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/SGkCLsgGdJrzQZexCPeYxT-1920-80.jpg",
+      "summary": "\"The advent of AI marked a seismic shift in the way retro games were being made\"",
+      "platforms": [],
+      "topicKey": "ai-competition-flood-homebrew-kills-retro",
+      "coverageCount": 1,
+      "stale": false
     },
     {
-      "id": "https://www.ign.com/articles/percy-jackson-actors-reveal-they-watched-attack-on-titan-fan-edits-to-help-themselves-cry-while-filming-emotional-scenes|Fri, 20 Nov 2026 22:29:26 +0000",
-      "title": "Percy Jackson Actors Reveal They Watched Attack on Titan Fan Edits to Help Themselves Cry While Filming Emotional Scenes",
-      "link": "https://www.ign.com/articles/percy-jackson-actors-reveal-they-watched-attack-on-titan-fan-edits-to-help-themselves-cry-while-filming-emotional-scenes",
-      "summary": "Walker Scobell and Aryan Simhadri revealed that they would watch Attack on Titan fan edits to help them prepare to film emotional scenes for Percy Jackson and the Olympians.",
-      "publishedAt": "Fri, 20 Nov 2026 22:29:26 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/percy-jackson-actors-watched-aot-fan-edits-to-cry-1795212891154.jpg",
-      "source": "IGN"
+      "id": "e9ff98f783cd097b",
+      "title": "Dragon Age Dev Explains BioWare’s Struggles: ‘EA Doesn’t Shoot You, It Puts A Gun On The Table And Then Comes In Every Day And Asks You If You’ll Shoot Yourself’",
+      "link": "https://kotaku.com/dragon-age-dev-explains-biowares-struggles-ea-doesnt-shoot-you-it-puts-a-gun-on-the-table-and-then-comes-in-every-day-and-asks-you-if-youll-shoot-yourself-2001000008",
+      "source": "Kotaku",
+      "publishedAt": "2026-11-24T23:00:03.000Z",
+      "image": "https://kotaku.com/app/uploads/2024/06/c780b35d24a2dce588574a5c0cc02cd7-1280x720.jpg",
+      "summary": "No holding back",
+      "platforms": [],
+      "topicKey": "age-biowares-dev-dragon-explains-struggles",
+      "coverageCount": 1,
+      "stale": false
     },
     {
-      "id": "https://www.ign.com/articles/eureka-ergonomic-has-black-friday-deals-to-give-your-space-the-upgrade-it-needs|Fri, 20 Nov 2026 22:20:00 +0000",
-      "title": "Eureka Ergonomic Has Black Friday Deals to Give Your Space the Upgrade It Needs",
-      "link": "https://www.ign.com/articles/eureka-ergonomic-has-black-friday-deals-to-give-your-space-the-upgrade-it-needs",
-      "summary": "Professional office or gamer vibes? The choice is yours.",
-      "publishedAt": "Fri, 20 Nov 2026 22:20:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/eurekaergonomic-1795207927744.jpg",
-      "source": "IGN"
-    },
-    {
-      "id": "https://www.ign.com/articles/shokz-openrun-pro-2-sport-headphone-deal-november-2026|Fri, 20 Nov 2026 22:20:00 +0000",
-      "title": "Save 33% Off the Shokz OpenRun Pro 2 Sport Headphone With Bone Conduction Tech for Black Friday",
-      "link": "https://www.ign.com/articles/shokz-openrun-pro-2-sport-headphone-deal-november-2026",
-      "summary": "The best headphones for runners.",
-      "publishedAt": "Fri, 20 Nov 2026 22:20:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/19/shokopenrunpro2rosegold-1795124327316.jpg",
-      "source": "IGN"
-    },
-    {
-      "id": "https://www.ign.com/articles/gta-6-players-react-after-exclusive-shops-greet-non-ultimate-edition-buyers-with-locked-doors|Fri, 20 Nov 2026 22:19:52 +0000",
-      "title": "GTA 6 Players React After Exclusive Shops Greet Non-Ultimate Edition Buyers With Locked Doors",
-      "link": "https://www.ign.com/articles/gta-6-players-react-after-exclusive-shops-greet-non-ultimate-edition-buyers-with-locked-doors",
-      "summary": "GTA 6 players are being locked out of in-game stores because they don't own the Ultimate Edition, and they've got some thoughts about how Rockstar handled it.",
-      "publishedAt": "Fri, 20 Nov 2026 22:19:52 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/18/g-blog-12-1794995262221.jpg",
-      "source": "IGN"
-    },
-    {
-      "id": "https://www.ign.com/articles/fallout-themed-arizona-iced-tea-gets-black-friday-discount-2026|Fri, 20 Nov 2026 22:08:55 +0000",
-      "title": "Fallout-Themed AriZona Iced Tea Gets Black Friday Discount, Including New 'Apocalyptic Orange' Flavor",
-      "link": "https://www.ign.com/articles/fallout-themed-arizona-iced-tea-gets-black-friday-discount-2026",
-      "summary": "",
-      "publishedAt": "Fri, 20 Nov 2026 22:08:55 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/falloutarizona-2-1795210680262.jpg",
-      "source": "IGN"
-    },
-    {
-      "id": "https://www.ign.com/articles/jensen-huang-verbal-abuse-allegations|Fri, 20 Nov 2026 22:06:55 +0000",
-      "title": "Jensen Huang Allegedly Threatened Nvidia Workers and Told Employee He Would Rip Off the Top of Their Head and 'Pee on Your Brain'",
-      "link": "https://www.ign.com/articles/jensen-huang-verbal-abuse-allegations",
-      "summary": "Former Nvidia CEO Jensen Huang allegedly threatened employees with violence and \"humiliated\" them for decades.",
-      "publishedAt": "Fri, 20 Nov 2026 22:06:55 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/20/jensen-1795211332386.jpg",
-      "source": "IGN"
-    },
-    {
-      "id": "https://www.pcgamer.com/games/grand-theft-auto/florida-joker-gets-his-wish-hes-a-special-voice-actor-in-grand-theft-auto-6/|Fri, 20 Nov 2026 22:02:48 +0000",
-      "title": "Florida Joker gets his wish: He's a 'special voice actor' in Grand Theft Auto 6",
-      "link": "https://www.pcgamer.com/games/grand-theft-auto/florida-joker-gets-his-wish-hes-a-special-voice-actor-in-grand-theft-auto-6/",
-      "summary": "Looks like Lawrence Sullivan settled his differences with Rockstar.",
-      "publishedAt": "Fri, 20 Nov 2026 22:02:48 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/yKEF5zpGf3RRXGcxqzk8Xd-1920-80.png",
-      "source": "PC Gamer"
-    },
-    {
-      "id": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-movement-speed-setting-walk-faster/|Fri, 20 Nov 2026 21:52:04 +0000",
-      "title": "Try this GTA 6 movement speed setting to make Jason and Lucia walk faster",
-      "link": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-movement-speed-setting-walk-faster/",
-      "summary": "Pep up their step.",
-      "publishedAt": "Fri, 20 Nov 2026 21:52:04 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/sg9TWszsU48jQVeLU4kJvG-1920-80.jpg",
-      "source": "PC Gamer"
-    },
-    {
-      "id": "https://www.ign.com/articles/apple-airpods-pro-3-deal-november-2026|Fri, 20 Nov 2026 21:45:00 +0000",
-      "title": "The Apple AirPods Pro 3 Wireless Noise Canceling Earbuds Drops to Its Lowest Price Ever for Black Friday",
-      "link": "https://www.ign.com/articles/apple-airpods-pro-3-deal-november-2026",
-      "summary": "Still the best AirPods.",
-      "publishedAt": "Fri, 20 Nov 2026 21:45:00 +0000",
-      "image": "https://assets-prd.ignimgs.com/2026/11/16/appleairpodspro32-1794849603151.jpg",
-      "source": "IGN"
-    },
-    {
-      "id": "https://www.gamespot.com/articles/gta-6-is-out-and-people-are-planning-to-party-outside-the-game-in-a-much-different-world/|Fri, 20 Nov 2026 21:25:06 +0000",
-      "title": "GTA 6 Is Out, And People Are Planning To Party&#8211;Outside The Game In A Much Different World",
-      "link": "https://www.gamespot.com/articles/gta-6-is-out-and-people-are-planning-to-party-outside-the-game-in-a-much-different-world/",
-      "summary": "Rockstar Games finally released Grand Theft Auto 6 on Thursday. The game was highly anticipated because of, well, a lot of reasons. It’s a technical marvel that can simulate anything from doomscrolling on your phone to the thrill of hitting the club in the Miami-inspired Vice City. But it's not just",
-      "publishedAt": "Fri, 20 Nov 2026 21:25:06 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/Screenshot-2026-11-20-131448.png?w=300",
-      "source": "GameSpot"
-    },
-    {
-      "id": "https://www.gamespot.com/articles/how-to-play-golf-and-mini-golf-in-gta-6/|Fri, 20 Nov 2026 21:12:09 +0000",
-      "title": "How To Play Golf (And Mini-Golf) In GTA 6",
-      "link": "https://www.gamespot.com/articles/how-to-play-golf-and-mini-golf-in-gta-6/",
-      "summary": "Golf is one of the most popular sports in the real state of Florida, so it's no surprise that Grand Theft Auto 6 offers plenty of ways to play golf in the fictional state of Leonida. GTA 6 offers two types of golf: mini-golf and traditional 18-hole golf, both of which are fully accessible from the s",
-      "publishedAt": "Fri, 20 Nov 2026 21:12:09 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/Cal_Hampton_01.0xlil231_osh4.jpg?w=300",
-      "source": "GameSpot"
-    },
-    {
-      "id": "https://www.gamespot.com/articles/gta-6-has-dexter-references-and-now-dexter-himself-has-reacted/|Fri, 20 Nov 2026 20:50:55 +0000",
-      "title": "GTA 6 Has Dexter References, And Now Dexter Himself Has Reacted",
-      "link": "https://www.gamespot.com/articles/gta-6-has-dexter-references-and-now-dexter-himself-has-reacted/",
-      "summary": "Actor Michael C. Hall has reacted to how GTA 6 features references to his Miami-set TV show Dexter, in which he famously played the serial killer Dexter. Appearing on the Barstool Movies show, Hall said he was \"informed\" of the Easter eggs in GTA 6 about his character. \"I wasn't consulted,\" he said ",
-      "publishedAt": "Fri, 20 Nov 2026 20:50:55 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/Dexter.png?w=300",
-      "source": "GameSpot"
-    },
-    {
-      "id": "https://www.gamespot.com/articles/best-guns-in-gta-6-and-all-guns-to-buy/|Fri, 20 Nov 2026 20:43:34 +0000",
-      "title": "Best Guns In GTA 6 And All Guns To Buy",
-      "link": "https://www.gamespot.com/articles/best-guns-in-gta-6-and-all-guns-to-buy/",
-      "summary": "Just like in every game before it, guns play a massive role throughout Grand Theft Auto 6. Whether you're completing a story mission, heading off on a crime spree with Jason and Lucia, or partaking in one of the many side quests, you'll need some trusty guns available in your loadout. Luckily, GTA 6",
-      "publishedAt": "Fri, 20 Nov 2026 20:43:34 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/Jason_Duval_05.0kxp6enhvzqka.jpg?w=300",
-      "source": "GameSpot"
-    },
-    {
-      "id": "https://www.pcgamer.com/games/grand-theft-auto/21-percent-of-rockstar-staff-have-been-employed-by-the-company-for-over-10-years-which-explains-a-lot-about-gta-6s-record-breaking-launch/|Fri, 20 Nov 2026 20:41:34 +0000",
-      "title": "21% of Rockstar staff have been employed by the company for over 10 years, which explains a lot about GTA 6's record-breaking launch",
-      "link": "https://www.pcgamer.com/games/grand-theft-auto/21-percent-of-rockstar-staff-have-been-employed-by-the-company-for-over-10-years-which-explains-a-lot-about-gta-6s-record-breaking-launch/",
-      "summary": "It's easier to make successful games when you hold onto the people who know how.",
-      "publishedAt": "Fri, 20 Nov 2026 20:41:34 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/e3fPzBmapimeiWj59SBAiQ-1920-80.jpg",
-      "source": "PC Gamer"
-    },
-    {
-      "id": "https://www.gamespot.com/articles/dont-blink-these-are-the-fastest-cars-in-gta-6/|Fri, 20 Nov 2026 19:52:58 +0000",
-      "title": "Don&#8217;t Blink: These Are The Fastest Cars In GTA 6",
-      "link": "https://www.gamespot.com/articles/dont-blink-these-are-the-fastest-cars-in-gta-6/",
-      "summary": "The state of Leonida is home to some of the rarest and most expensive cars we've ever seen in the Grand Theft Auto franchise. GTA 6 features over a dozen supercars, which are always the pinnacle of the vehicle food chain. While you'll likely take any supercar during the early or mid-game, you'll eve",
-      "publishedAt": "Fri, 20 Nov 2026 19:52:58 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/1a1fa4f321856-screenshotUrl.jpg?w=300",
-      "source": "GameSpot"
-    },
-    {
-      "id": "https://www.gamespot.com/articles/gta-6-sets-even-more-records/|Fri, 20 Nov 2026 19:52:51 +0000",
-      "title": "GTA 6 Sets Even More Records",
-      "link": "https://www.gamespot.com/articles/gta-6-sets-even-more-records/",
-      "summary": "Rockstar's Grand Theft Auto 6 has finally arrived, and, to the surprise of no one, it's putting up some big numbers that speak to the pent-up demand. GTA 6 sold more than 30 million copies and hit almost $4 billion on day one, but that's just the start of understanding the impact of the game's relea",
-      "publishedAt": "Fri, 20 Nov 2026 19:52:51 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/GTA6Circana.png?w=300",
-      "source": "GameSpot"
-    },
-    {
-      "id": "https://www.pcgamer.com/games/grand-theft-auto/grand-theft-auto-6-earned-usd3-79-billion-on-launch-day/|Fri, 20 Nov 2026 19:51:48 +0000",
-      "title": "Grand Theft Auto 6 earned $3.79 billion on launch day",
-      "link": "https://www.pcgamer.com/games/grand-theft-auto/grand-theft-auto-6-earned-usd3-79-billion-on-launch-day/",
-      "summary": "Preorders of GTA 6 totalled approximately 32.5 million copies.",
-      "publishedAt": "Fri, 20 Nov 2026 19:51:48 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/LKBnVpRq3heeVoNhrBEiUK-1920-80.jpg",
-      "source": "PC Gamer"
-    },
-    {
-      "id": "https://www.gamespot.com/articles/gta-6-hit-32-5-million-copies-sold-and-almost-4-billion-on-day-one/|Fri, 20 Nov 2026 19:30:17 +0000",
-      "title": "GTA 6&#8217;s Astonishing $4 Billion Day One Includes 32.5 Million Copies Sold",
-      "link": "https://www.gamespot.com/articles/gta-6-hit-32-5-million-copies-sold-and-almost-4-billion-on-day-one/",
-      "summary": "GTA 6 is an enormous hit--it's the biggest gaming release ever. Take-Two just announced that GTA 6 reach 32.5 million copies sold before release, with revenue reaching $3.79 billion through the end of the first day on sale on November 19. This makes it the biggest entertainment release--for any medi",
-      "publishedAt": "Fri, 20 Nov 2026 19:30:17 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/GTASales.png?w=300",
-      "source": "GameSpot"
-    },
-    {
-      "id": "https://www.gamespot.com/articles/you-should-bike-more-in-gta-6/|Fri, 20 Nov 2026 19:20:18 +0000",
-      "title": "You Should Bike More (In GTA 6)",
-      "link": "https://www.gamespot.com/articles/you-should-bike-more-in-gta-6/",
-      "summary": "I'm several hours into Rockstar's behemoth video game, and as big as the GTA 6 map is, I've seldom needed (and even less often preferred) more than two wheels to get around. Biking in GTA 6 is awesome, and it's a safe bet to say you should be doing it more than you are.&nbsp; Sure, Grand Theft Auto ",
-      "publishedAt": "Fri, 20 Nov 2026 19:20:18 +0000",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/193e53ff-c569-4833-ad64-dd964929b1fb_Thumbnail.png?w=300",
-      "source": "GameSpot"
-    },
-    {
-      "id": "https://www.pcgamer.com/software/ai/etsy-sellers-are-closing-their-stores-in-response-to-the-platforms-new-ai-training-policy/|Fri, 20 Nov 2026 19:02:52 +0000",
-      "title": "Etsy sellers are closing their stores in response to the platform's new AI training policy",
-      "link": "https://www.pcgamer.com/software/ai/etsy-sellers-are-closing-their-stores-in-response-to-the-platforms-new-ai-training-policy/",
-      "summary": "The platform says the new AI training policy is aimed solely at improving storefronts and tools, but not everyone is buying it.",
-      "publishedAt": "Fri, 20 Nov 2026 19:02:52 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/6UCWcJhrM4t2gQxgHwpjwh-1920-80.jpg",
-      "source": "PC Gamer"
-    },
-    {
-      "id": "https://www.pcgamer.com/hardware/graphics-cards/nyt-report-documents-ex-nvidia-ceo-jensen-huangs-decades-of-berating-employees-he-said-he-would-rip-both-arms-off-a-subordinate-and-beat-the-person-over-the-head-to-death-with-them/|Fri, 20 Nov 2026 16:52:44 +0000",
-      "title": "NYT report documents ex-Nvidia CEO Jensen Huang's decades of berating employees: 'He said he would rip both arms off a subordinate and beat the person over the head to death with them'",
-      "link": "https://www.pcgamer.com/hardware/graphics-cards/nyt-report-documents-ex-nvidia-ceo-jensen-huangs-decades-of-berating-employees-he-said-he-would-rip-both-arms-off-a-subordinate-and-beat-the-person-over-the-head-to-death-with-them/",
-      "summary": "Huang claims \"he couldn’t motivate them simply with money\".",
-      "publishedAt": "Fri, 20 Nov 2026 16:52:44 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/AVosit5WF73S3mLAR7exK3-1920-80.jpg",
-      "source": "PC Gamer"
-    },
-    {
-      "id": "https://www.pcgamer.com/gaming-industry/gamestop-boss-calls-for-return-of-physical-discs-just-as-gta-6-does-digital-gangbusters/|Fri, 20 Nov 2026 16:45:10 +0000",
-      "title": "GameStop boss calls for return of physical discs just as GTA 6 does digital gangbusters",
-      "link": "https://www.pcgamer.com/gaming-industry/gamestop-boss-calls-for-return-of-physical-discs-just-as-gta-6-does-digital-gangbusters/",
-      "summary": "Yes, it's true: this man has no disc.",
-      "publishedAt": "Fri, 20 Nov 2026 16:45:10 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/sem9rUwweFsxvNMZtfPBPU-1920-80.jpg",
-      "source": "PC Gamer"
-    },
-    {
-      "id": "https://www.pcgamer.com/hardware/gaming-chairs/why-mr-bezos-with-these-early-black-friday-gaming-chair-deals-you-are-really-spoiling-us/|Fri, 20 Nov 2026 16:30:25 +0000",
-      "title": "Why Mr. Bezos, with these early Black Friday gaming chair deals you are really spoiling us",
-      "link": "https://www.pcgamer.com/hardware/gaming-chairs/why-mr-bezos-with-these-early-black-friday-gaming-chair-deals-you-are-really-spoiling-us/",
-      "summary": "There's an astonishing array of gaming chairs for well under $300 right now, though it's not just Amazon at it.",
-      "publishedAt": "Fri, 20 Nov 2026 16:30:25 +0000",
-      "image": "https://cdn.mos.cms.futurecdn.net/CkksKxnSfea8Tu7cmP8myj-1920-80.jpg",
-      "source": "PC Gamer"
+      "id": "2a176d890d70fca9",
+      "title": "I'm not smart enough for the blocky, Factorio-esque spaceship and -station building sim Astario, but now that it's out in early access maybe you could be",
+      "link": "https://www.rockpapershotgun.com/im-not-smart-enough-for-the-blocky-factorio-esque-spaceship-and-station-building-sim-astario-but-now-that-its-out-in-early-access-maybe-you-could-be",
+      "source": "Rock Paper Shotgun",
+      "publishedAt": "2026-11-24T22:51:40.000Z",
+      "image": "https://assetsio.gnwcdn.com/astario.jpg?width=690&quality=85&format=jpg&auto=webp",
+      "summary": "There are many different kinds of smarts, and the kind of smarts I am are absolutely zero help when it comes to games like Astario, a spaceship and space…",
+      "platforms": [
+        "PC"
+      ],
+      "topicKey": "blocky-enough-esque-factorio-im-smart",
+      "coverageCount": 1,
+      "stale": false
     }
   ]
 }

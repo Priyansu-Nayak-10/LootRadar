@@ -1,5 +1,6 @@
 import { Component, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { fetchGamingNews, fetchRawgGames, searchGamesMulti, hasRawgKey } from '../lib/discoverApi'
+import { fetchRawgGames, searchGamesMulti, hasRawgKey } from '../lib/discoverApi'
+import { cleanNewsText, fetchNewsSnapshot, formatNewsRelativeTime } from '../lib/newsHelpers'
 import GameActions from '../components/GameActions'
 import TopDeals from '../components/TopDeals'
 import PopularGamesSection from '../components/PopularGamesSection'
@@ -1017,34 +1018,37 @@ export function HomeRedesign({
               {news[0].image ? (
                 <SafeImage
                   src={news[0].image}
-                  alt=""
+                  alt={cleanNewsText(news[0].title)}
                   fallbackText="RADAR"
                 />
               ) : (
                 <div className="lr-art-fallback">RADAR</div>
               )}
               <div>
-                <span>{news[0].source} {'\u00b7'} {formatRelativeTime(news[0].publishedAt)}</span>
-                <h3>{decodeText(news[0].title)}</h3>
-                <a href={news[0].link} target="_blank" rel="noreferrer" className="lr-button lr-button--ghost">Read Full Story</a>
+                <span>{news[0].source} {'\u00b7'} {formatNewsRelativeTime(news[0].publishedAt)}</span>
+                <h3>{cleanNewsText(news[0].title)}</h3>
+                <a href={news[0].link} target="_blank" rel="noopener noreferrer" className="lr-button lr-button--ghost">Read Full Story</a>
               </div>
             </article>
             <div className="home-news-small">
-              {news.slice(1, 3).map((article) => (
-                <article key={article.id || article.link}>
-                  {article.image ? (
-                    <SafeImage
-                      src={article.image}
-                      alt=""
-                      fallbackText="RADAR"
-                    />
-                  ) : (
-                    <div className="lr-art-fallback">RADAR</div>
-                  )}
-                  <div><span>{article.source} {'\u00b7'} {formatRelativeTime(article.publishedAt)}</span><h3>{decodeText(article.title)}</h3></div>
-                  <a href={article.link} target="_blank" rel="noreferrer" aria-label={`Read ${article.title}`} />
-                </article>
-              ))}
+              {news.slice(1, 3).map((article) => {
+                const headline = cleanNewsText(article.title)
+                return (
+                  <article key={article.id || article.link}>
+                    {article.image ? (
+                      <SafeImage
+                        src={article.image}
+                        alt={headline}
+                        fallbackText="RADAR"
+                      />
+                    ) : (
+                      <div className="lr-art-fallback">RADAR</div>
+                    )}
+                    <div><span>{article.source} {'\u00b7'} {formatNewsRelativeTime(article.publishedAt)}</span><h3>{headline}</h3></div>
+                    <a href={article.link} target="_blank" rel="noopener noreferrer" aria-label={`Read ${headline}`} />
+                  </article>
+                )
+              })}
             </div>
           </div>
         ) : (
@@ -1128,14 +1132,13 @@ export default function Discover({
     setNewsLoading(true)
     setNewsError('')
     try {
-      const data = await fetchGamingNews()
+      const data = await fetchNewsSnapshot()
       setNewsUpdatedAt(data.generatedAt || '')
       const stories = Array.isArray(data.articles) ? data.articles : []
       setNews(
         stories
           .filter((article) => !article.sponsored && article.title && article.link)
-          .sort((first, second) => new Date(second.publishedAt) - new Date(first.publishedAt))
-          .slice(0, 5)
+          .slice(0, 3)
       )
     } catch {
       setNewsError('Gaming news could not load right now. Please try again later.')
