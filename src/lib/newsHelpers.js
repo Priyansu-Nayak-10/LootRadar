@@ -1,4 +1,4 @@
-const NEWS_CACHE_KEY = 'lootradar_gaming_news_v2'
+const NEWS_CACHE_KEY = 'wishradar_gaming_news_v2'
 const NEWS_CACHE_TTL_MS = 10 * 60 * 1000
 
 export function cleanNewsText(value = '') {

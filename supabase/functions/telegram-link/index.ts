@@ -61,7 +61,7 @@ Deno.serve(async (request) => {
   if (!code) {
     await telegram('sendMessage', {
       chat_id: chat.id,
-      text: 'Open LootRadar, choose Account, and select Connect Telegram to get a one-time link.',
+      text: 'Open WishRadar, choose Account, and select Connect Telegram to get a one-time link.',
     })
     return new Response('OK')
   }
@@ -78,7 +78,7 @@ Deno.serve(async (request) => {
   if (linkError) {
     await telegram('sendMessage', {
       chat_id: chat.id,
-      text: 'LootRadar could not verify this link. Please try again.',
+      text: 'WishRadar could not verify this link. Please try again.',
     })
     return new Response('OK')
   }
@@ -86,7 +86,7 @@ Deno.serve(async (request) => {
   if (!link || link.used_at || new Date(link.expires_at).getTime() <= Date.now()) {
     await telegram('sendMessage', {
       chat_id: chat.id,
-      text: 'This LootRadar link is invalid or expired. Create a new one in your Account page.',
+      text: 'This WishRadar link is invalid or expired. Create a new one in your Account page.',
     })
     return new Response('OK')
   }
@@ -103,7 +103,7 @@ Deno.serve(async (request) => {
   if (connectionError) {
     await telegram('sendMessage', {
       chat_id: chat.id,
-      text: 'LootRadar could not save this connection. Please try again.',
+      text: 'WishRadar could not save this connection. Please try again.',
     })
     return new Response('OK')
   }
@@ -120,7 +120,7 @@ Deno.serve(async (request) => {
 
   await telegram('sendMessage', {
     chat_id: chat.id,
-    text: 'Telegram connected successfully to LootRadar. Free-game alerts are ready to be configured.',
+    text: 'Telegram connected successfully to WishRadar. Free-game alerts are ready to be configured.',
   })
 
   return new Response('OK')

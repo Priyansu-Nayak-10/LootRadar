@@ -201,7 +201,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
 
   // Load currency exchange rate (USD to INR, cached 24h)
   useEffect(() => {
-    const cacheKey = 'lootradar_usd_inr_rate'
+    const cacheKey = 'wishradar_usd_inr_rate'
     try {
       const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null')
       if (

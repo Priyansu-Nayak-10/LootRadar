@@ -217,7 +217,7 @@ export function selectHeroDeals(allDeals, count = 5) {
 }
 
 // ─── Batched Cheapest-Price-Ever Lazy Loader (24h Cache) ─────────────────────
-const LOWEST_STORAGE_KEY = 'lootradar_lowest_prices_v1'
+const LOWEST_STORAGE_KEY = 'wishradar_lowest_prices_v1'
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000
 
 let memoryLowestCache = null
@@ -269,7 +269,7 @@ export async function fetchLowestPricesBatch(gameIds = []) {
     const batch = uniqueMissing.slice(i, i + BATCH_SIZE)
     try {
       const res = await fetch(`https://www.cheapshark.com/api/1.0/games?ids=${batch.join(',')}`, {
-        headers: { 'User-Agent': 'LootRadar/1.0 (free portfolio project)' },
+        headers: { 'User-Agent': 'WishRadar/1.0 (free portfolio project)' },
       })
       if (res.ok) {
         const data = await res.json()

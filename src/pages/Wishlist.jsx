@@ -392,7 +392,7 @@ export default function Wishlist({
   const [sortBy, setSortBy] = useState('best') // 'best' | 'recent' | 'alpha'
   const [alertSensitivity, setAlertSensitivity] = useState(() => {
     try {
-      return localStorage.getItem('lootradar_alert_sensitivity') || 'good'
+      return localStorage.getItem('wishradar_alert_sensitivity') || 'good'
     } catch {
       return 'good'
     }
@@ -461,7 +461,7 @@ export default function Wishlist({
         if (!cancelled && data?.alert_sensitivity) {
           setAlertSensitivity(data.alert_sensitivity)
           try {
-            localStorage.setItem('lootradar_alert_sensitivity', data.alert_sensitivity)
+            localStorage.setItem('wishradar_alert_sensitivity', data.alert_sensitivity)
           } catch {}
         }
       })
@@ -475,7 +475,7 @@ export default function Wishlist({
   function handleSensitivityChange(nextSensitivity) {
     setAlertSensitivity(nextSensitivity)
     try {
-      localStorage.setItem('lootradar_alert_sensitivity', nextSensitivity)
+      localStorage.setItem('wishradar_alert_sensitivity', nextSensitivity)
     } catch {}
 
     if (session && supabase) {

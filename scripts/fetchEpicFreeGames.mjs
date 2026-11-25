@@ -39,7 +39,7 @@ function cleanElement(element, type) {
 
 async function main() {
   const response = await fetch(EPIC_URL, {
-    headers: { 'User-Agent': 'LootRadar/1.0' },
+    headers: { 'User-Agent': 'WishRadar/1.0' },
   })
   if (!response.ok) {
     throw new Error(`Epic promotions request failed (${response.status})`)

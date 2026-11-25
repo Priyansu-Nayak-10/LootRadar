@@ -352,7 +352,7 @@ async function main() {
       const cleanQuery = rawTitle.replace(/\s*\(.*?\)/g, '').trim()
       const searchUrl = `https://www.cheapshark.com/api/1.0/deals?title=${encodeURIComponent(cleanQuery)}&pageSize=1`
       const res = await fetch(searchUrl, {
-        headers: { 'User-Agent': 'LootRadar/1.0 (free portfolio project)' },
+        headers: { 'User-Agent': 'WishRadar/1.0 (free portfolio project)' },
       })
       if (res.ok) {
         const results = await res.json()

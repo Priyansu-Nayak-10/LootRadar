@@ -15,7 +15,7 @@ import {
   useTopDeals,
 } from '../lib/dealsData'
 import { cleanTitle, isMobile } from '../lib/freeGames'
-import { lootRadarArt } from '../assets/art'
+import { wishRadarArt } from '../assets/art'
 
 function dateString(date) {
   return date.toISOString().slice(0, 10)
@@ -410,10 +410,10 @@ class HeroErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <div className="home-hero-wrap">
-          <div className="lr-art-fallback">LOOTRADAR</div>
+          <div className="lr-art-fallback">WISHRADAR</div>
           <div className="home-hero-overlay" />
           <div className="home-hero-copy">
-            <span className="lr-badge lr-badge--lime">LOOTRADAR</span>
+            <span className="lr-badge lr-badge--lime">WISHRADAR</span>
             <h1>Featured Gaming Radar</h1>
             <p>Track PC deals, free giveaways, and upcoming game alerts.</p>
           </div>
@@ -1081,8 +1081,8 @@ export function HomeRedesign({
         </section>
       )}
       <section className="home-promo-banner" style={matchedNewsPanelStyle} onClick={() => onNavigate('account')}>
-          {lootRadarArt.promo.src ? <img src={lootRadarArt.promo.src} alt={lootRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
-          <span><small>LOOTRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Connect Telegram</em></span>
+          {wishRadarArt.promo.src ? <img src={wishRadarArt.promo.src} alt={wishRadarArt.promo.alt} loading="lazy" /> : <span className="home-promo-radar" aria-hidden="true" />}
+          <span><small>WISHRADAR ALERTS</small><strong>Connect Telegram, never miss a free game</strong><em>Connect Telegram</em></span>
       </section>
     </div>
   )
@@ -1199,8 +1199,8 @@ export default function Discover({
       setSearchSubmitted(true)
       searchGames(null, query, category)
     }
-    window.addEventListener('lootradar-shell-search', handleShellSearch)
-    return () => window.removeEventListener('lootradar-shell-search', handleShellSearch)
+    window.addEventListener('wishradar-shell-search', handleShellSearch)
+    return () => window.removeEventListener('wishradar-shell-search', handleShellSearch)
   }, [searchGames])
 
   useEffect(() => {

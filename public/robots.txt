@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lootradar.vercel.app/sitemap.xml
+Sitemap: https://wishradar.vercel.app/sitemap.xml

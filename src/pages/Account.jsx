@@ -190,8 +190,8 @@ export default function Account({ session, onSignOut }) {
     setLoading(true)
     setMessage('')
     try {
-      window.localStorage.removeItem('lootradar_library')
-      window.localStorage.removeItem('lootradar_wishlist')
+      window.localStorage.removeItem('wishradar_library')
+      window.localStorage.removeItem('wishradar_wishlist')
     } catch {}
     if (typeof onSignOut === 'function') {
       await onSignOut()
@@ -347,7 +347,7 @@ export default function Account({ session, onSignOut }) {
       <div className="auth-redesign__art">
         <div className="auth-radar-art" aria-hidden="true" />
         <div className="auth-welcome">
-          <span className="lr-section-heading__kicker">WELCOME TO LOOTRADAR</span>
+          <span className="lr-section-heading__kicker">WELCOME TO WISHRADAR</span>
           <h1>Track. Discover. <strong>Claim.</strong></h1>
           <div className="auth-feature-list">
             <span><b>01</b> Track Your Progress</span>
@@ -357,9 +357,9 @@ export default function Account({ session, onSignOut }) {
         </div>
       </div>
       <div className="auth-redesign__card">
-        <div className="auth-logo" aria-label="LootRadar">
-          <span className="brand-mark" aria-hidden="true">LR</span>
-          <strong>Loot<span>Radar</span></strong>
+        <div className="auth-logo" aria-label="WishRadar">
+          <span className="brand-mark" aria-hidden="true">WR</span>
+          <strong>Wish<span>Radar</span></strong>
         </div>
         <h2>{mode === 'signup' ? 'Create Account' : 'Welcome Back!'}</h2>
         <div className="auth-mode-tabs" aria-label="Account mode">

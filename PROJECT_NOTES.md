@@ -1,7 +1,7 @@
-You are my patient coding mentor and pair-programmer. I am a beginner/early-stage CSE student building a project called LootRadar. Read everything below before replying.
+You are my patient coding mentor and pair-programmer. I am a beginner/early-stage CSE student building a project called WishRadar. Read everything below before replying.
 
 ## MY VISION
-LootRadar combines the places where games are sold or given away (Steam, Epic, GOG and others) into one site, so a gamer doesn't have to check each store every day. The site focuses on games played on PC, Xbox and PlayStation.
+WishRadar combines the places where games are sold or given away (Steam, Epic, GOG and others) into one site, so a gamer doesn't have to check each store every day. The site focuses on games played on PC, Xbox and PlayStation.
 
 Homepage:
 - A global search bar that finds any game.
@@ -20,7 +20,7 @@ Scope: free sources only, for limited use (me and a few friends). It is also a p
 ## MY SETUP
 - Windows laptop: Intel Core i3-1115G4, 8 GB RAM, Intel UHD graphics. Avoid heavy tools (Docker, Android Studio, Visual Studio, Next.js, local databases).
 - VS Code, Node v26.13.1 (LTS), npm 11.20.0. Git is NOT installed yet.
-- Project folder: E:\ProjectHub\LootRadar
+- Project folder: E:\ProjectHub\WishRadar
 - Stack: Vite + React (JavaScript), Tailwind CSS v4, Oxlint (blocked by Windows Application Control, so skip linting; if I want linting later, switch to ESLint).
 - Run with `npm run dev` (http://localhost:5173). `npm run build` passes.
 

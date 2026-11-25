@@ -35,7 +35,7 @@ export default function Footer({ onNavigate, onNavigateFreeTab }) {
               href="/"
               className="footer-brand"
               onClick={(e) => handleInternalClick(e, 'discover')}
-              aria-label="LootRadar home"
+              aria-label="WishRadar home"
             >
               <span className="brand-mark footer-brand-mark" aria-hidden="true">
                 <svg
@@ -54,7 +54,7 @@ export default function Footer({ onNavigate, onNavigateFreeTab }) {
               </span>
               <span className="brand-copy">
                 <span className="brand-name">
-                  Loot<span>Radar</span>
+                  Wish<span>Radar</span>
                 </span>
               </span>
             </a>
@@ -233,7 +233,7 @@ export default function Footer({ onNavigate, onNavigateFreeTab }) {
         {/* Bottom bar */}
         <div className="footer-bottom">
           <span className="footer-copyright">
-            {'\u00a9'} 2026 LootRadar
+            {'\u00a9'} 2026 WishRadar
           </span>
           <p className="footer-disclaimer">
             Not affiliated with Steam, Epic Games, Sony or Microsoft. Prices and offers can change, so check the store before buying.

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { lootRadarArt } from '../assets/art'
+import { wishRadarArt } from '../assets/art'
 
 /**
  * SafeImage displays image candidates in specified priority order:
  * 1. Steam library_hero.jpg (if steamAppID is present)
  * 2. Steam header.jpg (if steamAppID is present)
  * 3. Source imageUrl / src
- * 4. lootRadarArt.hero.src (only as last-resort image fallback)
+ * 4. wishRadarArt.hero.src (only as last-resort image fallback)
  * 5. .lr-art-fallback text block
  */
 export default function SafeImage({
@@ -16,7 +16,7 @@ export default function SafeImage({
   className = '',
   loading = 'lazy',
   decoding = 'async',
-  fallbackText = 'LOOTRADAR',
+  fallbackText = 'WISHRADAR',
 }) {
   const [candidateIndex, setCandidateIndex] = useState(0)
 
@@ -29,8 +29,8 @@ export default function SafeImage({
   if (src && typeof src === 'string' && src.trim()) {
     candidates.push(src.trim())
   }
-  if (lootRadarArt.hero?.src && typeof lootRadarArt.hero.src === 'string' && lootRadarArt.hero.src.trim()) {
-    candidates.push(lootRadarArt.hero.src.trim())
+  if (wishRadarArt.hero?.src && typeof wishRadarArt.hero.src === 'string' && wishRadarArt.hero.src.trim()) {
+    candidates.push(wishRadarArt.hero.src.trim())
   }
 
   // Reset index if steamAppID or src changes

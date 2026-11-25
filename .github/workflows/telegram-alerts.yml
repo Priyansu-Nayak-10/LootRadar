@@ -1,4 +1,4 @@
-name: Send LootRadar Telegram alerts
+name: Send WishRadar Telegram alerts
 
 on:
   schedule:

@@ -51,7 +51,7 @@ export async function fetchRawgGames(parameters, cacheLabel, cacheMs = RAWG_CACH
 
   const query = new URLSearchParams(parameters)
   query.set('key', rawgKey)
-  const cacheKey = `lootradar_rawg_${cacheLabel}`
+  const cacheKey = `wishradar_rawg_${cacheLabel}`
   return fetchCachedJson(`${RAWG_BASE}?${query}`, cacheKey, cacheMs)
 }
 
@@ -85,7 +85,7 @@ async function rawgSearch(query, category, signal, isVariant = false) {
 
   params.set('key', rawgKey)
 
-  const cacheKey = `lootradar_rawg_search_${query.toLowerCase()}_${category || 'All'}`
+  const cacheKey = `wishradar_rawg_search_${query.toLowerCase()}_${category || 'All'}`
 
   // Check cache first
   try {
@@ -173,7 +173,7 @@ export async function fetchGamingNews() {
     if (!Array.isArray(data.articles)) throw new Error('News snapshot is invalid')
     try {
       sessionStorage.setItem(
-        'lootradar_gaming_news',
+        'wishradar_gaming_news',
         JSON.stringify({ time: Date.now(), data })
       )
     } catch {
@@ -181,6 +181,6 @@ export async function fetchGamingNews() {
     }
     return data
   } catch {
-    return fetchCachedJson(NEWS_URL, 'lootradar_gaming_news', NEWS_CACHE_MS)
+    return fetchCachedJson(NEWS_URL, 'wishradar_gaming_news', NEWS_CACHE_MS)
   }
 }

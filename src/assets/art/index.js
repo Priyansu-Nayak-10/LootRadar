@@ -1,14 +1,14 @@
-export const lootRadarArt = {
+export const wishRadarArt = {
   hero: {
     src: '',
-    alt: 'LootRadar featured game artwork',
+    alt: 'WishRadar featured game artwork',
   },
   auth: {
     src: '',
-    alt: 'LootRadar account artwork',
+    alt: 'WishRadar account artwork',
   },
   promo: {
     src: '',
-    alt: 'LootRadar Telegram promotion artwork',
+    alt: 'WishRadar Telegram promotion artwork',
   },
 }

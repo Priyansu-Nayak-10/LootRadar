@@ -88,8 +88,8 @@ function toDatabaseRow(game, listType, userId) {
 
 export default function App() {
   const [tab, setTab] = useState('discover')
-  const [ownedGames, setOwnedGames] = useLocalStorage('lootradar_library', [])
-  const [wishlist, setWishlist] = useLocalStorage('lootradar_wishlist', [])
+  const [ownedGames, setOwnedGames] = useLocalStorage('wishradar_library', [])
+  const [wishlist, setWishlist] = useLocalStorage('wishradar_wishlist', [])
   const [availableFreeGames, setAvailableFreeGames] = useState([])
   const [availableDeals, setAvailableDeals] = useState([])
   const [dealsAvailabilityLoaded, setDealsAvailabilityLoaded] = useState(false)
@@ -136,8 +136,8 @@ export default function App() {
         let localLibrary = []
         let localWishlist = []
         try {
-          localLibrary = JSON.parse(window.localStorage.getItem('lootradar_library') || '[]')
-          localWishlist = JSON.parse(window.localStorage.getItem('lootradar_wishlist') || '[]')
+          localLibrary = JSON.parse(window.localStorage.getItem('wishradar_library') || '[]')
+          localWishlist = JSON.parse(window.localStorage.getItem('wishradar_wishlist') || '[]')
         } catch {
           // Keep database rows when local JSON is unavailable or invalid.
         }
@@ -186,14 +186,14 @@ export default function App() {
         const nextFreeTab = route
         setFreeTab(nextFreeTab)
         setTab('free')
-        document.title = 'Free Games | LootRadar'
+        document.title = 'Free Games | WishRadar'
         window.history.replaceState({}, '', `/free?tab=${nextFreeTab}`)
         return
       }
 
       if (route === 'signin' || route === 'signup') {
         setTab('account')
-        document.title = 'Account | LootRadar'
+        document.title = 'Account | WishRadar'
         window.history.replaceState({}, '', '/account')
         return
       }
@@ -213,7 +213,7 @@ export default function App() {
           setShellSearch(q)
           setShellCategory(platform)
           setTab('search')
-          document.title = `Search: ${q} | LootRadar`
+          document.title = `Search: ${q} | WishRadar`
           return
         }
       } else {
@@ -222,17 +222,17 @@ export default function App() {
       setTab(knownTabs.includes(route) ? route : 'not-found')
 
       const routeTitles = {
-        discover: 'LootRadar | Your Game Intelligence',
-        free: 'Free Games | LootRadar',
-        deals: 'Game Deals | LootRadar',
-        library: 'Library | LootRadar',
-        wishlist: 'Wishlist | LootRadar',
-        news: 'Gaming News | LootRadar',
-        account: 'Account | LootRadar',
-        search: 'Search | LootRadar',
-        'not-found': 'Page Not Found | LootRadar',
+        discover: 'WishRadar | Your Game Intelligence',
+        free: 'Free Games | WishRadar',
+        deals: 'Game Deals | WishRadar',
+        library: 'Library | WishRadar',
+        wishlist: 'Wishlist | WishRadar',
+        news: 'Gaming News | WishRadar',
+        account: 'Account | WishRadar',
+        search: 'Search | WishRadar',
+        'not-found': 'Page Not Found | WishRadar',
       }
-      document.title = routeTitles[route] || (knownTabs.includes(route) ? 'LootRadar' : 'Page Not Found | LootRadar')
+      document.title = routeTitles[route] || (knownTabs.includes(route) ? 'WishRadar' : 'Page Not Found | WishRadar')
     }
     readRoute()
     window.addEventListener('hashchange', readRoute)
@@ -249,23 +249,23 @@ export default function App() {
     if (nextTab === 'discover') setShellSearch('')
     setTab(nextTab)
     const titles = {
-      discover: 'LootRadar | Your Game Intelligence',
-      free: 'Free Games | LootRadar',
-      deals: 'Game Deals | LootRadar',
-      library: 'Library | LootRadar',
-      wishlist: 'Wishlist | LootRadar',
-      news: 'Gaming News | LootRadar',
-      account: 'Account | LootRadar',
-      search: 'Search | LootRadar',
+      discover: 'WishRadar | Your Game Intelligence',
+      free: 'Free Games | WishRadar',
+      deals: 'Game Deals | WishRadar',
+      library: 'Library | WishRadar',
+      wishlist: 'Wishlist | WishRadar',
+      news: 'Gaming News | WishRadar',
+      account: 'Account | WishRadar',
+      search: 'Search | WishRadar',
     }
-    document.title = titles[nextTab] || 'LootRadar'
+    document.title = titles[nextTab] || 'WishRadar'
     window.history.pushState({}, '', nextTab === 'discover' ? '/' : `/${nextTab}`)
   }
 
   function navigateFreeTab(nextFreeTab) {
     setFreeTab(nextFreeTab)
     setTab('free')
-    document.title = 'Free Games | LootRadar'
+    document.title = 'Free Games | WishRadar'
     window.history.pushState({}, '', nextFreeTab === 'claim' ? '/free' : `/free?tab=${nextFreeTab}`)
   }
 
@@ -275,9 +275,9 @@ export default function App() {
     closeTypeahead()
     if (query) {
       setTab('search')
-      document.title = `Search: ${query} | LootRadar`
+      document.title = `Search: ${query} | WishRadar`
       window.history.pushState({}, '', `/search?q=${encodeURIComponent(query)}&platform=${encodeURIComponent(shellCategory)}`)
-      window.dispatchEvent(new CustomEvent('lootradar-shell-search', {
+      window.dispatchEvent(new CustomEvent('wishradar-shell-search', {
         detail: { query, category: shellCategory },
       }))
     } else {
@@ -365,8 +365,8 @@ export default function App() {
 
   async function signOut() {
     try {
-      window.localStorage.removeItem('lootradar_library')
-      window.localStorage.removeItem('lootradar_wishlist')
+      window.localStorage.removeItem('wishradar_library')
+      window.localStorage.removeItem('wishradar_wishlist')
     } catch {}
     setOwnedGames([])
     setWishlist([])
@@ -517,7 +517,7 @@ export default function App() {
                 event.preventDefault()
                 navigateTab('discover')
               }}
-              aria-label="LootRadar home"
+              aria-label="WishRadar home"
             >
               <span className="brand-mark" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.7">
@@ -528,7 +528,7 @@ export default function App() {
                 </svg>
               </span>
               <span className="brand-copy">
-                <span className="brand-name">Loot<span>Radar</span></span>
+                <span className="brand-name">Wish<span>Radar</span></span>
                 <span className="brand-caption">YOUR GAME INTELLIGENCE</span>
               </span>
             </a>
@@ -741,7 +741,7 @@ export default function App() {
               <div className="lr-art-fallback" aria-hidden="true">404</div>
               <span className="lr-section-heading__kicker">RADAR LOST THE SIGNAL</span>
               <h1>Page <strong>Not Found</strong></h1>
-              <p>That LootRadar page does not exist or the link may be outdated.</p>
+              <p>That WishRadar page does not exist or the link may be outdated.</p>
               <button type="button" className="lr-button" onClick={() => navigateTab('discover')}>
                 Back to Home
               </button>

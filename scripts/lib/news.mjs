@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { XMLParser } from 'fast-xml-parser'
 
-export const USER_AGENT = 'LootRadar/1.0 (free portfolio project)'
+export const USER_AGENT = 'WishRadar/1.0 (free portfolio project)'
 
 export const NEWS_FEEDS = [
   { source: 'IGN', url: 'https://www.ign.com/rss/v2/articles/feed', limit: 20 },

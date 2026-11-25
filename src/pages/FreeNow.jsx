@@ -17,7 +17,7 @@ import {
 } from '../lib/freeGames.js'
 
 const GAMERPOWER_API = 'https://www.gamerpower.com/api/giveaways?type=game'
-const CACHE_KEY = 'lootradar_free_v2'
+const CACHE_KEY = 'wishradar_free_v2'
 const CACHE_MS = 10 * 60 * 1000 // 10 minutes
 
 const STORE_CHIPS = [
@@ -449,7 +449,7 @@ export default function FreeNow({
   const [telegramConnected, setTelegramConnected] = useState(false)
   const [telegramDismissed, setTelegramDismissed] = useState(() => {
     try {
-      return localStorage.getItem('lootradar_free_telegram_dismissed') === 'true'
+      return localStorage.getItem('wishradar_free_telegram_dismissed') === 'true'
     } catch {
       return false
     }
@@ -519,7 +519,7 @@ export default function FreeNow({
   const dismissTelegram = () => {
     setTelegramDismissed(true)
     try {
-      localStorage.setItem('lootradar_free_telegram_dismissed', 'true')
+      localStorage.setItem('wishradar_free_telegram_dismissed', 'true')
     } catch {
       // ignore
     }

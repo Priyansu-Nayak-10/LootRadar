@@ -62,7 +62,7 @@ export function GameCard({ image, title, children, className = '', imageAlt = ''
         />
       ) : (
         <div className="lr-art-fallback" aria-label={`${title} artwork unavailable`}>
-          LootRadar
+          WishRadar
         </div>
       )}
       <div className="lr-game-card__body">{children}</div>
@@ -83,7 +83,7 @@ export function NewsCard({ image, title, children, className = '', imageAlt = ''
         />
       ) : (
         <div className="lr-art-fallback" aria-label="News artwork unavailable">
-          LootRadar
+          WishRadar
         </div>
       )}
       <div className="lr-news-card__body">{children}</div>

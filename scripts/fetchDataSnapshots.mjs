@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { collectNewsSnapshot } from './lib/news.mjs'
 
-const USER_AGENT = 'LootRadar/1.0 (free portfolio project)'
+const USER_AGENT = 'WishRadar/1.0 (free portfolio project)'
 const DATA_DIR = new URL('../public/data/', import.meta.url)
 
 async function fetchJson(url) {
