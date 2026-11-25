@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 
 export const ITAD_DEALS_URL = '/data/itad-deals.json'
-const DEALS_CACHE_KEY = 'wishradar_itad_deals_v1'
+const DEALS_CACHE_KEY = 'wishradar_itad_deals_v2'
+const DEALS_CACHE_VERSION = 2
 const DEALS_CACHE_TTL_MS = 10 * 60 * 1000
 const STALE_THRESHOLD_MS = 3 * 60 * 60 * 1000
 
@@ -142,7 +143,9 @@ export function matchDealForGame(game, deals = []) {
 
 export function selectTopDeals(allDeals, limit = 8) {
   if (!Array.isArray(allDeals) || allDeals.length === 0) return []
-  const valid = allDeals.filter((d) => d && typeof d === 'object' && d.type === 'game')
+  const valid = allDeals.filter(
+    (d) => d && typeof d === 'object' && (d.type === 'game' || !d.type)
+  )
 
   const over50 = valid.filter((d) => Number(d.cut) >= 50)
   if (over50.length >= limit) {
@@ -162,7 +165,7 @@ export function selectHeroDeals(allDeals, count = 3) {
 
   const withImages = allDeals.filter((deal) => {
     if (!deal || typeof deal !== 'object') return false
-    if (deal.type !== 'game') return false
+    if (deal.type && deal.type !== 'game') return false
     return Boolean(deal.image || deal.steamAppId)
   })
 
@@ -284,6 +287,19 @@ export function filterAndSortDeals(deals = [], filters = {}) {
 let inFlightPromise = null
 let memoryCache = null
 
+export function getDealsErrorMessage(errorType) {
+  if (errorType === 'not_found') {
+    return 'No deals data file found. Snapshot will be generated soon.'
+  }
+  if (errorType === 'network_error') {
+    return 'Network error loading deals. Check your connection and try again.'
+  }
+  if (errorType === 'invalid_data') {
+    return 'Deals data is empty or invalid. Please try again later.'
+  }
+  return 'Could not load deals. Check your connection and try again.'
+}
+
 function readSessionCache() {
   try {
     if (typeof sessionStorage === 'undefined') return null
@@ -291,9 +307,12 @@ function readSessionCache() {
     if (!raw) return null
     const parsed = JSON.parse(raw)
     if (
+      parsed?.version === DEALS_CACHE_VERSION &&
       parsed?.data &&
       Array.isArray(parsed.data.deals) &&
       parsed.data.deals.length > 0 &&
+      parsed.data.deals[0]?.itadId &&
+      typeof parsed.data.deals[0]?.price === 'number' &&
       Date.now() - parsed.time < DEALS_CACHE_TTL_MS
     ) {
       return parsed.data
@@ -307,7 +326,10 @@ function readSessionCache() {
 function writeSessionCache(data) {
   try {
     if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.setItem(DEALS_CACHE_KEY, JSON.stringify({ time: Date.now(), data }))
+      sessionStorage.setItem(
+        DEALS_CACHE_KEY,
+        JSON.stringify({ version: DEALS_CACHE_VERSION, time: Date.now(), data })
+      )
     }
   } catch {
     // Ignore storage quota errors
@@ -331,18 +353,60 @@ export async function fetchDealsData(forceRefresh = false) {
 
   inFlightPromise = (async () => {
     try {
-      const response = await fetch(ITAD_DEALS_URL, { cache: 'no-cache' })
-      if (!response.ok) {
-        throw new Error(`Could not load deals (${response.status})`)
+      let response
+      try {
+        response = await fetch(ITAD_DEALS_URL, { cache: 'no-cache' })
+      } catch (netErr) {
+        const err = new Error('NETWORK_ERROR: Network connection failed while fetching deals')
+        err.cause = netErr
+        throw err
       }
-      const snapshot = await response.json()
-      const deals = Array.isArray(snapshot?.deals) ? snapshot.deals : []
+
+      if (response.status === 404) {
+        throw new Error('NOT_FOUND: Deals snapshot file /data/itad-deals.json not found (404)')
+      }
+
+      const contentType = response.headers.get('content-type') || ''
+      if (
+        contentType.includes('text/html') ||
+        (!contentType.includes('json') && !contentType.includes('text/plain'))
+      ) {
+        throw new Error('NOT_FOUND: Server returned HTML index fallback instead of JSON deals snapshot')
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP_ERROR: Server returned HTTP ${response.status}`)
+      }
+
+      let snapshot
+      try {
+        snapshot = await response.json()
+      } catch (parseErr) {
+        const err = new Error('INVALID_DATA: Deals snapshot is not valid JSON')
+        err.cause = parseErr
+        throw err
+      }
+
+      if (!snapshot || typeof snapshot !== 'object') {
+        throw new Error('INVALID_DATA: Deals snapshot root is not an object')
+      }
+
+      const rawDeals = Array.isArray(snapshot?.deals) ? snapshot.deals : []
       const free = Array.isArray(snapshot?.free) ? snapshot.free : []
       const stores = Array.isArray(snapshot?.shops) ? snapshot.shops : []
       const generatedAt = snapshot?.generatedAt || null
 
+      // Validate and filter items; skip malformed entries instead of throwing
+      const deals = rawDeals.filter((d) => {
+        if (!d || typeof d !== 'object') return false
+        if (!d.itadId || !d.title) return false
+        const price = Number(d.price)
+        if (!Number.isFinite(price) || price < 0) return false
+        return true
+      })
+
       if (deals.length === 0) {
-        throw new Error('Deals snapshot is empty')
+        throw new Error('NO_DEALS: Deals snapshot contains 0 valid game deals')
       }
 
       const result = {
@@ -351,6 +415,7 @@ export async function fetchDealsData(forceRefresh = false) {
         stores,
         generatedAt,
         error: false,
+        errorType: null,
       }
       memoryCache = result
       writeSessionCache(result)
@@ -372,6 +437,8 @@ export function useDeals() {
     generatedAt: initial?.generatedAt || null,
     loading: !initial,
     error: false,
+    errorType: null,
+    errorMessage: '',
   }))
   const [reloadKey, setReloadKey] = useState(0)
 
@@ -379,7 +446,7 @@ export function useDeals() {
     let cancelled = false
 
     async function load() {
-      setState((prev) => ({ ...prev, loading: true, error: false }))
+      setState((prev) => ({ ...prev, loading: true, error: false, errorType: null, errorMessage: '' }))
       try {
         const result = await fetchDealsData(reloadKey > 0)
         if (cancelled) return
@@ -390,13 +457,35 @@ export function useDeals() {
           generatedAt: result.generatedAt,
           loading: false,
           error: false,
+          errorType: null,
+          errorMessage: '',
         })
-      } catch {
+      } catch (err) {
         if (cancelled) return
+
+        if (import.meta.env.DEV) {
+          console.error('[useDeals] Snapshot load failed:', err?.message || err)
+        }
+
+        let type = 'network_error'
+        if (err?.message?.startsWith('NOT_FOUND')) {
+          type = 'not_found'
+        } else if (err?.message?.startsWith('INVALID_DATA') || err?.message?.startsWith('NO_DEALS')) {
+          type = 'invalid_data'
+        } else if (
+          err?.name === 'TypeError' ||
+          err?.message?.startsWith('NETWORK_ERROR') ||
+          err?.message?.includes('Failed to fetch')
+        ) {
+          type = 'network_error'
+        }
+
         setState((prev) => ({
           ...prev,
           loading: false,
           error: prev.deals.length === 0,
+          errorType: prev.deals.length === 0 ? type : null,
+          errorMessage: prev.deals.length === 0 ? getDealsErrorMessage(type) : '',
         }))
       }
     }

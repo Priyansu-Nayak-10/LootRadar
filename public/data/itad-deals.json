@@ -1,0 +1,3681 @@
+{
+  "generatedAt": "2026-11-25T14:42:29.738Z",
+  "country": "IN",
+  "currency": "INR",
+  "shops": [
+    {
+      "id": 61,
+      "name": "Steam"
+    },
+    {
+      "id": 16,
+      "name": "Epic Game Store"
+    },
+    {
+      "id": 52,
+      "name": "EA Store"
+    }
+  ],
+  "deals": [
+    {
+      "itadId": "01957c20-db4b-70bd-a1ca-db87943db968",
+      "slug": "umm-oyoun-am-ywn",
+      "title": "Umm Oyoun - ام عيون",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/01957c20-db4b-70bd-a1ca-db87943db968/banner600.jpg?t=1762607705",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 4.45,
+      "regular": 89,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 4.45,
+      "historyLow1y": 4.45,
+      "historyLow3m": 4.45,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-29T21:00:00.000Z",
+      "url": "https://itad.link/019a7c85-c809-7289-bfe0-684a7e1755aa/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "3575390",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-7af1-705f-8372-8fa63b4d57a8",
+      "slug": "together-after-dark",
+      "title": "Together After Dark",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-7af1-705f-8372-8fa63b4d57a8/banner600.jpg?t=1787938215",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 5.45,
+      "regular": 109,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 5.45,
+      "historyLow1y": 5.45,
+      "historyLow3m": 5.45,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-26T16:00:00.000Z",
+      "url": "https://itad.link/0196faff-71bc-713e-a038-4d8c2e31cd09/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "2708790",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-1809-7003-94eb-1a95c9319134",
+      "slug": "amazing-adventures-the-lost-tomb",
+      "title": "Amazing Adventures: The Lost Tomb",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-1809-7003-94eb-1a95c9319134/banner400.jpg?t=1790892736",
+      "shop": {
+        "id": 52,
+        "name": "EA Store"
+      },
+      "price": 14.45,
+      "regular": 289,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 14.45,
+      "historyLow1y": 14.45,
+      "historyLow3m": 14.45,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:30:00.000Z",
+      "url": "https://itad.link/018d9386-205f-725b-b350-ca5e537cabc5/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "3510",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-5013-7144-94c2-fcfe4a64a991",
+      "slug": "firelight-fantasy-force-energy",
+      "title": "Firelight Fantasy: Force Energy",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-5013-7144-94c2-fcfe4a64a991/banner600.jpg?t=1791584421",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 21.45,
+      "regular": 429,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 21.45,
+      "historyLow1y": 21.45,
+      "historyLow3m": 21.45,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-25T15:00:00.000Z",
+      "url": "https://itad.link/01904aa6-28d4-71a3-866c-418d8f526a1f/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "1619330",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-3e12-72c7-8109-ab468fabe2d4",
+      "slug": "helheim-hassle",
+      "title": "Helheim Hassle",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-3e12-72c7-8109-ab468fabe2d4/banner600.jpg?t=1786645520",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 23.45,
+      "regular": 469,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 23.45,
+      "historyLow1y": 23.45,
+      "historyLow3m": 23.45,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-01T16:00:00.000Z",
+      "url": "https://itad.link/018d959e-5808-73e7-af4a-6145350ad64b/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "1095120",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6482-701b-ac01-362ef1607b40",
+      "slug": "killer-worm-2",
+      "title": "Killer Worm 2",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6482-701b-ac01-362ef1607b40/banner600.jpg?t=1787596224",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 26,
+      "regular": 520,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 26,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/019f8f46-dfb7-73c5-9f56-6a93888850d3/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1768260",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0190a76a-52fb-7064-aa20-73088a92f4f5",
+      "slug": "aurye-clicker",
+      "title": "Aurye Clicker",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0190a76a-52fb-7064-aa20-73088a92f4f5/banner600.jpg?t=1788208518",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 26,
+      "regular": 520,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 26,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/01950171-b621-7088-b9fd-6e02208c36f3/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 3,
+          "name": "Linux"
+        }
+      ],
+      "steamAppId": "3092750",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-085a-7228-b13a-af6c4126b66a",
+      "slug": "memorise-n-run",
+      "title": "Memorise'n'run",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-085a-7228-b13a-af6c4126b66a/banner600.jpg?t=1787262646",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 26,
+      "regular": 520,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 26,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-956e-73cb-b6be-30d9e2255b4f/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1026910",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4af5-73cf-a7a7-4b615c679d46",
+      "slug": "gravkitten",
+      "title": "GravKitten",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4af5-73cf-a7a7-4b615c679d46/banner600.jpg?t=1787279427",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 26,
+      "regular": 520,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 26,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-6f32-73b8-a151-454ded8924ec/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1434940",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6751-72c5-9e1d-93e29a703019",
+      "slug": "evoluship",
+      "title": "EvoluShip",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6751-72c5-9e1d-93e29a703019/banner600.jpg?t=1787303117",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 26,
+      "regular": 520,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 26,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-5b6c-71da-aaa7-b8dafcceba06/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1937180",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-7acf-7169-973c-986f95544990",
+      "slug": "asteroid-core",
+      "title": "Asteroid Core",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-7acf-7169-973c-986f95544990/banner600.jpg?t=1787601073",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 26,
+      "regular": 520,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 26,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2a86-73e3-bb30-914f7904c570/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "2608120",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "019bf3b5-8c63-7352-a5b3-767d6fb55513",
+      "slug": "rustic-farm-life",
+      "title": "Rustic Farm Life",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/019bf3b5-8c63-7352-a5b3-767d6fb55513/banner600.jpg?t=1777339517",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 26.95,
+      "regular": 539,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26.95,
+      "historyLow1y": 26.95,
+      "historyLow3m": 26.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-27T21:00:00.000Z",
+      "url": "https://itad.link/019bf3b5-8c54-714d-9388-3f49655a4e11/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4817-71ee-8dac-d0e09a65f403",
+      "slug": "dofamine",
+      "title": "Dofamine",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4817-71ee-8dac-d0e09a65f403/banner600.jpg?t=1794006027",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 26.95,
+      "regular": 539,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26.95,
+      "historyLow1y": 26.95,
+      "historyLow3m": 26.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-01T15:00:00.000Z",
+      "url": "https://itad.link/018f6750-734b-7155-8825-2e697712b2ca/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "1441180",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4052-73ad-903f-e5857a783841",
+      "slug": "euphoria-supreme-mechanics",
+      "title": "Euphoria: Supreme Mechanics",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4052-73ad-903f-e5857a783841/banner600.jpg?t=1794008134",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 26.95,
+      "regular": 539,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26.95,
+      "historyLow1y": 26.95,
+      "historyLow3m": 26.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-01T15:00:00.000Z",
+      "url": "https://itad.link/018f5781-558c-7290-8a79-1a5cfb874279/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "1283500",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-7b19-70a5-8e98-a91e94cb60a2",
+      "slug": "undead-rise-of-the-betrayed-king",
+      "title": "Undead: Rise of the Betrayed King",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-7b19-70a5-8e98-a91e94cb60a2/banner600.jpg?t=1791248415",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 35.95,
+      "regular": 719,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 35.95,
+      "historyLow1y": 35.95,
+      "historyLow3m": 35.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-01T16:00:00.000Z",
+      "url": "https://itad.link/019c6dd1-58af-7204-8180-97f29f8dfff4/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "2711180",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0191699d-e1b2-729b-838c-c62bef254188",
+      "slug": "shadow-of-the-matrix",
+      "title": "Shadow of the matrix",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0191699d-e1b2-729b-838c-c62bef254188/banner600.jpg?t=1792952131",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 35.95,
+      "regular": 719,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 35.95,
+      "historyLow1y": 35.95,
+      "historyLow3m": 35.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-10T15:00:00.000Z",
+      "url": "https://itad.link/0191699d-e1a4-71f3-814f-6745a2524365/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "3098340",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-fdb9-7203-a89a-1be9ff5e9467",
+      "slug": "battlefield-4",
+      "title": "Battlefield 4",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937e-fdb9-7203-a89a-1be9ff5e9467/banner600.jpg?t=1786647356",
+      "shop": {
+        "id": 52,
+        "name": "EA Store"
+      },
+      "price": 49.95,
+      "regular": 999,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 49.95,
+      "historyLow1y": 49.95,
+      "historyLow3m": 49.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:30:00.000Z",
+      "url": "https://itad.link/018d9386-2e93-71f2-ae11-c89217e33f50/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1238860",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-efe8-72e7-ac09-9e56b08c749c",
+      "slug": "battlefield-3",
+      "title": "Battlefield 3",
+      "type": "game",
+      "image": null,
+      "shop": {
+        "id": 52,
+        "name": "EA Store"
+      },
+      "price": 49.95,
+      "regular": 999,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 49.95,
+      "historyLow1y": 49.95,
+      "historyLow3m": 49.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:30:00.000Z",
+      "url": "https://itad.link/018d9386-2e8e-73bf-b897-23f0529d2b5c/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-f55e-736d-91db-2c3d2edef26a",
+      "slug": "battlefield-1",
+      "title": "Battlefield 1",
+      "type": "game",
+      "image": null,
+      "shop": {
+        "id": 52,
+        "name": "EA Store"
+      },
+      "price": 49.95,
+      "regular": 999,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 49.95,
+      "historyLow1y": 49.95,
+      "historyLow3m": 49.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:30:00.000Z",
+      "url": "https://itad.link/018d9386-2dad-7014-976f-2222d37a7ef8/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-ea21-7051-9b8f-0460bb618e9b",
+      "slug": "battlefield-hardline",
+      "title": "Battlefield Hardline",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937e-ea21-7051-9b8f-0460bb618e9b/banner600.jpg?t=1786645557",
+      "shop": {
+        "id": 52,
+        "name": "EA Store"
+      },
+      "price": 49.95,
+      "regular": 999,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 49.95,
+      "historyLow1y": 49.95,
+      "historyLow3m": 49.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:30:00.000Z",
+      "url": "https://itad.link/018d9386-2dab-727e-9e1b-841dbe735080/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1238880",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4eef-73a5-aaed-0f8908352a55",
+      "slug": "rims-racing",
+      "title": "RiMS Racing",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4eef-73a5-aaed-0f8908352a55/banner600.jpg?t=1787462711",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 55,
+      "regular": 1100,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 55,
+      "historyLow1y": 55,
+      "historyLow3m": 55,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-07T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-b9c6-702f-872c-7bf8d79b4a21/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1346010",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0190f72c-d003-726f-8f8b-88eaa4dec290",
+      "slug": "realm",
+      "title": "Realm",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0190f72c-d003-726f-8f8b-88eaa4dec290/banner600.jpg?t=1787473215",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 65,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-06T09:00:00.000Z",
+      "url": "https://itad.link/0198f01f-327a-7130-840d-3a4dd24c037c/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "3735100",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018fde8f-eed8-7220-abc6-2ae191346383",
+      "slug": "backrooms-cats-and-lava",
+      "title": "Backrooms Cats and Lava",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018fde8f-eed8-7220-abc6-2ae191346383/banner600.jpg?t=1787437561",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 65,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-05T06:00:00.000Z",
+      "url": "https://itad.link/019025e8-c237-716f-bd5b-f1a717c6082e/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "3015110",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d979a-65dd-7243-a61e-1b46c2bb4965",
+      "slug": "space-wars--1",
+      "title": "Space Wars",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d979a-65dd-7243-a61e-1b46c2bb4965/banner600.jpg?t=1787475913",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 65,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-06T04:17:46.000Z",
+      "url": "https://itad.link/018d9386-cf1f-7206-a51b-ddaf87fd2a6d/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1176160",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-1938-73c6-bf62-3b9bca92dabe",
+      "slug": "paranoia-happiness-is-mandatory",
+      "title": "Paranoia: Happiness is Mandatory",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-1938-73c6-bf62-3b9bca92dabe/banner600.jpg?t=1787444436",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 65,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-05T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-aa80-7331-8460-2d335cfebbc3/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "858030",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-3868-7146-adc4-667497bf1618",
+      "slug": "era-of-miracles",
+      "title": "Era of Miracles",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-3868-7146-adc4-667497bf1618/banner600.jpg?t=1787535610",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 65,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-06T04:17:46.000Z",
+      "url": "https://itad.link/018d9386-591c-7316-a475-2f7745f351d5/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1037930",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-386b-7236-9c85-d9c5fbf38f21",
+      "slug": "cemetery-warrior-4",
+      "title": "Cemetery Warrior 4",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-386b-7236-9c85-d9c5fbf38f21/banner600.jpg?t=1787479224",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 65,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-06T09:00:00.000Z",
+      "url": "https://itad.link/018d9386-3c5f-70b6-8674-12ad19f3d6a3/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1150990",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-3893-720c-b2b0-2347e145d555",
+      "slug": "best-plumber",
+      "title": "Best Plumber",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-3893-720c-b2b0-2347e145d555/banner600.jpg?t=1787475309",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 65,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-06T04:17:46.000Z",
+      "url": "https://itad.link/018d9386-2fa5-71a8-8e7b-2bf33f86ae85/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1166580",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-3ebb-73ab-89a3-519da8296625",
+      "slug": "battle-ram",
+      "title": "Battle Ram",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-3ebb-73ab-89a3-519da8296625/banner600.jpg?t=1787501413",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 65,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-06T04:17:46.000Z",
+      "url": "https://itad.link/018d9386-2ea5-718e-815f-02dcfb9fa46f/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 3,
+          "name": "Linux"
+        }
+      ],
+      "steamAppId": "1262060",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "019f6072-3064-7036-8da4-a3fac23862a4",
+      "slug": "wo-shi-xiao-zhang",
+      "title": "我是校长",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/019f6072-3064-7036-8da4-a3fac23862a4/banner600.jpg?t=1790922018",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 67,
+      "regular": 1349,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 67,
+      "historyLow1y": 67,
+      "historyLow3m": 67,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-06T18:00:00.000Z",
+      "url": "https://itad.link/019fc22f-73fd-7319-8020-0ae8cf29550b/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "4916300",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-7362-7020-9383-0d171c98176f",
+      "slug": "lim-beyond-one-on-one-basketball",
+      "title": "LiM Beyond One-on-One Basketball",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-7362-7020-9383-0d171c98176f/banner600.jpg?t=1787698808",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 74,
+      "regular": 1499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 74,
+      "historyLow1y": 74,
+      "historyLow3m": 74,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-05T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-8d1f-737e-84cc-914c17c9a328/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "2410970",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-551f-73f9-9290-5b8f34a2fdf1",
+      "slug": "endless-mahjong",
+      "title": "Endless mahjong",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-551f-73f9-9290-5b8f34a2fdf1/banner600.jpg?t=1787474122",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 75,
+      "regular": 1500,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 75,
+      "historyLow1y": 75,
+      "historyLow3m": 75,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-06T09:00:00.000Z",
+      "url": "https://itad.link/018d9386-5826-72b0-9a1d-8268add3dae5/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1717120",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "019f6080-0983-70df-b422-68a8abe30f19",
+      "slug": "mao-mao-pao-ku",
+      "title": "猫猫跑酷",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/019f6080-0983-70df-b422-68a8abe30f19/banner600.jpg?t=1787420116",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 77,
+      "regular": 1549,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 77,
+      "historyLow1y": 77,
+      "historyLow3m": 77,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-06T18:00:00.000Z",
+      "url": "https://itad.link/019fd082-60e6-7127-a7b3-df2f4de78ba7/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "4917020",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-fd8e-737e-b27e-e89cf79e4ce4",
+      "slug": "agents-of-mayhem",
+      "title": "Agents of Mayhem",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937e-fd8e-737e-b27e-e89cf79e4ce4/banner600.jpg?t=1786384662",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 84,
+      "regular": 1680,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 84,
+      "historyLow1y": 84,
+      "historyLow3m": 84,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T17:00:00.000Z",
+      "url": "https://itad.link/018d9386-1726-7201-809d-5b74762def3e/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "304530",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-5506-70cc-8188-63f70161c34a",
+      "slug": "rims-racing-japanese-manufacturers-deluxe-edition",
+      "title": "RiMS Racing: Japanese Manufacturers Deluxe Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-5506-70cc-8188-63f70161c34a/banner600.jpg?t=1787430613",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 84.95,
+      "regular": 1699,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 84.95,
+      "historyLow1y": 84.95,
+      "historyLow3m": 84.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-01T16:00:00.000Z",
+      "url": "https://itad.link/018d959e-6831-73ec-8826-47cffab2f033/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-5506-70cc-8188-63f70364b8a5",
+      "slug": "rims-racing-european-manufacturers-deluxe-edition",
+      "title": "RiMS Racing: European Manufacturers Deluxe Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-5506-70cc-8188-63f70364b8a5/banner600.jpg?t=1787450431",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 84.95,
+      "regular": 1699,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 84.95,
+      "historyLow1y": 84.95,
+      "historyLow3m": 84.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-01T16:00:00.000Z",
+      "url": "https://itad.link/018d959e-6830-72a4-adc9-3fa0cf05779c/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6c94-7096-b156-2a9737c31f01",
+      "slug": "tt-isle-of-man-ride-on-the-edge-3",
+      "title": "TT Isle of Man: Ride on the Edge 3",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6c94-7096-b156-2a9737c31f01/banner600.jpg?t=1786221061",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 100,
+      "regular": 2000,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 100,
+      "historyLow1y": 100,
+      "historyLow3m": 100,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-07T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-e9fe-72f0-a016-3502e24b990b/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-5506-70cc-8188-63f70284fc63",
+      "slug": "rims-racing-ultimate-edition",
+      "title": "Rims Racing: Ultimate Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-5506-70cc-8188-63f70284fc63/banner600.jpg?t=1787423728",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 103.21,
+      "regular": 2064.34,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 103.21,
+      "historyLow1y": 103.21,
+      "historyLow3m": 103.21,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-01T16:00:00.000Z",
+      "url": "https://itad.link/018d959e-6831-73ec-8826-47cffaf34ff1/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-f828-720c-8022-68b31523105c",
+      "slug": "lego-the-incredibles",
+      "title": "LEGO The Incredibles",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937e-f828-720c-8022-68b31523105c/banner600.jpg?t=1786389128",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 108,
+      "regular": 2169,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 108,
+      "historyLow1y": 108,
+      "historyLow3m": 108,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-07T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-8b3c-7002-9cd2-a13f6b4cb958/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "818320",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-0e4d-72aa-89c1-056f0780ae27",
+      "slug": "battlefield-4-premium-edition",
+      "title": "Battlefield 4 Premium Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-0e4d-72aa-89c1-056f0780ae27/banner600.jpg?t=1731430504",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 124,
+      "historyLow1y": 124,
+      "historyLow3m": 124,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2e96-7102-af09-8171fcd0c384/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-2ee6-704c-8a25-f9606ccdf59a",
+      "slug": "battlefield-1-revolution",
+      "title": "Battlefield™ 1 Revolution",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-2ee6-704c-8a25-f9606ccdf59a/banner600.jpg?t=1786652421",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 124,
+      "historyLow1y": 124,
+      "historyLow3m": 124,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2e92-70eb-ae13-61d0383aa841/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1238840",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-03b7-718c-afcc-9fccfea4af66",
+      "slug": "battlefield-3-premium-edition",
+      "title": "Battlefield 3™ Premium Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-03b7-718c-afcc-9fccfea4af66/banner600.jpg?t=1786659020",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 124,
+      "historyLow1y": 124,
+      "historyLow3m": 124,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2e91-70e5-a5a3-0c40b4bbc8fd/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1238820",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-20cd-724e-850f-eb8214455fe8",
+      "slug": "battlefield-hardline-ultimate-edition",
+      "title": "Battlefield™ Hardline Ultimate Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-20cd-724e-850f-eb8214455fe8/banner600.jpg?t=1731432617",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 124,
+      "historyLow1y": 124,
+      "historyLow3m": 124,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2dac-7218-8be0-0f5e37fd4b35/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-efe0-70c4-a142-bd045dd8c582",
+      "slug": "battlefield-v",
+      "title": "Battlefield™ V",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937e-efe0-70c4-a142-bd045dd8c582/banner600.jpg?t=1786644672",
+      "shop": {
+        "id": 52,
+        "name": "EA Store"
+      },
+      "price": 124.95,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 124.95,
+      "historyLow1y": 124.95,
+      "historyLow3m": 124.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:30:00.000Z",
+      "url": "https://itad.link/019b6764-a80b-733b-94a8-6ab5e7b0d197/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1238810",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4864-7079-96e0-bc2fa8510fcf",
+      "slug": "battlefield-v-definitive-edition",
+      "title": "Battlefield V Definitive Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4864-7079-96e0-bc2fa8510fcf/banner600.jpg?t=1758759904",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 129,
+      "regular": 2599,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 129,
+      "historyLow1y": 129,
+      "historyLow3m": 129,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2e98-73dd-aab8-33012ef80e0f/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-50d6-701c-93ce-50c01ecd801c",
+      "slug": "battlefield-2042",
+      "title": "Battlefield™ 2042",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-50d6-701c-93ce-50c01ecd801c/banner600.jpg?t=1786651265",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 149,
+      "regular": 2999,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 149,
+      "historyLow1y": 149,
+      "historyLow3m": 149,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2e8b-71ba-a73c-2521c6ef7790/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-333d-73a0-b5c7-b40075c95b25",
+      "slug": "need-for-speed-heat",
+      "title": "Need for Speed™ Heat",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-333d-73a0-b5c7-b40075c95b25/banner600.jpg?t=1786643731",
+      "shop": {
+        "id": 52,
+        "name": "EA Store"
+      },
+      "price": 149.95,
+      "regular": 2999,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 149.95,
+      "historyLow1y": 149.95,
+      "historyLow3m": 149.95,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:30:00.000Z",
+      "url": "https://itad.link/018d9386-a0f1-7126-9411-aca6823cf558/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1222680",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-1aaa-739f-9f5c-ee24e4446d90",
+      "slug": "need-for-speed-heat-deluxe-edition",
+      "title": "Need for Speed™ Heat Deluxe Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-1aaa-739f-9f5c-ee24e4446d90/banner600.jpg?t=1731431710",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 174,
+      "regular": 3499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 174,
+      "historyLow1y": 174,
+      "historyLow3m": 174,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-a0f2-7257-a08d-0ed283741d06/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0199451a-6b2f-724b-8d37-ec773b561d58",
+      "slug": "devil-laugh",
+      "title": "Devil Laugh",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0199451a-6b2f-724b-8d37-ec773b561d58/banner600.jpg?t=1794875735",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 200,
+      "regular": 4000,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 200,
+      "historyLow1y": 200,
+      "historyLow3m": 200,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-05T18:00:00.000Z",
+      "url": "https://itad.link/0199c4ab-5aa7-7330-b720-518ace683811/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "3912160",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0199451a-6b21-73dd-b172-59e285ed37e3",
+      "slug": "cosmic-rescue",
+      "title": "Cosmic Rescue",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0199451a-6b21-73dd-b172-59e285ed37e3/banner600.jpg?t=1794867304",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 200,
+      "regular": 4000,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 200,
+      "historyLow1y": 200,
+      "historyLow3m": 200,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-05T18:00:00.000Z",
+      "url": "https://itad.link/0199c4ab-5aa6-726d-8406-5b7b84905490/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "3912150",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "019616ff-c46d-7041-9d7e-4ddbcf83bc01",
+      "slug": "sky-sorcerer",
+      "title": "Sky Sorcerer",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/019616ff-c46d-7041-9d7e-4ddbcf83bc01/banner600.jpg?t=1794225926",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 200,
+      "regular": 4000,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 200,
+      "historyLow1y": 200,
+      "historyLow3m": 200,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-26T18:00:00.000Z",
+      "url": "https://itad.link/0199451a-72e7-71af-8b0a-f2306298bae8/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "3626470",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0196f869-bf34-7016-9aa5-04baddcf9923",
+      "slug": "sorcery-and-survival",
+      "title": "Sorcery and Survival",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0196f869-bf34-7016-9aa5-04baddcf9923/banner600.jpg?t=1794226224",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 200,
+      "regular": 4000,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 200,
+      "historyLow1y": 200,
+      "historyLow3m": 200,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-26T18:00:00.000Z",
+      "url": "https://itad.link/01975fd0-6237-7399-b738-0a2ae1e30b72/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "3730670",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0196ee61-6b47-7124-bc95-8b534f1b98fd",
+      "slug": "sorcerers-fortitude",
+      "title": "Sorcerer's Fortitude",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0196ee61-6b47-7124-bc95-8b534f1b98fd/banner600.jpg?t=1794225629",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 200,
+      "regular": 4000,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 200,
+      "historyLow1y": 200,
+      "historyLow3m": 200,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-26T18:00:00.000Z",
+      "url": "https://itad.link/01975fd0-6236-722a-960d-fd94cfeb984f/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "3730630",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6e97-737c-8260-a0276f553770",
+      "slug": "battlefield-2042-elite-edition",
+      "title": "Battlefield™ 2042 Elite Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6e97-737c-8260-a0276f553770/banner600.jpg?t=1782440410",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 239,
+      "regular": 4799,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 239,
+      "historyLow1y": 239,
+      "historyLow3m": 239,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2e8c-7309-a745-b31a8c65b147/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-49d9-73b6-8192-917312304375",
+      "slug": "wordle-4",
+      "title": "Wordle 4",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-49d9-73b6-8192-917312304375/banner600.jpg?t=1795337415",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 33,
+      "regular": 660,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 33,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-05T22:00:00.000Z",
+      "url": "https://itad.link/018d9386-f752-73f3-bb28-ff27d6dc9b6b/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1477020",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-47bc-7034-9c80-963311d2a298",
+      "slug": "wordle-3",
+      "title": "Wordle 3",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-47bc-7034-9c80-963311d2a298/banner600.jpg?t=1791093318",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 33,
+      "regular": 660,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 33,
+      "historyLow3m": 33,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-05T22:00:00.000Z",
+      "url": "https://itad.link/018d9386-f752-73f3-bb28-ff27d4dc8bfd/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        },
+        {
+          "id": 3,
+          "name": "Linux"
+        }
+      ],
+      "steamAppId": "1428820",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-45ff-7072-be22-17caaad19c76",
+      "slug": "wordle-2",
+      "title": "Wordle 2",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-45ff-7072-be22-17caaad19c76/banner600.jpg?t=1795338301",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 33,
+      "regular": 660,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 33,
+      "historyLow3m": 33,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-05T22:00:00.000Z",
+      "url": "https://itad.link/018d9386-f752-73f3-bb28-ff27d1ee1f5e/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        },
+        {
+          "id": 3,
+          "name": "Linux"
+        }
+      ],
+      "steamAppId": "1386730",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-42c4-7000-b596-71a6f6127c1b",
+      "slug": "wordle",
+      "title": "Wordle",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-42c4-7000-b596-71a6f6127c1b/banner600.jpg?t=1791060319",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 33,
+      "regular": 660,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 33,
+      "historyLow3m": 33,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-05T22:00:00.000Z",
+      "url": "https://itad.link/018d9386-f752-73f3-bb28-ff27cbae0f5b/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        },
+        {
+          "id": 3,
+          "name": "Linux"
+        }
+      ],
+      "steamAppId": "1334000",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6603-73b4-813c-c2c771fdf5f9",
+      "slug": "wordle-5",
+      "title": "Wordle 5",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6603-73b4-813c-c2c771fdf5f9/banner600.jpg?t=1795338902",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 33,
+      "regular": 660,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 33,
+      "historyLow3m": 33,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-05T22:00:00.000Z",
+      "url": "https://itad.link/018d9386-4935-72fb-b688-6873d0168784/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        },
+        {
+          "id": 3,
+          "name": "Linux"
+        }
+      ],
+      "steamAppId": "1867190",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6107-7374-9b4c-f6343e5fd667",
+      "slug": "hell-division",
+      "title": "Hell Division",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6107-7374-9b4c-f6343e5fd667/banner600.jpg?t=1791576025",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 35.95,
+      "regular": 719,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 24.39,
+      "historyLow1y": 35,
+      "historyLow3m": 35.95,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-27T15:00:00.000Z",
+      "url": "https://itad.link/0191d6a9-2950-70b0-87c2-218695919ea3/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "2004360",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4698-7181-a654-384850b72aba",
+      "slug": "cybernetic-fault",
+      "title": "Cybernetic Fault",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4698-7181-a654-384850b72aba/banner600.jpg?t=1786385192",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 35.95,
+      "regular": 719,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 33.18,
+      "historyLow1y": 35.95,
+      "historyLow3m": 35.95,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-25T15:00:00.000Z",
+      "url": "https://itad.link/018f5781-558b-73f0-9e39-3591bf9522f2/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "1409740",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6fc2-71ed-b150-cb78c1ad4cf8",
+      "slug": "heavy-burden",
+      "title": "Heavy Burden",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6fc2-71ed-b150-cb78c1ad4cf8/banner600.jpg?t=1786761319",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 35.95,
+      "regular": 719,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 18.75,
+      "historyLow1y": 35.95,
+      "historyLow3m": 35.95,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-10T15:00:00.000Z",
+      "url": "https://itad.link/018ea977-5229-726a-865e-0305fbd5e535/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "2070000",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6b2f-71b2-b856-d4d9461e18f3",
+      "slug": "the-wraith-of-the-galaxy",
+      "title": "The Wraith of the Galaxy",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6b2f-71b2-b856-d4d9461e18f3/banner600.jpg?t=1786742722",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 35.95,
+      "regular": 719,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 33.24,
+      "historyLow1y": 35.95,
+      "historyLow3m": 35.95,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-10T15:00:00.000Z",
+      "url": "https://itad.link/018e3a34-fab6-732f-a239-4d9324476a92/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "2057430",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4215-7268-a198-5c516ecbed34",
+      "slug": "hui-dao2001mai-fang-zi",
+      "title": "回到2001买房子",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4215-7268-a198-5c516ecbed34/banner600.jpg?t=1787973022",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 45,
+      "regular": 915,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 31,
+      "historyLow1y": 31,
+      "historyLow3m": 45,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-08T18:00:00.000Z",
+      "url": "https://itad.link/0197685d-a33c-70a2-a790-b0ed4d4dd76d/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1293250",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4e79-7340-ad53-3ea69ca1c96b",
+      "slug": "xiao-zhang-mo-ni-qi-gao-zhong-pian",
+      "title": "校长模拟器-高中篇",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4e79-7340-ad53-3ea69ca1c96b/banner600.jpg",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 45,
+      "regular": 915,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 31,
+      "historyLow1y": 31,
+      "historyLow3m": 45,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-08T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-fa46-7168-aa5c-818d515b3cfa/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-33e5-710e-96a6-8f8245e573c9",
+      "slug": "sausage-hunter",
+      "title": "Sausage Hunter",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-33e5-710e-96a6-8f8245e573c9/banner600.jpg?t=1787827215",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 57,
+      "regular": 1149,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 26,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-06T04:17:46.000Z",
+      "url": "https://itad.link/018d9386-c0e0-709c-b62e-b5980901f25e/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1296880",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-3d35-7019-8299-359f1400afe9",
+      "slug": "tavern-cards",
+      "title": "Tavern Cards",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-3d35-7019-8299-359f1400afe9/banner600.jpg?t=1787536506",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-05T22:00:00.000Z",
+      "url": "https://itad.link/018d9386-dbdf-7336-b5a5-371a083e65eb/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1221240",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-66ca-70e3-bd7f-c4160e46e58d",
+      "slug": "nanali-in-another-world",
+      "title": "Nanali in another world",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-66ca-70e3-bd7f-c4160e46e58d/banner600.jpg?t=1787473224",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-06T09:00:00.000Z",
+      "url": "https://itad.link/018d9386-9f65-7120-a3ca-6a0e726c13c0/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "2207060",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4996-734b-b51c-29768c8877d5",
+      "slug": "dark-side-of-war",
+      "title": "Dark Side of War",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4996-734b-b51c-29768c8877d5/banner600.jpg?t=1787481316",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 65,
+      "regular": 1300,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 65,
+      "historyLow3m": 65,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-06T09:00:00.000Z",
+      "url": "https://itad.link/018d9386-47c3-7012-a052-a755dcd0319b/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1464610",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-42c4-7000-b596-71a6f57dc99e",
+      "slug": "last-room",
+      "title": "Last Room",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-42c4-7000-b596-71a6f57dc99e/banner600.jpg?t=1787545524",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 67,
+      "regular": 1349,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 67,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-05T22:00:00.000Z",
+      "url": "https://itad.link/018d9386-89c6-7067-93e9-74dc7745e260/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1334010",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-47b6-72e5-9603-c919ecdd1ce0",
+      "slug": "gravity-field",
+      "title": "Gravity Field",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-47b6-72e5-9603-c919ecdd1ce0/banner600.jpg?t=1787480729",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 67,
+      "regular": 1349,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 26,
+      "historyLow1y": 26,
+      "historyLow3m": 67,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-06T09:00:00.000Z",
+      "url": "https://itad.link/018d9386-6f30-70cf-94b1-3b34601f1a71/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1425250",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "019d8769-57fc-73e7-9547-a7b9f5e7f931",
+      "slug": "mad-yu-rural-idle",
+      "title": "Mad YU: Rural Idle",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/019d8769-57fc-73e7-9547-a7b9f5e7f931/banner600.jpg?t=1790893924",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 77,
+      "regular": 1549,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 39,
+      "historyLow1y": 39,
+      "historyLow3m": 77,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-06T18:00:00.000Z",
+      "url": "https://itad.link/019dce2b-50ab-7223-9ea3-7e28ed0c1631/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "4593180",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-5c7c-7315-8420-a936dddbc5d7",
+      "slug": "zhong-guo-zhan-yi",
+      "title": "中国战疫",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-5c7c-7315-8420-a936dddbc5d7/banner600.jpg?t=1790952352",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 77,
+      "regular": 1549,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 31,
+      "historyLow1y": 31,
+      "historyLow3m": 77,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-06T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-fd06-716c-8683-c94bb90955f4/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1731360",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "019c2156-6843-7363-a4b8-5da58baa182f",
+      "slug": "bo-le-judging-horses",
+      "title": "Bo Le Judging Horses",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/019c2156-6843-7363-a4b8-5da58baa182f/banner600.jpg?t=1789131630",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 114,
+      "historyLow1y": 114,
+      "historyLow3m": 124,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/019c673c-3d11-72ce-bdce-2c494b364cfa/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        }
+      ],
+      "steamAppId": "4366940",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "019b0ff9-c0ab-7313-91ee-d97253c13e4c",
+      "slug": "ai-games",
+      "title": "AI Games",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/019b0ff9-c0ab-7313-91ee-d97253c13e4c/banner600.jpg?t=1792518629",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 120,
+      "historyLow1y": 120,
+      "historyLow3m": 124,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/019b7526-0535-7373-8c07-dbc35fdc4884/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0199ac0c-32c5-70bb-b325-1ed9961645ba",
+      "slug": "ai-snake",
+      "title": "AI Snake",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0199ac0c-32c5-70bb-b325-1ed9961645ba/banner600.jpg?t=1789165525",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 120,
+      "historyLow1y": 120,
+      "historyLow3m": 124,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/0199f26d-7e3c-71e4-9fe0-92091e7772cb/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0197eb69-717e-7258-92dc-4a48c21a4e0a",
+      "slug": "rolling-ball-hd-remaster",
+      "title": "Rolling Ball: HD Remaster",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0197eb69-717e-7258-92dc-4a48c21a4e0a/banner600.jpg?t=1789094446",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 120,
+      "historyLow1y": 120,
+      "historyLow3m": 124,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/0198476b-8986-711f-a850-a95fbfc38d03/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-0987-73b0-8e67-b53f65dfe886",
+      "slug": "seek-love",
+      "title": "Seek Love",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-0987-73b0-8e67-b53f65dfe886/banner600.jpg?t=1789029316",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 36,
+      "historyLow1y": 90,
+      "historyLow3m": 124,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-c352-70b1-812a-4936222aa63b/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        }
+      ],
+      "steamAppId": "966160",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-0863-701c-bab7-e1c30a0e9eb3",
+      "slug": "the-first-thrust-of-god",
+      "title": "The first thrust of God",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-0863-701c-bab7-e1c30a0e9eb3/banner600.jpg?t=1787611542",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 40,
+      "historyLow1y": 75,
+      "historyLow3m": 124,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-63f5-701f-8ee1-313f2458e20d/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        }
+      ],
+      "steamAppId": "773650",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d9645-113b-738c-ac04-3f55a7e910f1",
+      "slug": "fantasyland",
+      "title": "Fantasyland",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d9645-113b-738c-ac04-3f55a7e910f1/banner600.jpg?t=1787631632",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 38,
+      "historyLow1y": 80,
+      "historyLow3m": 124,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-5ffd-7060-9cf1-e5d91900c93a/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        }
+      ],
+      "steamAppId": "833300",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "019caff9-c217-719f-9c54-8bf144f01bb7",
+      "slug": "crazy-car",
+      "title": "Crazy Car",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/019caff9-c217-719f-9c54-8bf144f01bb7/banner600.jpg?t=1787604038",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 124,
+      "regular": 2499,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 36,
+      "historyLow1y": 100,
+      "historyLow3m": 124,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-436d-7164-a172-50ece376e981/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        }
+      ],
+      "steamAppId": "652230",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6a1e-7110-bdb5-7b0d9fd5981f",
+      "slug": "suicide-squad-kill-the-justice-league",
+      "title": "Suicide Squad: Kill the Justice League",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6a1e-7110-bdb5-7b0d9fd5981f/banner600.jpg?t=1790949661",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 249,
+      "regular": 4999,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 95.21,
+      "historyLow1y": 95.21,
+      "historyLow3m": 249,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-07T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-d62a-720c-8011-b8729b9f023f/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-7893-707b-b472-2d91084adb3c",
+      "slug": "suicide-squad-kill-the-justice-league-digital-deluxe-edition",
+      "title": "Suicide Squad: Kill the Justice League - Digital Deluxe Edition",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-7893-707b-b472-2d91084adb3c/banner600.jpg?t=1782438329",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 349,
+      "regular": 6999,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 136.02,
+      "historyLow1y": 136.02,
+      "historyLow3m": 349,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-07T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-d62a-720c-8011-b872b0ad1b10/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "0198f0d1-bba5-70da-8529-2cd2abb95d8f",
+      "slug": "everest-real-climbing-simulator",
+      "title": "Everest: Real Climbing Simulator",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/0198f0d1-bba5-70da-8529-2cd2abb95d8f/banner600.jpg?t=1790328917",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 382,
+      "regular": 7649,
+      "cut": 95,
+      "currency": "INR",
+      "historyLow": 177,
+      "historyLow1y": 177,
+      "historyLow3m": 382,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-07T18:00:00.000Z",
+      "url": "https://itad.link/019bdf68-7da1-709c-a3be-253b634c5ec0/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        }
+      ],
+      "steamAppId": "3877940",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-57c8-70ba-b16f-0ff8c4cc35c4",
+      "slug": "demolish-and-build-vr",
+      "title": "Demolish & Build VR",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-57c8-70ba-b16f-0ff8c4cc35c4/banner600.jpg?t=1787515809",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 31,
+      "regular": 529,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 31,
+      "historyLow1y": 31,
+      "historyLow3m": 31,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-4b4c-713a-850c-aff1e322eb4e/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 6,
+          "name": "Oculus"
+        },
+        {
+          "id": 7,
+          "name": "Windows Mixed Reality"
+        }
+      ],
+      "steamAppId": "1736090",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6b8d-72bc-988b-1f22d9bf45df",
+      "slug": "swords-fantasy-battlefield",
+      "title": "Swords Fantasy: Battlefield",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6b8d-72bc-988b-1f22d9bf45df/banner600.jpg?t=1791578719",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 32.34,
+      "regular": 539,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 32.34,
+      "historyLow1y": 32.34,
+      "historyLow3m": 32.34,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-17T15:00:00.000Z",
+      "url": "https://itad.link/019cfb67-2e1a-70e9-8998-c28ae3ef1196/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "1916280",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-18ea-70f3-9bea-45a4a400f84b",
+      "slug": "demolish-and-build-2017",
+      "title": "Demolish & Build 2017",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-18ea-70f3-9bea-45a4a400f84b/banner600.jpg?t=1787528117",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 33,
+      "regular": 565,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 33,
+      "historyLow1y": 33,
+      "historyLow3m": 33,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-4b4b-72c3-9a70-f972656f77bb/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "470740",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6e68-70e1-953b-8860a2045f78",
+      "slug": "blade-prince-academy",
+      "title": "Blade Prince Academy",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6e68-70e1-953b-8860a2045f78/banner600.jpg?t=1787856911",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 52,
+      "regular": 880,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 52,
+      "historyLow1y": 52,
+      "historyLow3m": 52,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018e1970-9b13-71fa-b83a-12d50155d6cc/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "2333510",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-5cbc-710c-973f-fef56a8b26e8",
+      "slug": "johnny-boy-red-moons-kiss",
+      "title": "Johnny Boy: Red Moon's Kiss",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-5cbc-710c-973f-fef56a8b26e8/banner600.jpg?t=1794607820",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 52,
+      "regular": 880,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 52,
+      "historyLow1y": 52,
+      "historyLow3m": 52,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-04T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-8418-71ad-94b4-d3ace3630154/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1847160",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6761-70f0-a209-88cdcebdb5a5",
+      "slug": "great-houses-of-calderia",
+      "title": "Great Houses of Calderia",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6761-70f0-a209-88cdcebdb5a5/banner600.jpg?t=1793954120",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 66,
+      "regular": 1100,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 66,
+      "historyLow1y": 66,
+      "historyLow3m": 66,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-6f38-70ec-a3b9-6465dcaeb4d7/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1812910",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-0a7f-7072-948b-050a8959b351",
+      "slug": "biker-garage",
+      "title": "Biker Garage",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-0a7f-7072-948b-050a8959b351/banner600.jpg",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 34,
+      "regular": 569,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 28,
+      "historyLow1y": 28,
+      "historyLow3m": 34,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-03T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-30ea-729f-9564-89e01772bfe5/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-2e81-722e-be0a-f3d2d2180fc6",
+      "slug": "electrician-simulator",
+      "title": "Electrician Simulator",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-2e81-722e-be0a-f3d2d2180fc6/banner400.jpg?t=1792504502",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 48,
+      "regular": 810,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 40,
+      "historyLow1y": 40,
+      "historyLow3m": 40.5,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-56ed-70eb-850a-2c61a2a24803/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1080020",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-0083-72fc-85df-d1fcf2d2819d",
+      "slug": "castle-flipper",
+      "title": "Castle Flipper",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-0083-72fc-85df-d1fcf2d2819d/banner600.jpg?t=1792509927",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 51,
+      "regular": 850,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 42,
+      "historyLow1y": 42,
+      "historyLow3m": 42.5,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-3ba5-72fb-a0c0-ebbae793d616/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "944250",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-3eb8-708b-b6a3-f241bb404936",
+      "slug": "ultimate-fishing-simulator-2",
+      "title": "Ultimate Fishing Simulator 2",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-3eb8-708b-b6a3-f241bb404936/banner600.jpg?t=1792520711",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 52,
+      "regular": 880,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 44,
+      "historyLow1y": 44,
+      "historyLow3m": 44,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-eb43-73c9-be9f-4cab569dfee0/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1136380",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-15bf-70a1-9e1c-01020c6a9e0c",
+      "slug": "ultimate-fishing-simulator",
+      "title": "Ultimate Fishing Simulator",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-15bf-70a1-9e1c-01020c6a9e0c/banner600.jpg?t=1792517719",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 52,
+      "regular": 880,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 44,
+      "historyLow1y": 44,
+      "historyLow3m": 52,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-eb43-73c9-be9f-4cab4b55e127/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "468920",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-1046-7096-bd0b-e28b40d179a4",
+      "slug": "farm-expert-2017",
+      "title": "Farm Expert 2017",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-1046-7096-bd0b-e28b40d179a4/banner600.jpg?t=1786658128",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 52,
+      "regular": 880,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 44,
+      "historyLow1y": 44,
+      "historyLow3m": 44,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-6021-7278-93ad-f91d003bedbc/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "424590",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-1050-7172-bf98-d2db171d2240",
+      "slug": "deadliest-catch-the-game",
+      "title": "Deadliest Catch: The Game",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-1050-7172-bf98-d2db171d2240/banner600.jpg?t=1793890221",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 52,
+      "regular": 880,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 44,
+      "historyLow1y": 44,
+      "historyLow3m": 44,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-493d-7368-a288-920f5f9e0584/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "964330",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-2eaf-7075-89ef-31cbd7bc6bb6",
+      "slug": "ships-2017",
+      "title": "Ships 2017",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-2eaf-7075-89ef-31cbd7bc6bb6/banner600.jpg?t=1786637730",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 54,
+      "regular": 915,
+      "cut": 94,
+      "currency": "INR",
+      "historyLow": 31.05,
+      "historyLow1y": 31.05,
+      "historyLow3m": 54,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-c589-7184-8289-0540e3ac76b6/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "439460",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-527f-73a1-9f9c-3f273fd2506e",
+      "slug": "synthwave-burnout",
+      "title": "Synthwave Burnout",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-527f-73a1-9f9c-3f273fd2506e/banner600.jpg?t=1786404315",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 25.13,
+      "regular": 359,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 25.13,
+      "historyLow1y": 25.13,
+      "historyLow3m": 25.13,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-10T15:00:00.000Z",
+      "url": "https://itad.link/019d4d75-a226-73eb-8d81-6db3736b6c65/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "1693040",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018e030b-5a79-72bd-b553-b59c1c769d5c",
+      "slug": "never-synth",
+      "title": "Never Synth",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018e030b-5a79-72bd-b553-b59c1c769d5c/banner600.jpg",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 25.13,
+      "regular": 359,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 25.13,
+      "historyLow1y": 25.13,
+      "historyLow3m": 25.13,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-10T15:00:00.000Z",
+      "url": "https://itad.link/018e030b-5a6e-7082-a67e-0f1ebd8aa6e8/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-553a-700e-a2f5-7f41301fe38e",
+      "slug": "onde",
+      "title": "Onde",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-553a-700e-a2f5-7f41301fe38e/banner600.jpg?t=1787448938",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 30,
+      "regular": 439,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 30,
+      "historyLow1y": 30,
+      "historyLow3m": 30,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-05T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-a5e5-70d2-9d2d-456e2aea488b/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1676910",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-0a0d-7368-a6ba-8aa2735a38f3",
+      "slug": "shakes-on-a-plane",
+      "title": "Shakes on a Plane",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-0a0d-7368-a6ba-8aa2735a38f3/banner600.jpg?t=1787450434",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 32,
+      "regular": 459,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 32,
+      "historyLow1y": 32,
+      "historyLow3m": 32,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-05T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-c4bc-70bc-befb-4ff2c25512a8/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "964620",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-09b1-7322-86ce-61f9f19ef099",
+      "slug": "rover-builder",
+      "title": "Rover Builder",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-09b1-7322-86ce-61f9f19ef099/banner600.jpg?t=1792077338",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 35,
+      "regular": 509,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 35,
+      "historyLow1y": 35,
+      "historyLow3m": 35,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-bd74-735e-b820-0425be3c1805/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "683770",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-1f5b-7133-8d77-3df4d90dcfd5",
+      "slug": "mordheim-city-of-the-damned",
+      "title": "Mordheim: City of the Damned",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-1f5b-7133-8d77-3df4d90dcfd5/banner600.jpg?t=1793971214",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 55,
+      "regular": 799,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 55,
+      "historyLow1y": 55,
+      "historyLow3m": 55,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-05T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-9baf-72bb-8837-1a620fa3d826/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "276810",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4a34-7030-8eca-1a8358046043",
+      "slug": "jet-kave-adventure",
+      "title": "Jet Kave Adventure",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4a34-7030-8eca-1a8358046043/banner600.jpg?t=1786140990",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 55,
+      "regular": 799,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 55,
+      "historyLow1y": 55,
+      "historyLow3m": 55,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-830a-7346-979c-aab36b6335b7/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1383700",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-504a-73c7-8afc-611ab3807fc2",
+      "slug": "polyclassic-wild",
+      "title": "PolyClassic: Wild",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-504a-73c7-8afc-611ab3807fc2/banner600.jpg?t=1791577503",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 25.13,
+      "regular": 359,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 17.95,
+      "historyLow1y": 17.95,
+      "historyLow3m": 25.13,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-25T15:00:00.000Z",
+      "url": "https://itad.link/01904aa6-28d6-72f1-a4c2-8db1d68ca138/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "1631850",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-2ee1-722b-846a-0f91af8cecba",
+      "slug": "girlfriend-rescue-deluxe-version-game-and-guide-and-goodies",
+      "title": "Girlfriend Rescue - Deluxe Version (Game+Guide+Goodies)",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-2ee1-722b-846a-0f91af8cecba/banner600.jpg",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 42,
+      "regular": 610,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 41,
+      "historyLow1y": 42,
+      "historyLow3m": 42,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-02T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-6bd7-71eb-8060-fa0e6399980f/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-2271-731a-8219-39b226c33c8e",
+      "slug": "asguaard",
+      "title": "Asguaard",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-2271-731a-8219-39b226c33c8e/banner600.jpg?t=1787420732",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 42,
+      "regular": 610,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 17.25,
+      "historyLow1y": 22.88,
+      "historyLow3m": 42,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-02T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2697-704d-a7cb-7f9961aaa5f9/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "332380",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-f7f8-714b-8219-0ae96e44ef0a",
+      "slug": "the-way",
+      "title": "The Way",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937e-f7f8-714b-8219-0ae96e44ef0a/banner600.jpg?t=1792159811",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 48,
+      "regular": 690,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 41,
+      "historyLow1y": 41,
+      "historyLow3m": 41.4,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-f4c6-7036-8d8f-602152b2afd6/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        },
+        {
+          "id": 3,
+          "name": "Linux"
+        }
+      ],
+      "steamAppId": "311010",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-03db-700a-90bc-9f355775640f",
+      "slug": "robot-squad",
+      "title": "Robot Squad",
+      "type": "game",
+      "image": null,
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 48,
+      "regular": 690,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 41,
+      "historyLow1y": 41,
+      "historyLow3m": 48,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-bb5b-72b4-8039-790662075cc7/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4086-7176-abbf-9bb0c0df7e45",
+      "slug": "police-shootout",
+      "title": "Police Shootout",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4086-7176-abbf-9bb0c0df7e45/banner600.jpg?t=1794160205",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 48,
+      "regular": 690,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 31.42,
+      "historyLow1y": 31.42,
+      "historyLow3m": 31.42,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-06T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-af96-72d1-a9a6-29ccd185f384/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1279240",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-0808-71be-b448-9a51b81acc74",
+      "slug": "clinically-dead",
+      "title": "Clinically Dead",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-0808-71be-b448-9a51b81acc74/banner600.jpg?t=1792510525",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 48,
+      "regular": 690,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 41,
+      "historyLow1y": 41,
+      "historyLow3m": 41.4,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-3e8e-72ce-a317-f7a0af15c067/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "927840",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-2d4c-7285-b6c3-163292ac2cc7",
+      "slug": "asguaard-deluxe-edition-contains-game-and-guide-and-goodies",
+      "title": "Asguaard - Deluxe Edition (contains Game+Guide+Goodies)",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-2d4c-7285-b6c3-163292ac2cc7/banner600.jpg",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 48,
+      "regular": 690,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 39,
+      "historyLow1y": 48,
+      "historyLow3m": 48,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-02T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2697-704d-a7cb-7f996460d63f/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-f098-737d-8b53-b5d4aa61f5cb",
+      "slug": "bakery-simulator",
+      "title": "Bakery Simulator",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937e-f098-737d-8b53-b5d4aa61f5cb/banner600.jpg?t=1792502724",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 51,
+      "regular": 730,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 36,
+      "historyLow1y": 36,
+      "historyLow3m": 36.5,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-2ca7-73c1-be2e-57d388b4a84a/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1031120",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937e-f539-717e-9928-248a61582805",
+      "slug": "roguebook",
+      "title": "Roguebook",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937e-f539-717e-9928-248a61582805/banner600.jpg?t=1787426163",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 62,
+      "regular": 899,
+      "cut": 93,
+      "currency": "INR",
+      "historyLow": 41.23,
+      "historyLow1y": 41.23,
+      "historyLow3m": 41.23,
+      "isLowestEver": false,
+      "isNewLow": false,
+      "expiry": "2026-12-05T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-bca7-71e9-9a42-9fd72482a583/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 2,
+          "name": "Mac"
+        },
+        {
+          "id": 3,
+          "name": "Linux"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-298a-739e-89fc-012d7addd1ae",
+      "slug": "plane-mechanic-simulator",
+      "title": "Plane Mechanic Simulator",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-298a-739e-89fc-012d7addd1ae/banner600.jpg?t=1792513816",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 31,
+      "regular": 399,
+      "cut": 92,
+      "currency": "INR",
+      "historyLow": 31,
+      "historyLow1y": 31,
+      "historyLow3m": 31,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-adec-71cd-8657-52a5b7a5aac0/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "803980",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-3ac8-713d-bf79-fa11bc4aa6ec",
+      "slug": "fishing-adventure-vr",
+      "title": "FIshing Adventure VR",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-3ac8-713d-bf79-fa11bc4aa6ec/banner600.jpg?t=1787538629",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 31,
+      "regular": 399,
+      "cut": 92,
+      "currency": "INR",
+      "historyLow": 31,
+      "historyLow1y": 31,
+      "historyLow3m": 31,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-30T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-6547-7155-a8ef-3e8357032c07/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        },
+        {
+          "id": 6,
+          "name": "Oculus"
+        },
+        {
+          "id": 7,
+          "name": "Windows Mixed Reality"
+        }
+      ],
+      "steamAppId": "1200220",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-35ec-72c5-bcd5-044b9da598e9",
+      "slug": "boiling-bolt",
+      "title": "Boiling Bolt",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-35ec-72c5-bcd5-044b9da598e9/banner600.jpg?t=1787868944",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 31,
+      "regular": 399,
+      "cut": 92,
+      "currency": "INR",
+      "historyLow": 31,
+      "historyLow1y": 31,
+      "historyLow3m": 31,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-07T17:00:00.000Z",
+      "url": "https://itad.link/018d9386-3434-7195-bbd7-9cb6c33bd657/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "462250",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-4875-7080-a02b-65a79d9d66e9",
+      "slug": "blood-knot",
+      "title": "Blood Knot",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-4875-7080-a02b-65a79d9d66e9/banner600.jpg?t=1787422832",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 31,
+      "regular": 399,
+      "cut": 92,
+      "currency": "INR",
+      "historyLow": 31,
+      "historyLow1y": 31,
+      "historyLow3m": 31,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-02T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-3323-70f1-bbd6-c8e9c2039748/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": "1456710",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-11c2-7141-adb0-804e13e8e2ea",
+      "slug": "undefeated-strategist-edition-contains-game-and-guide",
+      "title": "Undefeated - Strategist Edition (contains Game+Guide)",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-11c2-7141-adb0-804e13e8e2ea/banner600.jpg",
+      "shop": {
+        "id": 61,
+        "name": "Steam"
+      },
+      "price": 32,
+      "regular": 409,
+      "cut": 92,
+      "currency": "INR",
+      "historyLow": 32,
+      "historyLow1y": 32,
+      "historyLow3m": 32,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-02T18:00:00.000Z",
+      "url": "https://itad.link/018d9386-ebfc-7291-8f88-bd5020d27e44/?app=t1ehff",
+      "platforms": [
+        {
+          "id": 1,
+          "name": "Windows"
+        }
+      ],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    }
+  ],
+  "free": [
+    {
+      "itadId": "019f62ea-4de4-734f-ac26-d94cb55fef39",
+      "slug": "contractor-the-clean-up-part-ii",
+      "title": "Contractor: The Clean Up Part II",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/019f62ea-4de4-734f-ac26-d94cb55fef39/banner600.png?t=1784223611",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 0,
+      "regular": 179,
+      "cut": 100,
+      "currency": "INR",
+      "historyLow": 89.5,
+      "historyLow1y": 89.5,
+      "historyLow3m": 89.5,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-12-02T10:00:00.000Z",
+      "url": "https://itad.link/019f62ea-4dd6-715c-ba5c-17520a280a59/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": null,
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    },
+    {
+      "itadId": "018d937f-6f14-72be-9554-eeff3cd3a8c0",
+      "slug": "mark-of-the-deep",
+      "title": "Mark of the Deep",
+      "type": "game",
+      "image": "https://assets.isthereanydeal.com/018d937f-6f14-72be-9554-eeff3cd3a8c0/banner600.jpg?t=1795381516",
+      "shop": {
+        "id": 16,
+        "name": "Epic Game Store"
+      },
+      "price": 0,
+      "regular": 880,
+      "cut": 100,
+      "currency": "INR",
+      "historyLow": 308,
+      "historyLow1y": 308,
+      "historyLow3m": 308,
+      "isLowestEver": true,
+      "isNewLow": true,
+      "expiry": "2026-11-26T16:00:00.000Z",
+      "url": "https://itad.link/019257f0-5106-72c5-99b2-ccc5e38235fc/?app=t1ehff",
+      "platforms": [],
+      "steamAppId": "1933370",
+      "fetchedAt": "2026-11-25T14:42:29.738Z"
+    }
+  ]
+}

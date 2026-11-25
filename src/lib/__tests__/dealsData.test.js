@@ -7,6 +7,8 @@ import {
   parseDealsParams,
   serializeDealsParams,
   filterAndSortDeals,
+  getDealsErrorMessage,
+  fetchDealsData,
   MAX_PRICE_CAP,
 } from '../dealsData.js'
 
@@ -171,6 +173,84 @@ describe('dealsData helpers and logic (ITAD INR)', () => {
       assert.equal(byExpiry[0].itadId, 'd2')
       assert.equal(byExpiry[1].itadId, 'd1')
       assert.equal(byExpiry[2].itadId, 'd3')
+    })
+  })
+
+  describe('getDealsErrorMessage and fetchDealsData error differentiation', () => {
+    it('returns differentiated user-friendly messages per errorType', () => {
+      assert.equal(
+        getDealsErrorMessage('not_found'),
+        'No deals data file found. Snapshot will be generated soon.'
+      )
+      assert.equal(
+        getDealsErrorMessage('network_error'),
+        'Network error loading deals. Check your connection and try again.'
+      )
+      assert.equal(
+        getDealsErrorMessage('invalid_data'),
+        'Deals data is empty or invalid. Please try again later.'
+      )
+      assert.equal(
+        getDealsErrorMessage('unknown'),
+        'Could not load deals. Check your connection and try again.'
+      )
+    })
+
+    it('rejects with NOT_FOUND on 404 or HTML index fallback', async () => {
+      const origFetch = globalThis.fetch
+      try {
+        globalThis.fetch = async () => ({
+          status: 404,
+          ok: false,
+          headers: new Headers({ 'content-type': 'text/plain' }),
+        })
+        await assert.rejects(
+          async () => fetchDealsData(true),
+          (err) => err.message.startsWith('NOT_FOUND')
+        )
+
+        globalThis.fetch = async () => ({
+          status: 200,
+          ok: true,
+          headers: new Headers({ 'content-type': 'text/html' }),
+          text: async () => '<!doctype html>',
+        })
+        await assert.rejects(
+          async () => fetchDealsData(true),
+          (err) => err.message.startsWith('NOT_FOUND')
+        )
+      } finally {
+        globalThis.fetch = origFetch
+      }
+    })
+
+    it('skips malformed items and keeps valid items', async () => {
+      const origFetch = globalThis.fetch
+      try {
+        globalThis.fetch = async () => ({
+          status: 200,
+          ok: true,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            generatedAt: '2026-11-25T12:00:00Z',
+            deals: [
+              { itadId: 'g1', title: 'Game 1', price: 999, cut: 50 },
+              { itadId: null, title: 'Corrupt' },
+              { itadId: 'g2', title: 'Game 2', price: 'invalid' },
+              { itadId: 'g3', title: 'Game 3', price: 499, cut: 70 },
+            ],
+            free: [],
+            shops: [{ id: 61, name: 'Steam' }],
+          }),
+        })
+
+        const res = await fetchDealsData(true)
+        assert.equal(res.deals.length, 2)
+        assert.equal(res.deals[0].itadId, 'g1')
+        assert.equal(res.deals[1].itadId, 'g3')
+      } finally {
+        globalThis.fetch = origFetch
+      }
     })
   })
 })

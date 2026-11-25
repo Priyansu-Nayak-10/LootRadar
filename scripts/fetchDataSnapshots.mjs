@@ -85,12 +85,8 @@ export async function runItadSnapshot({ outDir = DATA_DIR } = {}) {
 async function main() {
   await mkdir(DATA_DIR, { recursive: true })
 
-  const [freeGamesRes, dealsRes, storesRes, alwaysFreeRes] = await Promise.allSettled([
+  const [freeGamesRes, alwaysFreeRes] = await Promise.allSettled([
     fetchJson('https://www.gamerpower.com/api/giveaways?type=game'),
-    fetchJson(
-      'https://www.cheapshark.com/api/1.0/deals?onSale=1&pageSize=60&sortBy=Savings&desc=0'
-    ),
-    fetchJson('https://www.cheapshark.com/api/1.0/stores'),
     fetchJson('https://www.freetogame.com/api/games'),
   ])
 
@@ -117,30 +113,6 @@ async function main() {
     })
   } else {
     console.warn('GamerPower fetch failed or returned non-array:', freeGamesRes.reason?.message || 'unknown error')
-  }
-
-  let deals = []
-  let activeStores = []
-  if (dealsRes.status === 'fulfilled' && Array.isArray(dealsRes.value)) {
-    deals = dealsRes.value
-    if (storesRes.status === 'fulfilled' && Array.isArray(storesRes.value)) {
-      activeStores = storesRes.value
-        .filter((store) => Number(store.isActive) === 1)
-        .map((store) => ({
-          storeID: store.storeID,
-          storeName: store.storeName,
-        }))
-    }
-
-    await saveJson('cheapshark-deals.json', {
-      generatedAt: new Date().toISOString(),
-      source: 'CheapShark',
-      sourceUrl: 'https://www.cheapshark.com',
-      stores: activeStores,
-      deals,
-    })
-  } else {
-    console.warn('CheapShark deals fetch failed:', dealsRes.reason?.message || 'unknown error')
   }
 
   let cleanAlwaysFreeGames = []
@@ -181,7 +153,7 @@ async function main() {
   const newsSnapshot = newsRes.status === 'fulfilled' ? newsRes.value : { articles: [] }
 
   console.log(
-    `Saved ${cleanFreeGames.length} free games, ${deals.length} deals, ${activeStores.length} stores, ${cleanAlwaysFreeGames.length} always-free games, ${itadSnapshot.deals?.length || 0} ITAD deals, and ${newsSnapshot.articles.length} news stories`
+    `Saved ${cleanFreeGames.length} free games, ${cleanAlwaysFreeGames.length} always-free games, ${itadSnapshot.deals?.length || 0} ITAD deals, and ${newsSnapshot.articles.length} news stories`
   )
 }
 

@@ -60,7 +60,7 @@ export function normalizeQuery(raw) {
     .trim()
     .toLowerCase()
     .replace(/[\u2018\u2019\u201A\u201B\u2032`]/g, "'") // normalize smart quotes & backticks
-    .replace(/[^a-z0-9\s'\-]/g, ' ')                    // strip other punctuation
+    .replace(/[^a-z0-9\s'-]/g, ' ')                    // strip other punctuation
     .replace(/\s+/g, ' ')                                // collapse whitespace
     .trim()
 }
@@ -256,7 +256,7 @@ function isWebOnly(game) {
  * - Drop web-only platform games
  * - Drop added < 50 unless result set would have fewer than 5 results
  */
-export function filterGames(games, queryNorm) {
+export function filterGames(games, _queryNorm) {
   if (!Array.isArray(games)) return []
 
   const viableCount = games.filter(

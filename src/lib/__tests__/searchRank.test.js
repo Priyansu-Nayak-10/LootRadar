@@ -9,9 +9,7 @@ import {
   popularityScore,
   scoreGame,
   dedupeGames,
-  filterGames,
   rankAndFilter,
-  ALIASES,
 } from '../searchRank.js'
 
 test('normalizeQuery - trims, lowercases, collapses whitespace, strips punctuation', () => {

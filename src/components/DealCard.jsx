@@ -100,6 +100,7 @@ export default function DealCard({
           image: deal.image,
           source: 'deal',
           sourceId: deal.itadId,
+          url: deal.url,
         })
       : { owned: false, wishlisted: false, onToggleOwned: () => {}, onToggleWishlist: () => {} }
 

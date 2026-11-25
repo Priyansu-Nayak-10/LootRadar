@@ -636,7 +636,7 @@ export default function FreeNow({
           // ignore cache writing error
         }
       }
-    } catch (err) {
+    } catch {
       // If we don't even have snapshot data, display error state
       if (initialList.length === 0 && games.length === 0) {
         setError('Could not load free games right now. Check your internet connection.')

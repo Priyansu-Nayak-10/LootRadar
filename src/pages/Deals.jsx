@@ -98,6 +98,8 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
     isStale,
     loading,
     error,
+    errorType,
+    errorMessage,
     reload,
   } = useDeals()
 
@@ -223,7 +225,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
           </div>
           {isStale && (
             <p className="deals-stale-warning" role="status">
-              Prices may be older than 3 hours.
+              Prices may be out of date.
             </p>
           )}
         </div>
@@ -392,7 +394,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
 
       {error && (
         <div className="deals-error-box" role="alert">
-          <p>Could not load deals. Check your connection and try again.</p>
+          <p>{errorMessage || 'Could not load deals. Check your connection and try again.'}</p>
           <button
             type="button"
             onClick={reload}

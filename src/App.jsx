@@ -1,7 +1,6 @@
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react'
 import Footer from './components/Footer'
 import useLocalStorage from './hooks/useLocalStorage'
-import cachedFetch from './lib/cachedFetch'
 import { hasSupabaseConfig, supabase } from './lib/supabase'
 import { searchGamesMulti } from './lib/discoverApi'
 import { normalizeQuery } from './lib/searchRank'
@@ -91,8 +90,6 @@ export default function App() {
   const [ownedGames, setOwnedGames] = useLocalStorage('wishradar_library', [])
   const [wishlist, setWishlist] = useLocalStorage('wishradar_wishlist', [])
   const [availableFreeGames, setAvailableFreeGames] = useState([])
-  const [availableDeals, setAvailableDeals] = useState([])
-  const [dealsAvailabilityLoaded, setDealsAvailabilityLoaded] = useState(false)
   const [session, setSession] = useState(null)
   const [shellSearch, setShellSearch] = useState('')
   const [shellCategory, setShellCategory] = useState('All')
@@ -379,37 +376,6 @@ export default function App() {
     await signOut()
     navigateTab('account')
   }
-
-  const updateAvailableDeals = useCallback((games) => {
-    setAvailableDeals(games)
-    setDealsAvailabilityLoaded(true)
-  }, [])
-
-  useEffect(() => {
-    if (tab !== 'wishlist' || dealsAvailabilityLoaded) return undefined
-
-    let cancelled = false
-    const params = new URLSearchParams({
-      onSale: '1',
-      pageSize: '60',
-      sortBy: 'Savings',
-      desc: '1',
-      upperPrice: '15',
-    })
-
-    cachedFetch(`https://www.cheapshark.com/api/1.0/deals?${params}`)
-      .then((data) => {
-        if (!cancelled) updateAvailableDeals(Array.isArray(data) ? data : [])
-      })
-      .catch(() => {})
-      .finally(() => {
-        if (!cancelled) setDealsAvailabilityLoaded(true)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [tab, dealsAvailabilityLoaded, updateAvailableDeals])
 
   function gameIsSaved(games, title) {
     return games.some((game) => titleKey(game.title) === titleKey(title))
@@ -705,10 +671,7 @@ export default function App() {
             />
           )}
           {tab === 'deals' && (
-            <Deals
-              getGameActions={saveActions}
-              onAvailabilityChange={updateAvailableDeals}
-            />
+            <Deals getGameActions={saveActions} />
           )}
           {tab === 'library' && (
             <Library
@@ -724,7 +687,6 @@ export default function App() {
               setGames={syncedSetter('wishlist', setWishlist)}
               ownedGames={ownedGames}
               freeGames={availableFreeGames}
-              deals={availableDeals}
               session={session}
               onNavigate={navigateTab}
             />

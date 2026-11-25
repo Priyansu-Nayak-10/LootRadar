@@ -325,7 +325,7 @@ export function bestDeal(priceEntry) {
   }
 }
 
-export function shouldAlert({ price, regular, cut, historyLow, sensitivity = 'good' } = {}) {
+export function shouldAlert({ price, regular: _regular, cut, historyLow, sensitivity = 'good' } = {}) {
   const p = Number(price)
   const c = Number(cut ?? 0)
   const h = historyLow != null && Number.isFinite(Number(historyLow)) ? Number(historyLow) : null

@@ -70,7 +70,7 @@ export function GameCard({ image, title, children, className = '', imageAlt = ''
   )
 }
 
-export function NewsCard({ image, title, children, className = '', imageAlt = '' }) {
+export function NewsCard({ image, title: _title, children, className = '', imageAlt = '' }) {
   return (
     <article className={`lr-news-card ${className}`.trim()}>
       {image ? (

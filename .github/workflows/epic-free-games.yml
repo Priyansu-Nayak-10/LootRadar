@@ -25,12 +25,15 @@ jobs:
         with:
           node-version: 20
 
-      - name: Fetch game snapshots
+      - name: Fetch Epic free games
+        continue-on-error: true
+        run: npm run fetch:epic
+
+      - name: Fetch ITAD deals & giveaway snapshots
+        continue-on-error: true
         env:
           ITAD_API_KEY: ${{ secrets.ITAD_API_KEY }}
-        run: |
-          npm run fetch:epic
-          npm run fetch:snapshots -- --skip-news
+        run: npm run fetch:snapshots -- --skip-news
 
       - name: Fetch gaming news snapshot
         continue-on-error: true
@@ -40,7 +43,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/data/epic-free-games.json public/data/gamerpower-free-games.json public/data/cheapshark-deals.json public/data/itad-deals.json public/data/gaming-news.json public/data/always-free-games.json
+          git add public/data/epic-free-games.json public/data/gamerpower-free-games.json public/data/itad-deals.json public/data/gaming-news.json public/data/always-free-games.json
           git diff --cached --quiet && exit 0
           git commit -m "Update WishRadar data snapshots"
           git pull --rebase origin main

@@ -265,7 +265,7 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
                     <a
                       href={
                         game.source === 'deal'
-                          ? `https://www.cheapshark.com/redirect?dealID=${game.sourceId}`
+                          ? (game.url || '#')
                           : game.source === 'gamerpower'
                           ? `https://www.gamerpower.com/open/${game.sourceId}`
                           : '#'

@@ -1204,12 +1204,11 @@ export default function Discover({
     async function loadSectionCounts() {
       const requests = [
         ['free', '/data/gamerpower-free-games.json', 'games'],
-        ['deals', '/data/itad-deals.json', 'deals'],
         ['always', '/data/always-free-games.json', 'games'],
         ['coming', '/data/epic-free-games.json', 'upcoming'],
       ]
 
-      const counts = {}
+      const counts = { deals: deals.length }
       let gpGames = []
       let epicCurrent = []
       let epicUpcoming = []
@@ -1230,7 +1229,7 @@ export default function Discover({
       }))
 
       if (!cancelled) {
-        setSectionCounts((current) => ({ ...current, ...counts }))
+        setSectionCounts((current) => ({ ...current, ...counts, deals: deals.length }))
         setGamerPowerGames(gpGames)
         setEpicCurrentGames(epicCurrent)
         setUpcomingGames(epicUpcoming)
@@ -1241,7 +1240,7 @@ export default function Discover({
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [deals.length])
 
   function handleSelectPlatform(platform) {
     setActivePlatform(platform)
