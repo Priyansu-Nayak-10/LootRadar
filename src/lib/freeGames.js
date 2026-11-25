@@ -3,21 +3,15 @@
  * Used by FreeNow page, Home free games carousel/panels, and alert routines.
  */
 
-// Suffixes and tags commonly attached to giveaway titles
 const CLEAN_TITLE_PATTERNS = [
-  /\s*\((?:Epic Games Store|Epic Games|Epic|Steam|GOG|itch\.io|Itch\.io|IndieGala|Amazon|Prime|Mobile)\)/gi,
-  /\s*\[(?:Epic Games Store|Epic Games|Epic|Steam|GOG|itch\.io|Itch\.io|IndieGala|Amazon|Prime|Mobile)\]/gi,
+  /\s*\((?:Epic Games Store|Epic Games|Epic|Steam|GOG|itch\.io|Itch\.io|IndieGala|Amazon|Prime|EA Store|Mobile)\)/gi,
+  /\s*\[(?:Epic Games Store|Epic Games|Epic|Steam|GOG|itch\.io|Itch\.io|IndieGala|Amazon|Prime|EA Store|Mobile)\]/gi,
   /\s*(?:-\s*)?Giveaway\b/gi,
   /\s*(?:-\s*)?Free Games? Bundle\b/gi,
   /\s*(?:-\s*)?Free Steam Key\b/gi,
   /\s*(?:-\s*)?Key Giveaway\b/gi,
 ]
 
-/**
- * Strips store tags, "(Mobile)", "Giveaway" and other extraneous suffixes from titles.
- * @param {string} title
- * @returns {string}
- */
 export function cleanTitle(title) {
   if (!title || typeof title !== 'string') return ''
   let cleaned = title.trim()
@@ -26,17 +20,10 @@ export function cleanTitle(title) {
     cleaned = cleaned.replace(pattern, '')
   }
 
-  // Remove any dangling hyphens, colons, or parentheses at the end
   cleaned = cleaned.replace(/[\s\-_:–—()]+$/, '').trim()
   return cleaned || title.trim()
 }
 
-/**
- * Returns true if the giveaway item targets mobile platforms (Android/iOS).
- * Mobile giveaways must be excluded across Free Now, Home, and alerts.
- * @param {object} item
- * @returns {boolean}
- */
 export function isMobile(item) {
   if (!item || typeof item !== 'object') return false
   const platforms = String(item.platforms || item.platform || '').toLowerCase()
@@ -44,21 +31,17 @@ export function isMobile(item) {
   return /(android|ios|mobile|iphone|ipad)/i.test(`${platforms} ${title}`)
 }
 
-/**
- * Normalizes store name into:
- * 'Epic' | 'Steam' | 'GOG' | 'itch.io' | 'Prime/Amazon' | 'Ubisoft' | 'Other'
- * @param {object} item
- * @returns {string}
- */
 export function normalizeStore(item) {
   if (!item || typeof item !== 'object') return 'Other'
   const haystack = [
     item.platforms,
     item.platform,
     item.store,
+    item.shop?.name,
     item.title,
     item.open_giveaway_url,
     item.gamerpower_url,
+    item.url,
   ]
     .filter(Boolean)
     .join(' ')
@@ -66,6 +49,7 @@ export function normalizeStore(item) {
 
   if (haystack.includes('epic')) return 'Epic'
   if (haystack.includes('steam')) return 'Steam'
+  if (haystack.includes('ea store') || haystack.includes('origin')) return 'EA Store'
   if (haystack.includes('gog')) return 'GOG'
   if (haystack.includes('itch')) return 'itch.io'
   if (haystack.includes('amazon') || haystack.includes('prime')) return 'Prime/Amazon'
@@ -74,12 +58,6 @@ export function normalizeStore(item) {
   return 'Other'
 }
 
-/**
- * Parses end date string into Unix millisecond timestamp.
- * Handles GamerPower ("YYYY-MM-DD HH:mm:ss") and ISO 8601 strings.
- * @param {string|number|null} dateStr
- * @returns {number|null}
- */
 export function parseEndDate(dateStr) {
   if (!dateStr || dateStr === 'N/A') return null
   if (typeof dateStr === 'number') return Number.isNaN(dateStr) ? null : dateStr
@@ -88,35 +66,16 @@ export function parseEndDate(dateStr) {
   return Number.isNaN(t) ? null : t
 }
 
-/**
- * Checks if a giveaway item is currently active (not expired).
- * Items without an end date are considered "open-ended" and active.
- * @param {object} item
- * @param {number} now
- * @returns {boolean}
- */
 export function isActive(item, now = Date.now()) {
   if (!item || typeof item !== 'object') return false
   if (item.status && /expired|ended/i.test(item.status)) return false
 
-  const endMs = parseEndDate(item.end_date || item.endDate)
-  if (endMs == null) return true // open-ended
+  const endMs = parseEndDate(item.end_date || item.endDate || item.expiry)
+  if (endMs == null) return true
 
   return endMs > now
 }
 
-/**
- * Returns formatted countdown object for a giveaway.
- * - Under 12h: "Ends today" (urgent: true, isEndsToday: true)
- * - Under 24h: "Xh left" (urgent: true)
- * - 24h+: "Xd Yh left" (urgent: false)
- * - Open-ended (no date): "Time TBA" (urgent: false, isTba: true)
- * - Expired: "Ended" (urgent: true)
- *
- * @param {string|number|null} endDate
- * @param {number} now
- * @returns {{ text: string, urgent: boolean, isEndsToday: boolean, isTba: boolean }}
- */
 export function formatTimeLeft(endDate, now = Date.now()) {
   const endMs = parseEndDate(endDate)
   if (endMs == null) {
@@ -147,12 +106,6 @@ export function formatTimeLeft(endDate, now = Date.now()) {
   }
 }
 
-/**
- * Formats "Starts in Xd Yh" for Upcoming / Coming Soon games.
- * @param {string|number} startDate
- * @param {number} now
- * @returns {string}
- */
 export function formatStartsIn(startDate, now = Date.now()) {
   if (!startDate) return 'Coming soon'
   const startMs = parseEndDate(startDate)
@@ -168,11 +121,6 @@ export function formatStartsIn(startDate, now = Date.now()) {
   return 'Starts in <1h'
 }
 
-/**
- * Parses numeric USD value from a worth string like "$19.99 USD" or 19.99.
- * @param {string|number} worth
- * @returns {number}
- */
 export function parseWorthUsd(worth) {
   if (worth == null) return 0
   if (typeof worth === 'number') return Number.isNaN(worth) ? 0 : worth
@@ -180,13 +128,81 @@ export function parseWorthUsd(worth) {
   return match ? parseFloat(match[0]) || 0 : 0
 }
 
-/**
- * Deduplicates giveaway items by cleaned title.
- * Merges duplicate entries (e.g. GamerPower vs Epic official snapshot),
- * prioritizing Epic official links and artwork while keeping earliest end time.
- * @param {Array<object>} items
- * @returns {Array<object>}
- */
+const INR_WHOLE_FORMATTER = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  maximumFractionDigits: 0,
+})
+
+const INR_PAISE_FORMATTER = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
+
+export function formatWorthInr(amount) {
+  const val = Number(amount)
+  if (!Number.isFinite(val) || val <= 0) return ''
+  const hasPaise = Math.abs(val - Math.trunc(val)) > 0.001
+  return hasPaise ? INR_PAISE_FORMATTER.format(val) : INR_WHOLE_FORMATTER.format(val)
+}
+
+export function normalizeItadFreeItem(item) {
+  if (!item || typeof item !== 'object') return null
+  const shopName = item.shop?.name || ''
+  const steamUrl = item.steamAppId ? `https://store.steampowered.com/app/${item.steamAppId}` : ''
+  const steamImage = item.steamAppId
+    ? `https://cdn.cloudflare.steamstatic.com/steam/apps/${item.steamAppId}/header.jpg`
+    : ''
+  const image = item.image || steamImage || ''
+  const regular = Number(item.regular || 0)
+
+  return {
+    id: item.itadId || item.id,
+    title: cleanTitle(item.title),
+    platforms: shopName ? `PC, ${shopName}` : 'PC',
+    store: shopName,
+    image,
+    thumbnail: image,
+    end_date: item.expiry || null,
+    endDate: item.expiry || null,
+    steamAppId: item.steamAppId || null,
+    worthInr: regular > 0 ? regular : 0,
+    open_giveaway_url: steamUrl || item.url || '',
+    url: item.url || '',
+    _isItad: true,
+  }
+}
+
+function getOfficialClaimUrl(item) {
+  if (!item || typeof item !== 'object') return ''
+  if (item.slug && !/^[0-9a-f-]{30,}$/i.test(item.slug) && (item.namespace || (item.image && item.image.includes('epicgames.com')))) {
+    return `https://store.epicgames.com/p/${item.slug}`
+  }
+  if (item.steamAppId) {
+    return `https://store.steampowered.com/app/${item.steamAppId}`
+  }
+  return ''
+}
+
+function pickBestClaimUrl(existing, item) {
+  const officialItem = getOfficialClaimUrl(item)
+  if (officialItem) return officialItem
+  const officialExisting = getOfficialClaimUrl(existing)
+  if (officialExisting) return officialExisting
+
+  return (
+    item.open_giveaway_url ||
+    existing.open_giveaway_url ||
+    item.url ||
+    existing.url ||
+    existing.gamerpower_url ||
+    item.gamerpower_url ||
+    ''
+  )
+}
+
 export function dedupe(items = []) {
   if (!Array.isArray(items)) return []
 
@@ -199,7 +215,14 @@ export function dedupe(items = []) {
     const key = title.toLowerCase()
 
     if (!map.has(key)) {
-      map.set(key, { ...item, title })
+      const officialUrl = getOfficialClaimUrl(item)
+      const worthInr = Number(item.worthInr || (item._isItad ? item.regular : 0) || 0)
+      map.set(key, {
+        ...item,
+        title,
+        worthInr,
+        open_giveaway_url: officialUrl || item.open_giveaway_url || item.url || item.gamerpower_url || '',
+      })
       continue
     }
 
@@ -207,80 +230,75 @@ export function dedupe(items = []) {
     const isItemEpic = Boolean(item.namespace || item.slug || (item.image && item.image.includes('epicgames.com')))
     const isExistingEpic = Boolean(existing.namespace || existing.slug || (existing.image && existing.image.includes('epicgames.com')))
 
-    // Earliest end time
-    const existingEnd = parseEndDate(existing.end_date || existing.endDate)
-    const itemEnd = parseEndDate(item.end_date || item.endDate)
-    let bestEnd = existing.end_date || existing.endDate
+    // Earliest non-null end time
+    const existingEnd = parseEndDate(existing.end_date || existing.endDate || existing.expiry)
+    const itemEnd = parseEndDate(item.end_date || item.endDate || item.expiry)
+    let bestEnd = existing.end_date || existing.endDate || existing.expiry || null
     if (itemEnd != null && (existingEnd == null || itemEnd < existingEnd)) {
-      bestEnd = item.end_date || item.endDate
+      bestEnd = item.end_date || item.endDate || item.expiry
     }
 
-    // Best image
+    // Best image: Epic official > ITAD/Steam > GamerPower
     const bestImage =
       (isItemEpic && item.image) ||
+      (isExistingEpic && existing.image) ||
       existing.image ||
-      existing.thumbnail ||
       item.image ||
+      existing.thumbnail ||
       item.thumbnail ||
       ''
 
-    // Best claim / open URL
-    const bestUrl =
-      item.open_giveaway_url ||
-      existing.open_giveaway_url ||
-      (item.slug ? `https://store.epicgames.com/p/${item.slug}` : '') ||
-      existing.gamerpower_url ||
-      item.gamerpower_url ||
-      ''
+    const bestUrl = pickBestClaimUrl(existing, item)
 
-    // Best worth
-    const bestWorth = existing.worth || item.worth || ''
+    // Worth in INR ONLY from ITAD (never USD fallback)
+    const itemWorthInr = Number(item.worthInr || (item._isItad ? item.regular : 0) || 0)
+    const existingWorthInr = Number(existing.worthInr || 0)
+    const bestWorthInr = itemWorthInr > 0 ? itemWorthInr : existingWorthInr
 
-    if (isItemEpic && !isExistingEpic) {
-      map.set(key, {
-        ...existing,
-        ...item,
-        title,
-        image: bestImage,
-        thumbnail: bestImage,
-        open_giveaway_url: bestUrl,
-        worth: bestWorth,
-        end_date: bestEnd,
-        endDate: bestEnd,
-      })
-    } else {
-      map.set(key, {
-        ...existing,
-        title,
-        image: bestImage,
-        thumbnail: bestImage,
-        open_giveaway_url: bestUrl,
-        worth: bestWorth,
-        end_date: bestEnd,
-        endDate: bestEnd,
-      })
-    }
+    // Merge metadata preferring Epic details when available
+    const base = isItemEpic && !isExistingEpic ? { ...existing, ...item } : { ...item, ...existing }
+
+    map.set(key, {
+      ...base,
+      title,
+      image: bestImage,
+      thumbnail: bestImage,
+      open_giveaway_url: bestUrl,
+      worthInr: bestWorthInr,
+      steamAppId: existing.steamAppId || item.steamAppId || null,
+      end_date: bestEnd,
+      endDate: bestEnd,
+    })
   }
 
   return Array.from(map.values())
 }
 
-/**
- * Sorts giveaway items by:
- * - 'ending': Ending soonest first; open-ended (TBA) at the end.
- * - 'value': Highest worth value first.
- * - 'recent': Recently added first (by id descending or published_date).
- *
- * @param {Array<object>} items
- * @param {'ending'|'value'|'recent'} sortKey
- * @param {number} now
- * @returns {Array<object>}
- */
+export function mergeFreeSources({
+  epicItems = [],
+  gamerPowerItems = [],
+  itadFreeItems = [],
+  now = Date.now(),
+} = {}) {
+  const normalizedItad = (Array.isArray(itadFreeItems) ? itadFreeItems : [])
+    .map(normalizeItadFreeItem)
+    .filter(Boolean)
+
+  const combined = dedupe([
+    ...(Array.isArray(gamerPowerItems) ? gamerPowerItems : []),
+    ...(Array.isArray(epicItems) ? epicItems : []),
+    ...normalizedItad,
+  ])
+
+  const filtered = combined.filter((item) => !isMobile(item) && isActive(item, now))
+  return sortFreeGames(filtered, 'ending', now)
+}
+
 export function sortFreeGames(items = [], sortKey = 'ending', now = Date.now()) {
   const list = [...items]
 
   if (sortKey === 'value') {
-    return list.sort((a, b) => parseWorthUsd(b.worth) - parseWorthUsd(a.worth))
+    return list.sort((a, b) => Number(b.worthInr || 0) - Number(a.worthInr || 0))
   }
 
   if (sortKey === 'recent') {
@@ -291,21 +309,15 @@ export function sortFreeGames(items = [], sortKey = 'ending', now = Date.now()) 
     })
   }
 
-  // Default: 'ending'
   return list.sort((a, b) => {
-    const endA = parseEndDate(a.end_date || a.endDate)
-    const endB = parseEndDate(b.end_date || b.endDate)
+    const endA = parseEndDate(a.end_date || a.endDate || a.expiry)
+    const endB = parseEndDate(b.end_date || b.endDate || b.expiry)
     const valA = endA != null && endA > now ? endA : Infinity
     const valB = endB != null && endB > now ? endB : Infinity
     return valA - valB
   })
 }
 
-/**
- * Parses free page URL search params into clean state.
- * @param {string} search
- * @returns {{ tab: 'claim'|'coming'|'always', store: string, sort: 'ending'|'value'|'recent' }}
- */
 export function parseFreeParams(search = '') {
   const query = search.startsWith('?') ? search.slice(1) : search
   const params = new URLSearchParams(query)
@@ -322,11 +334,6 @@ export function parseFreeParams(search = '') {
   return { tab, store, sort }
 }
 
-/**
- * Serializes state back to URL query string.
- * @param {{ tab: string, store: string, sort: string }} state
- * @returns {string}
- */
 export function serializeFreeParams({ tab = 'claim', store = 'all', sort = 'ending' } = {}) {
   const params = new URLSearchParams()
   if (tab && tab !== 'claim') params.set('tab', tab)

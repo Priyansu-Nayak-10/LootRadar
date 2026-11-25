@@ -9,7 +9,9 @@ import {
   formatTimeLeft,
   formatStartsIn,
   parseWorthUsd,
+  formatWorthInr,
   dedupe,
+  mergeFreeSources,
   sortFreeGames,
   parseFreeParams,
   serializeFreeParams,
@@ -211,16 +213,63 @@ describe('freeGames helpers', () => {
       const result = dedupe([gpItem, epicItem])
       assert.equal(result.length, 1)
       assert.equal(result[0].title, 'Mark of the Deep')
-      assert.equal(result[0].worth, '$19.99')
+      assert.equal(result[0].worthInr, 0)
       assert.equal(result[0].image, 'https://cdn1.epicgames.com/mark-of-the-deep.png')
+    })
+
+    it('merges Epic and ITAD free[] keeping Epic image/link, INR worth, and earliest end time', () => {
+      const now = Date.parse('2026-11-25T10:00:00Z')
+      const epicItem = {
+        id: 'epic-1',
+        title: 'Mark of the Deep',
+        image: 'https://cdn1.epicgames.com/mark.png',
+        endDate: '2026-11-28T16:00:00.000Z',
+        slug: 'mark-of-the-deep',
+        namespace: 'ns1',
+      }
+      const itadItem = {
+        itadId: 'itad-1',
+        title: 'Mark of the Deep',
+        image: 'https://assets.isthereanydeal.com/mark.jpg',
+        shop: { id: 16, name: 'Epic Game Store' },
+        price: 0,
+        regular: 899,
+        cut: 100,
+        expiry: '2026-11-26T16:00:00.000Z',
+        url: 'https://isthereanydeal.com/deals/mark',
+      }
+      const expiredItad = {
+        itadId: 'itad-old',
+        title: 'Expired Game',
+        shop: { id: 61, name: 'Steam' },
+        price: 0,
+        regular: 499,
+        cut: 100,
+        expiry: '2026-11-24T10:00:00.000Z',
+        url: 'https://isthereanydeal.com/deals/expired',
+      }
+
+      const merged = mergeFreeSources({
+        epicItems: [epicItem],
+        gamerPowerItems: [],
+        itadFreeItems: [itadItem, expiredItad],
+        now,
+      })
+
+      assert.equal(merged.length, 1)
+      assert.equal(merged[0].title, 'Mark of the Deep')
+      assert.equal(merged[0].worthInr, 899)
+      assert.equal(formatWorthInr(merged[0].worthInr), '₹899')
+      assert.equal(merged[0].end_date, '2026-11-26T16:00:00.000Z')
+      assert.equal(merged[0].open_giveaway_url, 'https://store.epicgames.com/p/mark-of-the-deep')
     })
   })
 
   describe('sortFreeGames', () => {
     const now = 1700000000000
-    const item1 = { id: 1, title: 'Game A', worth: '$10.00', end_date: new Date(now + 50000).toISOString() }
-    const item2 = { id: 2, title: 'Game B', worth: '$30.00', end_date: new Date(now + 10000).toISOString() }
-    const itemTba = { id: 3, title: 'Game C', worth: '$5.00', end_date: null }
+    const item1 = { id: 1, title: 'Game A', worthInr: 500, end_date: new Date(now + 50000).toISOString() }
+    const item2 = { id: 2, title: 'Game B', worthInr: 1500, end_date: new Date(now + 10000).toISOString() }
+    const itemTba = { id: 3, title: 'Game C', worthInr: 250, end_date: null }
 
     it('sorts ending soonest first, with TBA last', () => {
       const sorted = sortFreeGames([item1, itemTba, item2], 'ending', now)

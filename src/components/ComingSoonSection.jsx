@@ -3,6 +3,7 @@ import SafeImage from './SafeImage.jsx'
 import { fetchRawgGames, hasRawgKey } from '../lib/discoverApi.js'
 import { titleKey } from '../lib/wishlistAlerts.js'
 import { cleanTitle, formatStartsIn } from '../lib/freeGames.js'
+import { formatDealPrice, matchDealForGame } from '../lib/dealsData.js'
 
 // ─── Inline Platform SVG Icons ────────────────────────────────────────────────
 function PcIcon() {
@@ -141,11 +142,16 @@ function ComingSoonPlatformIcons({ item }) {
 // ─── Coming Soon Card ────────────────────────────────────────────────────────
 function ComingSoonCardItem({
   item,
+  deals = [],
   now,
   getGameActions,
 }) {
   const isGiveaway = item.type === 'giveaway'
   const title = cleanTitle(item.title || item.name)
+  const dealMatch = useMemo(() => {
+    if (isGiveaway) return null
+    return matchDealForGame({ title }, deals)
+  }, [isGiveaway, title, deals])
 
   const actions = getGameActions({
     title,
@@ -233,6 +239,16 @@ function ComingSoonCardItem({
           </span>
         )}
 
+        {/* Lime Price Badge for matched pre-order / PC deals */}
+        {dealMatch && Number(dealMatch.cut) > 0 && (
+          <span className="popular-game-card__price-badge">
+            -{Math.round(Number(dealMatch.cut))}%{' '}
+            <span className="popular-game-card__price-val">
+              {formatDealPrice(dealMatch.price)}
+            </span>
+          </span>
+        )}
+
         {/* Wishlist Heart Top-Right */}
         <button
           type="button"
@@ -274,6 +290,7 @@ function ComingSoonCardItem({
 
 // ─── Main Section Component ──────────────────────────────────────────────────
 export default function ComingSoonSection({
+  deals = [],
   getGameActions = () => ({ owned: false, wishlisted: false, onToggleWishlist: () => {}, onToggleOwned: () => {} }),
   onNavigate = () => {},
 }) {
@@ -474,6 +491,7 @@ export default function ComingSoonSection({
             <ComingSoonCardItem
               key={item.id || item.slug}
               item={item}
+              deals={deals}
               now={now}
               getGameActions={getGameActions}
             />

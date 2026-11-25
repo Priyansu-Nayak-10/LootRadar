@@ -1,9 +1,8 @@
 import SafeImage from './SafeImage'
 import {
   formatStoreName,
-  STORE_NAMES,
   formatDealPrice,
-  getDealFlag,
+  formatDealExpiry,
 } from '../lib/dealsData'
 
 function FlameIcon() {
@@ -82,63 +81,43 @@ function PcIcon() {
 
 export default function DealCard({
   deal,
-  storeName,
   getGameActions,
-  lowestPrice = null,
-  lowestLoading = false,
-  currency = 'USD',
-  inrRate = null,
 }) {
-  if (!deal || !deal.dealID) return null
+  if (!deal || !deal.itadId) return null
 
-  const resolvedStore =
-    storeName ||
-    STORE_NAMES[String(deal.storeID)] ||
-    formatStoreName(deal.storeName) ||
-    'PC Store'
+  const resolvedStore = formatStoreName(deal.shop?.name || 'PC Store')
+  const discount = Math.round(Number(deal.cut || 0))
+  const salePrice = Number(deal.price || 0)
+  const regularPrice = Number(deal.regular || 0)
+  const historyLow = deal.historyLow != null ? Number(deal.historyLow) : null
+  const expiryLabel = formatDealExpiry(deal.expiry)
 
-  const discount = Math.round(Number(deal.savings || 0))
-  const salePrice = Number(deal.salePrice || 0)
-  const normalPrice = Number(deal.normalPrice || 0)
-  const dealRating = Number(deal.dealRating || 0)
-  const steamRating = Number(deal.steamRatingPercent || 0)
-  const metacritic = Number(deal.metacriticScore || 0)
-
-  // Flag logic (lowest ever or great deal)
-  const flag = getDealFlag(salePrice, lowestPrice, dealRating, discount)
-
-  // Wishlist & Owned actions
   const actions =
     typeof getGameActions === 'function'
       ? getGameActions({
           title: deal.title || 'Game',
           platform: resolvedStore,
-          image: deal.thumb,
+          image: deal.image,
           source: 'deal',
-          sourceId: deal.dealID,
+          sourceId: deal.itadId,
         })
       : { owned: false, wishlisted: false, onToggleOwned: () => {}, onToggleWishlist: () => {} }
 
-  const redirectUrl = `https://www.cheapshark.com/redirect?dealID=${deal.dealID}`
-
   return (
     <article className="deal-card-redesign">
-      {/* 16:9 Media with SafeImage */}
       <div className="deal-card__media">
         <SafeImage
-          steamAppID={deal.steamAppID}
-          src={deal.thumb}
+          steamAppID={deal.steamAppId}
+          src={deal.image}
           alt={deal.title}
           className="deal-card__image"
           fallbackText={deal.title?.slice(0, 1)}
         />
 
-        {/* Top-Left: Discount Badge */}
         {discount > 0 && (
           <span className="deal-card__badge-discount">-{discount}%</span>
         )}
 
-        {/* Top-Right: Wishlist Heart */}
         <button
           type="button"
           onClick={(e) => {
@@ -153,77 +132,54 @@ export default function DealCard({
           <HeartIcon active={actions.wishlisted} />
         </button>
 
-        {/* Bottom-Left: Lowest Ever or Great Deal Flag */}
-        {flag === 'lowest' && (
+        {deal.isLowestEver ? (
           <span className="deal-card__flag deal-card__flag--lowest">
             <FlameIcon /> Lowest ever
           </span>
-        )}
-        {flag === 'great' && (
+        ) : deal.isNewLow ? (
           <span className="deal-card__flag deal-card__flag--great">
-            Great deal
+            New low
           </span>
-        )}
+        ) : null}
       </div>
 
-      {/* Body: Title, Store, Ratings, Price, Lowest info, Actions */}
       <div className="deal-card__body">
         <h3 className="deal-card__title" title={deal.title}>
           {deal.title}
         </h3>
 
-        {/* Meta Row: PC icon, Store chip, and Rating */}
         <div className="deal-card__meta-row">
           <div className="deal-card__platform-store">
             <PcIcon />
             <span className="deal-card__store-chip">{resolvedStore}</span>
           </div>
-          <div className="deal-card__rating-box">
-            {steamRating > 0 ? (
-              <span
-                className="deal-card__rating deal-card__rating--steam"
-                title={`Steam positive reviews: ${steamRating}%`}
-              >
-                ★ {steamRating}%
-              </span>
-            ) : metacritic > 0 ? (
-              <span
-                className="deal-card__rating deal-card__rating--meta"
-                title={`Metacritic score: ${metacritic}`}
-              >
-                MC {metacritic}
-              </span>
-            ) : null}
-          </div>
+          {expiryLabel && (
+            <span className="deal-card__expiry">{expiryLabel}</span>
+          )}
         </div>
 
-        {/* Prices Row */}
         <div className="deal-card__prices-row">
           <strong className="deal-card__sale-price">
-            {formatDealPrice(salePrice, currency, inrRate)}
+            {formatDealPrice(salePrice)}
           </strong>
-          {normalPrice > salePrice && (
+          {regularPrice > salePrice && (
             <del className="deal-card__old-price">
-              {formatDealPrice(normalPrice, currency, inrRate)}
+              {formatDealPrice(regularPrice)}
             </del>
           )}
         </div>
 
-        {/* Lowest Ever Historical Line */}
         <div className="deal-card__lowest-line">
-          {lowestPrice != null && Number.isFinite(Number(lowestPrice)) ? (
-            <span>Lowest ever {formatDealPrice(lowestPrice, currency, inrRate)}</span>
-          ) : lowestLoading ? (
-            <span className="deal-card__lowest-muted">Checking lowest price...</span>
+          {historyLow != null && Number.isFinite(historyLow) ? (
+            <span>Lowest ever {formatDealPrice(historyLow)}</span>
           ) : (
             <span className="deal-card__lowest-muted">Lowest price not available</span>
           )}
         </div>
 
-        {/* Bottom Actions Row */}
         <div className="deal-card__actions-row">
           <a
-            href={redirectUrl}
+            href={deal.url || '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="deal-card__cta-btn"

@@ -7,14 +7,14 @@ import PopularGamesSection from '../components/PopularGamesSection'
 import ComingSoonSection from '../components/ComingSoonSection'
 import SafeImage from '../components/SafeImage'
 import {
-  STORE_NAMES,
   formatStoreName,
-  money,
+  formatDealPrice,
+  formatDealExpiry,
   getDealImageUrl,
   selectHeroDeals,
-  useTopDeals,
+  useDeals,
 } from '../lib/dealsData'
-import { cleanTitle, isMobile } from '../lib/freeGames'
+import { cleanTitle, isMobile, mergeFreeSources, normalizeStore } from '../lib/freeGames'
 import { wishRadarArt } from '../assets/art'
 
 function dateString(date) {
@@ -488,7 +488,7 @@ export function HomeRedesign({
     try {
       if (!Array.isArray(deals) || deals.length === 0) return []
 
-      const heroDeals = selectHeroDeals(deals, 5)
+      const heroDeals = selectHeroDeals(deals, 3)
       if (!Array.isArray(heroDeals) || heroDeals.length === 0) return []
 
       const slides = []
@@ -496,33 +496,28 @@ export function HomeRedesign({
 
       const makeDealSlide = (deal, idPrefix = 'deal') => {
         if (!deal || typeof deal !== 'object' || !deal.title) return null
-        const dealID = String(deal.dealID || idPrefix)
-        const rawStore =
-          (Array.isArray(dealsStores)
-            ? dealsStores.find((s) => String(s?.storeID) === String(deal.storeID))?.storeName
-            : null) ||
-          STORE_NAMES[String(deal.storeID)] ||
-          'PC Store'
-        const store = formatStoreName(rawStore)
-        const salePrice = Number(deal.salePrice || 0)
-        const normalPrice = Number(deal.normalPrice || 0)
-        const savings = Math.max(0, Math.round(Number(deal.savings || 0)))
+        const dealID = String(deal.itadId || idPrefix)
+        const store = formatStoreName(deal.shop?.name || 'PC Store')
+        const salePrice = Number(deal.price || 0)
+        const regularPrice = Number(deal.regular || 0)
+        const savings = Math.max(0, Math.round(Number(deal.cut || 0)))
 
         return {
           id: `${idPrefix}-${dealID}`,
           type: 'deal',
           title: deal.title,
-          imageUrl: getDealImageUrl(deal) || deal.thumb || '',
-          steamAppID: deal.steamAppID && deal.steamAppID !== '0' && deal.steamAppID !== 'null' ? String(deal.steamAppID) : null,
+          imageUrl: getDealImageUrl(deal) || '',
+          steamAppID: deal.steamAppId ? String(deal.steamAppId) : null,
           badgeText: 'TOP DEAL',
           subtitle: store,
+          countdownEnd: deal.expiry || '',
           price: {
             sale: Number.isFinite(salePrice) ? salePrice : 0,
-            regular: Number.isFinite(normalPrice) ? normalPrice : 0,
+            regular: Number.isFinite(regularPrice) ? regularPrice : 0,
             savings: Number.isFinite(savings) ? savings : 0,
           },
           actionLabel: 'View deal',
-          actionUrl: `https://www.cheapshark.com/redirect?dealID=${dealID}`,
+          actionUrl: deal.url || '#',
           isExternal: true,
           store,
           rawItem: deal,
@@ -537,43 +532,28 @@ export function HomeRedesign({
       }
 
       // 2. Free game (or 4th deal fallback)
-      const activeFreeGames = (Array.isArray(freeGames) ? freeGames : [])
-        .filter((game) => {
-          if (!game || typeof game !== 'object' || !game.title) return false
-          if (isMobile(game)) return false
-          const thumb = game.thumbnail || game.image
-          if (!thumb || !thumb.trim()) return false
-          const endStr = game.end_date || game.endDate
-          if (!endStr || endStr === 'N/A') return true
-          const cleanDate = endStr.includes('T') ? endStr : endStr.replace(' ', 'T') + 'Z'
-          const end = new Date(cleanDate).getTime()
-          return Number.isNaN(end) || end > now
-        })
-        .sort((a, b) => {
-          const parseTime = (dateStr) => {
-            if (!dateStr || dateStr === 'N/A') return Infinity
-            const clean = dateStr.includes('T') ? dateStr : dateStr.replace(' ', 'T') + 'Z'
-            const t = new Date(clean).getTime()
-            return Number.isNaN(t) ? Infinity : t
-          }
-          return parseTime(a.end_date || a.endDate) - parseTime(b.end_date || b.endDate)
-        })
+      const activeFreeGames = freeGames.filter((game) => {
+        if (!game || typeof game !== 'object' || !game.title) return false
+        const thumb = game.image || game.thumbnail
+        return Boolean(thumb && thumb.trim())
+      })
 
       const chosenFree = activeFreeGames[0]
       if (chosenFree && chosenFree.title) {
         const cleanedFreeTitle = cleanTitle(chosenFree.title)
+        const freeStore = normalizeStore(chosenFree)
         slides.push({
           id: `free-${chosenFree.id || 'giveaway'}`,
           type: 'free',
           title: cleanedFreeTitle,
           imageUrl: chosenFree.image || chosenFree.thumbnail || '',
           badgeText: 'FREE NOW',
-          subtitle: chosenFree.platforms || 'PC / DRM-Free',
+          subtitle: freeStore !== 'Other' ? `${freeStore} · PC` : (chosenFree.platforms || 'PC / DRM-Free'),
           countdownEnd: chosenFree.end_date || chosenFree.endDate || '',
           actionLabel: 'Claim now',
-          actionUrl: chosenFree.open_giveaway_url || chosenFree.gamerpower_url || 'https://www.gamerpower.com',
+          actionUrl: chosenFree.open_giveaway_url || chosenFree.url || chosenFree.gamerpower_url || 'https://www.gamerpower.com',
           isExternal: true,
-          store: 'Giveaway',
+          store: freeStore !== 'Other' ? freeStore : 'Giveaway',
           rawItem: chosenFree,
         })
       } else if (heroDeals[3]) {
@@ -633,7 +613,7 @@ export function HomeRedesign({
       }
       return []
     }
-  }, [deals, dealsStores, freeGames, upcomingGames, now])
+  }, [deals, freeGames, upcomingGames, now])
 
   const isPaused = isHovered || isFocused || isTouching || isTabHidden || reducedMotion
 
@@ -795,16 +775,21 @@ export function HomeRedesign({
                                 </span>
                               )}
                               <strong className="home-hero-sale-price">
-                                {money(slide.price.sale)}
+                                {formatDealPrice(slide.price.sale)}
                               </strong>
                               {slide.price.regular > slide.price.sale && (
                                 <del className="home-hero-old-price">
-                                  {money(slide.price.regular)}
+                                  {formatDealPrice(slide.price.regular)}
                                 </del>
                               )}
                               {slide.store && (
                                 <span className="home-hero-store-chip">
                                   {slide.store}
+                                </span>
+                              )}
+                              {slide.countdownEnd && formatDealExpiry(slide.countdownEnd, now) && (
+                                <span className="home-hero-countdown">
+                                  {formatDealExpiry(slide.countdownEnd, now)}
                                 </span>
                               )}
                             </div>
@@ -998,6 +983,7 @@ export function HomeRedesign({
       />
 
       <ComingSoonSection
+        deals={deals}
         getGameActions={getGameActions}
         onNavigate={onNavigate}
       />
@@ -1101,10 +1087,10 @@ export default function Discover({
 }) {
   const {
     deals,
-    stores: dealsStores,
+    free: itadFreeGames,
     loading: dealsLoading,
     error: dealsError,
-  } = useTopDeals()
+  } = useDeals()
 
   const [news, setNews] = useState([])
   const [newsUpdatedAt, setNewsUpdatedAt] = useState('')
@@ -1125,8 +1111,18 @@ export default function Discover({
     always: 0,
     coming: 0,
   })
-  const [freeGames, setFreeGames] = useState([])
+  const [gamerPowerGames, setGamerPowerGames] = useState([])
+  const [epicCurrentGames, setEpicCurrentGames] = useState([])
   const [upcomingGames, setUpcomingGames] = useState([])
+
+  const freeGames = useMemo(() => {
+    return mergeFreeSources({
+      epicItems: epicCurrentGames,
+      gamerPowerItems: gamerPowerGames,
+      itadFreeItems: itadFreeGames,
+      now,
+    })
+  }, [epicCurrentGames, gamerPowerGames, itadFreeGames, now])
 
   async function loadNews() {
     setNewsLoading(true)
@@ -1209,13 +1205,14 @@ export default function Discover({
     async function loadSectionCounts() {
       const requests = [
         ['free', '/data/gamerpower-free-games.json', 'games'],
-        ['deals', '/data/cheapshark-deals.json', 'deals'],
+        ['deals', '/data/itad-deals.json', 'deals'],
         ['always', '/data/always-free-games.json', 'games'],
         ['coming', '/data/epic-free-games.json', 'upcoming'],
       ]
 
       const counts = {}
-      let gamerPowerGames = []
+      let gpGames = []
+      let epicCurrent = []
       let epicUpcoming = []
       await Promise.all(requests.map(async ([key, url, field]) => {
         try {
@@ -1223,8 +1220,11 @@ export default function Discover({
           if (!response.ok) return
           const data = await response.json()
           counts[key] = Array.isArray(data[field]) ? data[field].length : 0
-          if (key === 'free') gamerPowerGames = Array.isArray(data.games) ? data.games : []
-          if (key === 'coming') epicUpcoming = Array.isArray(data.upcoming) ? data.upcoming : []
+          if (key === 'free') gpGames = Array.isArray(data.games) ? data.games : []
+          if (key === 'coming') {
+            epicCurrent = Array.isArray(data.current) ? data.current : []
+            epicUpcoming = Array.isArray(data.upcoming) ? data.upcoming : []
+          }
         } catch {
           counts[key] = 0
         }
@@ -1232,7 +1232,8 @@ export default function Discover({
 
       if (!cancelled) {
         setSectionCounts((current) => ({ ...current, ...counts }))
-        setFreeGames(gamerPowerGames)
+        setGamerPowerGames(gpGames)
+        setEpicCurrentGames(epicCurrent)
         setUpcomingGames(epicUpcoming)
       }
     }

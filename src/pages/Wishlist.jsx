@@ -3,12 +3,22 @@ import { supabase } from '../lib/supabase'
 import SafeImage from '../components/SafeImage'
 import {
   titleKey,
-  formatUsd,
   isConsoleGame,
   normalizeFreeTitle,
   evaluateWishlistDeal,
 } from '../lib/wishlistAlerts'
-import { STORE_NAMES, formatStoreName } from '../lib/dealsData'
+import {
+  formatDealExpiry,
+  formatDealPrice,
+  formatStoreName,
+  matchDealForGame,
+  useDeals,
+} from '../lib/dealsData'
+import { formatWorthInr, mergeFreeSources } from '../lib/freeGames'
+
+const ITAD_CACHE_KEY = 'wishradar_wishlist_itad_v1'
+const ITAD_ID_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const ITAD_PRICE_TTL_MS = 30 * 60 * 1000
 
 const POPULAR_STARTER_GAMES = [
   {
@@ -50,6 +60,25 @@ function formatCountdown(endDate, now) {
   if (days > 0) return `${days}d ${hours}h left`
   if (hours > 0) return `${hours}h ${mins}m left`
   return `${mins}m left`
+}
+
+function readLocalItadCache() {
+  try {
+    const raw = localStorage.getItem(ITAD_CACHE_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw)
+    return parsed && typeof parsed === 'object' ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+function writeLocalItadCache(cache) {
+  try {
+    localStorage.setItem(ITAD_CACHE_KEY, JSON.stringify(cache))
+  } catch {
+    // Ignore storage quota issues
+  }
 }
 
 // ─── Inline SVG Icons ────────────────────────────────────────────────────────
@@ -148,12 +177,32 @@ function CheckCircleIcon() {
   )
 }
 
+function getConsoleLinks(title, platform = '') {
+  const q = encodeURIComponent(title)
+  const p = String(platform || '').toLowerCase()
+  const links = []
+  if (p.includes('playstation') || p.includes('ps')) {
+    links.push({ label: 'PS Store', url: `https://store.playstation.com/en-in/search/${q}` })
+  }
+  if (p.includes('xbox')) {
+    links.push({ label: 'Xbox', url: `https://www.xbox.com/en-IN/search?q=${q}` })
+  }
+  if (p.includes('nintendo') || p.includes('switch')) {
+    links.push({ label: 'Nintendo', url: `https://www.nintendo.com/search/#q=${q}` })
+  }
+  if (links.length === 0) {
+    links.push({ label: 'PS Store', url: `https://store.playstation.com/en-in/search/${q}` })
+    links.push({ label: 'Xbox', url: `https://www.xbox.com/en-IN/search?q=${q}` })
+  }
+  return links
+}
+
 // ─── Wishlist Card Component ─────────────────────────────────────────────────
 function WishlistCard({
   game,
   deal,
   freeGame,
-  storeMap,
+  priceLoading,
   alertSensitivity,
   now,
   onRemove,
@@ -162,59 +211,55 @@ function WishlistCard({
   const [imgFailed, setImgFailed] = useState(false)
   const isAlertsOn = game.notify !== false
 
-  const coverImage = (!imgFailed && (game.image || deal?.thumb || freeGame?.thumbnail)) || ''
+  const coverImage =
+    (!imgFailed && (game.image || deal?.image || freeGame?.image || freeGame?.thumbnail)) || ''
   const isConsole = isConsoleGame(game.platform)
 
-  // A game is free if matched with a GamerPower giveaway OR a CheapShark 100% free deal
-  const isDealFree = Boolean(
-    deal && (
-      deal.isFree ||
-      Number(deal.savings) >= 100 ||
-      Number(deal.salePrice) === 0
-    )
-  )
+  const isDealFree = Boolean(deal && (Number(deal.cut) >= 100 || Number(deal.price) === 0))
   const isFree = Boolean(!isConsole && (freeGame || isDealFree))
-  const isOnSale = Boolean(
-    !isConsole &&
-    !isFree &&
-    deal &&
-    (deal.isOnSale === '1' || Number(deal.savings) > 0)
-  )
+  const isOnSale = Boolean(!isConsole && !isFree && deal && Number(deal.cut) > 0)
 
-  // Determine state
   let cardState = 'not_on_sale'
   if (isConsole) cardState = 'console'
   else if (isFree) cardState = 'free'
   else if (isOnSale) cardState = 'sale'
 
-  // Lowest ever price and deal evaluation
-  const cheapestEver = deal?.cheapest ? Number(deal.cheapest) : null
-  const evalResult = isOnSale ? evaluateWishlistDeal(deal, alertSensitivity, cheapestEver) : { fires: false }
+  const historyLow = deal?.historyLow != null ? Number(deal.historyLow) : null
+  const goodEval = isOnSale
+    ? evaluateWishlistDeal(
+        { salePrice: deal.price, savings: deal.cut, lowestPrice: historyLow },
+        'good',
+        historyLow
+      )
+    : { fires: false }
+  const userEval = isOnSale
+    ? evaluateWishlistDeal(
+        { salePrice: deal.price, savings: deal.cut, lowestPrice: historyLow },
+        alertSensitivity,
+        historyLow
+      )
+    : { fires: false }
 
   const storeLabel = deal
-    ? (formatStoreName(deal.storeName || storeMap.get(String(deal.storeID)) || STORE_NAMES[String(deal.storeID)]) || 'PC Store')
+    ? formatStoreName(deal.store || deal.shop?.name || 'PC Store')
     : isFree
-      ? (freeGame?.platforms ? freeGame.platforms.replace('PC, ', '') : 'Epic Games')
-      : (game.platform || 'PC')
-
-  const regularPrice = deal?.normalPrice
-    ? Number(deal.normalPrice)
-    : freeGame?.worth && freeGame.worth !== 'N/A'
-      ? Number(String(freeGame.worth).replace(/[^0-9.]/g, ''))
-      : null
+      ? freeGame?.store ||
+        (freeGame?.platforms ? freeGame.platforms.replace('PC, ', '') : 'Epic')
+      : game.platform || 'PC'
 
   const claimUrl =
     freeGame?.open_giveaway_url ||
+    freeGame?.url ||
     freeGame?.gamerpower_url ||
-    (deal?.dealID ? `https://www.cheapshark.com/redirect?dealID=${deal.dealID}` : null)
+    deal?.url ||
+    null
 
-  const dealUrl = deal?.dealID
-    ? `https://www.cheapshark.com/redirect?dealID=${deal.dealID}`
-    : null
+  const dealUrl = deal?.url || null
+  const expiryLabel = deal?.expiry ? formatDealExpiry(deal.expiry, now) : null
+  const freeWorthInr = freeGame?.worthInr > 0 ? formatWorthInr(freeGame.worthInr) : ''
 
   return (
     <article className="wishlist-card-redesign">
-      {/* Full-bleed Card Background Image */}
       <div className="wishlist-card-media">
         {coverImage ? (
           <img
@@ -233,7 +278,6 @@ function WishlistCard({
         <div className="wishlist-card-vignette" aria-hidden="true" />
       </div>
 
-      {/* Floating Top Bar (Tags & Actions) */}
       <div className="wishlist-card-top">
         <div className="wishlist-card-tags">
           {cardState === 'free' && (
@@ -242,11 +286,11 @@ function WishlistCard({
           {cardState === 'sale' && (
             <>
               <span className="wishlist-tag wishlist-tag--sale">
-                ON SALE {Number(deal.savings) > 0 ? `-${Math.round(Number(deal.savings))}%` : ''}
+                ON SALE -{Math.round(Number(deal.cut))}%
               </span>
-              {evalResult.fires && evalResult.isNearLow && (
+              {(goodEval.fires || (userEval.fires && userEval.isNearLow)) && (
                 <span className="wishlist-tag wishlist-tag--low">
-                  {evalResult.isAllTimeLow ? 'ALL-TIME LOW' : 'NEAR LOW'}
+                  {deal.isLowestEver ? 'ALL-TIME LOW' : 'NEAR ALL-TIME LOW'}
                 </span>
               )}
             </>
@@ -255,7 +299,9 @@ function WishlistCard({
             <span className="wishlist-tag wishlist-tag--console">CONSOLE</span>
           )}
           {cardState === 'not_on_sale' && (
-            <span className="wishlist-tag wishlist-tag--neutral">NOT ON SALE</span>
+            <span className="wishlist-tag wishlist-tag--neutral">
+              {priceLoading ? 'CHECKING PRICE' : 'NO CURRENT DEAL'}
+            </span>
           )}
         </div>
 
@@ -281,7 +327,6 @@ function WishlistCard({
         </div>
       </div>
 
-      {/* Bottom Frosted Glass Overlay */}
       <div className="wishlist-card-bottom-overlay">
         <h2 className="wishlist-card-title" title={game.title}>
           {game.title}
@@ -289,22 +334,19 @@ function WishlistCard({
 
         <div className="wishlist-card-meta">
           <span className="wishlist-store-chip">{storeLabel}</span>
-          {game.platform && game.platform !== storeLabel && (
-            <span className="wishlist-platform-text">{game.platform}</span>
+          {expiryLabel && cardState === 'sale' && (
+            <span className="wishlist-countdown-chip">{expiryLabel}</span>
           )}
         </div>
 
-        {/* State-specific Pricing & CTAs */}
         {cardState === 'free' && (
           <div className="wishlist-details-group">
             <div className="wishlist-price-row">
               <span className="wishlist-price-free">Free</span>
-              {regularPrice != null && regularPrice > 0 && (
-                <del className="wishlist-price-old">{formatUsd(regularPrice)}</del>
-              )}
-              {freeGame?.end_date && (
+              {freeWorthInr && <del className="wishlist-price-old">{freeWorthInr}</del>}
+              {(freeGame?.end_date || freeGame?.endDate) && (
                 <span className="wishlist-countdown-chip">
-                  {formatCountdown(freeGame.end_date, now)}
+                  {formatCountdown(freeGame.end_date || freeGame.endDate, now)}
                 </span>
               )}
             </div>
@@ -324,13 +366,13 @@ function WishlistCard({
         {cardState === 'sale' && (
           <div className="wishlist-details-group">
             <div className="wishlist-price-row">
-              <strong className="wishlist-price-sale">{formatUsd(deal.salePrice)}</strong>
-              {Number(deal.normalPrice) > Number(deal.salePrice) && (
-                <del className="wishlist-price-old">{formatUsd(deal.normalPrice)}</del>
+              <strong className="wishlist-price-sale">{formatDealPrice(deal.price)}</strong>
+              {Number(deal.regular) > Number(deal.price) && (
+                <del className="wishlist-price-old">{formatDealPrice(deal.regular)}</del>
               )}
-              {cheapestEver != null && cheapestEver > 0 && (
-                <span className="wishlist-lowest-chip" title="Historical lowest price">
-                  Low {formatUsd(cheapestEver)}
+              {historyLow != null && historyLow > 0 && (
+                <span className="wishlist-lowest-chip" title="Historical lowest price in India">
+                  Lowest ever {formatDealPrice(historyLow)}
                 </span>
               )}
             </div>
@@ -349,20 +391,36 @@ function WishlistCard({
 
         {cardState === 'not_on_sale' && (
           <div className="wishlist-details-group">
-            <div className="wishlist-price-row">
-              <span className="wishlist-price-regular">
-                {deal?.normalPrice || deal?.salePrice
-                  ? formatUsd(deal.normalPrice || deal.salePrice)
-                  : 'Price tracked on PC'}
-              </span>
-            </div>
+            {priceLoading ? (
+              <div className="lr-skeleton" style={{ height: '18px', width: '75%' }} />
+            ) : (
+              <div className="wishlist-price-row">
+                <span className="wishlist-price-regular">
+                  No current deal in Steam, Epic or EA Store
+                </span>
+              </div>
+            )}
           </div>
         )}
 
         {cardState === 'console' && (
           <div className="wishlist-details-group">
             <div className="wishlist-price-row">
-              <span className="wishlist-console-badge">Console Exclusive</span>
+              <span className="wishlist-console-badge">Price tracking unavailable</span>
+            </div>
+            <div className="wishlist-console-links" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {getConsoleLinks(game.title, game.platform).map((lnk) => (
+                <a
+                  key={lnk.label}
+                  href={lnk.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="lr-button lr-button--ghost"
+                  style={{ minHeight: '32px', padding: '4px 10px', fontSize: '11px' }}
+                >
+                  {lnk.label} <ExternalLinkIcon />
+                </a>
+              ))}
             </div>
           </div>
         )}
@@ -377,19 +435,20 @@ export default function Wishlist({
   setGames,
   ownedGames = [],
   freeGames = [],
-  deals = [],
   session,
   onNavigate,
 }) {
   const [telegramConnected, setTelegramConnected] = useState(false)
-  const [snapshotStores, setSnapshotStores] = useState([])
-  const [snapshotDeals, setSnapshotDeals] = useState([])
-  const [snapshotFree, setSnapshotFree] = useState([])
-  const [liveDeals, setLiveDeals] = useState({})
+  const [epicCurrent, setEpicCurrent] = useState([])
+  const [gpFree, setGpFree] = useState([])
+  const [livePrices, setLivePrices] = useState(() => readLocalItadCache())
+  const [pricesLoading, setPricesLoading] = useState(false)
+  const [liveUnavailable, setLiveUnavailable] = useState(false)
   const [now, setNow] = useState(Date.now())
 
-  // Header controls state
-  const [sortBy, setSortBy] = useState('best') // 'best' | 'recent' | 'alpha'
+  const { deals: itadDeals, free: itadFree } = useDeals()
+
+  const [sortBy, setSortBy] = useState('best')
   const [alertSensitivity, setAlertSensitivity] = useState(() => {
     try {
       return localStorage.getItem('wishradar_alert_sensitivity') || 'good'
@@ -398,34 +457,28 @@ export default function Wishlist({
     }
   })
 
-  // Live timer interval
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 60000)
     return () => clearInterval(timer)
   }, [])
 
-  // Load snapshots for deals, stores, and free games
+  // Load free game snapshots for free-giveaway priority
   useEffect(() => {
     let cancelled = false
-    fetch('/data/cheapshark-deals.json')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!cancelled && data) {
-          if (Array.isArray(data.stores)) setSnapshotStores(data.stores)
-          if (Array.isArray(data.deals)) setSnapshotDeals(data.deals)
-        }
-      })
-      .catch(() => {})
-
-    fetch('/data/gamerpower-free-games.json')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!cancelled && data && Array.isArray(data.games)) {
-          setSnapshotFree(data.games)
-        }
-      })
-      .catch(() => {})
-
+    Promise.allSettled([
+      fetch('/data/epic-free-games.json'),
+      fetch('/data/gamerpower-free-games.json'),
+    ]).then(async ([epicRes, gpRes]) => {
+      if (cancelled) return
+      if (epicRes.status === 'fulfilled' && epicRes.value.ok) {
+        const data = await epicRes.value.json().catch(() => null)
+        if (!cancelled && Array.isArray(data?.current)) setEpicCurrent(data.current)
+      }
+      if (gpRes.status === 'fulfilled' && gpRes.value.ok) {
+        const data = await gpRes.value.json().catch(() => null)
+        if (!cancelled && Array.isArray(data?.games)) setGpFree(data.games)
+      }
+    })
     return () => {
       cancelled = true
     }
@@ -451,7 +504,6 @@ export default function Wishlist({
         if (!cancelled) setTelegramConnected(false)
       })
 
-    // Fetch user alert_sensitivity if present
     supabase
       .from('notification_settings')
       .select('alert_sensitivity')
@@ -494,43 +546,15 @@ export default function Wishlist({
     }
   }
 
-  const storeMap = useMemo(() => {
-    const map = new Map()
-    snapshotStores.forEach((s) => map.set(String(s.storeID), s.storeName))
-    return map
-  }, [snapshotStores])
-
-  const combinedDeals = useMemo(() => {
-    const list = Array.isArray(deals) ? [...deals] : []
-    const existing = new Set(list.map((d) => d.dealID))
-    for (const d of snapshotDeals) {
-      if (!existing.has(d.dealID)) list.push(d)
-    }
-    return list
-  }, [deals, snapshotDeals])
-
   const combinedFreeGames = useMemo(() => {
-    const list = Array.isArray(freeGames) ? [...freeGames] : []
-    const existing = new Set(list.map((g) => g.id))
-    for (const g of snapshotFree) {
-      if (!existing.has(g.id)) list.push(g)
-    }
-    return list
-  }, [freeGames, snapshotFree])
-
-  const dealsByTitle = useMemo(() => {
-    const match = new Map()
-    combinedDeals.forEach((deal) => {
-      const key = titleKey(deal.title)
-      const existing = match.get(key)
-      if (!existing || Number(deal.salePrice) < Number(existing.salePrice)) {
-        match.set(key, deal)
-      }
+    return mergeFreeSources({
+      epicItems: epicCurrent,
+      gamerPowerItems: [...(Array.isArray(freeGames) ? freeGames : []), ...gpFree],
+      itadFreeItems: itadFree,
+      now,
     })
-    return match
-  }, [combinedDeals])
+  }, [epicCurrent, freeGames, gpFree, itadFree, now])
 
-  // Populate freeByTitle with both full title and cleaned title (stripping "(Epic Games) Giveaway", etc.)
   const freeByTitle = useMemo(() => {
     const match = new Map()
     combinedFreeGames.forEach((game) => {
@@ -542,102 +566,153 @@ export default function Wishlist({
     return match
   }, [combinedFreeGames])
 
-  // Helper to find matching free game with fuzzy fallback
   function findFreeGame(title) {
     if (!title) return null
     const key = titleKey(title)
     if (freeByTitle.has(key)) return freeByTitle.get(key)
     const cleanKey = titleKey(normalizeFreeTitle(title))
     if (freeByTitle.has(cleanKey)) return freeByTitle.get(cleanKey)
+    return null
+  }
 
-    // Substring match
-    for (const fg of combinedFreeGames) {
-      const fgClean = titleKey(normalizeFreeTitle(fg.title))
-      if (fgClean && (fgClean.includes(key) || key.includes(fgClean))) {
-        return fg
+  // Lazy batched ITAD lookup via serverless /api/itad-prices
+  useEffect(() => {
+    let cancelled = false
+    const nowMs = Date.now()
+    const pcGames = games.filter((g) => g?.title && !isConsoleGame(g.platform))
+    if (pcGames.length === 0) return undefined
+
+    const cache = readLocalItadCache()
+    const needed = []
+    for (const g of pcGames) {
+      const key = titleKey(g.title)
+      const entry = cache[key]
+      const idFresh = entry?.itadId && nowMs - (entry.resolvedAt || 0) < ITAD_ID_TTL_MS
+      const priceFresh = entry && nowMs - (entry.pricedAt || 0) < ITAD_PRICE_TTL_MS
+      if (!priceFresh) {
+        needed.push({
+          key,
+          title: g.title,
+          itadId: idFresh ? entry.itadId : null,
+        })
+      }
+    }
+
+    if (needed.length === 0) return undefined
+
+    async function fetchBatch() {
+      setPricesLoading(true)
+      try {
+        const chunk = needed.slice(0, 25)
+        const ids = chunk.filter((x) => x.itadId).map((x) => x.itadId)
+        const titles = chunk.filter((x) => !x.itadId).map((x) => x.title)
+
+        const res = await fetch('/api/itad-prices', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids, titles }),
+        })
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`)
+        }
+
+        const data = await res.json()
+        const returned = data?.prices || {}
+        const updatedCache = { ...readLocalItadCache() }
+        const stamp = Date.now()
+
+        for (const item of chunk) {
+          const payload = returned[item.itadId || item.title]
+          if (payload !== undefined) {
+            updatedCache[item.key] = {
+              itadId: payload.itadId || item.itadId || null,
+              deal: payload.deal || null,
+              resolvedAt: payload.itadId ? stamp : updatedCache[item.key]?.resolvedAt || stamp,
+              pricedAt: stamp,
+            }
+          }
+        }
+
+        if (!cancelled) {
+          writeLocalItadCache(updatedCache)
+          setLivePrices(updatedCache)
+          setLiveUnavailable(false)
+        }
+      } catch {
+        if (!cancelled) {
+          setLiveUnavailable(true)
+        }
+      } finally {
+        if (!cancelled) setPricesLoading(false)
+      }
+    }
+
+    fetchBatch()
+    return () => {
+      cancelled = true
+    }
+  }, [games])
+
+  function getDealForGame(game) {
+    if (!game?.title || isConsoleGame(game.platform)) return null
+    const key = titleKey(game.title)
+    const cached = livePrices[key]
+    if (cached?.deal) return cached.deal
+
+    // Fallback to global itad-deals.json snapshot if live function unavailable or not cached
+    const snapMatch = matchDealForGame(game, itadDeals)
+    if (snapMatch) {
+      return {
+        itadId: snapMatch.itadId,
+        store: snapMatch.shop?.name || '',
+        storeId: snapMatch.shop?.id ?? null,
+        price: snapMatch.price,
+        regular: snapMatch.regular,
+        cut: snapMatch.cut,
+        currency: 'INR',
+        expiry: snapMatch.expiry,
+        url: snapMatch.url,
+        historyLow: snapMatch.historyLow,
+        isLowestEver: snapMatch.isLowestEver,
       }
     }
     return null
   }
 
-  // Fetch live deals for wishlisted PC games not in top 60 snapshot
-  useEffect(() => {
-    let cancelled = false
-    const pending = games.filter((g) => {
-      if (isConsoleGame(g.platform)) return false
-      const key = titleKey(g.title)
-      return !dealsByTitle.has(key) && !liveDeals[key]
-    })
-
-    if (pending.length === 0) return
-
-    pending.slice(0, 15).forEach(async (g) => {
-      const key = titleKey(g.title)
-      try {
-        const cleanQuery = g.title.replace(/\s*\(.*?\)/g, '').trim()
-        const res = await fetch(
-          `https://www.cheapshark.com/api/1.0/deals?title=${encodeURIComponent(cleanQuery)}&pageSize=1`
-        )
-        if (!res.ok) return
-        const data = await res.json()
-        if (!cancelled && Array.isArray(data) && data[0]) {
-          setLiveDeals((prev) => ({
-            ...prev,
-            [key]: data[0],
-          }))
-        }
-      } catch {}
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [games, dealsByTitle, liveDeals])
-
-  // Count games currently on sale or free
   const saleOrFreeCount = useMemo(() => {
     return games.filter((g) => {
       if (isConsoleGame(g.platform)) return false
-      const key = titleKey(g.title)
       const free = findFreeGame(g.title)
-      const deal = dealsByTitle.get(key) || liveDeals[key]
-      const isDealFree = Boolean(
-        deal && (deal.isFree || Number(deal.savings) >= 100 || Number(deal.salePrice) === 0)
-      )
+      const deal = getDealForGame(g)
+      const isDealFree = Boolean(deal && (Number(deal.cut) >= 100 || Number(deal.price) === 0))
       const isFree = Boolean(free || isDealFree)
-      const isOnSale = Boolean(!isFree && deal && (deal.isOnSale === '1' || Number(deal.savings) > 0))
+      const isOnSale = Boolean(!isFree && deal && Number(deal.cut) > 0)
       return isFree || isOnSale
     }).length
-  }, [games, freeByTitle, dealsByTitle, liveDeals, combinedFreeGames])
+  }, [games, freeByTitle, livePrices, itadDeals])
 
-  // Sorted games
   const sortedGames = useMemo(() => {
     const list = [...games]
-    if (sortBy === 'recent') {
-      return list.reverse()
-    }
-    if (sortBy === 'alpha') {
-      return list.sort((a, b) => a.title.localeCompare(b.title))
-    }
-    // Default: 'best' deals first
+    if (sortBy === 'recent') return list.reverse()
+    if (sortBy === 'alpha') return list.sort((a, b) => a.title.localeCompare(b.title))
+
     return list.sort((a, b) => {
-      const keyA = titleKey(a.title)
-      const keyB = titleKey(b.title)
-      const freeA = findFreeGame(a.title) || (liveDeals[keyA] && Number(liveDeals[keyA].savings) >= 100) ? 1 : 0
-      const freeB = findFreeGame(b.title) || (liveDeals[keyB] && Number(liveDeals[keyB].savings) >= 100) ? 1 : 0
+      const freeA = findFreeGame(a.title) ? 1 : 0
+      const freeB = findFreeGame(b.title) ? 1 : 0
       if (freeA !== freeB) return freeB - freeA
 
-      const dealA = dealsByTitle.get(keyA) || liveDeals[keyA]
-      const dealB = dealsByTitle.get(keyB) || liveDeals[keyB]
-      const savingsA = dealA ? Number(dealA.savings || 0) : -1
-      const savingsB = dealB ? Number(dealB.savings || 0) : -1
-      if (savingsA !== savingsB) return savingsB - savingsA
+      const dealA = getDealForGame(a)
+      const dealB = getDealForGame(b)
+      const cutA = dealA ? Number(dealA.cut || 0) : -1
+      const cutB = dealB ? Number(dealB.cut || 0) : -1
+      if (cutA !== cutB) return cutB - cutA
 
-      const priceA = dealA ? Number(dealA.salePrice || 9999) : 9999
-      const priceB = dealB ? Number(dealB.salePrice || 9999) : 9999
+      const priceA = dealA ? Number(dealA.price ?? 999999) : 999999
+      const priceB = dealB ? Number(dealB.price ?? 999999) : 999999
       return priceA - priceB
     })
-  }, [games, sortBy, freeByTitle, dealsByTitle, liveDeals, combinedFreeGames])
+  }, [games, sortBy, freeByTitle, livePrices, itadDeals])
 
   function addGame(gameToAdd) {
     if (!gameToAdd || !gameToAdd.title) return
@@ -665,7 +740,6 @@ export default function Wishlist({
 
   return (
     <div className="wishlist-page-redesign">
-      {/* ─── Page Header & Tabs ─── */}
       <header className="wishlist-header">
         <div className="wishlist-header__main">
           <h1>Wishlist</h1>
@@ -690,7 +764,6 @@ export default function Wishlist({
           </div>
         </div>
 
-        {/* ─── Controls: Sort & Alert Sensitivity ─── */}
         <div className="wishlist-controls">
           <label className="wishlist-control-label">
             <span className="wishlist-control-title">Sort</span>
@@ -722,12 +795,16 @@ export default function Wishlist({
         </div>
       </header>
 
-      {/* ─── Status Banner ─── */}
       <section className="wishlist-banner" aria-label="Wishlist status summary">
         <div className="wishlist-banner__info">
           <span className="wishlist-banner__indicator" aria-hidden="true" />
           <p>
             <strong>{saleOrFreeCount} of your games</strong> are on sale or free right now
+            {liveUnavailable && (
+              <span className="wishlist-live-note" style={{ marginLeft: '8px', color: 'var(--muted)', fontSize: '12px' }}>
+                · Live price unavailable
+              </span>
+            )}
           </p>
         </div>
         <div className="wishlist-banner__telegram">
@@ -747,7 +824,6 @@ export default function Wishlist({
         </div>
       </section>
 
-      {/* ─── Cards Grid or Empty State ─── */}
       {games.length === 0 ? (
         <div className="wishlist-empty-redesign">
           <div className="lr-art-fallback" aria-hidden="true">★</div>
@@ -760,7 +836,8 @@ export default function Wishlist({
             <button
               type="button"
               className="lr-button lr-button--ghost"
-              onClick={() => onNavigate('free')}>
+              onClick={() => onNavigate('free')}
+            >
               See Free Now
             </button>
           </div>
@@ -802,7 +879,7 @@ export default function Wishlist({
         <div className="wishlist-grid-redesign">
           {sortedGames.map((game, index) => {
             const key = titleKey(game.title)
-            const deal = dealsByTitle.get(key) || liveDeals[key] || null
+            const deal = getDealForGame(game)
             const freeGame = findFreeGame(game.title)
             return (
               <WishlistCard
@@ -810,7 +887,7 @@ export default function Wishlist({
                 game={game}
                 deal={deal}
                 freeGame={freeGame}
-                storeMap={storeMap}
+                priceLoading={pricesLoading && !deal && !freeGame}
                 alertSensitivity={alertSensitivity}
                 now={now}
                 onRemove={removeGame}

@@ -1,21 +1,19 @@
 import { useMemo } from 'react'
 import DealCard from './DealCard'
 import {
-  formatStoreName,
-  STORE_NAMES,
   selectTopDeals,
-  useTopDeals,
+  useDeals,
 } from '../lib/dealsData'
 
 export default function TopDeals({ getGameActions, onNavigate }) {
-  const { deals, stores, loading, error, reload } = useTopDeals()
-  const topDeals = useMemo(() => selectTopDeals(deals), [deals])
+  const { deals, loading, error, reload } = useDeals()
+  const topDeals = useMemo(() => selectTopDeals(deals, 8), [deals])
 
   return (
     <section className="top-deals" aria-labelledby="top-deals-heading">
       <header className="lr-section-heading">
         <div className="lr-section-heading__copy">
-          <span className="lr-section-heading__kicker">PC SAVINGS</span>
+          <span className="lr-section-heading__kicker">INDIA PC SAVINGS</span>
           <h2 id="top-deals-heading">
             Top <strong>Deals</strong>
           </h2>
@@ -40,20 +38,13 @@ export default function TopDeals({ getGameActions, onNavigate }) {
           ))}
 
         {!loading &&
-          topDeals.map((deal) => {
-            const storeName = formatStoreName(
-              stores.find((s) => String(s.storeID) === String(deal.storeID))?.storeName ||
-                STORE_NAMES[String(deal.storeID)]
-            )
-            return (
-              <DealCard
-                key={deal.dealID}
-                deal={deal}
-                storeName={storeName}
-                getGameActions={getGameActions}
-              />
-            )
-          })}
+          topDeals.map((deal) => (
+            <DealCard
+              key={deal.itadId}
+              deal={deal}
+              getGameActions={getGameActions}
+            />
+          ))}
 
         {!loading && (topDeals.length === 0 || error) && (
           <div className="top-deals__empty">

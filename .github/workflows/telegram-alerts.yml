@@ -64,4 +64,5 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ITAD_API_KEY: ${{ secrets.ITAD_API_KEY }}
         run: npm run send:telegram-alerts

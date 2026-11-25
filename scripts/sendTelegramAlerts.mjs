@@ -2,20 +2,42 @@ import {
   shouldSendWishlistAlert,
   isConsoleGame,
 } from '../src/lib/wishlistAlerts.js'
+import {
+  bestDeal,
+  createItadClient,
+  fetchPrices,
+  resolveItadId,
+  shouldAlert,
+} from './lib/itad.mjs'
 
+const DRY_RUN = process.env.DRY_RUN === '1' || process.argv.includes('--dry-run')
 const SUPABASE_URL = process.env.SUPABASE_URL
 const SUPABASE_KEY =
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
   process.env.SUPABASE_SECRET_KEY
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
+const ITAD_API_KEY = process.env.ITAD_API_KEY
+
+const RESOLVED_TTL_MS = 30 * 24 * 60 * 60 * 1000
+const UNRESOLVED_TTL_MS = 7 * 24 * 60 * 60 * 1000
+
+const SAMPLE_DRY_RUN_TITLES = [
+  'Elden Ring',
+  'Cyberpunk 2077',
+  'Hades II',
+  "Baldur's Gate 3",
+  'Hollow Knight',
+]
 
 function requireEnv(name, value) {
   if (!value) throw new Error(`Missing required server environment variable: ${name}`)
 }
 
-requireEnv('SUPABASE_URL', SUPABASE_URL)
-requireEnv('SUPABASE_SERVICE_ROLE_KEY', SUPABASE_KEY)
-requireEnv('TELEGRAM_BOT_TOKEN', TELEGRAM_BOT_TOKEN)
+if (!DRY_RUN) {
+  requireEnv('SUPABASE_URL', SUPABASE_URL)
+  requireEnv('SUPABASE_SERVICE_ROLE_KEY', SUPABASE_KEY)
+  requireEnv('TELEGRAM_BOT_TOKEN', TELEGRAM_BOT_TOKEN)
+}
 
 function normalizeTitle(value = '') {
   return String(value)
@@ -26,7 +48,21 @@ function normalizeTitle(value = '') {
     .trim()
 }
 
+function formatInr(amount) {
+  const val = Number(amount)
+  if (!Number.isFinite(val)) return '₹0'
+  if (val === 0) return 'Free'
+  const hasPaise = Math.abs(val - Math.trunc(val)) > 0.001
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: hasPaise ? 2 : 0,
+    maximumFractionDigits: hasPaise ? 2 : 0,
+  }).format(val)
+}
+
 async function supabase(method, path, body, prefer) {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return null
   const headers = {
     apikey: SUPABASE_KEY,
     Authorization: `Bearer ${SUPABASE_KEY}`,
@@ -74,6 +110,11 @@ function parseUtc(value) {
 }
 
 async function telegramSend(chatId, text) {
+  if (DRY_RUN) {
+    console.log(`[DRY_RUN] Would send to chat ${chatId}:\n${text}\n---`)
+    return { status: 200 }
+  }
+
   const response = await fetch(
     `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
     {
@@ -111,32 +152,130 @@ function dueAt(now, target, toleranceMs = 45 * 60 * 1000) {
   return distance >= -10 * 60 * 1000 && distance <= toleranceMs
 }
 
+async function loadPriceIdCache() {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return new Map()
+  try {
+    const rows = await supabase('GET', 'game_price_ids?select=*')
+    const map = new Map()
+    for (const row of rows || []) {
+      map.set(row.normalized_title, row)
+    }
+    return map
+  } catch (err) {
+    console.warn('game_price_ids cache unavailable (run migration if needed):', err.message)
+    return new Map()
+  }
+}
+
+async function savePriceIdCache(rows) {
+  if (DRY_RUN || !SUPABASE_URL || !SUPABASE_KEY || rows.length === 0) return
+  try {
+    await supabase(
+      'POST',
+      'game_price_ids?on_conflict=normalized_title',
+      rows,
+      'resolution=merge-duplicates,return=minimal'
+    )
+  } catch (err) {
+    console.warn('Could not persist game_price_ids cache:', err.message)
+  }
+}
+
+async function evaluateItadForTitles(titles, idCacheMap, now) {
+  const dealByNormTitle = new Map()
+  if (!ITAD_API_KEY || !ITAD_API_KEY.trim()) {
+    console.warn('ITAD_API_KEY is missing; skipping live ITAD wishlist price evaluation.')
+    return { dealByNormTitle, resolvedRows: [], summary: [] }
+  }
+
+  const client = createItadClient({ apiKey: ITAD_API_KEY.trim() })
+  const nowMs = now.getTime()
+  const resolvedRowsToSave = []
+  const idsToFetch = []
+  const normToItadId = new Map()
+  const summary = []
+
+  for (const rawTitle of titles) {
+    const norm = normalizeTitle(rawTitle)
+    const cached = idCacheMap.get(norm)
+    const resolvedAtMs = cached?.resolved_at ? Date.parse(cached.resolved_at) : 0
+    const isFresh = cached
+      ? cached.unresolved
+        ? nowMs - resolvedAtMs < UNRESOLVED_TTL_MS
+        : nowMs - resolvedAtMs < RESOLVED_TTL_MS
+      : false
+
+    let itadId = isFresh ? cached.itad_id : null
+    if (!isFresh) {
+      itadId = await resolveItadId(client, rawTitle)
+      const row = {
+        normalized_title: norm,
+        itad_id: itadId || null,
+        steam_app_id: null,
+        resolved_at: now.toISOString(),
+        unresolved: !itadId,
+      }
+      resolvedRowsToSave.push(row)
+    }
+
+    if (itadId) {
+      normToItadId.set(norm, itadId)
+      idsToFetch.push(itadId)
+    }
+  }
+
+  const priceEntries = idsToFetch.length > 0 ? await fetchPrices(client, idsToFetch) : []
+  const priceById = new Map(priceEntries.map((p) => [p.id, bestDeal(p)]))
+
+  for (const rawTitle of titles) {
+    const norm = normalizeTitle(rawTitle)
+    const itadId = normToItadId.get(norm) || null
+    const deal = itadId ? priceById.get(itadId) || null : null
+    if (deal) {
+      dealByNormTitle.set(norm, deal)
+    }
+    const wouldAlert = deal
+      ? shouldAlert({
+          price: deal.price,
+          regular: deal.regular,
+          cut: deal.cut,
+          historyLow: deal.historyLow,
+          sensitivity: 'good',
+        })
+      : false
+
+    summary.push({
+      title: rawTitle,
+      resolvedId: itadId || 'UNRESOLVED',
+      bestStore: deal?.store || '-',
+      priceINR: deal ? formatInr(deal.price) : '-',
+      regularINR: deal ? formatInr(deal.regular) : '-',
+      cut: deal ? `${Math.round(deal.cut)}%` : '-',
+      lowestEver: deal?.historyLow != null ? formatInr(deal.historyLow) : '-',
+      wouldAlert,
+    })
+  }
+
+  return { dealByNormTitle, resolvedRows: resolvedRowsToSave, summary }
+}
+
 async function main() {
+  const now = new Date()
+
+  // Standalone DRY_RUN mode when Supabase env vars are not provided
+  if (DRY_RUN && (!SUPABASE_URL || !SUPABASE_KEY)) {
+    console.log('SENDER_PHASE=dry_run_standalone')
+    const idCache = new Map()
+    const { summary } = await evaluateItadForTitles(SAMPLE_DRY_RUN_TITLES, idCache, now)
+    console.table(summary)
+    return
+  }
+
   console.log('SENDER_PHASE=loading_snapshots')
   const epic = await loadJson(new URL('../public/data/epic-free-games.json', import.meta.url))
   const gamerPower = await loadJson(
     new URL('../public/data/gamerpower-free-games.json', import.meta.url)
   )
-  let cheapshark = { deals: [], stores: [] }
-  try {
-    cheapshark = await loadJson(new URL('../public/data/cheapshark-deals.json', import.meta.url))
-  } catch {
-    console.warn('CheapShark deals snapshot unavailable for wishlist matching')
-  }
-
-  const storeMap = new Map()
-  for (const s of cheapshark.stores || []) {
-    storeMap.set(String(s.storeID), s.storeName)
-  }
-
-  const cheapsharkDealsMap = new Map()
-  for (const d of cheapshark.deals || []) {
-    const key = normalizeTitle(d.title)
-    const existing = cheapsharkDealsMap.get(key)
-    if (!existing || Number(d.salePrice) < Number(existing.salePrice)) {
-      cheapsharkDealsMap.set(key, d)
-    }
-  }
 
   const windows = []
   for (const game of epic.current || []) {
@@ -150,7 +289,7 @@ async function main() {
       end_at: game.endDate,
       link: `https://store.epicgames.com/en-US/p/${game.slug}`,
       image: game.image || '',
-      updated_at: new Date().toISOString(),
+      updated_at: now.toISOString(),
     })
   }
   for (const game of epic.upcoming || []) {
@@ -164,7 +303,7 @@ async function main() {
       end_at: game.endDate,
       link: `https://store.epicgames.com/en-US/p/${game.slug}`,
       image: game.image || '',
-      updated_at: new Date().toISOString(),
+      updated_at: now.toISOString(),
     })
   }
   for (const game of gamerPower.games || []) {
@@ -179,11 +318,11 @@ async function main() {
       end_at: end,
       link: game.open_giveaway_url || game.gamerpower_url || 'https://www.gamerpower.com',
       image: game.thumbnail || '',
-      updated_at: new Date().toISOString(),
+      updated_at: now.toISOString(),
     })
   }
 
-  if (windows.length > 0) {
+  if (!DRY_RUN && windows.length > 0) {
     console.log('SENDER_PHASE=upserting_free_game_windows')
     await supabase(
       'POST',
@@ -193,15 +332,13 @@ async function main() {
     )
   }
 
-  // Fetch all data needed for alert decisions in a single parallel batch.
-  // Wishlists for all users are loaded once here and grouped by user_id in
-  // memory below, avoiding one Supabase query per (user × game) combination.
-  const [settings, connections, library, wishlistRows, sentAlerts] = await Promise.all([
+  const [settings, connections, library, wishlistRows, sentAlerts, idCacheMap] = await Promise.all([
     supabase('GET', 'notification_settings?select=*'),
     supabase('GET', 'telegram_connections?select=*&active=eq.true'),
     supabase('GET', 'saved_games?select=user_id,title,normalized_title,platform,list_type&list_type=eq.library'),
     supabase('GET', 'saved_games?select=id,user_id,title,normalized_title,platform,notify,last_alerted_at,last_alerted_discount,last_alerted_price,alert_count_this_week,alert_week_start&list_type=eq.wishlist'),
     supabase('GET', 'sent_alerts?select=*'),
+    loadPriceIdCache(),
   ])
   console.log(`SENDER_PHASE=settings_loaded settings=${settings.length} connections=${connections.length}`)
 
@@ -215,8 +352,6 @@ async function main() {
       .add(normalizeTitle(game.normalized_title || game.title))
   }
 
-  // Group pre-fetched wishlist rows by user_id so the per-window loop needs
-  // no additional Supabase queries.
   const wishlistTitlesByUser = new Map()
   const wishlistGamesByUser = new Map()
   for (const game of wishlistRows) {
@@ -235,7 +370,6 @@ async function main() {
     )
   )
 
-  const now = new Date()
   for (const setting of settings) {
     if (!setting.enabled) continue
     const connection = connections.find((item) => item.user_id === setting.user_id)
@@ -252,8 +386,9 @@ async function main() {
 
       if (setting.mode === 'platform') {
         const selected = Array.isArray(setting.platforms) ? setting.platforms : []
+        const windowPlatform = String(window.platform || '').toLowerCase()
         const matchesPlatform = selected.some((platform) =>
-          window.platform.toLowerCase().includes(platform.toLowerCase().replace('.io', ''))
+          windowPlatform.includes(String(platform || '').toLowerCase().replace('.io', ''))
         )
         if (!matchesPlatform) continue
       }
@@ -291,7 +426,7 @@ async function main() {
 
         const text = [
           `Free game: ${window.title}`,
-          `Platform: ${window.platform}`,
+          `Platform: ${window.platform || 'PC'}`,
           `Ends: ${istLabel(window.end_at)}`,
           window.link,
         ].join('\n')
@@ -303,17 +438,19 @@ async function main() {
         }
         if (result.status !== 200) continue
 
-        await supabase(
-          'POST',
-          'sent_alerts?on_conflict=user_id,game_key,window_start,alert_kind',
-          [{
-            user_id: setting.user_id,
-            game_key: window.game_key,
-            window_start: windowStart,
-            alert_kind: candidate.kind,
-          }],
-          'resolution=ignore-duplicates,return=minimal'
-        )
+        if (!DRY_RUN) {
+          await supabase(
+            'POST',
+            'sent_alerts?on_conflict=user_id,game_key,window_start,alert_kind',
+            [{
+              user_id: setting.user_id,
+              game_key: window.game_key,
+              window_start: windowStart,
+              alert_kind: candidate.kind,
+            }],
+            'resolution=ignore-duplicates,return=minimal'
+          )
+        }
         sentKeys.add(sentKey)
       }
     }
@@ -321,53 +458,36 @@ async function main() {
 
   console.log(`Processed ${windows.length} free-game windows`)
 
-  // ─── Process Wishlist Price Drop Deals ──────────────────────────────────────
+  // ─── Process Wishlist Price Drop Deals (ITAD INR) ───────────────────────────
   console.log('SENDER_PHASE=evaluating_wishlist_deals')
 
-  // Find all unique PC wishlisted titles across active users with notifications enabled
   const activeUserIds = new Set(
     settings
       .filter((s) => s.enabled && connections.some((c) => c.user_id === s.user_id))
       .map((s) => s.user_id)
   )
 
-  const uniqueWishlistTitles = new Set()
+  const uniqueTitlesByNorm = new Map()
   for (const game of wishlistRows) {
     if (!activeUserIds.has(game.user_id)) continue
     if (game.notify === false) continue
     if (isConsoleGame(game.platform)) continue
     const norm = normalizeTitle(game.normalized_title || game.title)
     const userOwned = ownedTitlesByUser.get(game.user_id) || new Set()
-    if (!userOwned.has(norm)) {
-      uniqueWishlistTitles.add(game.title)
+    if (!userOwned.has(norm) && !uniqueTitlesByNorm.has(norm)) {
+      uniqueTitlesByNorm.set(norm, game.title)
     }
   }
 
-  // Fetch live deals for wishlisted titles not found in the global snapshot
-  for (const rawTitle of uniqueWishlistTitles) {
-    const norm = normalizeTitle(rawTitle)
-    if (cheapsharkDealsMap.has(norm)) continue
+  const { dealByNormTitle, resolvedRows, summary } = await evaluateItadForTitles(
+    [...uniqueTitlesByNorm.values()],
+    idCacheMap,
+    now
+  )
+  await savePriceIdCache(resolvedRows)
 
-    try {
-      const cleanQuery = rawTitle.replace(/\s*\(.*?\)/g, '').trim()
-      const searchUrl = `https://www.cheapshark.com/api/1.0/deals?title=${encodeURIComponent(cleanQuery)}&pageSize=1`
-      const res = await fetch(searchUrl, {
-        headers: { 'User-Agent': 'WishRadar/1.0 (free portfolio project)' },
-      })
-      if (res.ok) {
-        const results = await res.json()
-        if (Array.isArray(results) && results[0]) {
-          cheapsharkDealsMap.set(norm, results[0])
-          // Also map by result title's normalized form
-          const resultNorm = normalizeTitle(results[0].title)
-          if (!cheapsharkDealsMap.has(resultNorm)) {
-            cheapsharkDealsMap.set(resultNorm, results[0])
-          }
-        }
-      }
-    } catch (err) {
-      console.warn(`CheapShark lookup failed for "${rawTitle}":`, err.message)
-    }
+  if (DRY_RUN && summary.length > 0) {
+    console.table(summary)
   }
 
   let wishlistAlertsSent = 0
@@ -386,53 +506,65 @@ async function main() {
       const normTitle = normalizeTitle(game.normalized_title || game.title)
       if (ownedTitles.has(normTitle)) continue
 
-      const deal = cheapsharkDealsMap.get(normTitle)
-      if (deal && (deal.isOnSale === '1' || Number(deal.savings) >= 15)) {
+      const deal = dealByNormTitle.get(normTitle)
+      if (deal && (deal.price === 0 || Number(deal.cut) >= 15)) {
+        const adaptedDeal = {
+          isFree: deal.price === 0 || Number(deal.cut) >= 100,
+          salePrice: deal.price,
+          price: deal.price,
+          savings: deal.cut,
+          lowestPrice: deal.historyLow,
+        }
+
         const decision = shouldSendWishlistAlert({
           gameRecord: game,
-          deal,
+          deal: adaptedDeal,
           sensitivity,
+          cheapestEver: deal.historyLow,
           now,
         })
 
         if (decision.shouldAlert) {
-          const storeName = storeMap.get(String(deal.storeID)) || 'PC Store'
-          const discountPercent = Math.round(Number(deal.savings))
-          const salePriceStr = Number(deal.salePrice).toFixed(2)
-          const normalPriceStr = Number(deal.normalPrice).toFixed(2)
-          const dealLink = `https://www.cheapshark.com/redirect?dealID=${deal.dealID}`
-
-          const text = [
+          const discountPercent = Math.round(Number(deal.cut))
+          const lines = [
             `🎯 Wishlist Deal Alert: ${game.title}`,
-            `Discount: -${discountPercent}% (${decision.reason})`,
-            `Price: $${salePriceStr} USD (was $${normalPriceStr})`,
-            `Store: ${storeName}`,
-            dealLink,
-          ].join('\n')
+            `Store: ${deal.store || 'PC Store'}`,
+            `Price: ${formatInr(deal.price)} (was ${formatInr(deal.regular)}, -${discountPercent}%)`,
+          ]
+          if (deal.historyLow != null) {
+            lines.push(`Lowest ever: ${formatInr(deal.historyLow)}`)
+          }
+          if (deal.expiry) {
+            lines.push(`Ends: ${istLabel(deal.expiry)}`)
+          }
+          if (deal.url) {
+            lines.push(deal.url)
+          }
 
-          const result = await telegramSend(connection.chat_id, text)
+          const result = await telegramSend(connection.chat_id, lines.join('\n'))
           if (result.status === 429) {
             await new Promise((resolve) => setTimeout(resolve, (result.retryAfter + 1) * 1000))
             continue
           }
           if (result.status === 200) {
             wishlistAlertsSent++
-            await supabase(
-              'PATCH',
-              `saved_games?id=eq.${game.id}`,
-              {
-                last_alerted_at: now.toISOString(),
-                last_alerted_discount: discountPercent,
-                last_alerted_price: Number(deal.salePrice),
-                alert_count_this_week: decision.currentWeekCount,
-                alert_week_start: decision.isNewWeek ? now.toISOString() : game.alert_week_start,
-              },
-              'return=minimal'
-            ).catch((err) => console.error('Error updating saved game alert state:', err.message))
+            if (!DRY_RUN) {
+              await supabase(
+                'PATCH',
+                `saved_games?id=eq.${game.id}`,
+                {
+                  last_alerted_at: now.toISOString(),
+                  last_alerted_discount: discountPercent,
+                  last_alerted_price: Number(deal.price),
+                  alert_count_this_week: decision.currentWeekCount,
+                  alert_week_start: decision.isNewWeek ? now.toISOString() : game.alert_week_start,
+                },
+                'return=minimal'
+              ).catch((err) => console.error('Error updating saved game alert state:', err.message))
+            }
           }
         }
-      } else if (game.last_alerted_at && (!deal || deal.isOnSale !== '1' || Number(deal.savings) < 15)) {
-        // Sale has ended; reset last_alerted state so next sale can alert fresh
+      } else if (!DRY_RUN && game.last_alerted_at && (!deal || Number(deal.cut) < 15)) {
         await supabase(
           'PATCH',
           `saved_games?id=eq.${game.id}`,

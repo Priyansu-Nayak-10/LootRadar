@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import SafeImage from './SafeImage.jsx'
 import { fetchRawgGames, hasRawgKey } from '../lib/discoverApi.js'
 import { titleKey } from '../lib/wishlistAlerts.js'
-import { formatDealPrice } from '../lib/dealsData.js'
+import { formatDealPrice, matchDealForGame } from '../lib/dealsData.js'
 
 // Platform ID filters for RAWG
 const PLATFORM_CHIPS = [
@@ -173,7 +173,7 @@ function GamePlatformIcons({ game }) {
 function PopularGameCard({
   game,
   rank,
-  dealsMap,
+  deals,
   getGameActions,
 }) {
   const actions = getGameActions({
@@ -184,12 +184,10 @@ function PopularGameCard({
     sourceId: game.id,
   })
 
-  // Match CheapShark deal for PC
+  // Match ITAD deal by normalized title (edition-safe) or steamAppId
   const dealMatch = useMemo(() => {
-    if (!dealsMap || dealsMap.size === 0) return null
-    const key = titleKey(game.name)
-    return dealsMap.get(key) || null
-  }, [dealsMap, game.name])
+    return matchDealForGame(game, deals)
+  }, [deals, game])
 
   const genreName = game.genres?.[0]?.name || 'Action'
   const ratingVal = game.rating ? game.rating.toFixed(1) : null
@@ -213,11 +211,11 @@ function PopularGameCard({
         <span className="popular-game-card__rank">#{rank}</span>
 
         {/* Lime Price Badge for matched PC deals */}
-        {dealMatch && Number(dealMatch.savings) > 0 && (
+        {dealMatch && Number(dealMatch.cut) > 0 && (
           <span className="popular-game-card__price-badge">
-            -{Math.round(Number(dealMatch.savings))}%{' '}
+            -{Math.round(Number(dealMatch.cut))}%{' '}
             <span className="popular-game-card__price-val">
-              {formatDealPrice(dealMatch.salePrice || dealMatch.price)}
+              {formatDealPrice(dealMatch.price)}
             </span>
           </span>
         )}
@@ -284,20 +282,6 @@ export default function PopularGamesSection({
 
   const sectionRef = useRef(null)
   const scrollRowRef = useRef(null)
-
-  // Pre-build CheapShark deals lookup map by titleKey (zero extra network calls!)
-  const dealsMap = useMemo(() => {
-    const map = new Map()
-    if (!Array.isArray(deals)) return map
-    for (const d of deals) {
-      if (!d || !d.title) continue
-      const k = titleKey(d.title)
-      if (!map.has(k)) {
-        map.set(k, d)
-      }
-    }
-    return map
-  }, [deals])
 
   // Lazy loading via IntersectionObserver
   useEffect(() => {
@@ -490,7 +474,7 @@ export default function PopularGamesSection({
               key={game.id}
               game={game}
               rank={idx + 1}
-              dealsMap={dealsMap}
+              deals={deals}
               getGameActions={getGameActions}
             />
           ))}

@@ -9,21 +9,22 @@ import {
   formatTimeLeft,
   formatStartsIn,
   parseEndDate,
-  parseWorthUsd,
-  dedupe,
+  formatWorthInr,
+  mergeFreeSources,
   sortFreeGames,
   parseFreeParams,
   serializeFreeParams,
 } from '../lib/freeGames.js'
 
 const GAMERPOWER_API = 'https://www.gamerpower.com/api/giveaways?type=game'
-const CACHE_KEY = 'wishradar_free_v2'
+const CACHE_KEY = 'wishradar_free_v3'
 const CACHE_MS = 10 * 60 * 1000 // 10 minutes
 
 const STORE_CHIPS = [
   { label: 'All', value: 'all' },
   { label: 'Epic', value: 'epic' },
   { label: 'Steam', value: 'steam' },
+  { label: 'EA Store', value: 'ea store' },
   { label: 'GOG', value: 'gog' },
   { label: 'itch.io', value: 'itch.io' },
   { label: 'Prime/Amazon', value: 'prime/amazon' },
@@ -172,7 +173,8 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
     game.gamerpower_url ||
     '#'
 
-  const worthDisplay = game.worth && game.worth !== 'N/A' ? `Worth ${game.worth}` : ''
+  const worthFormatted = formatWorthInr(game.worthInr)
+  const worthDisplay = worthFormatted ? `Worth ${worthFormatted}` : ''
 
   return (
     <article
@@ -183,6 +185,7 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
       {/* 16:9 Media */}
       <div className="free-card__media">
         <SafeImage
+          steamAppID={game.steamAppId}
           src={game.image || game.thumbnail}
           alt={title}
           className="free-card__img"
@@ -532,13 +535,15 @@ export default function FreeNow({
 
     let initialList = []
     let epicList = []
+    let itadFreeList = []
     let snapshotTimestamp = null
 
     // 1. Instant render from local snapshots
     try {
-      const [gpSnapshotRes, epicSnapshotRes, alwaysRes] = await Promise.allSettled([
+      const [gpSnapshotRes, epicSnapshotRes, itadSnapshotRes, alwaysRes] = await Promise.allSettled([
         fetch('/data/gamerpower-free-games.json'),
         fetch('/data/epic-free-games.json'),
+        fetch('/data/itad-deals.json'),
         fetch('/data/always-free-games.json'),
       ])
 
@@ -554,13 +559,22 @@ export default function FreeNow({
         if (Array.isArray(epicData.upcoming)) setComingGames(epicData.upcoming)
       }
 
+      if (itadSnapshotRes.status === 'fulfilled' && itadSnapshotRes.value.ok) {
+        const itadData = await itadSnapshotRes.value.json()
+        if (Array.isArray(itadData.free)) itadFreeList = itadData.free
+      }
+
       if (alwaysRes.status === 'fulfilled' && alwaysRes.value.ok) {
         const alwaysData = await alwaysRes.value.json()
         if (Array.isArray(alwaysData.games)) setAlwaysGames(alwaysData.games)
       }
 
       // Merge & clean instant snapshot
-      const mergedInitial = dedupe([...initialList, ...epicList]).filter((g) => !isMobile(g))
+      const mergedInitial = mergeFreeSources({
+        epicItems: epicList,
+        gamerPowerItems: initialList,
+        itadFreeItems: itadFreeList,
+      })
       if (mergedInitial.length > 0) {
         setGames(mergedInitial)
         onAvailabilityChange(mergedInitial)
@@ -600,7 +614,11 @@ export default function FreeNow({
       const liveList = Array.isArray(liveData) ? liveData : []
 
       if (liveList.length > 0) {
-        const combined = dedupe([...liveList, ...epicList]).filter((g) => !isMobile(g))
+        const combined = mergeFreeSources({
+          epicItems: epicList,
+          gamerPowerItems: liveList,
+          itadFreeItems: itadFreeList,
+        })
         setGames(combined)
         onAvailabilityChange(combined)
         const nowMs = Date.now()

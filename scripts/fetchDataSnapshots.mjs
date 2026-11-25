@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { collectNewsSnapshot } from './lib/news.mjs'
+import { collectItadSnapshot } from './lib/itad.mjs'
 
 const USER_AGENT = 'WishRadar/1.0 (free portfolio project)'
 const DATA_DIR = new URL('../public/data/', import.meta.url)
@@ -45,6 +46,40 @@ export async function runNewsSnapshot({ outDir = DATA_DIR } = {}) {
   )
 
   return snapshot
+}
+
+export async function runItadSnapshot({ outDir = DATA_DIR } = {}) {
+  await mkdir(outDir, { recursive: true })
+  if (!process.env.ITAD_API_KEY || !process.env.ITAD_API_KEY.trim()) {
+    console.warn('ITAD_API_KEY is missing. Keeping previous itad-deals.json untouched.')
+    return { deals: [], free: [], skipped: true }
+  }
+
+  try {
+    const snapshot = await collectItadSnapshot()
+    if (!Array.isArray(snapshot.deals) || snapshot.deals.length === 0) {
+      console.warn('ITAD returned 0 deals. Keeping previous itad-deals.json untouched.')
+      return snapshot
+    }
+
+    await saveJson(
+      'itad-deals.json',
+      {
+        generatedAt: snapshot.generatedAt,
+        country: snapshot.country,
+        currency: snapshot.currency,
+        shops: snapshot.shops,
+        deals: snapshot.deals,
+        free: snapshot.free,
+      },
+      outDir
+    )
+
+    return snapshot
+  } catch (error) {
+    console.warn('ITAD snapshot failed:', error?.message || 'unknown error')
+    return { deals: [], free: [], failed: true }
+  }
 }
 
 async function main() {
@@ -137,23 +172,59 @@ async function main() {
   }
 
   const skipNews = process.argv.includes('--skip-news')
-  const newsSnapshot = skipNews ? { articles: [] } : await runNewsSnapshot()
+  const [itadRes, newsRes] = await Promise.allSettled([
+    runItadSnapshot(),
+    skipNews ? Promise.resolve({ articles: [] }) : runNewsSnapshot(),
+  ])
+
+  const itadSnapshot = itadRes.status === 'fulfilled' ? itadRes.value : { deals: [], free: [] }
+  const newsSnapshot = newsRes.status === 'fulfilled' ? newsRes.value : { articles: [] }
 
   console.log(
-    `Saved ${cleanFreeGames.length} free games, ${deals.length} deals, ${activeStores.length} stores, ${cleanAlwaysFreeGames.length} always-free games, and ${newsSnapshot.articles.length} news stories`
+    `Saved ${cleanFreeGames.length} free games, ${deals.length} deals, ${activeStores.length} stores, ${cleanAlwaysFreeGames.length} always-free games, ${itadSnapshot.deals?.length || 0} ITAD deals, and ${newsSnapshot.articles.length} news stories`
   )
 }
 
 const args = process.argv.slice(2)
 const newsOnly = args.includes('--news-only')
+const itadOnly = args.includes('--itad-only')
 const outIdx = args.indexOf('--out')
 const outArg = outIdx >= 0 ? args[outIdx + 1] : null
+const resolvedOutDir = outArg
+  ? pathToFileURL(outArg.endsWith('/') || outArg.endsWith('\\') ? outArg : `${outArg}/`)
+  : DATA_DIR
 
-if (newsOnly) {
-  const targetDir = outArg
-    ? pathToFileURL(outArg.endsWith('/') || outArg.endsWith('\\') ? outArg : `${outArg}/`)
-    : DATA_DIR
-  runNewsSnapshot({ outDir: targetDir })
+if (itadOnly) {
+  runItadSnapshot({ outDir: resolvedOutDir })
+    .then((snapshot) => {
+      if (snapshot.skipped || snapshot.failed) return
+      console.log(
+        `ITAD snapshot: ${snapshot.deals.length} deals, ${snapshot.free.length} free | Requests used: ${snapshot.stats?.requestsUsed ?? 0}`
+      )
+      if (snapshot.stats?.perShopCounts) {
+        console.log('Per-shop raw counts:', snapshot.stats.perShopCounts)
+      }
+      if (snapshot.stats?.emptyShops?.length) {
+        console.warn('Shops with no deals:', snapshot.stats.emptyShops.join(', '))
+      }
+      console.table(
+        snapshot.deals.slice(0, 15).map((d) => ({
+          title: d.title.slice(0, 42),
+          shop: d.shop?.name,
+          priceINR: d.price,
+          regular: d.regular,
+          cut: `-${d.cut}%`,
+          historyLow: d.historyLow,
+          expiry: d.expiry || '-',
+          type: d.type,
+        }))
+      )
+    })
+    .catch((error) => {
+      console.warn('ITAD-only snapshot warning:', error.message)
+    })
+} else if (newsOnly) {
+  runNewsSnapshot({ outDir: resolvedOutDir })
     .then((snapshot) => {
       console.log(
         `News-only snapshot: ${snapshot.articles.length} stories from ${snapshot.sources.length} sources (${snapshot.failedSources.length} failed)`

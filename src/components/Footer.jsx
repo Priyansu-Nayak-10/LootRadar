@@ -175,12 +175,12 @@ export default function Footer({ onNavigate, onNavigateFreeTab }) {
               </li>
               <li>
                 <a
-                  href="https://www.cheapshark.com"
+                  href="https://isthereanydeal.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer-link footer-link--ext"
                 >
-                  CheapShark
+                  Prices from IsThereAnyDeal
                 </a>
               </li>
               <li>
