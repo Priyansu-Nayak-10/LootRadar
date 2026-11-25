@@ -63,7 +63,8 @@ function formatRelativeTime(value) {
 
 function formatCountdown(endDate, now) {
   if (!endDate || endDate === 'N/A') return 'Limited Time'
-  const cleanDate = endDate.includes('T') ? endDate : endDate.replace(' ', 'T') + 'Z'
+  const str = String(endDate)
+  const cleanDate = str.includes('T') ? str : str.replace(' ', 'T') + 'Z'
   const end = new Date(cleanDate).getTime()
   if (Number.isNaN(end)) return 'Limited Time'
   const diff = end - (now || Date.now())
@@ -426,7 +427,6 @@ class HeroErrorBoundary extends Component {
 
 export function HomeRedesign({
   deals,
-  dealsStores,
   dealsLoading,
   dealsError,
   freeGames,
@@ -1120,9 +1120,8 @@ export default function Discover({
       epicItems: epicCurrentGames,
       gamerPowerItems: gamerPowerGames,
       itadFreeItems: itadFreeGames,
-      now,
     })
-  }, [epicCurrentGames, gamerPowerGames, itadFreeGames, now])
+  }, [epicCurrentGames, gamerPowerGames, itadFreeGames])
 
   async function loadNews() {
     setNewsLoading(true)
@@ -1296,7 +1295,6 @@ export default function Discover({
   return (
     <HomeRedesign
       deals={deals}
-      dealsStores={dealsStores}
       dealsLoading={dealsLoading}
       dealsError={dealsError}
       freeGames={freeGames}
