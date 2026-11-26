@@ -104,6 +104,8 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
   } = useDeals()
 
   const searchTimerRef = useRef(null)
+  useEffect(() => () => clearTimeout(searchTimerRef.current), [])
+
   function handleSearchChange(e) {
     const val = e.target.value
     setSearchQuery(val)
@@ -399,6 +401,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
             type="button"
             onClick={reload}
             className="deals-retry-btn"
+            aria-label="Retry loading deals"
           >
             Retry
           </button>
@@ -440,7 +443,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
             className="deals-load-more-btn"
             onClick={() => setVisibleCount((prev) => prev + 24)}
           >
-            Load more deals ({filteredDeals.length - visibleCount} remaining)
+            Load more deals ({Math.max(0, filteredDeals.length - visibleCount)} remaining)
           </button>
         </div>
       )}

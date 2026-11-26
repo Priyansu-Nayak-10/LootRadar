@@ -1,4 +1,4 @@
-import { Component, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Component, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { fetchRawgGames, searchGamesMulti, hasRawgKey } from '../lib/discoverApi'
 import { cleanNewsText, fetchNewsSnapshot, formatNewsRelativeTime } from '../lib/newsHelpers'
 import GameActions from '../components/GameActions'
@@ -17,17 +17,10 @@ import {
 import { cleanTitle, isMobile, mergeFreeSources, normalizeStore } from '../lib/freeGames'
 import { wishRadarArt } from '../assets/art'
 
+const SKELETON_ITEMS = Array.from({ length: 12 }, (_, i) => i)
+
 function dateString(date) {
   return date.toISOString().slice(0, 10)
-}
-
-function getDateRange(daysBack, daysAhead) {
-  const today = new Date()
-  const start = new Date(today)
-  const end = new Date(today)
-  start.setDate(start.getDate() - daysBack)
-  end.setDate(end.getDate() + daysAhead)
-  return `${dateString(start)},${dateString(end)}`
 }
 
 function formatDate(value) {
@@ -125,7 +118,7 @@ function PlatformIcons({ platforms }) {
   return <>{icons.slice(0, 3)}</>
 }
 
-function GameTile({ game, badge, getGameActions }) {
+const GameTile = memo(function GameTile({ game, badge, getGameActions }) {
   const platformNames = (game.platforms || [])
     .map((item) => item.platform?.name)
     .filter(Boolean)
@@ -148,13 +141,13 @@ function GameTile({ game, badge, getGameActions }) {
         className="search-tile__main-link"
         href={`https://rawg.io/games/${game.slug}`}
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
         aria-label={`View ${game.name} on RAWG`}
       >
         <div className="search-tile__media">
           <SafeImage
             src={game.background_image}
-            alt=""
+            alt={game.name}
             loading="lazy"
             className="search-tile__image"
           />
@@ -219,7 +212,7 @@ function GameTile({ game, badge, getGameActions }) {
       </div>
     </article>
   )
-}
+})
 
 const SUGGESTED_SEARCHES = ['Spider-Man', 'Grand Theft Auto V', 'Elden Ring']
 const SEARCH_PLATFORMS = ['All', 'PC', 'PlayStation', 'Xbox']
@@ -282,7 +275,7 @@ function SearchResultsView({
 
       {searchLoading && (
         <div className="search-grid-loading" aria-label="Loading search results">
-          {Array.from({ length: 12 }).map((_, i) => (
+          {SKELETON_ITEMS.map((i) => (
             <div key={i} className="search-tile-skeleton lr-skeleton" />
           ))}
         </div>
@@ -333,7 +326,7 @@ function SearchResultsView({
   )
 }
 
-function NewsTile({ article }) {
+const NewsTile = memo(function NewsTile({ article }) {
   const [imageFailed, setImageFailed] = useState(false)
 
   return (
@@ -341,13 +334,13 @@ function NewsTile({ article }) {
       {article.image && !imageFailed ? (
         <img
           src={article.image}
-          alt=""
+          alt={article.title}
           loading="lazy"
           className="news-image"
           onError={() => setImageFailed(true)}
         />
       ) : (
-        <div className="news-image-fallback" aria-hidden="true">RADAR</div>
+        <div className="news-image-fallback" role="img" aria-label="No image available">RADAR</div>
       )}
       <div className="news-copy">
         <div className="news-meta">
@@ -356,13 +349,13 @@ function NewsTile({ article }) {
         </div>
         <h3>{article.title}</h3>
         {article.summary && <p>{article.summary}</p>}
-        <a href={article.link} target="_blank" rel="noreferrer" className="news-link">
+        <a href={article.link} target="_blank" rel="noopener noreferrer" className="news-link">
           Read story <span aria-hidden="true">-&gt;</span>
         </a>
       </div>
     </article>
   )
-}
+})
 
 function SetupHint() {
   return (
@@ -374,7 +367,7 @@ function SetupHint() {
       </p>
       <ol>
         <li>
-          Get a key at <a href="https://rawg.io/apidocs" target="_blank" rel="noreferrer">rawg.io/apidocs</a>.
+          Get a key at <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a>.
         </li>
         <li>Create <code>.env.local</code> in the project folder.</li>
         <li>Add <code>VITE_RAWG_API_KEY=your_key_here</code> and restart <code>npm run dev</code>.</li>

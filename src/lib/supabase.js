@@ -8,3 +8,8 @@ export const hasSupabaseConfig = Boolean(supabaseUrl && supabaseAnonKey)
 export const supabase = hasSupabaseConfig
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null
+
+export function getAuthRedirectUrl() {
+  if (typeof window === 'undefined') return '/account'
+  return `${window.location.origin}/account`
+}

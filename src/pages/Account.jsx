@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { hasSupabaseConfig, supabase } from '../lib/supabase'
+import { hasSupabaseConfig, supabase, getAuthRedirectUrl } from '../lib/supabase'
 
 export default function Account({ session, onSignOut }) {
   const [mode, setMode] = useState('signin')
@@ -16,6 +16,15 @@ export default function Account({ session, onSignOut }) {
   const [alertPlatforms, setAlertPlatforms] = useState([])
   const [endingHours, setEndingHours] = useState(6)
   const [preferencesLoading, setPreferencesLoading] = useState(false)
+  const [loadError, setLoadError] = useState('')
+  const [telegramError, setTelegramError] = useState(false)
+  const [reloadTrigger, setReloadTrigger] = useState(0)
+
+  const retryLoadData = () => {
+    setLoadError('')
+    setTelegramError(false)
+    setReloadTrigger((prev) => prev + 1)
+  }
 
   useEffect(() => {
     if (!session || !supabase) return
@@ -26,18 +35,24 @@ export default function Account({ session, onSignOut }) {
       .select('enabled, mode, platforms, ending_hours')
       .eq('user_id', session.user.id)
       .maybeSingle()
-      .then(({ data }) => {
-        if (cancelled || !data) return
-        setAlertEnabled(data.enabled)
-        setAlertMode(data.mode)
-        setAlertPlatforms(Array.isArray(data.platforms) ? data.platforms : [])
-        setEndingHours(data.ending_hours || 6)
+      .then(({ data, error }) => {
+        if (cancelled) return
+        if (error) {
+          setLoadError("Couldn't load your Telegram/alert settings.")
+          return
+        }
+        if (data) {
+          setAlertEnabled(data.enabled)
+          setAlertMode(data.mode)
+          setAlertPlatforms(Array.isArray(data.platforms) ? data.platforms : [])
+          setEndingHours(data.ending_hours || 6)
+        }
       })
 
     return () => {
       cancelled = true
     }
-  }, [session])
+  }, [session, reloadTrigger])
 
   useEffect(() => {
     if (!session || !supabase) return
@@ -48,14 +63,21 @@ export default function Account({ session, onSignOut }) {
       .select('chat_id, username, connected_at')
       .eq('user_id', session.user.id)
       .maybeSingle()
-      .then(({ data }) => {
-        if (!cancelled) setTelegramConnection(data)
+      .then(({ data, error }) => {
+        if (cancelled) return
+        if (error) {
+          setTelegramError(true)
+          setLoadError("Couldn't load your Telegram/alert settings.")
+          return
+        }
+        setTelegramError(false)
+        setTelegramConnection(data)
       })
 
     return () => {
       cancelled = true
     }
-  }, [session])
+  }, [session, reloadTrigger])
 
   function createCode() {
     const bytes = new Uint8Array(6)
@@ -81,7 +103,8 @@ export default function Account({ session, onSignOut }) {
         }, { onConflict: 'user_id' })
       if (error) throw error
 
-      setTelegramLink(`https://t.me/GameRadar7_bot?start=${encodeURIComponent(code)}`)
+      const botUsername = import.meta.env.VITE_TELEGRAM_BOT_USERNAME?.trim() || 'GameRadar7_bot'
+      setTelegramLink(`https://t.me/${botUsername}?start=${encodeURIComponent(code)}`)
       setMessage('One-time Telegram link created. It expires in 15 minutes.')
     } catch (error) {
       setMessage(error.message || 'Could not create a Telegram link.')
@@ -110,6 +133,10 @@ export default function Account({ session, onSignOut }) {
 
   async function saveAlertPreferences() {
     if (!session || !supabase) return
+    if (alertMode === 'platform' && alertPlatforms.length === 0) {
+      setMessage('Pick at least one platform.')
+      return
+    }
     setPreferencesLoading(true)
     setMessage('')
 
@@ -161,7 +188,7 @@ export default function Account({ session, onSignOut }) {
           email: email.trim(),
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/#/account`,
+            emailRedirectTo: getAuthRedirectUrl(),
           },
         })
         if (error) throw error
@@ -213,7 +240,7 @@ export default function Account({ session, onSignOut }) {
     setLoading(true)
     setMessage('')
     const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
-      redirectTo: `${window.location.origin}/#/account`,
+      redirectTo: getAuthRedirectUrl(),
     })
     setLoading(false)
     setMessage(
@@ -230,7 +257,7 @@ export default function Account({ session, onSignOut }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/#/account`,
+        redirectTo: getAuthRedirectUrl(),
       },
     })
     if (error) {
@@ -249,11 +276,35 @@ export default function Account({ session, onSignOut }) {
           </div>
           <span className="lr-badge">{session.user.email}</span>
         </header>
-        <p className="account-email">{session.user.email}</p>
+        {loadError && (
+          <div className="form-message" role="alert" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', color: '#ff6b6b' }}>
+            <span>{loadError}</span>
+            <button
+              type="button"
+              className="lr-button lr-button--ghost"
+              style={{ minHeight: '28px', padding: '0 10px', fontSize: '12px' }}
+              onClick={retryLoadData}
+            >
+              Retry
+            </button>
+          </div>
+        )}
         {message && <p className="form-message" role="status">{message}</p>}
         <div className="telegram-account-card" id="telegram-settings">
           <h3>Telegram alerts</h3>
-          {telegramConnection ? (
+          {telegramError ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+              <p style={{ margin: 0 }}>Couldn&apos;t load Telegram status.</p>
+              <button
+                type="button"
+                className="lr-button lr-button--ghost"
+                style={{ minHeight: '28px', padding: '0 10px', fontSize: '12px' }}
+                onClick={retryLoadData}
+              >
+                Retry
+              </button>
+            </div>
+          ) : telegramConnection ? (
             <>
               <p>Connected{telegramConnection.username ? ` to @${telegramConnection.username}` : ''}.</p>
               <button type="button" className="form-submit" onClick={disconnectTelegram} disabled={telegramLoading}>
@@ -271,7 +322,7 @@ export default function Account({ session, onSignOut }) {
                   className="telegram-link"
                   href={telegramLink}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                 >
                   Open Telegram bot
                 </a>
@@ -315,6 +366,11 @@ export default function Account({ session, onSignOut }) {
               ))}
             </div>
           )}
+          {alertMode === 'platform' && alertPlatforms.length === 0 && (
+            <p className="form-message" style={{ color: '#ff6b6b', margin: '6px 0 0', fontSize: '13px' }}>
+              Pick at least one platform.
+            </p>
+          )}
           <label className="form-field">
             End reminder
             <select
@@ -330,7 +386,7 @@ export default function Account({ session, onSignOut }) {
             type="button"
             className="form-submit"
             onClick={saveAlertPreferences}
-            disabled={preferencesLoading}
+            disabled={preferencesLoading || (alertMode === 'platform' && alertPlatforms.length === 0)}
           >
             {preferencesLoading ? 'Saving...' : 'Save alert preferences'}
           </button>
@@ -421,20 +477,16 @@ export default function Account({ session, onSignOut }) {
         <button type="submit" className="form-submit" disabled={loading}>
           {loading ? 'Please wait...' : mode === 'signup' ? 'Create account' : 'Sign in'}
         </button>
-        {mode === 'signin' && (
-          <>
-            <div className="auth-divider"><span>or</span></div>
-            <button
-              type="button"
-              className="auth-google"
-              onClick={signInWithGoogle}
-              disabled={loading}
-            >
-              <span aria-hidden="true">G</span>
-              Continue with Google
-            </button>
-          </>
-        )}
+        <div className="auth-divider"><span>or</span></div>
+        <button
+          type="button"
+          className="auth-google"
+          onClick={signInWithGoogle}
+          disabled={loading}
+        >
+          <span aria-hidden="true">G</span>
+          Continue with Google
+        </button>
       </form>
       </div>
     </section>

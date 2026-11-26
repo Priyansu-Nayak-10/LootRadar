@@ -1,6 +1,7 @@
 import {
   shouldSendWishlistAlert,
   isConsoleGame,
+  isAlertDue,
 } from '../src/lib/wishlistAlerts.js'
 import {
   bestDeal,
@@ -144,12 +145,6 @@ async function telegramSend(chatId, text) {
     throw new Error(`Telegram send failed (${response.status}): ${detail}`)
   }
   return { status: 200 }
-}
-
-function dueAt(now, target, toleranceMs = 45 * 60 * 1000) {
-  if (!target) return false
-  const distance = now.getTime() - target.getTime()
-  return distance >= -10 * 60 * 1000 && distance <= toleranceMs
 }
 
 async function loadPriceIdCache() {
@@ -419,7 +414,13 @@ async function main() {
       }
 
       for (const candidate of candidateAlerts) {
-        if (!dueAt(now, candidate.target)) continue
+        if (!isAlertDue({
+          kind: candidate.kind,
+          target: candidate.target,
+          end,
+          candidates: candidateAlerts,
+          now,
+        })) continue
         const windowStart = start ? start.toISOString() : end ? end.toISOString() : null
         const sentKey = `${setting.user_id}|${window.game_key}|${windowStart}|${candidate.kind}`
         if (sentKeys.has(sentKey)) continue

@@ -208,3 +208,42 @@ export function shouldSendWishlistAlert(arg1, arg2, arg3, arg4, arg5) {
     currentWeekCount: currentWeekCount + 1,
   }
 }
+
+export function isAlertDue({ kind, target, end = null, candidates = [], now = new Date() }) {
+  if (!target) return false
+
+  const nowMs = now instanceof Date ? now.getTime() : new Date(now).getTime()
+  const targetMs = target instanceof Date ? target.getTime() : new Date(target).getTime()
+  if (Number.isNaN(nowMs) || Number.isNaN(targetMs)) return false
+
+  // 1. Due time must have passed
+  if (nowMs < targetMs) return false
+
+  // 2. Window has not ended
+  if (end) {
+    const endMs = end instanceof Date ? end.getTime() : new Date(end).getTime()
+    if (!Number.isNaN(endMs) && nowMs >= endMs) return false
+  }
+
+  // 3. For day_before and mid_window, skip if a later alert for the same game is already due
+  const isCandidateDue = (checkKind) => {
+    const c = candidates.find((item) => item.kind === checkKind)
+    if (!c?.target) return false
+    const t = c.target instanceof Date ? c.target.getTime() : new Date(c.target).getTime()
+    return !Number.isNaN(t) && nowMs >= t
+  }
+
+  if (kind === 'day_before') {
+    if (isCandidateDue('mid_window') || isCandidateDue('ending_soon')) {
+      return false
+    }
+  }
+
+  if (kind === 'mid_window') {
+    if (isCandidateDue('ending_soon')) {
+      return false
+    }
+  }
+
+  return true
+}

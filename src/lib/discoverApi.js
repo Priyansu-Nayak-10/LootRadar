@@ -1,7 +1,5 @@
 const RAWG_BASE = 'https://api.rawg.io/api/games'
-const NEWS_URL = 'https://proxy.cors.dev/https://gamebeeper.gg/feed.json'
 const RAWG_CACHE_MS = 12 * 60 * 60 * 1000
-const NEWS_CACHE_MS = 30 * 60 * 1000
 
 const rawgKey = import.meta.env.VITE_RAWG_API_KEY?.trim()
 
@@ -181,6 +179,6 @@ export async function fetchGamingNews() {
     }
     return data
   } catch {
-    return fetchCachedJson(NEWS_URL, 'wishradar_gaming_news', NEWS_CACHE_MS)
+    return { articles: [] }
   }
 }

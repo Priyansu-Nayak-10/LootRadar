@@ -127,7 +127,7 @@ function SetupHint() {
       </p>
       <ol>
         <li>
-          Get a key at <a href="https://rawg.io/apidocs" target="_blank" rel="noreferrer">rawg.io/apidocs</a>.
+          Get a key at <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer">rawg.io/apidocs</a>.
         </li>
         <li>Create <code>.env.local</code> in the project folder.</li>
         <li>Add <code>VITE_RAWG_API_KEY=your_key_here</code> and restart <code>npm run dev</code>.</li>

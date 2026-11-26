@@ -8,6 +8,7 @@ import {
   isShoppingArticle,
   clusterAndRankNews,
   collectNewsSnapshot,
+  parseGamebeeperJson,
 } from '../../../scripts/lib/news.mjs'
 
 const RSS_FIXTURE = `<?xml version="1.0" encoding="UTF-8"?>
@@ -216,4 +217,63 @@ test('collectNewsSnapshot returns empty articles when all feeds fail (never writ
   assert.equal(result.articles.length, 0)
   assert.equal(result.sources.length, 0)
   assert.equal(result.failedSources.length, 1)
+})
+
+test('parseGamebeeperJson normalizes gamebeeper feed items and tolerates missing fields', () => {
+  const jsonFixture = [
+    {
+      title: 'Hollow Knight: Silksong Update Shared by Team Cherry',
+      url: 'https://gamebeeper.gg/articles/silksong-update?utm_source=feed&fbclid=xyz',
+      publishedAt: '2026-11-25T14:00:00Z',
+      description: 'Team Cherry shares a new development update for Silksong on PC and Switch.',
+      thumbnail: 'https://gamebeeper.gg/images/silksong.jpg',
+      tags: ['PC', 'Switch'],
+      source: 'GameBeeper',
+    },
+    {
+      title: 'Sponsored Giveaway: Win a GPU',
+      link: 'https://gamebeeper.gg/sponsored-giveaway',
+      published: '2026-11-25T15:00:00Z',
+      sponsored: true,
+    },
+    {
+      title: 'Minimal Article With Missing Optional Fields',
+      link: 'https://gamebeeper.gg/minimal-article',
+      date: '2026-11-25T12:00:00Z',
+    },
+    {
+      title: 'Invalid Article Without Date or Link',
+      publishedAt: 'not-a-date',
+    },
+  ]
+
+  const articles = parseGamebeeperJson(jsonFixture, 'GameBeeper', 10)
+  assert.equal(articles.length, 2)
+
+  // Item 1: full details
+  assert.equal(articles[0].title, 'Hollow Knight: Silksong Update Shared by Team Cherry')
+  assert.equal(articles[0].link, 'https://gamebeeper.gg/articles/silksong-update')
+  assert.equal(articles[0].publishedAt, '2026-11-25T14:00:00.000Z')
+  assert.equal(articles[0].image, 'https://gamebeeper.gg/images/silksong.jpg')
+  assert.equal(articles[0].source, 'GameBeeper')
+  assert.deepEqual(articles[0].platforms, ['PC', 'Switch'])
+  assert.ok(articles[0].summary.includes('Team Cherry shares a new development update'))
+
+  // Item 2: sponsored was skipped, item 3 is minimal
+  assert.equal(articles[1].title, 'Minimal Article With Missing Optional Fields')
+  assert.equal(articles[1].link, 'https://gamebeeper.gg/minimal-article')
+  assert.equal(articles[1].image, null)
+  assert.equal(articles[1].summary, '')
+  assert.deepEqual(articles[1].platforms, [])
+
+  // Tolerates string JSON, object wrapper, null, or invalid JSON string
+  const fromString = parseGamebeeperJson(JSON.stringify(jsonFixture))
+  assert.equal(fromString.length, 2)
+
+  const fromObjectWrapper = parseGamebeeperJson({ articles: jsonFixture })
+  assert.equal(fromObjectWrapper.length, 2)
+
+  assert.deepEqual(parseGamebeeperJson(null), [])
+  assert.deepEqual(parseGamebeeperJson('invalid-json'), [])
+  assert.deepEqual(parseGamebeeperJson({}), [])
 })

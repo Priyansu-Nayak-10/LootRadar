@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import SafeImage from '../components/SafeImage.jsx'
 import { supabase } from '../lib/supabase.js'
 import {
@@ -418,7 +418,12 @@ function FreeCardSkeleton() {
 }
 
 // ─── Main Component ──────────────────────────────────────────────────────────
+function titleKey(title = '') {
+  return String(title).trim().toLocaleLowerCase()
+}
+
 export default function FreeNow({
+  library = [],
   getGameActions = () => ({ owned: false, wishlisted: false, onToggleOwned: () => {}, onToggleWishlist: () => {} }),
   onAvailabilityChange = () => {},
   activeTab = 'claim',
@@ -535,6 +540,8 @@ export default function FreeNow({
 
     let initialList = []
     let epicList = []
+    let epicUpcoming = []
+    let alwaysList = []
     let itadFreeList = []
     let snapshotTimestamp = null
 
@@ -556,7 +563,10 @@ export default function FreeNow({
       if (epicSnapshotRes.status === 'fulfilled' && epicSnapshotRes.value.ok) {
         const epicData = await epicSnapshotRes.value.json()
         if (Array.isArray(epicData.current)) epicList = epicData.current
-        if (Array.isArray(epicData.upcoming)) setComingGames(epicData.upcoming)
+        if (Array.isArray(epicData.upcoming)) {
+          epicUpcoming = epicData.upcoming
+          setComingGames(epicUpcoming)
+        }
       }
 
       if (itadSnapshotRes.status === 'fulfilled' && itadSnapshotRes.value.ok) {
@@ -566,7 +576,10 @@ export default function FreeNow({
 
       if (alwaysRes.status === 'fulfilled' && alwaysRes.value.ok) {
         const alwaysData = await alwaysRes.value.json()
-        if (Array.isArray(alwaysData.games)) setAlwaysGames(alwaysData.games)
+        if (Array.isArray(alwaysData.games)) {
+          alwaysList = alwaysData.games
+          setAlwaysGames(alwaysList)
+        }
       }
 
       // Merge & clean instant snapshot
@@ -589,16 +602,21 @@ export default function FreeNow({
     try {
       const cached = sessionStorage.getItem(CACHE_KEY)
       if (cached) {
-        const { time, data, epicUpcoming, alwaysList } = JSON.parse(cached)
-        if (Date.now() - time < CACHE_MS) {
-          if (Array.isArray(data) && data.length > 0) {
-            setGames(data)
-            onAvailabilityChange(data)
-            setLastUpdated(time)
-            setLoading(false)
-          }
-          if (Array.isArray(epicUpcoming)) setComingGames(epicUpcoming)
-          if (Array.isArray(alwaysList)) setAlwaysGames(alwaysList)
+        const { time, data, epicUpcoming: cachedUpcoming, alwaysList: cachedAlways } = JSON.parse(cached)
+        if (
+          time &&
+          Date.now() - time < CACHE_MS &&
+          Array.isArray(data) &&
+          data.length > 0 &&
+          Array.isArray(cachedUpcoming) &&
+          Array.isArray(cachedAlways)
+        ) {
+          setGames(data)
+          onAvailabilityChange(data)
+          setLastUpdated(time)
+          setComingGames(cachedUpcoming)
+          setAlwaysGames(cachedAlways)
+          setLoading(false)
           return
         }
       }
@@ -630,6 +648,8 @@ export default function FreeNow({
             JSON.stringify({
               time: nowMs,
               data: combined,
+              epicUpcoming,
+              alwaysList,
             })
           )
         } catch {
@@ -651,6 +671,14 @@ export default function FreeNow({
   }, [])
 
   // ─── Filter & Sort Claim Games ──────────────────────────────────────────────
+  const ownedTitles = useMemo(() => {
+    const set = new Set()
+    for (const game of library) {
+      if (game?.title) set.add(titleKey(game.title))
+    }
+    return set
+  }, [library])
+
   const activeClaimGames = useMemo(() => {
     return games.filter((game) => isActive(game, now) && !isMobile(game))
   }, [games, now])
@@ -666,8 +694,12 @@ export default function FreeNow({
     // Hide owned unless showOwned is toggled
     if (!showOwned) {
       result = result.filter((g) => {
+        const title = cleanTitle(g.title)
+        if (library.length > 0) {
+          return !ownedTitles.has(titleKey(title))
+        }
         const act = getGameActions({
-          title: cleanTitle(g.title),
+          title,
           platform: g.platforms || 'PC',
           image: g.thumbnail || g.image,
           source: 'free',
@@ -679,13 +711,17 @@ export default function FreeNow({
 
     // Sort
     return sortFreeGames(result, sort, now)
-  }, [activeClaimGames, store, showOwned, sort, now, getGameActions])
+  }, [activeClaimGames, store, showOwned, sort, now, library.length, ownedTitles, getGameActions])
 
   // Count owned games that are hidden
   const hiddenOwnedCount = useMemo(() => {
     return activeClaimGames.filter((g) => {
+      const title = cleanTitle(g.title)
+      if (library.length > 0) {
+        return ownedTitles.has(titleKey(title))
+      }
       const act = getGameActions({
-        title: cleanTitle(g.title),
+        title,
         platform: g.platforms || 'PC',
         image: g.thumbnail || g.image,
         source: 'free',
@@ -693,7 +729,7 @@ export default function FreeNow({
       })
       return act.owned
     }).length
-  }, [activeClaimGames, getGameActions])
+  }, [activeClaimGames, library.length, ownedTitles, getGameActions])
 
   // ─── Always Free Filter & Pagination ────────────────────────────────────────
   const alwaysGenresList = useMemo(() => {
@@ -870,6 +906,7 @@ export default function FreeNow({
                     type="button"
                     className="free-owned-toggle-btn"
                     onClick={() => setShowOwned(!showOwned)}
+                    aria-pressed={showOwned}
                   >
                     {showOwned ? 'Hide' : 'Show'}
                   </button>
@@ -1008,6 +1045,7 @@ export default function FreeNow({
                   type="button"
                   className="free-search-clear"
                   onClick={() => setAlwaysSearch('')}
+                  aria-label="Clear search"
                 >
                   ✕
                 </button>

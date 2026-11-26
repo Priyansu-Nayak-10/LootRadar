@@ -60,7 +60,18 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
     }
 
     // 3. Sorting
-    if (sortBy === 'az') {
+    if (sortBy === 'recent') {
+      list.sort((a, b) => {
+        const aTime = a?.addedAt ? (typeof a.addedAt === 'number' ? a.addedAt : new Date(a.addedAt).getTime()) : -1
+        const bTime = b?.addedAt ? (typeof b.addedAt === 'number' ? b.addedAt : new Date(b.addedAt).getTime()) : -1
+        const validA = Number.isFinite(aTime) ? aTime : -1
+        const validB = Number.isFinite(bTime) ? bTime : -1
+        if (validA === -1 && validB === -1) return 0
+        if (validA === -1) return 1
+        if (validB === -1) return -1
+        return validB - validA
+      })
+    } else if (sortBy === 'az') {
       list.sort((a, b) => (a.title || '').localeCompare(b.title || ''))
     } else if (sortBy === 'za') {
       list.sort((a, b) => (b.title || '').localeCompare(a.title || ''))
@@ -111,15 +122,14 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
             />
           </div>
 
-          <div className="library-filters" role="tablist" aria-label="Filter by platform">
+          <div className="library-filters" aria-label="Filter by platform">
             {PLATFORMS.map((platform) => (
               <button
                 key={platform}
                 type="button"
                 className={`library-filter-chip ${activePlatform === platform ? 'is-active' : ''}`}
                 onClick={() => setActivePlatform(platform)}
-                role="tab"
-                aria-selected={activePlatform === platform}
+                aria-pressed={activePlatform === platform}
               >
                 {platform}
               </button>
@@ -205,6 +215,7 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
                         className={`empty-suggestion-card__btn ${isOwned ? 'is-added' : ''}`}
                         onClick={() => !isOwned && onAdd?.(item)}
                         disabled={isOwned}
+                        aria-label={`Add ${item.title} to library`}
                       >
                         {isOwned ? '✓ In Library' : '+ Add to Library'}
                       </button>

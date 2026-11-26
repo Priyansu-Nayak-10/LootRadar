@@ -5,6 +5,7 @@ import { hasSupabaseConfig, supabase } from './lib/supabase'
 import { searchGamesMulti } from './lib/discoverApi'
 import { normalizeQuery } from './lib/searchRank'
 import SafeImage from './components/SafeImage'
+import ErrorBoundary from './components/ErrorBoundary'
 import './App.css'
 
 // Route-level code-splitting: lazy load pages to minimize initial bundle size
@@ -46,15 +47,20 @@ function titleKey(title) {
   return title.trim().toLocaleLowerCase()
 }
 
-function mergeSavedGames(localGames, databaseRows, listType) {
-  const merged = new Map()
+function mergeSavedGames(localGames, databaseRows, listType, keepLocalOnly = true) {
+  const localMap = new Map()
 
   for (const game of localGames) {
-    merged.set(titleKey(game.title), { ...game, notify: game.notify !== false })
+    localMap.set(titleKey(game.title), { ...game, notify: game.notify !== false })
   }
+
+  const merged = keepLocalOnly ? new Map(localMap) : new Map()
+
   for (const row of databaseRows) {
     if (row.list_type !== listType) continue
-    merged.set(titleKey(row.title), {
+    const key = titleKey(row.title)
+    const existing = localMap.get(key)
+    merged.set(key, {
       title: row.title,
       platform: row.platform || '',
       image: row.image || '',
@@ -65,6 +71,7 @@ function mergeSavedGames(localGames, databaseRows, listType) {
       lastAlertedAt: row.last_alerted_at || null,
       lastAlertedDiscount: row.last_alerted_discount ?? null,
       lastAlertedPrice: row.last_alerted_price ?? null,
+      addedAt: existing?.addedAt || (row.created_at ? new Date(row.created_at).getTime() : undefined),
     })
   }
 
@@ -94,6 +101,7 @@ export default function App() {
   const [shellSearch, setShellSearch] = useState('')
   const [shellCategory, setShellCategory] = useState('All')
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+  const [syncError, setSyncError] = useState(false)
 
   // Typeahead state
   const [typeaheadResults, setTypeaheadResults] = useState([])
@@ -140,23 +148,45 @@ export default function App() {
         }
 
         const databaseRows = Array.isArray(rows) ? rows : []
-        const mergedLibrary = mergeSavedGames(localLibrary, databaseRows, 'library')
-        const mergedWishlist = mergeSavedGames(localWishlist, databaseRows, 'wishlist')
-
-        if (!cancelled) {
-          setOwnedGames(mergedLibrary)
-          setWishlist(mergedWishlist)
+        const syncMarkerKey = `wishradar_synced_${session.user.id}`
+        let isFirstSync = false
+        try {
+          isFirstSync = window.localStorage.getItem(syncMarkerKey) !== 'true'
+        } catch {
+          // If storage is blocked, default to false (treat Supabase as source of truth)
         }
 
-        const migrationRows = [
-          ...mergedLibrary.map((game) => toDatabaseRow(game, 'library', session.user.id)),
-          ...mergedWishlist.map((game) => toDatabaseRow(game, 'wishlist', session.user.id)),
-        ]
-        if (migrationRows.length > 0) {
-          const { error: upsertError } = await supabase
-            .from('saved_games')
-            .upsert(migrationRows, { onConflict: 'user_id,list_type,title_key' })
-          if (upsertError) throw upsertError
+        if (isFirstSync) {
+          const mergedLibrary = mergeSavedGames(localLibrary, databaseRows, 'library', true)
+          const mergedWishlist = mergeSavedGames(localWishlist, databaseRows, 'wishlist', true)
+
+          if (!cancelled) {
+            setOwnedGames(mergedLibrary)
+            setWishlist(mergedWishlist)
+          }
+
+          const migrationRows = [
+            ...mergedLibrary.map((game) => toDatabaseRow(game, 'library', session.user.id)),
+            ...mergedWishlist.map((game) => toDatabaseRow(game, 'wishlist', session.user.id)),
+          ]
+          if (migrationRows.length > 0) {
+            const { error: upsertError } = await supabase
+              .from('saved_games')
+              .upsert(migrationRows, { onConflict: 'user_id,list_type,title_key' })
+            if (upsertError) throw upsertError
+          }
+
+          try {
+            window.localStorage.setItem(syncMarkerKey, 'true')
+          } catch {}
+        } else {
+          const cloudLibrary = mergeSavedGames(localLibrary, databaseRows, 'library', false)
+          const cloudWishlist = mergeSavedGames(localWishlist, databaseRows, 'wishlist', false)
+
+          if (!cancelled) {
+            setOwnedGames(cloudLibrary)
+            setWishlist(cloudWishlist)
+          }
         }
       } catch (error) {
         console.error('Could not sync saved games:', error.message)
@@ -340,7 +370,7 @@ export default function App() {
       event.preventDefault()
       if (selectedTypeaheadIdx < typeaheadResults.length) {
         const game = typeaheadResults[selectedTypeaheadIdx]
-        window.open(`https://rawg.io/games/${game.slug}`, '_blank', 'noreferrer')
+        window.open(`https://rawg.io/games/${game.slug}`, '_blank', 'noopener,noreferrer')
       } else {
         // "See all results" row
         submitShellSearch(event)
@@ -381,14 +411,14 @@ export default function App() {
     return games.some((game) => titleKey(game.title) === titleKey(title))
   }
 
-  function saveActions(game) {
+  const saveActions = useCallback((game) => {
     return {
       owned: gameIsSaved(ownedGames, game.title),
       wishlisted: gameIsSaved(wishlist, game.title),
       onToggleOwned: () => toggleSavedGame('library', ownedGames, setOwnedGames, game),
       onToggleWishlist: () => toggleSavedGame('wishlist', wishlist, setWishlist, game),
     }
-  }
+  }, [ownedGames, wishlist, session])
 
   function syncedSetter(listType, setLocalGames) {
     return (updater) => {
@@ -428,6 +458,7 @@ export default function App() {
               }
             } catch (error) {
               console.error('Could not sync saved games:', error.message)
+              setSyncError(true)
             }
           })
         }
@@ -443,7 +474,7 @@ export default function App() {
     )
     const nextGames = alreadySaved
       ? currentGames.filter((saved) => titleKey(saved.title) !== titleKey(game.title))
-      : [...currentGames, game]
+      : [...currentGames, { ...game, addedAt: game.addedAt || Date.now() }]
 
     setGames(nextGames)
 
@@ -468,6 +499,7 @@ export default function App() {
       }
     } catch (error) {
       console.error('Could not update saved game:', error.message)
+      setSyncError(true)
     }
   }
 
@@ -550,7 +582,7 @@ export default function App() {
                           className={`shell-typeahead-item ${selectedTypeaheadIdx === idx ? 'is-active' : ''}`}
                           href={`https://rawg.io/games/${game.slug}`}
                           target="_blank"
-                          rel="noreferrer"
+                          rel="noopener noreferrer"
                           onClick={() => closeTypeahead()}
                           onMouseEnter={() => setSelectedTypeaheadIdx(idx)}
                         >
@@ -641,75 +673,111 @@ export default function App() {
         </div>
       </header>
 
+      {syncError && (
+        <div
+          className="sync-error-banner"
+          role="status"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            padding: '10px 18px',
+            background: 'var(--lr-panel, #10161b)',
+            borderBottom: '1px solid var(--lr-line-strong, rgba(196, 255, 77, 0.28))',
+            color: 'var(--lr-text, #eff8f1)',
+            fontSize: '13px',
+            width: '100%',
+            maxWidth: '1200px',
+            margin: '0 auto',
+            boxSizing: 'border-box',
+          }}
+        >
+          <span>Couldn&apos;t sync to your account. Your changes are saved on this device.</span>
+          <button
+            type="button"
+            className="lr-button lr-button--ghost"
+            style={{ minHeight: '26px', padding: '0 10px', fontSize: '11px' }}
+            onClick={() => setSyncError(false)}
+            aria-label="Dismiss sync warning"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       <main className="main-content">
-        <Suspense fallback={<RouteFallback />}>
-          {tab === 'free' && (
-            <FreeNow
-              getGameActions={saveActions}
-              onAvailabilityChange={setAvailableFreeGames}
-              activeTab={freeTab}
-              onTabChange={navigateFreeTab}
-              onGameOpen={() => {}}
-              session={session}
-              onNavigate={navigateTab}
-            />
-          )}
-          {(tab === 'discover' || tab === 'search') && (
-            <Discover
-              library={ownedGames}
-              wishlist={wishlist}
-              session={session}
-              getGameActions={saveActions}
-              onNavigate={navigateTab}
-              isSearchPage={tab === 'search'}
-              searchQuery={shellSearch}
-              searchCategory={shellCategory}
-              onSearchChange={(q, cat) => {
-                setShellSearch(q)
-                if (cat) setShellCategory(cat)
-              }}
-            />
-          )}
-          {tab === 'deals' && (
-            <Deals getGameActions={saveActions} />
-          )}
-          {tab === 'library' && (
-            <Library
-              games={ownedGames}
-              onAdd={(game) => toggleSavedGame('library', ownedGames, setOwnedGames, game)}
-              onRemove={(title) => toggleSavedGame('library', ownedGames, setOwnedGames, { title })}
-              onNavigate={navigateTab}
-            />
-          )}
-          {tab === 'wishlist' && (
-            <Wishlist
-              games={wishlist}
-              setGames={syncedSetter('wishlist', setWishlist)}
-              ownedGames={ownedGames}
-              freeGames={availableFreeGames}
-              session={session}
-              onNavigate={navigateTab}
-            />
-          )}
-          {tab === 'news' && <News />}
-          {tab === 'account' && (
-            <Account
-              session={session}
-              onSignOut={signOut}
-            />
-          )}
-          {tab === 'not-found' && (
-            <section className="not-found-redesign" role="alert">
-              <div className="lr-art-fallback" aria-hidden="true">404</div>
-              <span className="lr-section-heading__kicker">RADAR LOST THE SIGNAL</span>
-              <h1>Page <strong>Not Found</strong></h1>
-              <p>That WishRadar page does not exist or the link may be outdated.</p>
-              <button type="button" className="lr-button" onClick={() => navigateTab('discover')}>
-                Back to Home
-              </button>
-            </section>
-          )}
-        </Suspense>
+        <ErrorBoundary key={tab}>
+          <Suspense fallback={<RouteFallback />}>
+            {tab === 'free' && (
+              <FreeNow
+                library={ownedGames}
+                getGameActions={saveActions}
+                onAvailabilityChange={setAvailableFreeGames}
+                activeTab={freeTab}
+                onTabChange={navigateFreeTab}
+                onGameOpen={() => {}}
+                session={session}
+                onNavigate={navigateTab}
+              />
+            )}
+            {(tab === 'discover' || tab === 'search') && (
+              <Discover
+                library={ownedGames}
+                wishlist={wishlist}
+                session={session}
+                getGameActions={saveActions}
+                onNavigate={navigateTab}
+                isSearchPage={tab === 'search'}
+                searchQuery={shellSearch}
+                searchCategory={shellCategory}
+                onSearchChange={(q, cat) => {
+                  setShellSearch(q)
+                  if (cat) setShellCategory(cat)
+                }}
+              />
+            )}
+            {tab === 'deals' && (
+              <Deals getGameActions={saveActions} />
+            )}
+            {tab === 'library' && (
+              <Library
+                games={ownedGames}
+                onAdd={(game) => toggleSavedGame('library', ownedGames, setOwnedGames, game)}
+                onRemove={(title) => toggleSavedGame('library', ownedGames, setOwnedGames, { title })}
+                onNavigate={navigateTab}
+              />
+            )}
+            {tab === 'wishlist' && (
+              <Wishlist
+                games={wishlist}
+                setGames={syncedSetter('wishlist', setWishlist)}
+                ownedGames={ownedGames}
+                freeGames={availableFreeGames}
+                session={session}
+                onNavigate={navigateTab}
+              />
+            )}
+            {tab === 'news' && <News />}
+            {tab === 'account' && (
+              <Account
+                session={session}
+                onSignOut={signOut}
+              />
+            )}
+            {tab === 'not-found' && (
+              <section className="not-found-redesign" role="alert">
+                <div className="lr-art-fallback" aria-hidden="true">404</div>
+                <span className="lr-section-heading__kicker">RADAR LOST THE SIGNAL</span>
+                <h1>Page <strong>Not Found</strong></h1>
+                <p>That WishRadar page does not exist or the link may be outdated.</p>
+                <button type="button" className="lr-button" onClick={() => navigateTab('discover')}>
+                  Back to Home
+                </button>
+              </section>
+            )}
+          </Suspense>
+        </ErrorBoundary>
       </main>
 
       <Footer onNavigate={navigateTab} onNavigateFreeTab={navigateFreeTab} />

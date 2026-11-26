@@ -694,7 +694,18 @@ export default function Wishlist({
 
   const sortedGames = useMemo(() => {
     const list = [...games]
-    if (sortBy === 'recent') return list.reverse()
+    if (sortBy === 'recent') {
+      return list.sort((a, b) => {
+        const aTime = a?.addedAt ? (typeof a.addedAt === 'number' ? a.addedAt : new Date(a.addedAt).getTime()) : -1
+        const bTime = b?.addedAt ? (typeof b.addedAt === 'number' ? b.addedAt : new Date(b.addedAt).getTime()) : -1
+        const validA = Number.isFinite(aTime) ? aTime : -1
+        const validB = Number.isFinite(bTime) ? bTime : -1
+        if (validA === -1 && validB === -1) return 0
+        if (validA === -1) return 1
+        if (validB === -1) return -1
+        return validB - validA
+      })
+    }
     if (sortBy === 'alpha') return list.sort((a, b) => a.title.localeCompare(b.title))
 
     return list.sort((a, b) => {
@@ -720,7 +731,7 @@ export default function Wishlist({
     setGames((current) => {
       const list = Array.isArray(current) ? current : []
       if (list.some((g) => titleKey(g.title) === key)) return list
-      return [...list, { ...gameToAdd, notify: true }]
+      return [...list, { ...gameToAdd, notify: true, addedAt: gameToAdd.addedAt || Date.now() }]
     })
   }
 
@@ -746,16 +757,20 @@ export default function Wishlist({
           <div className="wishlist-tabs" role="tablist" aria-label="Collections tabs">
             <button
               type="button"
+              id="wishlist-tab"
               role="tab"
               aria-selected="true"
+              aria-controls="wishlist-tabpanel"
               className="wishlist-tab is-active"
             >
               Wishlist <span className="wishlist-tab__count">{games.length}</span>
             </button>
             <button
               type="button"
+              id="library-tab"
               role="tab"
               aria-selected="false"
+              aria-controls="wishlist-tabpanel"
               className="wishlist-tab"
               onClick={() => onNavigate('library')}
             >
@@ -807,7 +822,7 @@ export default function Wishlist({
             )}
           </p>
         </div>
-        <div className="wishlist-banner__telegram">
+        <div className="wishlist-banner__telegram" aria-live="polite">
           {telegramConnected ? (
             <span className="wishlist-telegram-badge">
               <CheckCircleIcon /> Telegram connected
@@ -824,79 +839,82 @@ export default function Wishlist({
         </div>
       </section>
 
-      {games.length === 0 ? (
-        <div className="wishlist-empty-redesign">
-          <div className="lr-art-fallback" aria-hidden="true">★</div>
-          <h2>Your Wishlist is waiting for its next great game.</h2>
-          <p>Track price drops, giveaways, and sale alerts across your favorite titles.</p>
-          <div className="wishlist-empty-actions">
-            <button type="button" className="lr-button" onClick={() => onNavigate('deals')}>
-              Browse Deals
-            </button>
-            <button
-              type="button"
-              className="lr-button lr-button--ghost"
-              onClick={() => onNavigate('free')}
-            >
-              See Free Now
-            </button>
-          </div>
+      <div id="wishlist-tabpanel" role="tabpanel" aria-labelledby="wishlist-tab">
+        {games.length === 0 ? (
+          <div className="wishlist-empty-redesign">
+            <div className="lr-art-fallback" aria-hidden="true">★</div>
+            <h2>Your Wishlist is waiting for its next great game.</h2>
+            <p>Track price drops, giveaways, and sale alerts across your favorite titles.</p>
+            <div className="wishlist-empty-actions">
+              <button type="button" className="lr-button" onClick={() => onNavigate('deals')}>
+                Browse Deals
+              </button>
+              <button
+                type="button"
+                className="lr-button lr-button--ghost"
+                onClick={() => onNavigate('free')}
+              >
+                See Free Now
+              </button>
+            </div>
 
-          <div className="empty-suggestions-shelf">
-            <div className="empty-suggestions-header">
-              <span className="empty-suggestions-kicker">QUICK START</span>
-              <h3 className="empty-suggestions-title">Trending Games to Track</h3>
-            </div>
-            <div className="empty-suggestions-grid">
-              {POPULAR_STARTER_GAMES.map((item) => {
-                const isSaved = games.some((g) => titleKey(g.title) === titleKey(item.title))
-                return (
-                  <article key={item.title} className="empty-suggestion-card">
-                    <div className="empty-suggestion-card__media">
-                      <SafeImage src={item.image} alt={item.title} fallbackText={item.title} />
-                    </div>
-                    <div className="empty-suggestion-card__body">
-                      <h4 className="empty-suggestion-card__title" title={item.title}>
-                        {item.title}
-                      </h4>
-                      <span className="empty-suggestion-card__meta">{item.genre}</span>
-                      <button
-                        type="button"
-                        className={`empty-suggestion-card__btn ${isSaved ? 'is-added' : ''}`}
-                        onClick={() => !isSaved && addGame(item)}
-                        disabled={isSaved}
-                      >
-                        {isSaved ? '✓ Added' : '+ Add to Wishlist'}
-                      </button>
-                    </div>
-                  </article>
-                )
-              })}
+            <div className="empty-suggestions-shelf">
+              <div className="empty-suggestions-header">
+                <span className="empty-suggestions-kicker">QUICK START</span>
+                <h3 className="empty-suggestions-title">Trending Games to Track</h3>
+              </div>
+              <div className="empty-suggestions-grid">
+                {POPULAR_STARTER_GAMES.map((item) => {
+                  const isSaved = games.some((g) => titleKey(g.title) === titleKey(item.title))
+                  return (
+                    <article key={item.title} className="empty-suggestion-card">
+                      <div className="empty-suggestion-card__media">
+                        <SafeImage src={item.image} alt={item.title} fallbackText={item.title} />
+                      </div>
+                      <div className="empty-suggestion-card__body">
+                        <h4 className="empty-suggestion-card__title" title={item.title}>
+                          {item.title}
+                        </h4>
+                        <span className="empty-suggestion-card__meta">{item.genre}</span>
+                        <button
+                          type="button"
+                          className={`empty-suggestion-card__btn ${isSaved ? 'is-added' : ''}`}
+                          onClick={() => !isSaved && addGame(item)}
+                          disabled={isSaved}
+                          aria-label={`Add ${item.title} to wishlist`}
+                        >
+                          {isSaved ? '✓ Added' : '+ Add to Wishlist'}
+                        </button>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="wishlist-grid-redesign">
-          {sortedGames.map((game, index) => {
-            const key = titleKey(game.title)
-            const deal = getDealForGame(game)
-            const freeGame = findFreeGame(game.title)
-            return (
-              <WishlistCard
-                key={`${key}-${index}`}
-                game={game}
-                deal={deal}
-                freeGame={freeGame}
-                priceLoading={pricesLoading && !deal && !freeGame}
-                alertSensitivity={alertSensitivity}
-                now={now}
-                onRemove={removeGame}
-                onUpdate={updateGame}
-              />
-            )
-          })}
-        </div>
-      )}
+        ) : (
+          <div className="wishlist-grid-redesign">
+            {sortedGames.map((game, index) => {
+              const key = titleKey(game.title)
+              const deal = getDealForGame(game)
+              const freeGame = findFreeGame(game.title)
+              return (
+                <WishlistCard
+                  key={`${key}-${index}`}
+                  game={game}
+                  deal={deal}
+                  freeGame={freeGame}
+                  priceLoading={pricesLoading && !deal && !freeGame}
+                  alertSensitivity={alertSensitivity}
+                  now={now}
+                  onRemove={removeGame}
+                  onUpdate={updateGame}
+                />
+              )
+            })}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

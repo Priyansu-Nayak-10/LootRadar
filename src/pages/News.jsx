@@ -47,23 +47,34 @@ export default function News() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const load = useCallback(async (forceRefresh = false) => {
+  const load = useCallback(async (forceRefresh = false, checkCancelled = () => false) => {
     setLoading(true)
     setError('')
     try {
       const data = await fetchNewsSnapshot({ forceRefresh })
+      if (checkCancelled()) return
+      if (!data || !Array.isArray(data.articles)) {
+        throw new Error('Invalid news snapshot shape')
+      }
       setGeneratedAt(data.generatedAt || '')
       setArticles(data.articles)
     } catch {
+      if (checkCancelled()) return
       setError('Gaming news could not load right now. Please try again.')
       setArticles([])
     } finally {
-      setLoading(false)
+      if (!checkCancelled()) {
+        setLoading(false)
+      }
     }
   }, [])
 
   useEffect(() => {
-    load(false)
+    let cancelled = false
+    load(false, () => cancelled)
+    return () => {
+      cancelled = true
+    }
   }, [load])
 
   const ageHours = getSnapshotAgeHours(generatedAt)

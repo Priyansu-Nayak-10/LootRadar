@@ -4,6 +4,7 @@ import { XMLParser } from 'fast-xml-parser'
 export const USER_AGENT = 'WishRadar/1.0 (free portfolio project)'
 
 export const NEWS_FEEDS = [
+  { source: 'GameBeeper', url: 'https://gamebeeper.gg/feed.json', limit: 20, type: 'json' },
   { source: 'IGN', url: 'https://www.ign.com/rss/v2/articles/feed', limit: 20 },
   { source: 'PC Gamer', url: 'https://www.pcgamer.com/feeds.xml', limit: 20 },
   { source: 'GameSpot', url: 'https://www.gamespot.com/feeds/mashup/', limit: 20 },
@@ -367,6 +368,66 @@ export function parseFeedXml(xml, source = '', limit = 20) {
     .filter((article) => article.title && article.link && article.publishedAt)
 }
 
+export function parseGamebeeperJson(data, source = 'GameBeeper', limit = 20) {
+  if (!data) return []
+  let items = []
+  if (typeof data === 'string') {
+    try {
+      items = JSON.parse(data)
+    } catch {
+      return []
+    }
+  } else {
+    items = data
+  }
+
+  const rawList = Array.isArray(items)
+    ? items
+    : Array.isArray(items?.articles)
+    ? items.articles
+    : Array.isArray(items?.items)
+    ? items.items
+    : []
+
+  return rawList
+    .slice(0, limit)
+    .filter((item) => item && !item.sponsored)
+    .map((item) => {
+      const rawTitle = item.title || ''
+      const itemSource = item.source || source || 'GameBeeper'
+      const title = cleanTitle(String(rawTitle), itemSource)
+      const rawLink = item.link || item.url || ''
+      const link = stripTrackingParams(rawLink)
+      const rawDate =
+        item.publishedAt ||
+        item.published ||
+        item.pubDate ||
+        item.date ||
+        item.updated
+      const publishedAt = normalizeDate(rawDate)
+      const rawSummary = item.summary || item.description || ''
+      const summary = cleanSummary(rawSummary, 160)
+      const rawImage = item.image || item.thumbnail || item.imageUrl || null
+      const image = sanitizeHttpsImage(rawImage)
+      const platforms = extractPlatforms(
+        item.categories || item.tags || item.category || [],
+        title
+      )
+
+      return {
+        id: link ? hashId(link) : '',
+        title,
+        link,
+        source: itemSource,
+        publishedAt,
+        image,
+        summary,
+        platforms,
+      }
+    })
+    .filter((article) => article.title && article.link && article.publishedAt)
+}
+
 export function isShoppingArticle(article, blocklist = SHOPPING_BLOCKLIST) {
   const haystack = `${article.title || ''} ${article.summary || ''}`.toLowerCase()
   return blocklist.some((pattern) => {
@@ -612,6 +673,16 @@ export async function collectNewsSnapshot({
   const results = await Promise.all(
     feeds.map(async (feed) => {
       try {
+        if (feed.type === 'json' || feed.url?.endsWith('.json')) {
+          const raw = await fetchFeedWithRetry(feed.url, { timeoutMs, fetchImpl })
+          const items = parseGamebeeperJson(raw, feed.source || 'GameBeeper', feed.limit || 20)
+          if (items.length === 0) {
+            failedSources.push({ source: feed.source, reason: '0 valid items parsed' })
+            return []
+          }
+          succeededSources.push(feed.source)
+          return items
+        }
         const xml = await fetchFeedWithRetry(feed.url, { timeoutMs, fetchImpl })
         const items = parseFeedXml(xml, feed.source, feed.limit || 20)
         if (items.length === 0) {

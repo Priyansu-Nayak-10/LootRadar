@@ -7,6 +7,7 @@ import {
   normalizeFreeTitle,
   evaluateWishlistDeal,
   shouldSendWishlistAlert,
+  isAlertDue,
 } from '../wishlistAlerts.js';
 
 describe('wishlistAlerts pure functions', () => {
@@ -200,6 +201,55 @@ describe('wishlistAlerts pure functions', () => {
       const allTimeLowDeal = { ...baseDeal, price: 14.99, lowestPrice: 15.00 };
       const decision = shouldSendWishlistAlert(savedGame, allTimeLowDeal, 'any');
       assert.equal(decision.shouldAlert, true);
+    });
+  });
+
+  describe('isAlertDue pure function', () => {
+    const start = new Date('2026-11-26T10:00:00Z');
+    const end = new Date('2026-12-03T10:00:00Z');
+    const dayBeforeTarget = new Date(start.getTime() - 24 * 60 * 60 * 1000); // 2026-11-25T10:00:00Z
+    const midWindowTarget = new Date(start.getTime() + (end.getTime() - start.getTime()) / 2); // 2026-11-29T22:00:00Z
+    const endingSoonTarget = new Date(end.getTime() - 6 * 60 * 60 * 1000); // 2026-12-03T04:00:00Z
+
+    const candidates = [
+      { kind: 'day_before', target: dayBeforeTarget },
+      { kind: 'mid_window', target: midWindowTarget },
+      { kind: 'ending_soon', target: endingSoonTarget },
+    ];
+
+    it('returns false if target is in the future', () => {
+      const now = new Date('2026-11-24T12:00:00Z');
+      assert.equal(isAlertDue({ kind: 'day_before', target: dayBeforeTarget, end, candidates, now }), false);
+    });
+
+    it('returns true when due time has arrived and window is active', () => {
+      const now = new Date('2026-11-25T12:00:00Z');
+      assert.equal(isAlertDue({ kind: 'day_before', target: dayBeforeTarget, end, candidates, now }), true);
+    });
+
+    it('returns false when window has already ended', () => {
+      const now = new Date('2026-12-03T11:00:00Z'); // 1 hour past end
+      assert.equal(isAlertDue({ kind: 'ending_soon', target: endingSoonTarget, end, candidates, now }), false);
+      assert.equal(isAlertDue({ kind: 'day_before', target: dayBeforeTarget, end, candidates, now }), false);
+    });
+
+    it('skips day_before if mid_window or ending_soon is already due', () => {
+      // mid_window is due at 2026-11-29T22:00:00Z. At 2026-11-30T00:00:00Z:
+      const nowMid = new Date('2026-11-30T00:00:00Z');
+      assert.equal(isAlertDue({ kind: 'day_before', target: dayBeforeTarget, end, candidates, now: nowMid }), false);
+      assert.equal(isAlertDue({ kind: 'mid_window', target: midWindowTarget, end, candidates, now: nowMid }), true);
+
+      // ending_soon is due at 2026-12-03T04:00:00Z. At 2026-12-03T05:00:00Z:
+      const nowEnding = new Date('2026-12-03T05:00:00Z');
+      assert.equal(isAlertDue({ kind: 'day_before', target: dayBeforeTarget, end, candidates, now: nowEnding }), false);
+      assert.equal(isAlertDue({ kind: 'mid_window', target: midWindowTarget, end, candidates, now: nowEnding }), false);
+      assert.equal(isAlertDue({ kind: 'ending_soon', target: endingSoonTarget, end, candidates, now: nowEnding }), true);
+    });
+
+    it('handles missing candidates, null end, and invalid inputs gracefully', () => {
+      assert.equal(isAlertDue({ kind: 'ending_soon', target: null }), false);
+      assert.equal(isAlertDue({ kind: 'ending_soon', target: new Date('2026-11-20T00:00:00Z'), end: null, now: new Date('2026-11-25T00:00:00Z') }), true);
+      assert.equal(isAlertDue({ kind: 'ending_soon', target: 'invalid' }), false);
     });
   });
 });

@@ -293,3 +293,11 @@
     animation: none;
   }
 }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--lr-lime);
+  outline-offset: 2px;
+}
