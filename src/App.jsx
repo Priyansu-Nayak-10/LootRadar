@@ -6,6 +6,18 @@ import { searchGamesMulti } from './lib/discoverApi'
 import { normalizeQuery } from './lib/searchRank'
 import SafeImage from './components/SafeImage'
 import ErrorBoundary from './components/ErrorBoundary'
+import {
+  RadarMarkIcon,
+  SearchIcon,
+  BellIcon,
+  CompassIcon,
+  GiftIcon,
+  TagIcon,
+  LibraryIcon,
+  HeartIcon,
+  NewspaperIcon,
+  AccountIcon,
+} from './components/icons'
 import './App.css'
 
 // Route-level code-splitting: lazy load pages to minimize initial bundle size
@@ -33,14 +45,14 @@ const TABS = [
   { id: 'wishlist', label: 'Wishlist' },
 ]
 
-const TAB_ICONS = {
-  free: 'M12 3v2m0 14v2m9-9h-2M5 12H3m15.36-6.36-1.42 1.42M7.06 16.94l-1.42 1.42m12.72 0-1.42-1.42M7.06 7.06 5.64 5.64M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
-  discover: 'M12 3 14.8 9.2 21 12l-6.2 2.8L12 21l-2.8-6.2L3 12l6.2-2.8L12 3Zm0 6v6m-3-3h6',
-  deals: 'm20 13-7 7L3 10V3h7l10 10Zm-12-6h.01',
-  library: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
-  wishlist: 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z',
-  news: 'M4 5h16v14H4V5Zm3 4h10M7 13h6M7 16h8',
-  account: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0',
+const TAB_ICON_COMPONENTS = {
+  free: GiftIcon,
+  discover: CompassIcon,
+  deals: TagIcon,
+  library: LibraryIcon,
+  wishlist: HeartIcon,
+  news: NewspaperIcon,
+  account: AccountIcon,
 }
 
 function titleKey(title) {
@@ -518,12 +530,7 @@ export default function App() {
               aria-label="WishRadar home"
             >
               <span className="brand-mark" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.7">
-                  <circle cx="12" cy="12" r="8.5" />
-                  <circle cx="12" cy="12" r="4.5" />
-                  <path d="m12 12 6.2-6.2M12 3.5v2M3.5 12h2" strokeLinecap="round" />
-                  <circle cx="12" cy="12" r="1" fill="currentColor" />
-                </svg>
+                <RadarMarkIcon size={24} />
               </span>
               <span className="brand-copy">
                 <span className="brand-name">Wish<span>Radar</span></span>
@@ -620,10 +627,7 @@ export default function App() {
                 )}
               </div>
               <button type="submit" aria-label="Submit game search">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                  <circle cx="10.5" cy="10.5" r="6.5" />
-                  <path d="m15.5 15.5 4 4" strokeLinecap="round" />
-                </svg>
+                <SearchIcon size={18} strokeWidth={2} />
               </button>
             </form>
             <div className="shell-actions">
@@ -633,10 +637,7 @@ export default function App() {
                 aria-label="Notifications: no new alerts"
                 title="Notifications"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z" />
-                  <path d="M10 20h4" strokeLinecap="round" />
-                </svg>
+                <BellIcon size={20} />
               </button>
               {session ? (
                 <div className="shell-account-menu">
@@ -684,7 +685,7 @@ export default function App() {
             gap: '12px',
             padding: '10px 18px',
             background: 'var(--lr-panel, #10161b)',
-            borderBottom: '1px solid var(--lr-line-strong, rgba(196, 255, 77, 0.28))',
+            borderBottom: '1px solid var(--border-strong, #26406B)',
             color: 'var(--lr-text, #eff8f1)',
             fontSize: '13px',
             width: '100%',
@@ -697,7 +698,7 @@ export default function App() {
           <button
             type="button"
             className="lr-button lr-button--ghost"
-            style={{ minHeight: '26px', padding: '0 10px', fontSize: '11px' }}
+            style={{ minHeight: '28px', padding: '0 10px', fontSize: '12px' }}
             onClick={() => setSyncError(false)}
             aria-label="Dismiss sync warning"
           >
@@ -783,24 +784,30 @@ export default function App() {
       <Footer onNavigate={navigateTab} onNavigateFreeTab={navigateFreeTab} />
 
       {tab !== 'not-found' && !(tab === 'account' && !session) && tab !== 'signin' && tab !== 'signup' && <nav className="bottom-nav" aria-label="Main navigation">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => navigateTab(t.id)}
-            aria-current={activeNavTab === t.id ? 'page' : undefined}
-            className={`nav-item ${activeNavTab === t.id ? 'is-active' : ''}`}
-          >
-            <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d={TAB_ICONS[t.id]} />
-            </svg>
-            <span className="nav-label">{t.label}</span>
-            {t.id === 'wishlist' && wishlist.length > 0 && (
-              <span className="nav-count" aria-label={`${wishlist.length} wishlisted games`}>
-                {wishlist.length}
-              </span>
-            )}
-          </button>
-        ))}
+        {TABS.map((t) => {
+          const NavIcon = TAB_ICON_COMPONENTS[t.id] || CompassIcon
+          const isActive = activeNavTab === t.id
+          return (
+            <button
+              key={t.id}
+              onClick={() => navigateTab(t.id)}
+              aria-current={isActive ? 'page' : undefined}
+              className={`nav-item ${isActive ? 'is-active' : ''}`}
+            >
+              <NavIcon
+                className="nav-icon"
+                size={22}
+                strokeWidth={isActive ? 2 : 1.75}
+              />
+              <span className="nav-label">{t.label}</span>
+              {t.id === 'wishlist' && wishlist.length > 0 && (
+                <span className="nav-count" aria-label={`${wishlist.length} wishlisted games`}>
+                  {wishlist.length}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </nav>}
     </div>
   )

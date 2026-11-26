@@ -3,6 +3,15 @@ import SafeImage from './SafeImage.jsx'
 import { fetchRawgGames, hasRawgKey } from '../lib/discoverApi.js'
 import { titleKey } from '../lib/wishlistAlerts.js'
 import { formatDealPrice, matchDealForGame } from '../lib/dealsData.js'
+import {
+  PcIcon,
+  PlayStationIcon as PsIcon,
+  XboxIcon,
+  HeartIcon,
+  StarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from './icons'
 
 // Platform ID filters for RAWG
 const PLATFORM_CHIPS = [
@@ -11,111 +20,6 @@ const PLATFORM_CHIPS = [
   { label: 'PlayStation', value: 'PlayStation', id: '187,18' },
   { label: 'Xbox', value: 'Xbox', id: '186,1' },
 ]
-
-// ─── Inline Platform SVG Icons ────────────────────────────────────────────────
-function PcIcon() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-label="PC"
-      title="PC"
-    >
-      <rect x="2" y="3" width="20" height="14" rx="2" />
-      <line x1="8" y1="21" x2="16" y2="21" />
-      <line x1="12" y1="17" x2="12" y2="21" />
-    </svg>
-  )
-}
-
-function PsIcon() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-label="PlayStation"
-      title="PlayStation"
-    >
-      <path d="M8.5 4.5c.3 0 .7.1 1 .2l7.2 2.7c1.3.5 2.3 1.6 2.3 3.1 0 1.7-1.3 3.1-3 3.1H14v6.9c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5V13.6H9c-2.8 0-5-2.2-5-5s2.2-5 5-5h-.5zm5.5 6.1h2c.6 0 1-.4 1-1 0-.5-.4-.9-.9-1l-2.1-.8v2.8zm-5.5-3.1c-1.1 0-2 .9-2 2s.9 2 2 2h2V7.5h-2z" />
-    </svg>
-  )
-}
-
-function XboxIcon() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-label="Xbox"
-      title="Xbox"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="m8.5 6 7 12M15.5 6l-7 12" />
-    </svg>
-  )
-}
-
-function HeartIcon({ filled }) {
-  return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill={filled ? 'currentColor' : 'none'}
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-    </svg>
-  )
-}
-
-function StarIcon() {
-  return (
-    <svg
-      width="11"
-      height="11"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  )
-}
-
-function ChevronLeftIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="m15 18-6-6 6-6" />
-    </svg>
-  )
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="m9 18 6-6-6-6" />
-    </svg>
-  )
-}
 
 function SetupHint() {
   return (
@@ -210,7 +114,7 @@ function PopularGameCard({
         {/* Rank Number Badge Top-Left */}
         <span className="popular-game-card__rank">#{rank}</span>
 
-        {/* Lime Price Badge for matched PC deals */}
+        {/* Green Price Badge for matched PC deals */}
         {dealMatch && Number(dealMatch.cut) > 0 && (
           <span className="popular-game-card__price-badge">
             -{Math.round(Number(dealMatch.cut))}%{' '}

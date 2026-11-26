@@ -2,6 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import SafeImage from '../components/SafeImage'
 import {
+  BellIcon,
+  TrashIcon,
+  ExternalLinkIcon,
+  CircleCheckIcon as CheckCircleIcon,
+} from '../components/icons'
+import {
   titleKey,
   isConsoleGame,
   normalizeFreeTitle,
@@ -81,101 +87,7 @@ function writeLocalItadCache(cache) {
   }
 }
 
-// ─── Inline SVG Icons ────────────────────────────────────────────────────────
-function BellIcon({ active }) {
-  if (active) {
-    return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        className="wishlist-icon wishlist-icon--active"
-        aria-hidden="true"
-      >
-        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z" />
-        <path d="M10 20h4" strokeLinecap="round" />
-      </svg>
-    )
-  }
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="wishlist-icon wishlist-icon--muted"
-      aria-hidden="true"
-    >
-      <path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5" />
-      <path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7" />
-      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-      <path d="m2 2 20 20" />
-    </svg>
-  )
-}
 
-function TrashIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="wishlist-icon"
-      aria-hidden="true"
-    >
-      <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-      <line x1="10" y1="11" x2="10" y2="17" />
-      <line x1="14" y1="11" x2="14" y2="17" />
-    </svg>
-  )
-}
-
-function ExternalLinkIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="wishlist-btn-icon"
-      aria-hidden="true"
-    >
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" y1="14" x2="21" y2="3" />
-    </svg>
-  )
-}
-
-function CheckCircleIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="wishlist-btn-icon"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
-  )
-}
 
 function getConsoleLinks(title, platform = '') {
   const q = encodeURIComponent(title)
@@ -416,7 +328,7 @@ function WishlistCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="lr-button lr-button--ghost"
-                  style={{ minHeight: '32px', padding: '4px 10px', fontSize: '11px' }}
+                  style={{ minHeight: '32px', padding: '4px 10px', fontSize: '12px' }}
                 >
                   {lnk.label} <ExternalLinkIcon />
                 </a>

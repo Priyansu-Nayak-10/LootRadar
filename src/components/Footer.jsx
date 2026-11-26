@@ -1,3 +1,5 @@
+import { RadarMarkIcon } from './icons'
+
 export default function Footer({ onNavigate, onNavigateFreeTab }) {
   function handleInternalClick(event, destination, subTab) {
     event.preventDefault()
@@ -38,19 +40,7 @@ export default function Footer({ onNavigate, onNavigateFreeTab }) {
               aria-label="WishRadar home"
             >
               <span className="brand-mark footer-brand-mark" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  width="22"
-                  height="22"
-                  stroke="currentColor"
-                  strokeWidth="1.7"
-                >
-                  <circle cx="12" cy="12" r="8.5" />
-                  <circle cx="12" cy="12" r="4.5" />
-                  <path d="m12 12 6.2-6.2M12 3.5v2M3.5 12h2" strokeLinecap="round" />
-                  <circle cx="12" cy="12" r="1" fill="currentColor" />
-                </svg>
+                <RadarMarkIcon size={22} />
               </span>
               <span className="brand-copy">
                 <span className="brand-name">

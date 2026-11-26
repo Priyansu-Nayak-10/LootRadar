@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState, useRef } from 'react'
 import DealCard from '../components/DealCard'
 import {
+  FlameIcon,
+  SearchIcon,
+  ChevronDownIcon,
+  RotateCcwIcon,
+} from '../components/icons'
+import {
   MAX_PRICE_CAP,
   formatDealPrice,
   formatStoreName,
@@ -21,57 +27,6 @@ function SkeletonCard() {
         <div className="deal-card-skeleton__btn" />
       </div>
     </div>
-  )
-}
-
-function FlameIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="13"
-      height="13"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 2c-.5 2.5-2.5 4.5-4.5 6-2 1.5-3.5 4-3.5 7 0 4.4 3.6 8 8 8s8-3.6 8-8c0-3.5-2-6.5-4-8.5-.5 2-1.5 3.5-3 4.5C13 8 13.5 4.5 12 2z" />
-    </svg>
-  )
-}
-
-function SearchIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="15"
-      height="15"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  )
-}
-
-function ChevronDownIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="13"
-      height="13"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
   )
 }
 
@@ -351,20 +306,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
               onClick={handleResetFilters}
               title="Reset all filters to default"
             >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                <path d="M3 3v5h5" />
-              </svg>
+              <RotateCcwIcon size={12} strokeWidth={2.5} />
               Reset filters
             </button>
           )}

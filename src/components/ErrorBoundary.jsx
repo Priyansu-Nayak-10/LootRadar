@@ -31,8 +31,8 @@ export default class ErrorBoundary extends Component {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            background: '#070a0d',
-            color: '#eff8f1',
+            background: 'var(--bg, #060B16)',
+            color: 'var(--text, #E8EEF8)',
             padding: '24px',
             textAlign: 'center',
             fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
@@ -44,8 +44,8 @@ export default class ErrorBoundary extends Component {
               width: '100%',
               padding: '36px 28px',
               borderRadius: '16px',
-              background: 'linear-gradient(145deg, #151e23, #10161b)',
-              border: '1px solid rgba(196, 255, 77, 0.28)',
+              background: 'var(--surface, #0E1626)',
+              border: '1px solid var(--border, #1B2A44)',
               boxShadow: '0 18px 45px rgba(0, 0, 0, 0.4)',
             }}
           >
@@ -54,9 +54,9 @@ export default class ErrorBoundary extends Component {
                 width: '48px',
                 height: '48px',
                 borderRadius: '12px',
-                background: 'rgba(196, 255, 77, 0.12)',
-                border: '1px solid rgba(196, 255, 77, 0.3)',
-                color: '#c4ff4d',
+                background: 'var(--accent-soft, rgba(22, 140, 255, 0.14))',
+                border: '1px solid var(--border-strong, #26406B)',
+                color: 'var(--accent, #168CFF)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -73,7 +73,7 @@ export default class ErrorBoundary extends Component {
                 fontSize: '24px',
                 fontWeight: 800,
                 letterSpacing: '-0.03em',
-                color: '#eff8f1',
+                color: 'var(--text, #E8EEF8)',
               }}
             >
               Something went wrong
@@ -82,7 +82,7 @@ export default class ErrorBoundary extends Component {
               style={{
                 margin: '0 0 24px',
                 fontSize: '14px',
-                color: '#97a59f',
+                color: 'var(--text-muted, #8A97AD)',
                 lineHeight: 1.5,
               }}
             >
@@ -96,8 +96,8 @@ export default class ErrorBoundary extends Component {
                 minHeight: '44px',
                 padding: '10px 24px',
                 borderRadius: '999px',
-                background: '#c4ff4d',
-                color: '#10150a',
+                background: 'var(--accent-fill, #0B6FD6)',
+                color: '#ffffff',
                 border: 'none',
                 fontWeight: 800,
                 fontSize: '14px',

@@ -1,4 +1,14 @@
 import { Component, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  PcIcon,
+  PlayStationIcon,
+  XboxIcon,
+  SwitchIcon,
+  HeartIcon,
+  CheckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from '../components/icons'
 import { fetchRawgGames, searchGamesMulti, hasRawgKey } from '../lib/discoverApi'
 import { cleanNewsText, fetchNewsSnapshot, formatNewsRelativeTime } from '../lib/newsHelpers'
 import GameActions from '../components/GameActions'
@@ -82,36 +92,22 @@ function PlatformIcons({ platforms }) {
 
   if (hasPC) {
     icons.push(
-      <svg key="pc" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="platform-icon" title="PC" aria-label="PC">
-        <rect x="2" y="3" width="20" height="14" rx="2" />
-        <path d="M8 21h8M12 17v4" />
-      </svg>
+      <PcIcon key="pc" size={16} strokeWidth={1.8} className="platform-icon" title="PC" aria-label="PC" />
     )
   }
   if (hasPS) {
     icons.push(
-      <svg key="ps" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="platform-icon" title="PlayStation" aria-label="PlayStation">
-        <rect x="2" y="6" width="20" height="12" rx="4" />
-        <path d="M6 12h4m-2-2v4m7-3h.01m2.99 2h.01" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <PlayStationIcon key="ps" size={16} className="platform-icon" title="PlayStation" aria-label="PlayStation" />
     )
   }
   if (hasXbox) {
     icons.push(
-      <svg key="xbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="platform-icon" title="Xbox" aria-label="Xbox">
-        <circle cx="12" cy="12" r="9" />
-        <path d="m8.5 8.5 7 7m0-7-7 7" strokeLinecap="round" />
-      </svg>
+      <XboxIcon key="xbox" size={16} className="platform-icon" title="Xbox" aria-label="Xbox" />
     )
   }
   if (hasNintendo) {
     icons.push(
-      <svg key="nintendo" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="platform-icon" title="Nintendo" aria-label="Nintendo">
-        <rect x="5" y="4" width="6" height="16" rx="3" />
-        <rect x="13" y="4" width="6" height="16" rx="3" />
-        <circle cx="8" cy="8" r="1" fill="currentColor" />
-        <circle cx="16" cy="14" r="1" fill="currentColor" />
-      </svg>
+      <SwitchIcon key="nintendo" size={16} className="platform-icon" title="Nintendo" aria-label="Nintendo" />
     )
   }
 
@@ -190,9 +186,7 @@ const GameTile = memo(function GameTile({ game, badge, getGameActions }) {
           aria-label={actions.wishlisted ? `Remove ${game.name} from wishlist` : `Add ${game.name} to wishlist`}
           title={actions.wishlisted ? 'In wishlist' : 'Add to wishlist'}
         >
-          <svg viewBox="0 0 24 24" fill={actions.wishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
-          </svg>
+          <HeartIcon size={16} active={actions.wishlisted} />
         </button>
         <button
           type="button"
@@ -205,9 +199,7 @@ const GameTile = memo(function GameTile({ game, badge, getGameActions }) {
           aria-label={actions.owned ? `Remove ${game.name} from library` : `Mark ${game.name} as owned`}
           title={actions.owned ? 'In library' : 'Mark as owned'}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
-            <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <CheckIcon size={16} strokeWidth={2.4} />
         </button>
       </div>
     </article>
@@ -874,9 +866,7 @@ export function HomeRedesign({
                   aria-label="Previous slide"
                   onClick={() => goToHero(heroIndex - 1)}
                 >
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M15 18l-6-6 6-6" />
-                  </svg>
+                  <ChevronLeftIcon size={16} strokeWidth={2.4} />
                 </button>
 
                 <div className="home-hero-dots" role="tablist" aria-label="Choose featured slide">
@@ -903,9 +893,7 @@ export function HomeRedesign({
                   aria-label="Next slide"
                   onClick={() => goToHero(heroIndex + 1)}
                 >
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
+                  <ChevronRightIcon size={16} strokeWidth={2.4} />
                 </button>
               </div>
 

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import SafeImage from '../components/SafeImage'
+import { SearchIcon, LibraryIcon } from '../components/icons'
 
 const PLATFORMS = ['All', 'PC', 'Steam', 'Epic Games', 'GOG', 'PlayStation', 'Xbox']
 
@@ -99,20 +100,7 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
       {games.length > 0 && (
         <div className="library-toolbar">
           <div className="library-search">
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            <SearchIcon size={15} strokeWidth={2} />
             <input
               type="text"
               placeholder="Search library..."
@@ -154,19 +142,7 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
       {games.length === 0 ? (
         <div className="library-empty">
           <div className="library-empty__icon" aria-hidden="true">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-            </svg>
+            <LibraryIcon size={28} strokeWidth={1.75} />
           </div>
           <h2>Your library is empty</h2>
           <p>
@@ -284,7 +260,7 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="lr-button lr-button--ghost"
-                      style={{ minHeight: '30px', padding: '0 10px', fontSize: '11px' }}
+                      style={{ minHeight: '30px', padding: '0 10px', fontSize: '12px' }}
                     >
                       Store page →
                     </a>

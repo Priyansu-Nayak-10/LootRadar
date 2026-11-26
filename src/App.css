@@ -3,15 +3,36 @@
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  --ink: #070a0d;
-  --panel: #10161b;
-  --panel-raised: #141c21;
-  --line: rgba(186, 207, 196, 0.11);
-  --muted: #8d9b98;
-  --bright: #eff8f1;
-  --lime: #c4ff4d;
-  --lime-soft: rgba(196, 255, 77, 0.11);
-  --cyan: #5debd0;
+
+  /* Electric Blue Design System Tokens */
+  --bg: #060B16;
+  --bg-elevated: #0A1224;
+  --surface: #0E1626;
+  --surface-2: #121C30;
+  --border: #1B2A44;
+  --border-strong: #26406B;
+  --text: #E8EEF8;
+  --text-muted: #8A97AD;
+  --accent: #168CFF;
+  --accent-hover: #3AA0FF;
+  --accent-fill: #0B6FD6;
+  --accent-fill-hover: #1280F0;
+  --accent-soft: rgba(22, 140, 255, 0.14);
+  --accent-glow: 0 0 0 1px rgba(22, 140, 255, 0.55), 0 0 18px rgba(22, 140, 255, 0.30);
+  --success: #86EF4A;
+  --warning: #FBBF24;
+  --danger: #F87171;
+
+  /* Aliases for backwards compatibility */
+  --ink: var(--bg);
+  --panel: var(--surface);
+  --panel-raised: var(--surface-2);
+  --line: var(--border);
+  --muted: var(--text-muted);
+  --bright: var(--text);
+  --lime: var(--accent);
+  --lime-soft: var(--accent-soft);
+  --cyan: var(--accent-hover);
 }
 
 * {
@@ -31,8 +52,8 @@ body {
   overflow-x: hidden;
   color: var(--bright);
   background:
-    radial-gradient(ellipse at 78% -15%, rgba(76, 111, 51, 0.15), transparent 34rem),
-    radial-gradient(ellipse at 8% 42%, rgba(25, 72, 67, 0.1), transparent 34rem),
+    radial-gradient(ellipse at 78% -15%, rgba(22, 140, 255, 0.10), transparent 34rem),
+    radial-gradient(ellipse at 8% 42%, rgba(14, 22, 38, 0.7), transparent 34rem),
     var(--ink);
 }
 
@@ -69,13 +90,13 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--lime);
-  outline-offset: 3px;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 ::selection {
-  color: #10160a;
-  background: var(--lime);
+  color: #ffffff;
+  background: var(--accent-fill);
 }
 
 #root {
@@ -103,9 +124,9 @@ textarea:focus-visible {
   bottom: -12rem;
   width: 28rem;
   height: 28rem;
-  border: 1px solid rgba(196, 255, 77, 0.08);
+  border: 1px solid rgba(22, 140, 255, 0.08);
   border-radius: 50%;
-  box-shadow: 0 0 0 48px rgba(196, 255, 77, 0.018), 0 0 0 96px rgba(196, 255, 77, 0.014);
+  box-shadow: 0 0 0 48px rgba(22, 140, 255, 0.018), 0 0 0 96px rgba(22, 140, 255, 0.014);
   content: "";
   pointer-events: none;
 }
@@ -142,11 +163,11 @@ textarea:focus-visible {
   width: 42px;
   height: 42px;
   place-items: center;
-  border: 1px solid rgba(196, 255, 77, 0.32);
+  border: 1px solid rgba(22, 140, 255, 0.32);
   border-radius: 13px;
   color: var(--lime);
-  background: linear-gradient(145deg, rgba(196, 255, 77, 0.15), rgba(196, 255, 77, 0.035));
-  box-shadow: inset 0 0 20px rgba(196, 255, 77, 0.055), 0 0 28px rgba(196, 255, 77, 0.06);
+  background: linear-gradient(145deg, rgba(22, 140, 255, 0.15), rgba(22, 140, 255, 0.035));
+  box-shadow: inset 0 0 20px rgba(22, 140, 255, 0.055), 0 0 28px rgba(22, 140, 255, 0.06);
 }
 
 .brand-copy {
@@ -168,7 +189,7 @@ textarea:focus-visible {
 .brand-caption,
 .system-status {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -189,7 +210,7 @@ textarea:focus-visible {
   height: 7px;
   border-radius: 50%;
   background: var(--lime);
-  box-shadow: 0 0 12px rgba(196, 255, 77, 0.72);
+  box-shadow: 0 0 12px rgba(22, 140, 255, 0.72);
 }
 
 .main-content {
@@ -242,10 +263,10 @@ textarea:focus-visible {
 }
 
 .nav-item.is-active {
-  border-color: rgba(196, 255, 77, 0.16);
-  color: var(--lime);
-  background: linear-gradient(135deg, rgba(196, 255, 77, 0.14), rgba(196, 255, 77, 0.045));
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.045);
+  border-color: var(--accent);
+  color: #ffffff;
+  background: var(--accent-fill);
+  box-shadow: 0 2px 10px rgba(11, 111, 214, 0.35);
 }
 
 .nav-icon {
@@ -269,9 +290,9 @@ textarea:focus-visible {
   place-items: center;
   padding-inline: 5px;
   border-radius: 999px;
-  color: #131907;
-  background: var(--lime);
-  font-size: 10px;
+  color: #ffffff;
+  background: var(--accent-fill);
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -294,8 +315,8 @@ textarea:focus-visible {
 
 .game-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(196, 255, 77, 0.28);
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28), 0 0 30px rgba(196, 255, 77, 0.045);
+  border-color: rgba(22, 140, 255, 0.28);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28), 0 0 30px rgba(22, 140, 255, 0.045);
 }
 
 .game-card-image {
@@ -331,7 +352,7 @@ textarea:focus-visible {
   overflow: hidden;
   margin: -5px 0 0;
   color: #91a09a;
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -344,7 +365,7 @@ textarea:focus-visible {
   border-radius: 6px;
   color: var(--cyan);
   background: rgba(93, 235, 208, 0.06);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -363,11 +384,11 @@ textarea:focus-visible {
   align-items: center;
   gap: 5px;
   padding: 5px 9px;
-  border: 1px solid rgba(196, 255, 77, 0.15);
+  border: 1px solid rgba(22, 140, 255, 0.15);
   border-radius: 999px;
   color: var(--lime);
-  background: rgba(196, 255, 77, 0.09);
-  font-size: 10px;
+  background: rgba(22, 140, 255, 0.09);
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.035em;
   white-space: nowrap;
@@ -387,7 +408,7 @@ textarea:focus-visible {
   border-color: rgba(255, 199, 92, 0.15);
   color: #ffd27c;
   background: rgba(255, 185, 59, 0.08);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .countdown-pill.is-urgent {
@@ -404,7 +425,7 @@ textarea:focus-visible {
 
 .old-price {
   color: #7e8b86;
-  font-size: 11px;
+  font-size: 12px;
   text-decoration: line-through;
 }
 
@@ -430,21 +451,21 @@ textarea:focus-visible {
   color: #aab6b0;
   background: rgba(255, 255, 255, 0.025);
   cursor: pointer;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   transition: 160ms ease;
 }
 
 .game-action:hover {
-  border-color: rgba(196, 255, 77, 0.35);
+  border-color: rgba(22, 140, 255, 0.35);
   color: var(--lime);
-  background: rgba(196, 255, 77, 0.07);
+  background: rgba(22, 140, 255, 0.07);
 }
 
 .game-action.is-owned {
-  border-color: rgba(196, 255, 77, 0.27);
+  border-color: rgba(22, 140, 255, 0.27);
   color: var(--lime);
-  background: rgba(196, 255, 77, 0.09);
+  background: rgba(22, 140, 255, 0.09);
 }
 
 .game-action.is-wishlisted {
@@ -460,11 +481,11 @@ textarea:focus-visible {
   justify-content: center;
   gap: 8px;
   margin-top: auto;
-  border: 1px solid rgba(196, 255, 77, 0.72);
+  border: 1px solid rgba(22, 140, 255, 0.72);
   border-radius: 11px;
-  color: #11180b;
-  background: linear-gradient(105deg, #c4ff4d, #a7e936);
-  box-shadow: 0 4px 18px rgba(196, 255, 77, 0.12);
+  color: #ffffff;
+  background: var(--accent-fill);
+  box-shadow: none;
   font-size: 12px;
   font-weight: 850;
   text-decoration: none;
@@ -474,7 +495,7 @@ textarea:focus-visible {
 .game-card-cta:hover {
   transform: translateY(-1px);
   filter: brightness(1.07);
-  box-shadow: 0 7px 22px rgba(196, 255, 77, 0.22);
+  box-shadow: 0 7px 22px rgba(22, 140, 255, 0.22);
 }
 
 .filter-toolbar {
@@ -492,7 +513,7 @@ textarea:focus-visible {
   border-radius: 11px;
   color: #9ba9a3;
   background: rgba(19, 26, 29, 0.82);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
   transition: 150ms ease;
 }
@@ -504,15 +525,15 @@ textarea:focus-visible {
 
 .filter-chip:hover,
 .filter-select:hover {
-  border-color: rgba(196, 255, 77, 0.28);
+  border-color: rgba(22, 140, 255, 0.28);
   color: var(--bright);
 }
 
 .filter-chip.is-selected {
-  border-color: rgba(196, 255, 77, 0.44);
+  border-color: rgba(22, 140, 255, 0.44);
   color: var(--lime);
-  background: rgba(196, 255, 77, 0.1);
-  box-shadow: inset 0 0 14px rgba(196, 255, 77, 0.035);
+  background: rgba(22, 140, 255, 0.1);
+  box-shadow: inset 0 0 14px rgba(22, 140, 255, 0.035);
 }
 
 .filter-select {
@@ -523,7 +544,7 @@ textarea:focus-visible {
 .currency-note {
   margin: -5px 0 18px;
   color: #84918c;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -605,7 +626,7 @@ textarea:focus-visible {
 
 .section-count {
   color: #81908a;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -640,7 +661,7 @@ textarea:focus-visible {
   min-width: 0;
   gap: 7px;
   color: #b1beb7;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -680,26 +701,26 @@ textarea:focus-visible {
   grid-column: 1 / -1;
   margin: 0;
   color: var(--lime);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .form-submit {
   min-height: 40px;
   justify-self: start;
   padding: 0 17px;
-  border: 1px solid rgba(196, 255, 77, 0.55);
+  border: 1px solid var(--accent-fill);
   border-radius: 11px;
-  color: #11180b;
-  background: var(--lime);
+  color: #ffffff;
+  background: var(--accent-fill);
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   transition: 150ms ease;
 }
 
 .form-submit:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(196, 255, 77, 0.17);
+  box-shadow: 0 6px 20px rgba(22, 140, 255, 0.17);
 }
 
 .collection-grid {
@@ -720,7 +741,7 @@ textarea:focus-visible {
 .collection-card:hover,
 .wishlist-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(196, 255, 77, 0.23);
+  border-color: rgba(22, 140, 255, 0.23);
 }
 
 .collection-image,
@@ -738,7 +759,7 @@ textarea:focus-visible {
   display: grid;
   place-items: center;
   color: var(--lime);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: 0.12em;
 }
@@ -761,14 +782,14 @@ textarea:focus-visible {
 .collection-notes {
   margin: 0;
   color: #8d9b95;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
 .collection-notes {
   margin-top: 7px;
   color: #c0cac4;
-  font-size: 11px;
+  font-size: 12px;
   overflow-wrap: anywhere;
 }
 
@@ -779,7 +800,7 @@ textarea:focus-visible {
   color: #e58f9a;
   background: none;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -798,11 +819,11 @@ textarea:focus-visible {
 
 .availability-badge {
   padding: 5px 8px;
-  border: 1px solid rgba(196, 255, 77, 0.17);
+  border: 1px solid rgba(22, 140, 255, 0.17);
   border-radius: 999px;
   color: var(--lime);
-  background: rgba(196, 255, 77, 0.08);
-  font-size: 9px;
+  background: rgba(22, 140, 255, 0.08);
+  font-size: 12px;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -835,7 +856,7 @@ textarea:focus-visible {
 
 .discover-kicker {
   color: var(--lime);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.17em;
 }
@@ -843,7 +864,7 @@ textarea:focus-visible {
 .discover-heading-note,
 .discover-source-note {
   color: #81908a;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .discover-search {
@@ -852,7 +873,7 @@ textarea:focus-visible {
   align-items: center;
   gap: 12px;
   padding: 7px 8px 7px 17px;
-  border: 1px solid rgba(196, 255, 77, 0.2);
+  border: 1px solid rgba(22, 140, 255, 0.2);
   border-radius: 16px;
   background: linear-gradient(100deg, rgba(20, 29, 30, 0.95), rgba(12, 17, 19, 0.95));
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.035), 0 12px 35px rgba(0, 0, 0, 0.14);
@@ -883,12 +904,12 @@ textarea:focus-visible {
   min-height: 42px;
   flex: 0 0 auto;
   padding: 0 19px;
-  border: 1px solid rgba(196, 255, 77, 0.45);
+  border: 1px solid var(--accent-fill);
   border-radius: 11px;
-  color: #11180b;
-  background: var(--lime);
+  color: #ffffff;
+  background: var(--accent-fill);
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   transition: filter 150ms ease, transform 150ms ease;
 }
@@ -913,7 +934,7 @@ textarea:focus-visible {
   overflow-x: auto;
   padding: 3px 3px 16px;
   scroll-snap-type: x mandatory;
-  scrollbar-color: rgba(196, 255, 77, 0.28) rgba(255, 255, 255, 0.035);
+  scrollbar-color: rgba(22, 140, 255, 0.28) rgba(255, 255, 255, 0.035);
   scrollbar-width: thin;
 }
 
@@ -948,11 +969,11 @@ textarea:focus-visible {
   top: 12px;
   left: 12px;
   padding: 6px 9px;
-  border: 1px solid rgba(196, 255, 77, 0.3);
+  border: 1px solid rgba(22, 140, 255, 0.3);
   border-radius: 7px;
   color: var(--lime);
   background: rgba(8, 12, 13, 0.78);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: 0.12em;
   backdrop-filter: blur(10px);
@@ -975,7 +996,7 @@ textarea:focus-visible {
 .discovery-rating {
   float: right;
   color: #ffd271;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -992,7 +1013,7 @@ textarea:focus-visible {
   border-radius: 6px;
   color: #99a7a1;
   background: rgba(255, 255, 255, 0.025);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -1002,7 +1023,7 @@ textarea:focus-visible {
   border-radius: 999px;
   color: var(--cyan);
   background: rgba(93, 235, 208, 0.06);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -1018,7 +1039,7 @@ textarea:focus-visible {
   border-radius: 14px;
   color: #9aa8a2;
   background: rgba(17, 24, 27, 0.58);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.55;
   text-align: center;
 }
@@ -1046,13 +1067,13 @@ textarea:focus-visible {
 .discover-source-note a,
 .api-setup-hint a {
   color: var(--lime);
-  text-decoration-color: rgba(196, 255, 77, 0.4);
+  text-decoration-color: rgba(22, 140, 255, 0.4);
   text-underline-offset: 3px;
 }
 
 .discover-heading-link {
   color: #aebbb4;
-  font-size: 10px;
+  font-size: 12px;
   text-decoration: none;
 }
 
@@ -1087,15 +1108,15 @@ textarea:focus-visible {
 
 .home-section-strip:hover,
 .home-section-strip:focus-visible {
-  border-color: rgba(196, 255, 77, 0.28);
-  background: linear-gradient(145deg, rgba(196, 255, 77, 0.09), rgba(12, 17, 20, 0.96));
+  border-color: rgba(22, 140, 255, 0.28);
+  background: linear-gradient(145deg, rgba(22, 140, 255, 0.09), rgba(12, 17, 20, 0.96));
 }
 
 .home-section-strip span,
 .home-section-strip small {
   display: block;
   color: #87968f;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.08em;
 }
@@ -1129,9 +1150,9 @@ textarea:focus-visible {
 }
 
 .auth-mode-tabs button.is-selected {
-  border-color: rgba(196, 255, 77, 0.24);
+  border-color: rgba(22, 140, 255, 0.24);
   color: var(--lime);
-  background: rgba(196, 255, 77, 0.08);
+  background: rgba(22, 140, 255, 0.08);
 }
 
 .account-email {
@@ -1165,10 +1186,10 @@ textarea:focus-visible {
   min-height: 42px;
   display: inline-grid;
   place-items: center;
-  border: 1px solid rgba(196, 255, 77, 0.24);
+  border: 1px solid rgba(22, 140, 255, 0.24);
   border-radius: 10px;
   color: var(--lime);
-  background: rgba(196, 255, 77, 0.08);
+  background: rgba(22, 140, 255, 0.08);
   text-decoration: none;
   font-weight: 750;
 }
@@ -1216,13 +1237,13 @@ textarea:focus-visible {
   color: #9aa8a2;
   background: rgba(17, 24, 27, 0.58);
   cursor: pointer;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .platform-settings button.is-selected {
-  border-color: rgba(196, 255, 77, 0.24);
+  border-color: rgba(22, 140, 255, 0.24);
   color: var(--lime);
-  background: rgba(196, 255, 77, 0.08);
+  background: rgba(22, 140, 255, 0.08);
 }
 
 /* Redesign Step 7: collections and Account */
@@ -1243,7 +1264,7 @@ textarea:focus-visible {
 
 .auth-form .form-field {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: .05em;
   text-transform: uppercase;
@@ -1268,8 +1289,8 @@ textarea:focus-visible {
   min-height: 48px;
   border: 0;
   border-radius: var(--lr-radius-pill);
-  color: #10150a;
-  background: var(--lime);
+  color: #ffffff;
+  background: var(--accent-fill);
   font-weight: 850;
   cursor: pointer;
 }
@@ -1314,10 +1335,10 @@ textarea:focus-visible {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at 75% 20%, rgba(196,255,77,.12), transparent 30%),
+    radial-gradient(circle at 75% 20%, rgba(22, 140, 255,.12), transparent 30%),
     var(--panel-raised);
   color: var(--lime);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: .14em;
 }
@@ -1336,7 +1357,7 @@ textarea:focus-visible {
 .redesign-collection-card .collection-platform,
 .redesign-collection-card .collection-notes {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.45;
 }
 
@@ -1387,8 +1408,8 @@ textarea:focus-visible {
   min-height: 620px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 68% 42%, rgba(196,255,77,.13) 0 90px, transparent 91px),
-    linear-gradient(135deg, rgba(196,255,77,.08), transparent 55%), var(--panel-raised);
+    radial-gradient(circle at 68% 42%, rgba(22, 140, 255,.13) 0 90px, transparent 91px),
+    linear-gradient(135deg, rgba(22, 140, 255,.08), transparent 55%), var(--panel-raised);
 }
 
 .auth-radar-art {
@@ -1397,12 +1418,12 @@ textarea:focus-visible {
   height: 360px;
   right: -80px;
   bottom: -80px;
-  border: 1px solid rgba(196,255,77,.14);
+  border: 1px solid rgba(22, 140, 255,.14);
   border-radius: 50%;
   box-shadow:
-    0 0 0 50px rgba(196,255,77,.025),
-    0 0 0 100px rgba(196,255,77,.018),
-    0 0 70px rgba(196,255,77,.05);
+    0 0 0 50px rgba(22, 140, 255,.025),
+    0 0 0 100px rgba(22, 140, 255,.018),
+    0 0 70px rgba(22, 140, 255,.05);
 }
 
 .auth-radar-art::before,
@@ -1462,13 +1483,13 @@ textarea:focus-visible {
   border-radius: 12px;
   background: rgba(7, 10, 13, .42);
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   line-height: 1.3;
 }
 
 .auth-feature-list b {
   color: var(--lime);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .auth-redesign__card {
@@ -1497,7 +1518,7 @@ textarea:focus-visible {
   border-radius: 12px;
   color: var(--lime);
   background: var(--lime-soft);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -1538,8 +1559,8 @@ textarea:focus-visible {
 }
 
 .auth-mode-tabs button.is-selected {
-  color: #10150a;
-  background: var(--lime);
+  color: #ffffff;
+  background: var(--accent-fill);
 }
 
 .auth-form {
@@ -1578,7 +1599,7 @@ textarea:focus-visible {
   background: transparent;
   transform: translateY(-50%);
   cursor: pointer;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -1589,7 +1610,7 @@ textarea:focus-visible {
   color: var(--lime);
   background: transparent;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -1599,7 +1620,7 @@ textarea:focus-visible {
   align-items: center;
   gap: 10px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   text-transform: uppercase;
 }
 
@@ -1634,7 +1655,7 @@ textarea:focus-visible {
   border-radius: 50%;
   color: #11150a;
   background: var(--lime);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
 }
 
@@ -1756,7 +1777,7 @@ textarea:focus-visible {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--line);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -1768,8 +1789,8 @@ textarea:focus-visible {
   min-width: 260px;
   max-width: 360px;
   flex: 1;
-  background: var(--panel);
-  border: 1px solid var(--line);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
   border-radius: 999px;
   padding: 0 14px;
   height: 40px;
@@ -1777,7 +1798,8 @@ textarea:focus-visible {
 }
 
 .deals-search-box:focus-within {
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(22, 140, 255, 0.18);
 }
 
 .deals-search-input {
@@ -1858,20 +1880,20 @@ textarea:focus-visible {
 }
 
 .deals-chip:hover {
-  border-color: rgba(196, 255, 77, 0.4);
+  border-color: rgba(22, 140, 255, 0.4);
   color: var(--bright);
 }
 
 .deals-chip.is-active {
-  background: var(--lime);
-  border-color: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+  color: #ffffff;
   font-weight: 800;
 }
 
 .deals-chip--sm {
   padding: 6px 11px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .deals-chip--lowest {
@@ -1879,8 +1901,8 @@ textarea:focus-visible {
 }
 
 .deals-chip--lowest.is-active {
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
 }
 
 .deals-dropdown-wrapper {
@@ -1903,14 +1925,14 @@ textarea:focus-visible {
 
 .deals-select-chip:hover,
 .deals-select-chip:focus {
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: rgba(22, 140, 255, 0.5);
   color: var(--bright);
 }
 
 .deals-select-chip.is-active {
-  background: var(--lime);
-  border-color: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+  color: #ffffff;
   font-weight: 800;
 }
 
@@ -1933,7 +1955,7 @@ textarea:focus-visible {
 
 .deals-select:hover,
 .deals-select:focus {
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: rgba(22, 140, 255, 0.5);
 }
 
 .deals-currency-container {
@@ -1943,7 +1965,7 @@ textarea:focus-visible {
 }
 
 .deals-currency-approx {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 
@@ -2011,7 +2033,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   margin-left: auto;
 }
@@ -2021,14 +2043,14 @@ textarea:focus-visible {
   border: none;
   padding: 0;
   color: var(--lime);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 750;
   text-decoration: underline;
   cursor: pointer;
 }
 
 .deals-snapshot-note {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   padding: 6px 12px;
   border-radius: 8px;
@@ -2048,8 +2070,8 @@ textarea:focus-visible {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: #0e1418;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -2057,7 +2079,7 @@ textarea:focus-visible {
 
 .deal-card-redesign:hover {
   transform: translateY(-3px);
-  border-color: rgba(196, 255, 77, 0.4);
+  border-color: rgba(22, 140, 255, 0.4);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
 }
 
@@ -2065,8 +2087,16 @@ textarea:focus-visible {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: #0a0e11;
+  background: #060B16;
   overflow: hidden;
+}
+
+.deal-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(6, 11, 22, 0.45) 0%, transparent 40%, transparent 60%, rgba(6, 11, 22, 0.55) 100%);
 }
 
 .deal-card__image {
@@ -2082,9 +2112,9 @@ textarea:focus-visible {
   left: 8px;
   padding: 2px 7px;
   border-radius: 6px;
-  background: var(--lime);
-  color: #11170a;
-  font-size: 11px;
+  background: var(--success);
+  color: #060B16;
+  font-size: 12px;
   font-weight: 900;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
@@ -2129,7 +2159,7 @@ textarea:focus-visible {
   gap: 4px;
   padding: 2px 7px;
   border-radius: 5px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -2138,9 +2168,9 @@ textarea:focus-visible {
 }
 
 .deal-card__flag--lowest {
-  background: rgba(196, 255, 77, 0.22);
-  color: var(--lime);
-  border: 1px solid rgba(196, 255, 77, 0.5);
+  background: rgba(22, 140, 255, 0.16);
+  color: #6FB8FF;
+  border: 1px solid rgba(22, 140, 255, 0.4);
 }
 
 .deal-card__flag--great {
@@ -2153,8 +2183,8 @@ textarea:focus-visible {
 .deal-card__body {
   display: flex;
   flex-direction: column;
-  padding: 12px 14px 14px;
-  gap: 7px;
+  padding: 16px;
+  gap: 8px;
   flex: 1;
 }
 
@@ -2191,13 +2221,19 @@ textarea:focus-visible {
 }
 
 .deal-card__store-chip {
-  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 12px;
   font-weight: 700;
-  color: var(--bright);
+  color: var(--text-muted);
 }
 
 .deal-card__expiry {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--muted);
   white-space: nowrap;
@@ -2220,15 +2256,16 @@ textarea:focus-visible {
 }
 
 .deal-card__rating {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   padding: 2px 5px;
   border-radius: 4px;
 }
 
 .deal-card__rating--steam {
-  color: #60a5fa;
-  background: rgba(59, 130, 246, 0.12);
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
 }
 
 .deal-card__rating--meta {
@@ -2244,19 +2281,19 @@ textarea:focus-visible {
 }
 
 .deal-card__sale-price {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 900;
-  color: var(--lime);
+  color: var(--text);
 }
 
 .deal-card__old-price {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   text-decoration: line-through;
 }
 
 .deal-card__lowest-line {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   margin-bottom: 4px;
 }
@@ -2281,19 +2318,19 @@ textarea:focus-visible {
   height: 36px;
   padding: 0 12px;
   border-radius: 8px;
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
   font-size: 12px;
   font-weight: 800;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid var(--lime);
+  border: 1px solid var(--accent-fill);
 }
 
 .deal-card__cta-btn:hover {
   filter: brightness(1.1);
-  box-shadow: 0 0 14px rgba(196, 255, 77, 0.35);
+  box-shadow: 0 0 14px rgba(22, 140, 255, 0.35);
 }
 
 .deal-card__owned-btn {
@@ -2317,9 +2354,9 @@ textarea:focus-visible {
 }
 
 .deal-card__owned-btn.is-active {
-  background: rgba(196, 255, 77, 0.15);
+  background: rgba(22, 140, 255, 0.15);
   color: var(--lime);
-  border-color: rgba(196, 255, 77, 0.45);
+  border-color: rgba(22, 140, 255, 0.45);
 }
 
 /* ─── Skeleton Loading ─── */
@@ -2413,11 +2450,11 @@ textarea:focus-visible {
 .deals-reset-btn {
   padding: 8px 18px;
   border-radius: 999px;
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
   font-size: 12px;
   font-weight: 800;
-  border: 1px solid var(--lime);
+  border: 1px solid var(--accent-fill);
   cursor: pointer;
   transition: filter 0.2s ease;
 }
@@ -2477,7 +2514,7 @@ textarea:focus-visible {
 }
 
 .deals-load-more-btn:hover {
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: rgba(22, 140, 255, 0.5);
   color: var(--lime);
 }
 
@@ -2511,7 +2548,7 @@ textarea:focus-visible {
     font-size: 15px;
   }
   .deal-card__cta-btn {
-    font-size: 11px;
+    font-size: 12px;
     height: 32px;
     padding: 0 8px;
   }
@@ -2568,12 +2605,12 @@ textarea:focus-visible {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--line);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .free-updated-pill {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--line);
@@ -2611,8 +2648,8 @@ textarea:focus-visible {
 }
 
 .free-tab.is-active {
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
   font-weight: 800;
 }
 
@@ -2624,8 +2661,8 @@ textarea:focus-visible {
   gap: 12px;
   padding: 10px 16px;
   border-radius: 12px;
-  background: rgba(196, 255, 77, 0.08);
-  border: 1px solid rgba(196, 255, 77, 0.25);
+  background: rgba(22, 140, 255, 0.08);
+  border: 1px solid rgba(22, 140, 255, 0.25);
   flex-wrap: wrap;
 }
 
@@ -2652,10 +2689,10 @@ textarea:focus-visible {
 .free-telegram-strip__btn {
   padding: 5px 12px;
   border-radius: 999px;
-  background: var(--lime);
-  border: 1px solid var(--lime);
-  color: #11170a;
-  font-size: 11px;
+  background: var(--accent-fill);
+  border: 1px solid var(--accent-fill);
+  color: #ffffff;
+  font-size: 12px;
   font-weight: 800;
   cursor: pointer;
   transition: filter 0.2s ease;
@@ -2722,14 +2759,14 @@ textarea:focus-visible {
 }
 
 .free-chip:hover {
-  border-color: rgba(196, 255, 77, 0.4);
+  border-color: rgba(22, 140, 255, 0.4);
   color: var(--bright);
 }
 
 .free-chip.is-active {
-  background: var(--lime);
-  border-color: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+  color: #ffffff;
   font-weight: 800;
 }
 
@@ -2753,7 +2790,7 @@ textarea:focus-visible {
 
 .free-select:hover,
 .free-select:focus {
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: rgba(22, 140, 255, 0.5);
 }
 
 .free-owned-toggle-line {
@@ -2771,7 +2808,7 @@ textarea:focus-visible {
   color: var(--lime);
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 750;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -2779,7 +2816,7 @@ textarea:focus-visible {
 
 .free-owned-toggle-btn:hover {
   border-color: var(--lime);
-  background: rgba(196, 255, 77, 0.1);
+  background: rgba(22, 140, 255, 0.1);
 }
 
 .free-search-box {
@@ -2799,7 +2836,8 @@ textarea:focus-visible {
 }
 
 .free-search-box:focus-within {
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(22, 140, 255, 0.18);
 }
 
 .free-search-input {
@@ -2847,8 +2885,8 @@ textarea:focus-visible {
 
 .free-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(196, 255, 77, 0.4);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 16px rgba(196, 255, 77, 0.12);
+  border-color: rgba(22, 140, 255, 0.4);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 16px rgba(22, 140, 255, 0.12);
 }
 
 .free-card__media {
@@ -2875,9 +2913,9 @@ textarea:focus-visible {
   position: absolute;
   top: 10px;
   left: 10px;
-  background: var(--lime);
-  color: #11170a;
-  font-size: 11px;
+  background: var(--success);
+  color: #060B16;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.05em;
   padding: 2px 7px;
@@ -2889,10 +2927,10 @@ textarea:focus-visible {
   position: absolute;
   top: 10px;
   left: 10px;
-  background: rgba(196, 255, 77, 0.2);
+  background: rgba(22, 140, 255, 0.2);
   color: var(--lime);
-  border: 1px solid rgba(196, 255, 77, 0.4);
-  font-size: 10px;
+  border: 1px solid rgba(22, 140, 255, 0.4);
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: 0.05em;
   padding: 2px 7px;
@@ -2907,7 +2945,7 @@ textarea:focus-visible {
   background: rgba(255, 255, 255, 0.12);
   color: var(--bright);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 6px;
@@ -2922,7 +2960,7 @@ textarea:focus-visible {
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #e4e4e7;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 750;
   padding: 3px 8px;
   border-radius: 6px;
@@ -2945,7 +2983,7 @@ textarea:focus-visible {
 
 .free-card__countdown-chip--starts {
   color: var(--lime);
-  border-color: rgba(196, 255, 77, 0.35);
+  border-color: rgba(22, 140, 255, 0.35);
 }
 
 .free-card__heart-btn {
@@ -3011,30 +3049,30 @@ textarea:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--muted);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   padding: 2px 8px;
   border-radius: 6px;
 }
 
 .free-card__genre-chip {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #a1a1aa;
 }
 
 .free-card__worth {
-  font-size: 11px;
+  font-size: 12px;
   color: #a1a1aa;
   text-decoration: line-through;
   white-space: nowrap;
 }
 
 .free-card__date-range {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--lime);
   display: flex;
   flex-direction: column;
@@ -3047,7 +3085,7 @@ textarea:focus-visible {
 
 .free-card__desc {
   margin: 0;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.4;
   color: var(--muted);
   display: -webkit-box;
@@ -3070,11 +3108,11 @@ textarea:focus-visible {
   height: 36px;
   padding: 0 12px;
   border-radius: 8px;
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
   font-size: 12px;
   font-weight: 800;
-  border: 1px solid var(--lime);
+  border: 1px solid var(--accent-fill);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3087,18 +3125,18 @@ textarea:focus-visible {
 
 .free-card__claim-btn:hover {
   filter: brightness(1.1);
-  box-shadow: 0 0 16px rgba(196, 255, 77, 0.4);
+  box-shadow: 0 0 16px rgba(22, 140, 255, 0.4);
 }
 
 .free-card__claim-btn--secondary {
-  background: rgba(196, 255, 77, 0.15);
+  background: rgba(22, 140, 255, 0.15);
   color: var(--lime);
-  border-color: rgba(196, 255, 77, 0.4);
+  border-color: rgba(22, 140, 255, 0.4);
 }
 
 .free-card__claim-btn--secondary:hover {
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
 }
 
 .free-card__owned-btn {
@@ -3122,9 +3160,9 @@ textarea:focus-visible {
 }
 
 .free-card__owned-btn.is-owned {
-  background: rgba(196, 255, 77, 0.18);
+  background: rgba(22, 140, 255, 0.18);
   color: var(--lime);
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: rgba(22, 140, 255, 0.5);
 }
 
 /* ─── Skeletons ─── */
@@ -3205,11 +3243,11 @@ textarea:focus-visible {
 .free-reset-btn {
   padding: 8px 18px;
   border-radius: 999px;
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
   font-size: 12px;
   font-weight: 800;
-  border: 1px solid var(--lime);
+  border: 1px solid var(--accent-fill);
   cursor: pointer;
   transition: filter 0.2s ease;
 }
@@ -3269,7 +3307,7 @@ textarea:focus-visible {
 }
 
 .free-load-more-btn:hover {
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: rgba(22, 140, 255, 0.5);
   color: var(--lime);
 }
 
@@ -3297,7 +3335,7 @@ textarea:focus-visible {
     height: 30px;
   }
   .free-card__claim-btn {
-    font-size: 11px;
+    font-size: 12px;
     height: 32px;
     padding: 0 8px;
   }
@@ -3340,13 +3378,13 @@ textarea:focus-visible {
   align-items: flex-end;
   gap: 4px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
 .news-delay-note {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .news-stale-alert {
@@ -3361,7 +3399,7 @@ textarea:focus-visible {
 .news-reload-btn {
   min-height: 28px;
   padding: 4px 10px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .news-error-box {
@@ -3462,7 +3500,7 @@ textarea:focus-visible {
 
 .news-feature-actions > span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .news-tags-group {
@@ -3480,7 +3518,7 @@ textarea:focus-visible {
   border-radius: var(--lr-radius-pill);
   background: var(--panel-soft);
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -3567,7 +3605,7 @@ textarea:focus-visible {
 
 .news-trending-meta > span:first-child {
   color: var(--lime);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   white-space: nowrap;
   overflow: hidden;
@@ -3637,7 +3675,7 @@ textarea:focus-visible {
   justify-content: space-between;
   gap: 8px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .news-bottom-title {
@@ -3865,7 +3903,7 @@ textarea:focus-visible {
   width: auto;
   overflow: visible;
   color: var(--lime);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: .14em;
 }
@@ -3883,7 +3921,7 @@ textarea:focus-visible {
 .popular-games-section__header p {
   grid-column: 3;
   grid-row: 1;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .popular-games-section__row {
@@ -3931,7 +3969,7 @@ textarea:focus-visible {
 
 .deal-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(196, 255, 77, 0.35);
+  border-color: rgba(22, 140, 255, 0.35);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
@@ -3955,7 +3993,7 @@ textarea:focus-visible {
 .deal-card__badge {
   position: absolute;
   z-index: 2;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   line-height: 1;
   letter-spacing: -0.01em;
@@ -3974,14 +4012,15 @@ textarea:focus-visible {
 .deal-card__badge--store {
   top: 8px;
   right: 8px;
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: 6px;
-  border: 1px solid var(--line);
-  background: rgba(7, 10, 13, 0.82);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  color: var(--bright);
-  font-size: 9.5px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .deal-card__wishlist {
@@ -4080,7 +4119,7 @@ textarea:focus-visible {
   align-items: center;
   gap: 3px;
   color: var(--muted);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -4089,10 +4128,10 @@ textarea:focus-visible {
   align-items: center;
   padding: 2px 7px;
   border-radius: 4px;
-  background: rgba(196, 255, 77, 0.12);
-  border: 1px solid rgba(196, 255, 77, 0.25);
+  background: rgba(22, 140, 255, 0.12);
+  border: 1px solid rgba(22, 140, 255, 0.25);
   color: var(--lime);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -4131,10 +4170,10 @@ textarea:focus-visible {
 
 .home-wishlist-strip { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--panel-raised); }
 .home-wishlist-strip > div:last-child { display: flex; gap: 9px; overflow-x: auto; }
-.home-wishlist-strip span { min-width: 150px; display: grid; grid-template-columns: 38px 1fr; align-items: center; gap: 8px; color: var(--bright); font-size: 11px; }
+.home-wishlist-strip span { min-width: 150px; display: grid; grid-template-columns: 38px 1fr; align-items: center; gap: 8px; color: var(--bright); font-size: 12px; }
 .home-wishlist-strip img { width: 38px; height: 38px; object-fit: cover; border-radius: 8px; }
-.home-wishlist-item { min-width: 170px; display: grid; grid-template-columns: 38px 1fr; align-items: center; gap: 9px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255, 255, 255, 0.025); color: var(--bright); font-size: 11px; font-weight: 700; text-align: left; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; }
-.home-wishlist-item:hover { border-color: rgba(196, 255, 77, 0.35); background: rgba(196, 255, 77, 0.06); }
+.home-wishlist-item { min-width: 170px; display: grid; grid-template-columns: 38px 1fr; align-items: center; gap: 9px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255, 255, 255, 0.025); color: var(--bright); font-size: 12px; font-weight: 700; text-align: left; cursor: pointer; transition: border-color 150ms ease, background 150ms ease; }
+.home-wishlist-item:hover { border-color: rgba(22, 140, 255, 0.35); background: rgba(22, 140, 255, 0.06); }
 .home-wishlist-item img, .home-wishlist-item .lr-art-fallback { width: 38px; height: 38px; min-height: 38px; object-fit: cover; border-radius: 8px; }
 .home-wishlist-item .lr-art-fallback { font-size: 16px; }
 
@@ -4146,7 +4185,7 @@ textarea:focus-visible {
   .home-promo-banner { grid-column: 2 / -1; }
 }
 
-.home-promo-banner em { width: fit-content; min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 13px; color: #11170a; background: var(--lime); font-size: 13px; font-style: normal; font-weight: 850; }
+.home-promo-banner em { width: fit-content; min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 13px; color: #ffffff; background: var(--accent-fill); font-size: 13px; font-style: normal; font-weight: 750; }
 
 .top-deals__card, .free-now-card, .deals-card, .wishlist-detail-card { cursor: pointer; }
 
@@ -4175,8 +4214,8 @@ textarea:focus-visible {
   font-size: 13px;
   font-weight: 700;
   color: var(--lime);
-  background: rgba(196, 255, 77, 0.1);
-  border: 1px solid rgba(196, 255, 77, 0.25);
+  background: rgba(22, 140, 255, 0.1);
+  border: 1px solid rgba(22, 140, 255, 0.25);
   padding: 4px 12px;
   border-radius: 999px;
 }
@@ -4252,7 +4291,7 @@ textarea:focus-visible {
 }
 
 .library-filter-chip.is-active {
-  background: rgba(196, 255, 77, 0.12);
+  background: rgba(22, 140, 255, 0.12);
   border-color: var(--lime);
   color: var(--lime);
 }
@@ -4292,7 +4331,7 @@ textarea:focus-visible {
 }
 
 .library-card:hover {
-  border-color: rgba(196, 255, 77, 0.35);
+  border-color: rgba(22, 140, 255, 0.35);
   transform: translateY(-2px);
 }
 
@@ -4314,9 +4353,9 @@ textarea:focus-visible {
   position: absolute;
   top: 10px;
   left: 10px;
-  background: rgba(196, 255, 77, 0.9);
+  background: rgba(22, 140, 255, 0.9);
   color: #0b0f14;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -4328,14 +4367,14 @@ textarea:focus-visible {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(7, 10, 13, 0.78);
+  background: var(--surface-2);
   backdrop-filter: blur(8px);
-  color: #eff8f1;
-  font-size: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border);
 }
 
 .library-card__body {
@@ -4364,7 +4403,7 @@ textarea:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
 }
 
@@ -4411,8 +4450,8 @@ textarea:focus-visible {
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  background: rgba(196, 255, 77, 0.08);
-  border: 1px solid rgba(196, 255, 77, 0.2);
+  background: rgba(22, 140, 255, 0.08);
+  border: 1px solid rgba(22, 140, 255, 0.2);
   color: var(--lime);
   display: flex;
   align-items: center;
@@ -4480,14 +4519,14 @@ textarea:focus-visible {
 }
 
 .wishlist-tab:hover {
-  border-color: rgba(196, 255, 77, 0.4);
+  border-color: rgba(22, 140, 255, 0.4);
   color: var(--bright);
 }
 
 .wishlist-tab--active {
-  background: var(--lime);
-  border-color: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+  color: #ffffff;
 }
 
 .wishlist-tab__count {
@@ -4498,7 +4537,7 @@ textarea:focus-visible {
   height: 20px;
   padding: 0 6px;
   border-radius: 10px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   background: rgba(0, 0, 0, 0.15);
   color: inherit;
@@ -4542,7 +4581,7 @@ textarea:focus-visible {
 
 .wishlist-select:focus,
 .wishlist-select:hover {
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: rgba(22, 140, 255, 0.5);
 }
 
 .wishlist-banner {
@@ -4551,9 +4590,9 @@ textarea:focus-visible {
   justify-content: space-between;
   gap: 16px;
   padding: 14px 18px;
-  border: 1px solid rgba(196, 255, 77, 0.25);
+  border: 1px solid rgba(22, 140, 255, 0.25);
   border-radius: 14px;
-  background: linear-gradient(110deg, rgba(196, 255, 77, 0.08), rgba(17, 24, 27, 0.85));
+  background: linear-gradient(110deg, rgba(22, 140, 255, 0.08), rgba(17, 24, 27, 0.85));
 }
 
 .wishlist-banner__text {
@@ -4580,8 +4619,8 @@ textarea:focus-visible {
   gap: 6px;
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(196, 255, 77, 0.15);
-  border: 1px solid rgba(196, 255, 77, 0.35);
+  background: rgba(22, 140, 255, 0.15);
+  border: 1px solid rgba(22, 140, 255, 0.35);
   color: var(--lime);
   font-size: 12px;
   font-weight: 700;
@@ -4595,7 +4634,7 @@ textarea:focus-visible {
   padding: 6px 14px;
   border-radius: 999px;
   background: transparent;
-  border: 1px solid rgba(196, 255, 77, 0.5);
+  border: 1px solid rgba(22, 140, 255, 0.5);
   color: var(--lime);
   font-size: 12px;
   font-weight: 700;
@@ -4606,8 +4645,8 @@ textarea:focus-visible {
 }
 
 .wishlist-telegram-btn:hover {
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
 }
 
 .wishlist-grid-redesign {
@@ -4632,8 +4671,8 @@ textarea:focus-visible {
 
 .wishlist-card-redesign:hover {
   transform: translateY(-4px);
-  border-color: rgba(196, 255, 77, 0.45);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(196, 255, 77, 0.12);
+  border-color: rgba(22, 140, 255, 0.45);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(22, 140, 255, 0.12);
 }
 
 .wishlist-card-media {
@@ -4690,7 +4729,7 @@ textarea:focus-visible {
   gap: 4px;
   padding: 4px 10px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -4699,16 +4738,16 @@ textarea:focus-visible {
 }
 
 .wishlist-tag--free {
-  background: var(--lime);
-  color: #11170a;
+  background: var(--success);
+  color: #060B16;
   font-weight: 900;
-  box-shadow: 0 0 12px rgba(196, 255, 77, 0.4);
+  box-shadow: 0 0 12px rgba(134, 239, 74, 0.4);
 }
 
 .wishlist-tag--sale {
-  background: rgba(196, 255, 77, 0.2);
+  background: rgba(22, 140, 255, 0.2);
   color: var(--lime);
-  border: 1px solid rgba(196, 255, 77, 0.45);
+  border: 1px solid rgba(22, 140, 255, 0.45);
 }
 
 .wishlist-tag--low {
@@ -4754,8 +4793,8 @@ textarea:focus-visible {
 
 .wishlist-action-btn.is-active {
   color: var(--lime);
-  border-color: rgba(196, 255, 77, 0.5);
-  background: rgba(196, 255, 77, 0.18);
+  border-color: rgba(22, 140, 255, 0.5);
+  background: rgba(22, 140, 255, 0.18);
 }
 
 .wishlist-action-btn:hover {
@@ -4812,15 +4851,15 @@ textarea:focus-visible {
   display: inline-block;
   padding: 2px 7px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 12px;
   font-weight: 700;
-  color: var(--bright);
+  color: var(--text-muted);
 }
 
 .wishlist-platform-text {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 
@@ -4864,9 +4903,9 @@ textarea:focus-visible {
 .wishlist-countdown-chip {
   padding: 2px 6px;
   border-radius: 4px;
-  background: rgba(196, 255, 77, 0.15);
-  border: 1px solid rgba(196, 255, 77, 0.35);
-  font-size: 10px;
+  background: rgba(22, 140, 255, 0.15);
+  border: 1px solid rgba(22, 140, 255, 0.35);
+  font-size: 12px;
   font-weight: 750;
   color: var(--lime);
 }
@@ -4875,7 +4914,7 @@ textarea:focus-visible {
   padding: 2px 6px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.06);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--muted);
 }
@@ -4914,26 +4953,26 @@ textarea:focus-visible {
 }
 
 .wishlist-cta-btn--free {
-  background: var(--lime);
-  color: #11170a;
-  border: 1px solid var(--lime);
-  box-shadow: 0 0 16px rgba(196, 255, 77, 0.35);
+  background: var(--accent-fill);
+  color: #ffffff;
+  border: 1px solid var(--accent-fill);
+  box-shadow: none;
 }
 
 .wishlist-cta-btn--free:hover {
   filter: brightness(1.1);
-  box-shadow: 0 0 22px rgba(196, 255, 77, 0.55);
+  box-shadow: 0 0 22px rgba(22, 140, 255, 0.55);
 }
 
 .wishlist-cta-btn--deal {
-  background: rgba(196, 255, 77, 0.18);
+  background: rgba(22, 140, 255, 0.18);
   color: var(--lime);
-  border: 1px solid rgba(196, 255, 77, 0.45);
+  border: 1px solid rgba(22, 140, 255, 0.45);
 }
 
 .wishlist-cta-btn--deal:hover {
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
 }
 
 .wishlist-empty-redesign {
@@ -4979,8 +5018,8 @@ textarea:focus-visible {
   align-items: center;
   padding: 9px 18px;
   border-radius: 999px;
-  background: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  color: #ffffff;
   font-size: 12px;
   font-weight: 800;
   text-decoration: none;
@@ -5006,7 +5045,7 @@ textarea:focus-visible {
 }
 
 .wishlist-btn-secondary:hover {
-  border-color: rgba(196, 255, 77, 0.4);
+  border-color: rgba(22, 140, 255, 0.4);
   color: var(--lime);
 }
 
@@ -5030,21 +5069,21 @@ textarea:focus-visible {
   }
 }
 
-.deals-price-range { min-height: 44px; display: grid; gap: 3px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 11px; color: var(--muted); font-size: 11px; }
+.deals-price-range { min-height: 44px; display: grid; gap: 3px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 11px; color: var(--muted); font-size: 12px; }
 .deals-price-range input { width: 100%; accent-color: var(--lime); }
 .deals-display-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 12px 0; }
 .deals-currency-switch { display: flex; overflow: hidden; border: 1px solid var(--line); border-radius: 999px; }
-.deals-currency-switch button { min-height: 34px; padding: 0 12px; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 11px; font-weight: 800; }
-.deals-currency-switch button.is-selected { color: #11170a; background: var(--lime); }
+.deals-currency-switch button { min-height: 34px; padding: 0 12px; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 12px; font-weight: 800; }
+.deals-currency-switch button.is-selected { color: #ffffff; background: var(--accent-fill); }
 @media (max-width: 600px) { .deals-display-controls { align-items: flex-start; flex-direction: column; } }
 
 .free-now-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
 .free-now-tabs button { min-height: 42px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: transparent; cursor: pointer; font-weight: 800; }
-.free-now-tabs button.is-selected { color: #11170a; background: var(--lime); border-color: var(--lime); }
+.free-now-tabs button.is-selected { color: #ffffff; background: var(--accent-fill); border-color: var(--accent-fill); box-shadow: 0 2px 10px rgba(11, 111, 214, 0.35); }
 .free-now-show-owned { display: inline-flex; align-items: center; gap: 7px; margin: 12px 0; color: var(--muted); font-size: 12px; }
 .free-now-card__actions { display: flex; align-items: center; gap: 8px; }
 .free-now-owned-icon { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); background: transparent; cursor: pointer; }
-.free-now-owned-icon.is-owned { color: #11170a; background: var(--lime); border-color: var(--lime); }
+.free-now-owned-icon.is-owned { color: #ffffff; background: var(--accent-fill); border-color: var(--accent-fill); }
 
 .home-news-grid .lr-section-heading,
 .home-quick-access .lr-section-heading {
@@ -5118,8 +5157,8 @@ textarea:focus-visible {
 
 .home-promo-radar {
   background:
-    radial-gradient(circle at 92% 8%, transparent 0 52px, rgba(196,255,77,.22) 53px 54px, transparent 55px 82px, rgba(196,255,77,.12) 83px 84px, transparent 85px),
-    linear-gradient(135deg, rgba(196,255,77,.06), transparent 45%), var(--panel-raised);
+    radial-gradient(circle at 92% 8%, transparent 0 52px, rgba(22, 140, 255,.22) 53px 54px, transparent 55px 82px, rgba(22, 140, 255,.12) 83px 84px, transparent 85px),
+    linear-gradient(135deg, rgba(22, 140, 255,.06), transparent 45%), var(--panel-raised);
 }
 
 .home-promo-banner > span:last-child {
@@ -5192,9 +5231,9 @@ textarea:focus-visible {
   place-items: center;
   color: #718078;
   background:
-    linear-gradient(135deg, rgba(196, 255, 77, 0.08), transparent 58%),
+    linear-gradient(135deg, rgba(22, 140, 255, 0.08), transparent 58%),
     #131b1e;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: 0.18em;
 }
@@ -5211,7 +5250,7 @@ textarea:focus-visible {
   justify-content: space-between;
   gap: 8px;
   color: #84938d;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .news-meta span:first-child {
@@ -5240,7 +5279,7 @@ textarea:focus-visible {
   overflow: hidden;
   margin: 0 0 12px;
   color: #8d9b95;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
@@ -5252,7 +5291,7 @@ textarea:focus-visible {
   gap: 6px;
   margin-top: auto;
   color: var(--lime);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
   text-decoration: none;
 }
@@ -5271,11 +5310,11 @@ textarea:focus-visible {
 .api-setup-hint {
   margin-bottom: 28px;
   padding: 19px 21px;
-  border: 1px solid rgba(196, 255, 77, 0.2);
+  border: 1px solid rgba(22, 140, 255, 0.2);
   border-radius: 16px;
   color: #b6c3bd;
-  background: linear-gradient(110deg, rgba(196, 255, 77, 0.07), rgba(17, 24, 27, 0.84));
-  font-size: 11px;
+  background: linear-gradient(110deg, rgba(22, 140, 255, 0.07), rgba(17, 24, 27, 0.84));
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -5301,12 +5340,12 @@ textarea:focus-visible {
   border-radius: 5px;
   color: var(--bright);
   background: rgba(0, 0, 0, 0.24);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .api-setup-hint small {
   color: #84928c;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 @media (max-width: 1050px) {
@@ -5367,7 +5406,7 @@ textarea:focus-visible {
   }
 
   .game-action {
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .collection-grid {
@@ -5414,13 +5453,13 @@ textarea:focus-visible {
   }
 
   .brand-caption {
-    font-size: 7px;
+    font-size: 12px;
   }
 
   .system-status {
     gap: 6px;
     padding: 8px;
-    font-size: 7px;
+    font-size: 12px;
     letter-spacing: 0.1em;
   }
 
@@ -5431,7 +5470,7 @@ textarea:focus-visible {
   .discover-heading-note,
   .personalized-mark {
     max-width: 130px;
-    font-size: 8px;
+    font-size: 12px;
     text-align: right;
   }
 
@@ -5447,13 +5486,13 @@ textarea:focus-visible {
   }
 
   .discover-search input {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .discover-search button {
     min-height: 38px;
     padding-inline: 12px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .news-grid {
@@ -5499,7 +5538,7 @@ textarea:focus-visible {
   }
 
   .game-platform {
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .game-price-row {
@@ -5509,20 +5548,20 @@ textarea:focus-visible {
   .game-status-pill,
   .discount-pill {
     padding: 4px 7px;
-    font-size: 8px;
+    font-size: 12px;
   }
 
   .countdown-pill {
-    font-size: 8px;
+    font-size: 12px;
   }
 
   .old-price {
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .game-action {
     padding: 8px 3px;
-    font-size: 8px;
+    font-size: 12px;
   }
 }
 
@@ -5657,8 +5696,8 @@ textarea:focus-visible {
 .home-hero-discount {
   padding: 2px 7px;
   border-radius: 999px;
-  background: var(--lime);
-  color: #070a0d;
+  background: var(--success);
+  color: #060B16;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -5679,11 +5718,11 @@ textarea:focus-visible {
 
 .home-hero-store-chip {
   padding: 2px 7px;
-  border-radius: 4px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, .05);
-  color: #b5c1bc;
-  font-size: 11px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -5767,7 +5806,7 @@ textarea:focus-visible {
 }
 
 .home-hero-counter {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--muted);
   padding: 0 4px;
@@ -5846,7 +5885,7 @@ textarea:focus-visible {
   display: block;
   margin-bottom: 2px;
   color: var(--lime);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -5944,7 +5983,7 @@ textarea:focus-visible {
 
 .home-feature-free small {
   color: var(--lime);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -5982,7 +6021,7 @@ textarea:focus-visible {
   place-items: center;
   color: var(--lime);
   background: var(--panel-raised);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -5996,13 +6035,13 @@ textarea:focus-visible {
 }
 
 .home-upcoming-list strong {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .home-upcoming-list small {
   margin-top: 4px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .home-platform-chips {
@@ -6061,7 +6100,7 @@ textarea:focus-visible {
 .home-cover-card p {
   margin: 0;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 /* ─── Popular Games & Coming Soon Sections ─── */
@@ -6093,7 +6132,7 @@ textarea:focus-visible {
 .coming-soon-section__kicker {
   display: block;
   color: var(--lime);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -6117,7 +6156,7 @@ textarea:focus-visible {
 .coming-soon-section__sub {
   margin: 2px 0 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .popular-games-section__controls,
@@ -6139,7 +6178,7 @@ textarea:focus-visible {
   border: 1px solid var(--line);
   background: var(--panel);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -6147,14 +6186,14 @@ textarea:focus-visible {
 }
 
 .popular-games-section__chip:hover {
-  border-color: rgba(196, 255, 77, 0.4);
+  border-color: rgba(22, 140, 255, 0.4);
   color: var(--bright);
 }
 
 .popular-games-section__chip.is-active {
-  background: var(--lime);
-  border-color: var(--lime);
-  color: #11170a;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+  color: #ffffff;
   font-weight: 850;
 }
 
@@ -6182,7 +6221,7 @@ textarea:focus-visible {
 
 .popular-games-section__arrow:hover,
 .coming-soon-section__arrow:hover {
-  border-color: rgba(196, 255, 77, 0.5);
+  border-color: rgba(22, 140, 255, 0.5);
   color: var(--bright);
 }
 
@@ -6220,8 +6259,8 @@ textarea:focus-visible {
 .popular-game-card:hover,
 .coming-game-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(196, 255, 77, 0.4);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(196, 255, 77, 0.1);
+  border-color: rgba(22, 140, 255, 0.4);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(22, 140, 255, 0.1);
 }
 
 .popular-game-card__art,
@@ -6255,7 +6294,7 @@ textarea:focus-visible {
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   padding: 2px 7px;
   border-radius: 6px;
@@ -6265,9 +6304,9 @@ textarea:focus-visible {
   position: absolute;
   bottom: 8px;
   left: 8px;
-  background: var(--lime);
-  color: #11170a;
-  font-size: 10px;
+  background: var(--success);
+  color: #060B16;
+  font-size: 12px;
   font-weight: 850;
   padding: 2px 7px;
   border-radius: 6px;
@@ -6285,7 +6324,7 @@ textarea:focus-visible {
   position: absolute;
   top: 8px;
   left: 8px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
   padding: 2px 7px;
   border-radius: 6px;
@@ -6293,8 +6332,8 @@ textarea:focus-visible {
 }
 
 .coming-game-card__badge--free {
-  background: var(--lime);
-  color: #11170a;
+  background: var(--success);
+  color: #060B16;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
@@ -6311,9 +6350,9 @@ textarea:focus-visible {
   left: 8px;
   background: rgba(0, 0, 0, 0.78);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(196, 255, 77, 0.4);
+  border: 1px solid rgba(22, 140, 255, 0.4);
   color: var(--lime);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 6px;
@@ -6391,7 +6430,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
 }
 
@@ -6413,7 +6452,7 @@ textarea:focus-visible {
 }
 
 .coming-game-card__date {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--lime);
   font-weight: 600;
   white-space: nowrap;
@@ -6543,7 +6582,7 @@ textarea:focus-visible {
 .home-news-feature span,
 .home-news-small span {
   color: var(--lime);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -6620,7 +6659,7 @@ textarea:focus-visible {
 
 .home-quick-tile span {
   color: var(--lime);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -6645,8 +6684,8 @@ textarea:focus-visible {
 
 .home-promo-radar {
   background:
-    radial-gradient(circle at 82% 48%, transparent 0 34px, rgba(196,255,77,.18) 35px 36px, transparent 37px 62px, rgba(196,255,77,.08) 63px 64px, transparent 65px),
-    linear-gradient(135deg, rgba(196,255,77,.12), transparent 42%), var(--panel-raised);
+    radial-gradient(circle at 82% 48%, transparent 0 34px, rgba(22, 140, 255,.18) 35px 36px, transparent 37px 62px, rgba(22, 140, 255,.08) 63px 64px, transparent 65px),
+    linear-gradient(135deg, rgba(22, 140, 255,.12), transparent 42%), var(--panel-raised);
 }
 
 .home-promo-banner > span:last-child {
@@ -6661,7 +6700,7 @@ textarea:focus-visible {
 
 .home-promo-banner small {
   color: var(--lime);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 850;
   letter-spacing: .13em;
 }
@@ -6741,7 +6780,7 @@ textarea:focus-visible {
   .home-hero-deal-info,
   .home-hero-meta {
     margin: 0 0 10px;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .home-hero-sale-price {
@@ -6768,7 +6807,7 @@ textarea:focus-visible {
   }
 
   .home-hero-counter {
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .home-feature-side {
@@ -6839,14 +6878,14 @@ textarea:focus-visible {
   grid-template-columns: 82px minmax(120px, 1fr) 44px;
   min-height: 46px;
   align-items: center;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border-strong);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.035);
+  background: var(--surface);
 }
 
 .shell-search:focus-within {
-  border-color: rgba(196, 255, 77, 0.32);
-  box-shadow: 0 0 0 3px rgba(196, 255, 77, 0.055);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(22, 140, 255, 0.18);
 }
 
 .shell-category {
@@ -6861,7 +6900,7 @@ textarea:focus-visible {
   outline: 0;
   color: var(--bright);
   background: transparent;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   text-align: center;
   cursor: pointer;
@@ -6901,8 +6940,8 @@ textarea:focus-visible {
   display: grid;
   width: 44px;
   place-items: center;
-  color: #11170a;
-  background: var(--lime);
+  color: #ffffff;
+  background: var(--accent-fill);
   border-radius: 50%;
   transform: scale(.82);
 }
@@ -6935,10 +6974,10 @@ textarea:focus-visible {
 
 .shell-avatar {
   width: 44px;
-  border: 1px solid rgba(196, 255, 77, 0.22);
+  border: 1px solid rgba(22, 140, 255, 0.22);
   border-radius: 50%;
-  color: #11170a;
-  background: var(--lime);
+  color: #ffffff;
+  background: var(--accent-fill);
   font-weight: 900;
 }
 
@@ -6954,7 +6993,7 @@ textarea:focus-visible {
   width: 196px;
   display: grid;
   padding: 7px;
-  border: 1px solid rgba(196, 255, 77, 0.2);
+  border: 1px solid rgba(22, 140, 255, 0.2);
   border-radius: 14px;
   background: #11181c;
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
@@ -6975,8 +7014,8 @@ textarea:focus-visible {
 
 .shell-account-dropdown button:hover,
 .shell-account-dropdown button:focus-visible {
-  color: #11170a;
-  background: var(--lime);
+  color: #ffffff;
+  background: var(--accent-fill);
 }
 
 .shell-account-dropdown__divider {
@@ -6985,8 +7024,8 @@ textarea:focus-visible {
   background: var(--line);
 }
 
-.shell-owned-games { display: grid; gap: 4px; padding: 8px 10px; color: var(--muted); font-size: 10px; }
-.shell-owned-games strong { color: var(--lime); font-size: 10px; }
+.shell-owned-games { display: grid; gap: 4px; padding: 8px 10px; color: var(--muted); font-size: 12px; }
+.shell-owned-games strong { color: var(--lime); font-size: 12px; }
 .shell-owned-games span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .shell-account-dropdown .shell-account-dropdown__signout {
@@ -7002,10 +7041,10 @@ textarea:focus-visible {
 .shell-sign-in {
   min-height: 44px;
   padding: 0 16px;
-  border: 1px solid rgba(196, 255, 77, 0.38);
+  border: 1px solid rgba(22, 140, 255, 0.38);
   border-radius: 999px;
-  color: #11170a;
-  background: var(--lime);
+  color: #ffffff;
+  background: var(--accent-fill);
   cursor: pointer;
   font-size: 12px;
   font-weight: 850;
@@ -7067,8 +7106,8 @@ textarea:focus-visible {
   width: 36px;
   height: 36px;
   border-radius: 9px;
-  background: rgba(196, 255, 77, 0.1);
-  border: 1px solid rgba(196, 255, 77, 0.25);
+  background: rgba(22, 140, 255, 0.1);
+  border: 1px solid rgba(22, 140, 255, 0.25);
   color: var(--lime);
 }
 
@@ -7132,7 +7171,7 @@ textarea:focus-visible {
 }
 
 .footer-sublabel {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -7256,18 +7295,18 @@ textarea:focus-visible {
 
   .shell-sign-in {
     padding-inline: 11px;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .filter-chip {
     min-height: 34px;
     padding-inline: 10px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .filter-select {
     max-width: 100%;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .form-panel {
@@ -7295,7 +7334,7 @@ textarea:focus-visible {
   }
 
   .nav-label {
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .nav-count {
@@ -7305,7 +7344,7 @@ textarea:focus-visible {
     min-width: 15px;
     height: 15px;
     padding-inline: 4px;
-    font-size: 8px;
+    font-size: 12px;
   }
 
   .bottom-nav {
@@ -7335,7 +7374,7 @@ textarea:focus-visible {
   border: 1px solid var(--line);
   border-radius: var(--lr-radius-md);
   background:
-    radial-gradient(circle at 80% 20%, rgba(196, 255, 77, .055), transparent 30%),
+    radial-gradient(circle at 80% 20%, rgba(22, 140, 255, .055), transparent 30%),
     rgba(17, 24, 27, .72);
   color: var(--muted);
   line-height: 1.55;
@@ -7397,7 +7436,7 @@ textarea:focus-visible {
   border: 1px solid var(--line);
   border-radius: var(--lr-radius-lg);
   background:
-    radial-gradient(circle at 50% 38%, rgba(196, 255, 77, .08), transparent 180px),
+    radial-gradient(circle at 50% 38%, rgba(22, 140, 255, .08), transparent 180px),
     linear-gradient(145deg, var(--panel-raised), var(--panel));
   text-align: center;
 }
@@ -7582,7 +7621,7 @@ body:has(.auth-redesign) .bottom-nav {
   display: flex;
   flex-direction: column;
   background: #111714;
-  border: 1px solid rgba(196, 255, 77, 0.22);
+  border: 1px solid rgba(22, 140, 255, 0.22);
   border-radius: 14px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
   overflow: hidden;
@@ -7608,7 +7647,7 @@ body:has(.auth-redesign) .bottom-nav {
 
 .shell-typeahead-item:hover,
 .shell-typeahead-item.is-active {
-  background: rgba(196, 255, 77, 0.08);
+  background: rgba(22, 140, 255, 0.08);
 }
 
 .shell-typeahead-thumb {
@@ -7637,7 +7676,7 @@ body:has(.auth-redesign) .bottom-nav {
 }
 
 .shell-typeahead-info span {
-  font-size: 11px;
+  font-size: 12px;
   color: #8c9c95;
 }
 
@@ -7657,7 +7696,7 @@ body:has(.auth-redesign) .bottom-nav {
 
 .shell-typeahead-all:hover,
 .shell-typeahead-all.is-active {
-  background: rgba(196, 255, 77, 0.12);
+  background: rgba(22, 140, 255, 0.12);
 }
 
 /* ─── Search Results Page ────────────────────────────────────────────────── */
@@ -7744,7 +7783,7 @@ body:has(.auth-redesign) .bottom-nav {
 
 .search-filter-pill:hover {
   color: #fff;
-  border-color: rgba(196, 255, 77, 0.3);
+  border-color: rgba(22, 140, 255, 0.3);
 }
 
 .search-filter-pill.is-active {
@@ -7799,7 +7838,7 @@ body:has(.auth-redesign) .bottom-nav {
 
 .search-game-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(196, 255, 77, 0.28);
+  border-color: rgba(22, 140, 255, 0.28);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
 }
 
@@ -7842,7 +7881,7 @@ body:has(.auth-redesign) .bottom-nav {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   color: #7f8d88;
 }
 
@@ -7900,7 +7939,7 @@ body:has(.auth-redesign) .bottom-nav {
   padding: 2px 7px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: #8c9c95;
   text-transform: capitalize;
@@ -7938,7 +7977,7 @@ body:has(.auth-redesign) .bottom-nav {
 
 .search-tile__action-btn:hover {
   background: rgba(26, 36, 30, 0.95);
-  border-color: rgba(196, 255, 77, 0.4);
+  border-color: rgba(22, 140, 255, 0.4);
   color: #fff;
   transform: scale(1.08);
 }
@@ -7950,7 +7989,7 @@ body:has(.auth-redesign) .bottom-nav {
 }
 
 .search-tile__action-btn--owned.is-active {
-  background: rgba(196, 255, 77, 0.18);
+  background: rgba(22, 140, 255, 0.18);
   border-color: var(--lime);
   color: var(--lime);
 }
@@ -8019,8 +8058,8 @@ body:has(.auth-redesign) .bottom-nav {
 .search-suggestion-link {
   padding: 6px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(196, 255, 77, 0.25);
-  background: rgba(196, 255, 77, 0.05);
+  border: 1px solid rgba(22, 140, 255, 0.25);
+  background: rgba(22, 140, 255, 0.05);
   color: var(--lime);
   font-size: 12px;
   font-weight: 700;
@@ -8046,7 +8085,7 @@ body:has(.auth-redesign) .bottom-nav {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: 3px solid rgba(196, 255, 77, 0.15);
+  border: 3px solid rgba(22, 140, 255, 0.15);
   border-top-color: var(--lime);
   animation: lr-spin 0.75s linear infinite;
 }
@@ -8066,8 +8105,8 @@ body:has(.auth-redesign) .bottom-nav {
   min-height: 38px;
   padding: 0 13px;
   border-radius: 999px;
-  border: 1px solid rgba(196, 255, 77, 0.45);
-  background: rgba(196, 255, 77, 0.08);
+  border: 1px solid rgba(22, 140, 255, 0.45);
+  background: rgba(22, 140, 255, 0.08);
   color: var(--lime);
   font-size: 12px;
   font-weight: 700;
@@ -8078,7 +8117,7 @@ body:has(.auth-redesign) .bottom-nav {
 
 .deals-active-reset-btn:hover,
 .free-active-reset-btn:hover {
-  background: rgba(196, 255, 77, 0.18);
+  background: rgba(22, 140, 255, 0.18);
   border-color: var(--lime);
   color: #fff;
 }
@@ -8097,7 +8136,7 @@ body:has(.auth-redesign) .bottom-nav {
 
 .empty-suggestions-kicker {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -8129,7 +8168,7 @@ body:has(.auth-redesign) .bottom-nav {
 }
 
 .empty-suggestion-card:hover {
-  border-color: rgba(196, 255, 77, 0.35);
+  border-color: rgba(22, 140, 255, 0.35);
   transform: translateY(-2px);
 }
 
@@ -8165,7 +8204,7 @@ body:has(.auth-redesign) .bottom-nav {
 }
 
 .empty-suggestion-card__meta {
-  font-size: 11px;
+  font-size: 12px;
   color: #7b8b85;
   margin-bottom: 10px;
 }
@@ -8177,8 +8216,8 @@ body:has(.auth-redesign) .bottom-nav {
   font-size: 12px;
   font-weight: 700;
   border-radius: 8px;
-  border: 1px solid rgba(196, 255, 77, 0.35);
-  background: rgba(196, 255, 77, 0.1);
+  border: 1px solid rgba(22, 140, 255, 0.35);
+  background: rgba(22, 140, 255, 0.1);
   color: var(--lime);
   cursor: pointer;
   display: inline-flex;
@@ -8201,3 +8240,41 @@ body:has(.auth-redesign) .bottom-nav {
 }
 
 
+
+/* ─── Card Image Scrim Overlays ─── */
+.deal-card__media::after,
+.free-card__media::after,
+.popular-game-card__art::after,
+.coming-game-card__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(6, 11, 22, 0.45) 0%, transparent 35%, transparent 65%, rgba(6, 11, 22, 0.6) 100%);
+  z-index: 1;
+}
+
+/* ─── Icon Micro-Interactions ─── */
+@media (prefers-reduced-motion: no-preference) {
+  .icon-heart.is-active {
+    animation: heartPop 150ms cubic-bezier(0.17, 0.89, 0.32, 1.49);
+  }
+
+  .icon-bell-active {
+    animation: bellWiggle 300ms ease-in-out;
+  }
+}
+
+@keyframes heartPop {
+  0% { transform: scale(0.85); }
+  50% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+
+@keyframes bellWiggle {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(-12deg); }
+  50% { transform: rotate(12deg); }
+  75% { transform: rotate(-6deg); }
+  100% { transform: rotate(0); }
+}
