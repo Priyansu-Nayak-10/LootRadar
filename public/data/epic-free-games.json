@@ -1,20 +1,8 @@
 {
-  "generatedAt": "2026-11-26T13:03:15.371Z",
+  "generatedAt": "2026-11-26T22:08:10.088Z",
   "source": "Epic Games Store",
   "sourceUrl": "https://store.epicgames.com/free-games",
   "current": [
-    {
-      "id": "1f9a12b06b4f437790b6913ad136a08c",
-      "namespace": "3d6441ab9d4246208bc97d7babf664b5",
-      "title": "Mark of the Deep",
-      "description": "Mark of the Deep is an epic pirate-themed adventure with a strong narrative and a thrilling mix of Metroidvania and Souls-Like elements. Embark on this journey, explore the mysteries of a cursed island and find your missing pirate crew!",
-      "slug": "2fd257a6cd80405a833f9004ff07993a",
-      "image": "https://cdn1.epicgames.com/spt-assets/83a240506a884c10ad8fb99694e57a0d/mark-of-the-deep-w1ygr.png",
-      "startDate": "2026-11-19T16:00:00.000Z",
-      "endDate": "2026-11-26T16:00:00.000Z"
-    }
-  ],
-  "upcoming": [
     {
       "id": "0623017cf9f341efbe07557f46beb4e8",
       "namespace": "bda8d2133655435982b9118972792328",
@@ -34,7 +22,9 @@
       "image": "https://cdn1.epicgames.com/spt-assets/545b4dd8bb364c12b719268198a93ef3/bread-and-fred-3jnwn.jpg",
       "startDate": "2026-11-26T16:00:00.000Z",
       "endDate": "2026-12-03T16:00:00.000Z"
-    },
+    }
+  ],
+  "upcoming": [
     {
       "id": "72bd05148adb4e2cacb8b2efaa4c0297",
       "namespace": "ca2e8ee2cacc4b69abd275a50422b010",
