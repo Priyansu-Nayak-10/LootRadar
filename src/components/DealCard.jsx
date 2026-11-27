@@ -3,6 +3,7 @@ import {
   formatStoreName,
   formatDealPrice,
   formatDealExpiry,
+  formatDealTitle,
 } from '../lib/dealsData'
 import {
   FlameIcon,
@@ -23,6 +24,7 @@ export default function DealCard({
   const salePrice = Number(deal.price || 0)
   const regularPrice = Number(deal.regular || 0)
   const expiryLabel = formatDealExpiry(deal.expiry)
+  const displayTitle = formatDealTitle(deal.title) || deal.title || 'Game'
 
   const actions =
     typeof getGameActions === 'function'
@@ -37,48 +39,59 @@ export default function DealCard({
       : { owned: false, wishlisted: false, onToggleOwned: () => {}, onToggleWishlist: () => {} }
 
   return (
-    <article className="deal-card-redesign">
+    <article className="deal-card-redesign" data-testid="deal-card">
+      {/* Background Image covering entire card */}
       <div className="deal-card__media">
         <SafeImage
           steamAppID={deal.steamAppId}
           src={deal.image}
-          alt={deal.title}
+          alt={displayTitle}
           className="deal-card__image"
-          fallbackText={deal.title?.slice(0, 1)}
+          fallbackText={displayTitle.slice(0, 1)}
         />
-
-        {discount > 0 && (
-          <span className="deal-card__badge-discount">-{discount}%</span>
-        )}
-
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            actions.onToggleWishlist()
-          }}
-          className={`deal-card__heart-btn ${actions.wishlisted ? 'is-active' : ''}`}
-          aria-label={actions.wishlisted ? `Remove ${deal.title} from wishlist` : `Add ${deal.title} to wishlist`}
-          title={actions.wishlisted ? 'In Wishlist' : 'Add to Wishlist'}
-        >
-          <HeartIcon active={actions.wishlisted} />
-        </button>
-
-        {deal.isLowestEver ? (
-          <span className="deal-card__flag deal-card__flag--lowest">
-            <FlameIcon gradient={false} /> Lowest ever
-          </span>
-        ) : deal.isNewLow ? (
-          <span className="deal-card__flag deal-card__flag--great">
-            New low
-          </span>
-        ) : null}
       </div>
 
+      {/* Dark gradient fade over bottom of image */}
+      <div className="deal-card__fade" aria-hidden="true" />
+
+      {/* Top-left: green discount badge */}
+      {discount > 0 && (
+        <span className="deal-card__badge-discount">-{discount}%</span>
+      )}
+
+      {/* Top-right: wishlist heart button */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          actions.onToggleWishlist()
+        }}
+        className={`deal-card__heart-btn ${actions.wishlisted ? 'is-active' : ''}`}
+        aria-label={actions.wishlisted ? `Remove ${deal.title} from wishlist` : `Add ${deal.title} to wishlist`}
+        title={actions.wishlisted ? 'In Wishlist' : 'Add to Wishlist'}
+      >
+        <HeartIcon active={actions.wishlisted} />
+      </button>
+
+      {/* Overlay content over the bottom fade */}
       <div className="deal-card__body">
+        {deal.isLowestEver ? (
+          <div className="deal-card__badge-row">
+            <span className="deal-card__flag deal-card__flag--lowest">
+              <FlameIcon gradient={false} size={13} /> Lowest ever
+            </span>
+          </div>
+        ) : deal.isNewLow ? (
+          <div className="deal-card__badge-row">
+            <span className="deal-card__flag deal-card__flag--great">
+              New low
+            </span>
+          </div>
+        ) : null}
+
         <h3 className="deal-card__title" title={deal.title}>
-          {deal.title}
+          {displayTitle}
         </h3>
 
         <div className="deal-card__meta-row">

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import {
   formatDealPrice,
   formatDealExpiry,
+  formatDealTitle,
   isDealActive,
   matchDealForGame,
   parseDealsParams,
@@ -48,6 +49,24 @@ describe('dealsData helpers and logic (ITAD INR)', () => {
 
       assert.equal(formatDealExpiry(new Date(now - 1000).toISOString(), now), 'Ended')
       assert.equal(formatDealExpiry(null, now), null)
+    })
+  })
+
+  describe('formatDealTitle', () => {
+    it('strips non-Latin/Arabic subtitle and keeps English title', () => {
+      assert.equal(formatDealTitle('Umm Oyoun - ام عيون'), 'Umm Oyoun')
+    })
+
+    it('keeps standard English and alphanumeric titles unchanged', () => {
+      assert.equal(formatDealTitle('The Witcher 3: Wild Hunt'), 'The Witcher 3: Wild Hunt')
+      assert.equal(formatDealTitle('Cyberpunk 2077'), 'Cyberpunk 2077')
+      assert.equal(formatDealTitle('Amazing Adventures: The Lost Tomb'), 'Amazing Adventures: The Lost Tomb')
+    })
+
+    it('handles empty or non-string titles gracefully', () => {
+      assert.equal(formatDealTitle(''), '')
+      assert.equal(formatDealTitle(null), '')
+      assert.equal(formatDealTitle(undefined), '')
     })
   })
 

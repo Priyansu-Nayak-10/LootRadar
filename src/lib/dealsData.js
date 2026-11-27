@@ -31,6 +31,21 @@ export function formatStoreName(name) {
   return name
 }
 
+export function formatDealTitle(rawTitle) {
+  if (!rawTitle || typeof rawTitle !== 'string') return ''
+  const trimmed = rawTitle.trim()
+  // If title has a bilingual separator like "English - Arabic" (e.g. "Umm Oyoun - ام عيون"), keep the English/Latin part
+  const parts = trimmed.split(/\s*[-/|]\s*/)
+  if (parts.length > 1) {
+    const englishPart = parts.find((p) => /[a-zA-Z]/.test(p) && !/[\u0600-\u06FF\u0750-\u077F]/.test(p))
+    if (englishPart && englishPart.trim().length > 1) {
+      return englishPart.trim()
+    }
+  }
+  // Strip trailing Arabic script if attached
+  return trimmed.replace(/\s*[-/]?\s*[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]+.*$/, '').trim() || trimmed
+}
+
 const INR_WHOLE_FORMATTER = new Intl.NumberFormat('en-IN', {
   style: 'currency',
   currency: 'INR',
