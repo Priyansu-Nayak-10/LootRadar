@@ -8486,8 +8486,6 @@ body:has(.auth-redesign) .bottom-nav {
 
 
 /* ─── Card Image Scrim Overlays ─── */
-.deal-card__media::after,
-.free-card__media::after,
 .popular-game-card__art::after,
 .coming-game-card__art::after {
   content: "";
