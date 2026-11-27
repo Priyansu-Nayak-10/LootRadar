@@ -2,6 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { collectNewsSnapshot } from './lib/news.mjs'
 import { collectItadSnapshot } from './lib/itad.mjs'
+import { freeGameMergeKey } from '../src/lib/freeGames.js'
 
 const USER_AGENT = 'WishRadar/1.0 (free portfolio project)'
 const DATA_DIR = new URL('../public/data/', import.meta.url)
@@ -85,25 +86,53 @@ export async function runItadSnapshot({ outDir = DATA_DIR } = {}) {
 async function main() {
   await mkdir(DATA_DIR, { recursive: true })
 
-  const [freeGamesRes, alwaysFreeRes] = await Promise.allSettled([
+  const skipNews = process.argv.includes('--skip-news')
+  const [itadRes, newsRes, freeGamesRes, alwaysFreeRes] = await Promise.allSettled([
+    runItadSnapshot(),
+    skipNews ? Promise.resolve({ articles: [] }) : runNewsSnapshot(),
     fetchJson('https://www.gamerpower.com/api/giveaways?type=game'),
     fetchJson('https://www.freetogame.com/api/games'),
   ])
+
+  const itadSnapshot = itadRes.status === 'fulfilled' ? itadRes.value : { deals: [], free: [] }
+  const newsSnapshot = newsRes.status === 'fulfilled' ? newsRes.value : { articles: [] }
+
+  // Build lookup map for ITAD INR worth
+  const itadWorthMap = new Map()
+  for (const item of [...(itadSnapshot.free || []), ...(itadSnapshot.deals || [])]) {
+    if (item?.title && item.regular > 0) {
+      const key = freeGameMergeKey(item.title)
+      if (key && !itadWorthMap.has(key)) {
+        itadWorthMap.set(key, {
+          amount: item.regular,
+          currency: 'INR',
+          source: item.shop?.name || 'ITAD',
+        })
+      }
+    }
+  }
 
   let cleanFreeGames = []
   if (freeGamesRes.status === 'fulfilled' && Array.isArray(freeGamesRes.value)) {
     cleanFreeGames = freeGamesRes.value
       .filter((game) => game.status === 'Active')
-      .map((game) => ({
-        id: game.id,
-        title: game.title,
-        platforms: game.platforms,
-        thumbnail: game.thumbnail,
-        worth: game.worth,
-        end_date: game.end_date,
-        open_giveaway_url: game.open_giveaway_url,
-        gamerpower_url: game.gamerpower_url,
-      }))
+      .map((game) => {
+        const mergeKey = freeGameMergeKey(game.title)
+        const matchedWorth = itadWorthMap.get(mergeKey) || null
+        // Never store USD worth (e.g. "$4.99") as INR
+        const worth = matchedWorth || (game.worth?.currency === 'INR' ? game.worth : null)
+
+        return {
+          id: game.id,
+          title: game.title,
+          platforms: game.platforms,
+          thumbnail: game.thumbnail,
+          worth,
+          end_date: game.end_date,
+          open_giveaway_url: game.open_giveaway_url,
+          gamerpower_url: game.gamerpower_url,
+        }
+      })
 
     await saveJson('gamerpower-free-games.json', {
       generatedAt: new Date().toISOString(),
@@ -142,15 +171,6 @@ async function main() {
   } else {
     console.warn('FreeToGame fetch failed:', alwaysFreeRes.reason?.message || 'unknown error')
   }
-
-  const skipNews = process.argv.includes('--skip-news')
-  const [itadRes, newsRes] = await Promise.allSettled([
-    runItadSnapshot(),
-    skipNews ? Promise.resolve({ articles: [] }) : runNewsSnapshot(),
-  ])
-
-  const itadSnapshot = itadRes.status === 'fulfilled' ? itadRes.value : { deals: [], free: [] }
-  const newsSnapshot = newsRes.status === 'fulfilled' ? newsRes.value : { articles: [] }
 
   console.log(
     `Saved ${cleanFreeGames.length} free games, ${cleanAlwaysFreeGames.length} always-free games, ${itadSnapshot.deals?.length || 0} ITAD deals, and ${newsSnapshot.articles.length} news stories`

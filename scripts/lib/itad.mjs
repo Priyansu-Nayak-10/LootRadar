@@ -369,6 +369,15 @@ export function normalizeDeal(item, { fetchedAt = new Date().toISOString(), stea
     if (Number.isFinite(ms)) expiryIso = new Date(ms).toISOString()
   }
 
+  let worth = null
+  if (regularAmount > 0) {
+    worth = {
+      amount: regularAmount,
+      currency: deal?.price?.currency || DEFAULT_CURRENCY,
+      source: deal?.shop?.name || 'ITAD',
+    }
+  }
+
   return {
     itadId: item?.id || '',
     slug: item?.slug || '',
@@ -383,6 +392,7 @@ export function normalizeDeal(item, { fetchedAt = new Date().toISOString(), stea
     regular: regularAmount,
     cut: Number(deal?.cut ?? 0),
     currency: deal?.price?.currency || DEFAULT_CURRENCY,
+    worth,
     historyLow: historyLowAmount,
     historyLow1y: deal?.historyLow_1y?.amount != null ? Number(deal.historyLow_1y.amount) : null,
     historyLow3m: deal?.historyLow_3m?.amount != null ? Number(deal.historyLow_3m.amount) : null,
@@ -396,7 +406,7 @@ export function normalizeDeal(item, { fetchedAt = new Date().toISOString(), stea
   }
 }
 
-export function processItadDeals(rawItems = [], { fetchedAt = new Date().toISOString() } = {}) {
+export function processItadDeals(rawItems = [], { fetchedAt = new Date().toISOString(), nowMs = Date.now() } = {}) {
   const gameItems = rawItems
     .filter((item) => item && item.type === 'game' && item.id && item.title && item.deal)
     .map((item) => normalizeDeal(item, { fetchedAt }))
@@ -420,11 +430,11 @@ export function processItadDeals(rawItems = [], { fetchedAt = new Date().toISOSt
   const deduped = [...bestByItadId.values()]
 
   const free = deduped
-    .filter((d) => d.price === 0 || d.cut >= 100)
+    .filter((d) => (d.price === 0 || d.cut >= 100) && (!d.expiry || Date.parse(d.expiry) > nowMs))
     .sort((a, b) => a.title.localeCompare(b.title))
 
   const deals = deduped
-    .filter((d) => d.price > 0 && d.cut >= 20)
+    .filter((d) => d.price > 0 && d.cut >= 20 && (!d.expiry || Date.parse(d.expiry) > nowMs))
     .sort((a, b) => {
       if (b.cut !== a.cut) return b.cut - a.cut
       if (a.isLowestEver !== b.isLowestEver) return a.isLowestEver ? -1 : 1

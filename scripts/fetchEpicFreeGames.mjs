@@ -25,6 +25,15 @@ function cleanElement(element, type) {
   const offer = getOffer(element, type === 'current' ? 'promotionalOffers' : 'upcomingPromotionalOffers')
   if (!offer) return null
 
+  let worth = null
+  const origPrice = element.price?.totalPrice?.originalPrice
+  const currCode = element.price?.totalPrice?.currencyCode
+  if (origPrice != null && origPrice > 0 && currCode === 'INR') {
+    const decimals = element.price?.totalPrice?.currencyInfo?.decimals ?? 2
+    const amount = decimals > 0 ? origPrice / (10 ** decimals) : origPrice
+    worth = { amount, currency: 'INR', source: 'Epic Games Store' }
+  }
+
   return {
     id: element.id,
     namespace: element.namespace,
@@ -34,6 +43,7 @@ function cleanElement(element, type) {
     image: getImage(element),
     startDate: offer.startDate,
     endDate: offer.endDate,
+    worth,
   }
 }
 

@@ -8,7 +8,7 @@
       "title": "Lonesome Village (Mobile) Giveaway",
       "platforms": "Android, iOS",
       "thumbnail": "https://www.gamerpower.com/offers/1/6aff20a09cb65.jpg",
-      "worth": "$4.99",
+      "worth": null,
       "end_date": "2026-11-26 23:59:00",
       "open_giveaway_url": "https://www.gamerpower.com/open/lonesome-village-mobile-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/lonesome-village-mobile-giveaway"
@@ -18,7 +18,11 @@
       "title": "Mark of the Deep (Epic Games) Giveaway",
       "platforms": "PC, Epic Games Store",
       "thumbnail": "https://www.gamerpower.com/offers/1/6aff1d0e4942d.jpg",
-      "worth": "$19.99",
+      "worth": {
+        "amount": 880,
+        "currency": "INR",
+        "source": "Epic Game Store"
+      },
       "end_date": "2026-11-26 23:59:00",
       "open_giveaway_url": "https://www.gamerpower.com/open/mark-of-the-deep-epic-games-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/mark-of-the-deep-epic-games-giveaway"
@@ -28,7 +32,11 @@
       "title": "Contractor: The Clean Up Part 2 (Epic Games) Giveaway",
       "platforms": "PC, Epic Games Store",
       "thumbnail": "https://www.gamerpower.com/offers/1/6afc554f06761.jpg",
-      "worth": "$4.99",
+      "worth": {
+        "amount": 179,
+        "currency": "INR",
+        "source": "Epic Game Store"
+      },
       "end_date": "2026-12-02 23:59:00",
       "open_giveaway_url": "https://www.gamerpower.com/open/contractor-the-clean-up-part-2-epic-games-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/contractor-the-clean-up-part-2-epic-games-giveaway"
@@ -38,7 +46,7 @@
       "title": "My Darkest Witch (IndieGala) Giveaway",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/69061997da81d.jpg",
-      "worth": "$4.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/my-darkest-witch-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/my-darkest-witch-pc-giveaway"
@@ -48,7 +56,7 @@
       "title": "ANCIENT EVIL (IndieGala) Giveaway",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/69024dade7c16.jpg",
-      "worth": "$4.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/ancient-evil-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/ancient-evil-pc-giveaway"
@@ -58,7 +66,7 @@
       "title": "Last Room (IndieGala) Giveaway",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/68f91bd81c328.jpg",
-      "worth": "$29.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/last-room-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/last-room-pc-giveaway"
@@ -68,7 +76,7 @@
       "title": "Best Plumber (IndieGala) Giveaway",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/68f40b259de93.jpg",
-      "worth": "$29.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/best-plumber-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/best-plumber-pc-giveaway"
@@ -78,7 +86,7 @@
       "title": "Sausage Hunter (Indiegala) Giveaway",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/68eadb2d6f0c4.jpg",
-      "worth": "$29.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/sausage-hunter-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/sausage-hunter-pc-giveaway"
@@ -88,7 +96,7 @@
       "title": "Battle Ram (IndieGala) Giveaway",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/68efabd65f913.jpg",
-      "worth": "$29.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/battle-ram-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/battle-ram-pc-giveaway"
@@ -98,7 +106,7 @@
       "title": "Leaper (IndieGala) Giveaway",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/68e6513c31514.jpg",
-      "worth": "$4.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/leaper-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/leaper-pc-giveaway"
@@ -108,7 +116,7 @@
       "title": "Dwarven Realms (Steam) Key Giveaway",
       "platforms": "PC, Steam",
       "thumbnail": "https://www.gamerpower.com/offers/1/6a59119a8eb8d.jpg",
-      "worth": "$9.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/dwarven-realms-steam-key-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/dwarven-realms-steam-key-giveaway"
@@ -118,7 +126,7 @@
       "title": "GigaBash (Stove) Giveaway",
       "platforms": "PC",
       "thumbnail": "https://www.gamerpower.com/offers/1/69567c4ee0fa3.jpg",
-      "worth": "$24.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/gigabash-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/gigabash-pc-giveaway"
@@ -128,7 +136,7 @@
       "title": "Sharknado VR (Rift) Giveaway",
       "platforms": "VR",
       "thumbnail": "https://www.gamerpower.com/offers/1/689aece93310e.jpg",
-      "worth": "$1.99",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/sharknado-vr-rift-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/sharknado-vr-rift-giveaway"
@@ -138,7 +146,7 @@
       "title": "Dual Chroma: Academy Carols (itch.io) Giveaway",
       "platforms": "PC, Itch.io, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/63c6f67bb9c8b.jpg",
-      "worth": "$2.00",
+      "worth": null,
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/dual-chroma-academy-carols-itch-io-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/dual-chroma-academy-carols-itch-io-giveaway"

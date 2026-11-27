@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import {
   formatDealPrice,
   formatDealExpiry,
+  isDealActive,
   matchDealForGame,
   parseDealsParams,
   serializeDealsParams,
@@ -47,6 +48,45 @@ describe('dealsData helpers and logic (ITAD INR)', () => {
 
       assert.equal(formatDealExpiry(new Date(now - 1000).toISOString(), now), 'Ended')
       assert.equal(formatDealExpiry(null, now), null)
+    })
+  })
+
+  describe('isDealActive', () => {
+    const now = Date.parse('2026-11-27T10:00:00Z')
+
+    it('returns false for deals with past end dates', () => {
+      assert.equal(
+        isDealActive({ expiry: '2026-11-26T16:00:00.000Z' }, now),
+        false
+      )
+      assert.equal(
+        isDealActive({ expiry: new Date(now - 1000).toISOString() }, now),
+        false
+      )
+    })
+
+    it('returns true for deals with future end dates', () => {
+      assert.equal(
+        isDealActive({ expiry: '2026-11-30T16:00:00.000Z' }, now),
+        true
+      )
+      assert.equal(
+        isDealActive({ expiry: new Date(now + 3600000).toISOString() }, now),
+        true
+      )
+    })
+
+    it('returns true for deals with no end date (open-ended)', () => {
+      assert.equal(isDealActive({ expiry: null }, now), true)
+      assert.equal(isDealActive({ expiry: undefined }, now), true)
+      assert.equal(isDealActive({ title: 'Game Without Expiry' }, now), true)
+    })
+
+    it('handles invalid inputs gracefully', () => {
+      assert.equal(isDealActive(null, now), false)
+      assert.equal(isDealActive(undefined, now), false)
+      assert.equal(isDealActive('not-a-deal', now), false)
+      assert.equal(isDealActive({ expiry: 'invalid-date' }, now), true)
     })
   })
 
@@ -124,6 +164,7 @@ describe('dealsData helpers and logic (ITAD INR)', () => {
   })
 
   describe('filterAndSortDeals', () => {
+    const testNow = Date.parse('2026-11-27T10:00:00Z')
     const sampleDeals = [
       {
         itadId: 'd1',
@@ -132,7 +173,7 @@ describe('dealsData helpers and logic (ITAD INR)', () => {
         price: 440,
         cut: 60,
         isLowestEver: true,
-        expiry: '2026-12-01T10:00:00Z',
+        expiry: '2026-12-05T10:00:00Z',
       },
       {
         itadId: 'd2',
@@ -141,7 +182,7 @@ describe('dealsData helpers and logic (ITAD INR)', () => {
         price: 399,
         cut: 50,
         isLowestEver: false,
-        expiry: '2026-11-27T10:00:00Z',
+        expiry: '2026-12-01T10:00:00Z',
       },
       {
         itadId: 'd3',
@@ -152,24 +193,35 @@ describe('dealsData helpers and logic (ITAD INR)', () => {
         isLowestEver: true,
         expiry: null,
       },
+      {
+        itadId: 'd-expired',
+        title: 'Together After Dark (Expired)',
+        shop: { id: 61, name: 'Steam' },
+        price: 199,
+        cut: 80,
+        isLowestEver: true,
+        expiry: '2026-11-26T16:00:00.000Z',
+      },
     ]
 
-    it('filters by store, minDiscount, maxPrice, lowestOnly, and query', () => {
-      assert.equal(filterAndSortDeals(sampleDeals, { store: '61' }).length, 1)
-      assert.equal(filterAndSortDeals(sampleDeals, { minDiscount: '75' }).length, 1)
-      assert.equal(filterAndSortDeals(sampleDeals, { maxPrice: 500 }).length, 2)
-      assert.equal(filterAndSortDeals(sampleDeals, { lowestOnly: true }).length, 2)
-      assert.equal(filterAndSortDeals(sampleDeals, { q: 'hades' }).length, 1)
+    it('filters by store, minDiscount, maxPrice, lowestOnly, and query, while dropping expired deals', () => {
+      assert.equal(filterAndSortDeals(sampleDeals, { store: '61' }, testNow).length, 1) // only Hades, not expired
+      assert.equal(filterAndSortDeals(sampleDeals, { minDiscount: '75' }, testNow).length, 1)
+      assert.equal(filterAndSortDeals(sampleDeals, { maxPrice: 500 }, testNow).length, 2)
+      assert.equal(filterAndSortDeals(sampleDeals, { lowestOnly: true }, testNow).length, 2)
+      assert.equal(filterAndSortDeals(sampleDeals, { q: 'hades' }, testNow).length, 1)
+      // Verify expired deal is dropped
+      assert.equal(filterAndSortDeals(sampleDeals, { q: 'Together After Dark' }, testNow).length, 0)
     })
 
     it('sorts by savings, price, and expiry ascending', () => {
-      const bySavings = filterAndSortDeals(sampleDeals, { sort: 'savings' })
+      const bySavings = filterAndSortDeals(sampleDeals, { sort: 'savings' }, testNow)
       assert.equal(bySavings[0].itadId, 'd3')
 
-      const byPrice = filterAndSortDeals(sampleDeals, { sort: 'price' })
+      const byPrice = filterAndSortDeals(sampleDeals, { sort: 'price' }, testNow)
       assert.equal(byPrice[0].itadId, 'd2')
 
-      const byExpiry = filterAndSortDeals(sampleDeals, { sort: 'expiry' })
+      const byExpiry = filterAndSortDeals(sampleDeals, { sort: 'expiry' }, testNow)
       assert.equal(byExpiry[0].itadId, 'd2')
       assert.equal(byExpiry[1].itadId, 'd1')
       assert.equal(byExpiry[2].itadId, 'd3')

@@ -2,6 +2,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   cleanTitle,
+  freeGameMergeKey,
   isMobile,
   normalizeStore,
   parseEndDate,
@@ -46,6 +47,56 @@ describe('freeGames helpers', () => {
       assert.equal(cleanTitle(''), '')
       assert.equal(cleanTitle(null), '')
       assert.equal(cleanTitle(undefined), '')
+    })
+  })
+
+  describe('freeGameMergeKey', () => {
+    it('normalizes Part II vs Part 2 to identical keys', () => {
+      assert.equal(
+        freeGameMergeKey('Contractor: The Clean Up Part II'),
+        'contractor clean up part 2'
+      )
+      assert.equal(
+        freeGameMergeKey('Contractor: The Clean Up Part 2 (Epic Games) Giveaway'),
+        'contractor clean up part 2'
+      )
+      assert.equal(
+        freeGameMergeKey('Contractor: The Clean Up Part II'),
+        freeGameMergeKey('Contractor: The Clean Up Part 2 (Epic Games) Giveaway')
+      )
+    })
+
+    it('handles titles with and without punctuation and with and without "The"', () => {
+      assert.equal(
+        freeGameMergeKey('Contractor: The Clean Up Part II'),
+        freeGameMergeKey('Contractor The Clean Up Part 2')
+      )
+      assert.equal(
+        freeGameMergeKey('The Witcher 3: Wild Hunt'),
+        freeGameMergeKey('Witcher 3 Wild Hunt')
+      )
+      assert.equal(
+        freeGameMergeKey('Contractor: The Clean Up'),
+        freeGameMergeKey('Contractor Clean Up')
+      )
+    })
+
+    it('replaces standalone roman numerals I to X with digits', () => {
+      assert.equal(freeGameMergeKey('Game Part I'), 'game part 1')
+      assert.equal(freeGameMergeKey('Game Part II'), 'game part 2')
+      assert.equal(freeGameMergeKey('Game Part III'), 'game part 3')
+      assert.equal(freeGameMergeKey('Game Part IV'), 'game part 4')
+      assert.equal(freeGameMergeKey('Game Part V'), 'game part 5')
+      assert.equal(freeGameMergeKey('Game Part VI'), 'game part 6')
+      assert.equal(freeGameMergeKey('Game Part VII'), 'game part 7')
+      assert.equal(freeGameMergeKey('Game Part VIII'), 'game part 8')
+      assert.equal(freeGameMergeKey('Game Part IX'), 'game part 9')
+      assert.equal(freeGameMergeKey('Game Part X'), 'game part 10')
+    })
+
+    it('strips accents, trademarks, and collapses spaces', () => {
+      assert.equal(freeGameMergeKey('Pokémon™ Special Edition®'), 'pokemon special edition')
+      assert.equal(freeGameMergeKey('   Super   Game   Part   2   '), 'super game part 2')
     })
   })
 
@@ -191,7 +242,93 @@ describe('freeGames helpers', () => {
     })
   })
 
+  describe('formatWorthInr', () => {
+    it('formats INR object into currency string', () => {
+      assert.equal(formatWorthInr({ amount: 179, currency: 'INR' }), '₹179')
+      assert.equal(formatWorthInr({ amount: 539, currency: 'INR' }), '₹539')
+    })
+
+    it('formats raw numeric INR amounts', () => {
+      assert.equal(formatWorthInr(179), '₹179')
+      assert.equal(formatWorthInr('179'), '₹179')
+    })
+
+    it('returns null for non-INR currencies (never shows USD as INR)', () => {
+      assert.equal(formatWorthInr({ amount: 19.99, currency: 'USD' }), null)
+      assert.equal(formatWorthInr({ amount: 4.99, currency: 'EUR' }), null)
+    })
+
+    it('returns null for empty, zero, or missing values', () => {
+      assert.equal(formatWorthInr(null), null)
+      assert.equal(formatWorthInr(undefined), null)
+      assert.equal(formatWorthInr(0), null)
+      assert.equal(formatWorthInr(''), null)
+      assert.equal(formatWorthInr({}), null)
+    })
+  })
+
   describe('dedupe', () => {
+    it('merges Part II and Part 2 and preserves official source and copies missing fields', () => {
+      const gpContractor = {
+        id: 3852,
+        title: 'Contractor: The Clean Up Part 2 (Epic Games) Giveaway',
+        platforms: 'PC, Epic Games Store',
+        thumbnail: 'https://gp.com/contractor.jpg',
+        worth: '$4.99',
+        end_date: '2026-12-02 23:59:00',
+        open_giveaway_url: 'https://gp.com/open/contractor-2',
+      }
+      const itadContractor = {
+        itadId: 'itad-contractor',
+        title: 'Contractor: The Clean Up Part II',
+        platforms: 'PC, Epic Game Store',
+        image: 'https://assets.itad.com/contractor.png',
+        shop: { id: 16, name: 'Epic Game Store' },
+        price: 0,
+        regular: 179,
+        cut: 100,
+        currency: 'INR',
+        worth: { amount: 179, currency: 'INR', source: 'Epic Game Store' },
+        url: 'https://store.epicgames.com/p/contractor-the-clean-up-part-ii',
+        _isItad: true,
+      }
+
+      const result = dedupe([gpContractor, itadContractor])
+      assert.equal(result.length, 1)
+      assert.equal(result[0].title, 'Contractor: The Clean Up Part II')
+      assert.equal(result[0].worthInr, 179)
+      assert.deepEqual(result[0].worth, { amount: 179, currency: 'INR', source: 'Epic Game Store' })
+      assert.equal(formatWorthInr(result[0].worth), '₹179')
+      // Copied missing end_date from dropped entry
+      assert.equal(result[0].end_date, '2026-12-02 23:59:00')
+      assert.equal(result[0].thumbnail, 'https://assets.itad.com/contractor.png')
+    })
+
+    it('keeps earlier end time when both entries qualify', () => {
+      const itemEarly = {
+        id: 'epic-early',
+        title: 'Game Double',
+        namespace: 'ns-early',
+        startDate: '2026-11-20T00:00:00Z',
+        endDate: '2026-11-28T16:00:00Z',
+        slug: 'game-double',
+        image: 'img-early.jpg',
+      }
+      const itemLate = {
+        id: 'epic-late',
+        title: 'Game Double',
+        namespace: 'ns-late',
+        startDate: '2026-11-20T00:00:00Z',
+        endDate: '2026-12-02T16:00:00Z',
+        slug: 'game-double',
+        image: 'img-late.jpg',
+      }
+
+      const result = dedupe([itemLate, itemEarly])
+      assert.equal(result.length, 1)
+      assert.equal(result[0].endDate, '2026-11-28T16:00:00Z')
+    })
+
     it('merges GamerPower and Epic duplicate items and prefers Epic details', () => {
       const gpItem = {
         id: 101,

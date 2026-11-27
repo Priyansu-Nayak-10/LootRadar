@@ -43,31 +43,6 @@
       "fetchedAt": "2026-11-25T14:42:29.738Z"
     },
     {
-      "itadId": "018d937f-7af1-705f-8372-8fa63b4d57a8",
-      "slug": "together-after-dark",
-      "title": "Together After Dark",
-      "type": "game",
-      "image": "https://assets.isthereanydeal.com/018d937f-7af1-705f-8372-8fa63b4d57a8/banner600.jpg?t=1787938215",
-      "shop": {
-        "id": 16,
-        "name": "Epic Game Store"
-      },
-      "price": 5.45,
-      "regular": 109,
-      "cut": 95,
-      "currency": "INR",
-      "historyLow": 5.45,
-      "historyLow1y": 5.45,
-      "historyLow3m": 5.45,
-      "isLowestEver": true,
-      "isNewLow": true,
-      "expiry": "2026-11-26T16:00:00.000Z",
-      "url": "https://itad.link/0196faff-71bc-713e-a038-4d8c2e31cd09/?app=t1ehff",
-      "platforms": [],
-      "steamAppId": "2708790",
-      "fetchedAt": "2026-11-25T14:42:29.738Z"
-    },
-    {
       "itadId": "018d937f-1809-7003-94eb-1a95c9319134",
       "slug": "amazing-adventures-the-lost-tomb",
       "title": "Amazing Adventures: The Lost Tomb",
@@ -95,31 +70,6 @@
         }
       ],
       "steamAppId": "3510",
-      "fetchedAt": "2026-11-25T14:42:29.738Z"
-    },
-    {
-      "itadId": "018d937f-5013-7144-94c2-fcfe4a64a991",
-      "slug": "firelight-fantasy-force-energy",
-      "title": "Firelight Fantasy: Force Energy",
-      "type": "game",
-      "image": "https://assets.isthereanydeal.com/018d937f-5013-7144-94c2-fcfe4a64a991/banner600.jpg?t=1791584421",
-      "shop": {
-        "id": 16,
-        "name": "Epic Game Store"
-      },
-      "price": 21.45,
-      "regular": 429,
-      "cut": 95,
-      "currency": "INR",
-      "historyLow": 21.45,
-      "historyLow1y": 21.45,
-      "historyLow3m": 21.45,
-      "isLowestEver": true,
-      "isNewLow": true,
-      "expiry": "2026-11-25T15:00:00.000Z",
-      "url": "https://itad.link/01904aa6-28d4-71a3-866c-418d8f526a1f/?app=t1ehff",
-      "platforms": [],
-      "steamAppId": "1619330",
       "fetchedAt": "2026-11-25T14:42:29.738Z"
     },
     {
@@ -1466,96 +1416,6 @@
       "fetchedAt": "2026-11-25T14:42:29.738Z"
     },
     {
-      "itadId": "019616ff-c46d-7041-9d7e-4ddbcf83bc01",
-      "slug": "sky-sorcerer",
-      "title": "Sky Sorcerer",
-      "type": "game",
-      "image": "https://assets.isthereanydeal.com/019616ff-c46d-7041-9d7e-4ddbcf83bc01/banner600.jpg?t=1794225926",
-      "shop": {
-        "id": 61,
-        "name": "Steam"
-      },
-      "price": 200,
-      "regular": 4000,
-      "cut": 95,
-      "currency": "INR",
-      "historyLow": 200,
-      "historyLow1y": 200,
-      "historyLow3m": 200,
-      "isLowestEver": true,
-      "isNewLow": true,
-      "expiry": "2026-11-26T18:00:00.000Z",
-      "url": "https://itad.link/0199451a-72e7-71af-8b0a-f2306298bae8/?app=t1ehff",
-      "platforms": [
-        {
-          "id": 1,
-          "name": "Windows"
-        }
-      ],
-      "steamAppId": "3626470",
-      "fetchedAt": "2026-11-25T14:42:29.738Z"
-    },
-    {
-      "itadId": "0196f869-bf34-7016-9aa5-04baddcf9923",
-      "slug": "sorcery-and-survival",
-      "title": "Sorcery and Survival",
-      "type": "game",
-      "image": "https://assets.isthereanydeal.com/0196f869-bf34-7016-9aa5-04baddcf9923/banner600.jpg?t=1794226224",
-      "shop": {
-        "id": 61,
-        "name": "Steam"
-      },
-      "price": 200,
-      "regular": 4000,
-      "cut": 95,
-      "currency": "INR",
-      "historyLow": 200,
-      "historyLow1y": 200,
-      "historyLow3m": 200,
-      "isLowestEver": true,
-      "isNewLow": true,
-      "expiry": "2026-11-26T18:00:00.000Z",
-      "url": "https://itad.link/01975fd0-6237-7399-b738-0a2ae1e30b72/?app=t1ehff",
-      "platforms": [
-        {
-          "id": 1,
-          "name": "Windows"
-        }
-      ],
-      "steamAppId": "3730670",
-      "fetchedAt": "2026-11-25T14:42:29.738Z"
-    },
-    {
-      "itadId": "0196ee61-6b47-7124-bc95-8b534f1b98fd",
-      "slug": "sorcerers-fortitude",
-      "title": "Sorcerer's Fortitude",
-      "type": "game",
-      "image": "https://assets.isthereanydeal.com/0196ee61-6b47-7124-bc95-8b534f1b98fd/banner600.jpg?t=1794225629",
-      "shop": {
-        "id": 61,
-        "name": "Steam"
-      },
-      "price": 200,
-      "regular": 4000,
-      "cut": 95,
-      "currency": "INR",
-      "historyLow": 200,
-      "historyLow1y": 200,
-      "historyLow3m": 200,
-      "isLowestEver": true,
-      "isNewLow": true,
-      "expiry": "2026-11-26T18:00:00.000Z",
-      "url": "https://itad.link/01975fd0-6236-722a-960d-fd94cfeb984f/?app=t1ehff",
-      "platforms": [
-        {
-          "id": 1,
-          "name": "Windows"
-        }
-      ],
-      "steamAppId": "3730630",
-      "fetchedAt": "2026-11-25T14:42:29.738Z"
-    },
-    {
       "itadId": "018d937f-6e97-737c-8260-a0276f553770",
       "slug": "battlefield-2042-elite-edition",
       "title": "Battlefield™ 2042 Elite Edition",
@@ -1790,31 +1650,6 @@
       "url": "https://itad.link/0191d6a9-2950-70b0-87c2-218695919ea3/?app=t1ehff",
       "platforms": [],
       "steamAppId": "2004360",
-      "fetchedAt": "2026-11-25T14:42:29.738Z"
-    },
-    {
-      "itadId": "018d937f-4698-7181-a654-384850b72aba",
-      "slug": "cybernetic-fault",
-      "title": "Cybernetic Fault",
-      "type": "game",
-      "image": "https://assets.isthereanydeal.com/018d937f-4698-7181-a654-384850b72aba/banner600.jpg?t=1786385192",
-      "shop": {
-        "id": 16,
-        "name": "Epic Game Store"
-      },
-      "price": 35.95,
-      "regular": 719,
-      "cut": 95,
-      "currency": "INR",
-      "historyLow": 33.18,
-      "historyLow1y": 35.95,
-      "historyLow3m": 35.95,
-      "isLowestEver": false,
-      "isNewLow": false,
-      "expiry": "2026-11-25T15:00:00.000Z",
-      "url": "https://itad.link/018f5781-558b-73f0-9e39-3591bf9522f2/?app=t1ehff",
-      "platforms": [],
-      "steamAppId": "1409740",
       "fetchedAt": "2026-11-25T14:42:29.738Z"
     },
     {
@@ -3157,31 +2992,6 @@
       "fetchedAt": "2026-11-25T14:42:29.738Z"
     },
     {
-      "itadId": "018d937f-504a-73c7-8afc-611ab3807fc2",
-      "slug": "polyclassic-wild",
-      "title": "PolyClassic: Wild",
-      "type": "game",
-      "image": "https://assets.isthereanydeal.com/018d937f-504a-73c7-8afc-611ab3807fc2/banner600.jpg?t=1791577503",
-      "shop": {
-        "id": 16,
-        "name": "Epic Game Store"
-      },
-      "price": 25.13,
-      "regular": 359,
-      "cut": 93,
-      "currency": "INR",
-      "historyLow": 17.95,
-      "historyLow1y": 17.95,
-      "historyLow3m": 25.13,
-      "isLowestEver": false,
-      "isNewLow": false,
-      "expiry": "2026-11-25T15:00:00.000Z",
-      "url": "https://itad.link/01904aa6-28d6-72f1-a4c2-8db1d68ca138/?app=t1ehff",
-      "platforms": [],
-      "steamAppId": "1631850",
-      "fetchedAt": "2026-11-25T14:42:29.738Z"
-    },
-    {
       "itadId": "018d937f-2ee1-722b-846a-0f91af8cecba",
       "slug": "girlfriend-rescue-deluxe-version-game-and-guide-and-goodies",
       "title": "Girlfriend Rescue - Deluxe Version (Game+Guide+Goodies)",
@@ -3650,7 +3460,12 @@
       "url": "https://itad.link/019f62ea-4dd6-715c-ba5c-17520a280a59/?app=t1ehff",
       "platforms": [],
       "steamAppId": null,
-      "fetchedAt": "2026-11-25T14:42:29.738Z"
+      "fetchedAt": "2026-11-25T14:42:29.738Z",
+      "worth": {
+        "amount": 179,
+        "currency": "INR",
+        "source": "Epic Game Store"
+      }
     },
     {
       "itadId": "018d937f-6f14-72be-9554-eeff3cd3a8c0",
@@ -3675,7 +3490,12 @@
       "url": "https://itad.link/019257f0-5106-72c5-99b2-ccc5e38235fc/?app=t1ehff",
       "platforms": [],
       "steamAppId": "1933370",
-      "fetchedAt": "2026-11-25T14:42:29.738Z"
+      "fetchedAt": "2026-11-25T14:42:29.738Z",
+      "worth": {
+        "amount": 880,
+        "currency": "INR",
+        "source": "Epic Game Store"
+      }
     }
   ]
 }

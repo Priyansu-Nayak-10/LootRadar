@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 
 export const ITAD_DEALS_URL = '/data/itad-deals.json'
 const DEALS_CACHE_KEY = 'wishradar_itad_deals_v2'
@@ -77,6 +77,15 @@ export function formatDealExpiry(expiry, now = Date.now()) {
   return `Ends ${formatted}`
 }
 
+export function isDealActive(deal, now = Date.now()) {
+  if (!deal || typeof deal !== 'object') return false
+  const expiry = deal.expiry || deal.endsAt || deal.validUntil
+  if (!expiry) return true // deals with no end date stay
+  const ms = Date.parse(expiry)
+  if (!Number.isFinite(ms)) return true
+  return ms > now
+}
+
 export function formatUpdatedAgo(generatedAt, now = Date.now()) {
   if (!generatedAt) return ''
   const ms = Date.parse(generatedAt)
@@ -141,10 +150,10 @@ export function matchDealForGame(game, deals = []) {
   )
 }
 
-export function selectTopDeals(allDeals, limit = 8) {
+export function selectTopDeals(allDeals, limit = 8, now = Date.now()) {
   if (!Array.isArray(allDeals) || allDeals.length === 0) return []
   const valid = allDeals.filter(
-    (d) => d && typeof d === 'object' && (d.type === 'game' || !d.type)
+    (d) => d && typeof d === 'object' && (d.type === 'game' || !d.type) && isDealActive(d, now)
   )
 
   const over50 = valid.filter((d) => Number(d.cut) >= 50)
@@ -160,12 +169,13 @@ export function selectTopDeals(allDeals, limit = 8) {
   return valid.slice(0, limit)
 }
 
-export function selectHeroDeals(allDeals, count = 3) {
+export function selectHeroDeals(allDeals, count = 3, now = Date.now()) {
   if (!Array.isArray(allDeals) || allDeals.length === 0) return []
 
   const withImages = allDeals.filter((deal) => {
     if (!deal || typeof deal !== 'object') return false
     if (deal.type && deal.type !== 'game') return false
+    if (!isDealActive(deal, now)) return false
     return Boolean(deal.image || deal.steamAppId)
   })
 
@@ -234,7 +244,7 @@ export function serializeDealsParams(state = {}) {
 }
 
 // ─── Filtering & Sorting Engine ───────────────────────────────────────────────
-export function filterAndSortDeals(deals = [], filters = {}) {
+export function filterAndSortDeals(deals = [], filters = {}, now = Date.now()) {
   if (!Array.isArray(deals)) return []
 
   const {
@@ -253,6 +263,7 @@ export function filterAndSortDeals(deals = [], filters = {}) {
 
   const filtered = deals.filter((deal) => {
     if (!deal || typeof deal !== 'object') return false
+    if (!isDealActive(deal, now)) return false
     if (queryNorm && !(deal.title || '').toLowerCase().includes(queryNorm)) return false
     if (store && String(deal.shop?.id) !== String(store)) return false
     if (Number(deal.cut || 0) < minDiscNum) return false
@@ -441,6 +452,15 @@ export function useDeals() {
     errorMessage: '',
   }))
   const [reloadKey, setReloadKey] = useState(0)
+  const [now, setNow] = useState(() => Date.now())
+
+  // Shared 60-second timer to re-evaluate active deals and expire countdowns dynamically
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(Date.now())
+    }, 60000)
+    return () => clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -506,12 +526,19 @@ export function useDeals() {
     setReloadKey((k) => k + 1)
   }, [])
 
-  const ageMs = state.generatedAt ? Math.max(0, Date.now() - Date.parse(state.generatedAt)) : 0
+  const ageMs = state.generatedAt ? Math.max(0, now - Date.parse(state.generatedAt)) : 0
   const isStale = Boolean(state.generatedAt) && Number.isFinite(ageMs) && ageMs > STALE_THRESHOLD_MS
+
+  const activeDeals = useMemo(() => {
+    return (state.deals || []).filter((deal) => isDealActive(deal, now))
+  }, [state.deals, now])
 
   return {
     ...state,
-    updatedLabel: formatUpdatedAgo(state.generatedAt),
+    deals: activeDeals,
+    allDeals: state.deals,
+    now,
+    updatedLabel: formatUpdatedAgo(state.generatedAt, now),
     isStale,
     reload,
   }

@@ -11,7 +11,8 @@
       "slug": "1185abfe7c554a1e8c528aba37bf3d0f",
       "image": "https://cdn1.epicgames.com/spt-assets/69576a28f7154fe9a0dce97508da5163/firestone-online-idle-rpg-1inmf.jpg",
       "startDate": "2026-11-26T16:00:00.000Z",
-      "endDate": "2026-12-03T16:00:00.000Z"
+      "endDate": "2026-12-03T16:00:00.000Z",
+      "worth": null
     },
     {
       "id": "f0a333114190492c84a9decd2bb43875",
@@ -21,7 +22,12 @@
       "slug": "3435439bd89847608f5299fb297d1466",
       "image": "https://cdn1.epicgames.com/spt-assets/545b4dd8bb364c12b719268198a93ef3/bread-and-fred-3jnwn.jpg",
       "startDate": "2026-11-26T16:00:00.000Z",
-      "endDate": "2026-12-03T16:00:00.000Z"
+      "endDate": "2026-12-03T16:00:00.000Z",
+      "worth": {
+        "amount": 539,
+        "currency": "INR",
+        "source": "Epic Games Store"
+      }
     }
   ],
   "upcoming": [

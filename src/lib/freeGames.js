@@ -33,6 +33,8 @@ export function isMobile(item) {
 
 export function normalizeStore(item) {
   if (!item || typeof item !== 'object') return 'Other'
+  if (item.namespace || item.source === 'Epic Games Store' || item._isEpicOfficial) return 'Epic'
+  if (item.source === 'Steam' || item.steamAppId) return 'Steam'
   const haystack = [
     item.platforms,
     item.platform,
@@ -141,9 +143,78 @@ const INR_PAISE_FORMATTER = new Intl.NumberFormat('en-IN', {
   maximumFractionDigits: 2,
 })
 
-export function formatWorthInr(amount) {
+const ROMAN_NUMERALS = [
+  [/\bviii\b/g, '8'],
+  [/\bvii\b/g, '7'],
+  [/\biii\b/g, '3'],
+  [/\biv\b/g, '4'],
+  [/\bix\b/g, '9'],
+  [/\bvi\b/g, '6'],
+  [/\bii\b/g, '2'],
+  [/\bx\b/g, '10'],
+  [/\bv\b/g, '5'],
+  [/\bi\b/g, '1'],
+]
+
+/**
+ * Merge-key function used ONLY for deduplicating free game entries.
+ * Lowercase, strip accents and ™®, replace standalone roman numerals I to X with digits,
+ * remove punctuation, drop "the", collapse spaces.
+ * IMPORTANT: Does not modify the existing titleKey / normalized_title logic.
+ */
+export function freeGameMergeKey(title) {
+  if (!title || typeof title !== 'string') return ''
+  let cleaned = cleanTitle(title).toLowerCase()
+  // Strip accents
+  cleaned = cleaned.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  // Strip trademarks and copyright symbols
+  cleaned = cleaned.replace(/[™®©]/g, '')
+  // Replace standalone roman numerals I to X with digits
+  for (const [pattern, digit] of ROMAN_NUMERALS) {
+    cleaned = cleaned.replace(pattern, digit)
+  }
+  // Remove punctuation (replace with spaces so words don't glue)
+  cleaned = cleaned.replace(/[^\w\s]/g, ' ')
+  // Drop standalone word "the"
+  cleaned = cleaned.replace(/\bthe\b/g, ' ')
+  // Collapse whitespace
+  return cleaned.replace(/\s+/g, ' ').trim()
+}
+
+export function isOfficialStoreSource(item) {
+  if (!item || typeof item !== 'object') return false
+  if (item._isItad || item._isEpicOfficial) return true
+  if (item.namespace || (item.slug && item.startDate)) return true
+  if (item.source === 'Epic Games Store' || item.source === 'Steam' || item.source === 'GOG') return true
+  if (item.steamAppId) return true
+
+  const url = item.open_giveaway_url || item.url || ''
+  if (
+    url.includes('store.epicgames.com') ||
+    url.includes('store.steampowered.com') ||
+    url.includes('gog.com')
+  ) {
+    return true
+  }
+  return false
+}
+
+export function formatWorthInr(worth) {
+  if (worth == null) return null
+  let amount = null
+  let currency = 'INR'
+
+  if (typeof worth === 'object') {
+    amount = worth.amount
+    currency = worth.currency || 'INR'
+  } else if (typeof worth === 'number' || typeof worth === 'string') {
+    amount = worth
+  }
+
+  if (currency !== 'INR') return null
   const val = Number(amount)
-  if (!Number.isFinite(val) || val <= 0) return ''
+  if (!Number.isFinite(val) || val <= 0) return null
+
   const hasPaise = Math.abs(val - Math.trunc(val)) > 0.001
   return hasPaise ? INR_PAISE_FORMATTER.format(val) : INR_WHOLE_FORMATTER.format(val)
 }
@@ -158,6 +229,12 @@ export function normalizeItadFreeItem(item) {
   const image = item.image || steamImage || ''
   const regular = Number(item.regular || 0)
 
+  const worth = regular > 0 ? {
+    amount: regular,
+    currency: 'INR',
+    source: shopName || 'Epic Game Store',
+  } : null
+
   return {
     id: item.itadId || item.id,
     title: cleanTitle(item.title),
@@ -169,6 +246,7 @@ export function normalizeItadFreeItem(item) {
     endDate: item.expiry || null,
     steamAppId: item.steamAppId || null,
     worthInr: regular > 0 ? regular : 0,
+    worth,
     open_giveaway_url: steamUrl || item.url || '',
     url: item.url || '',
     _isItad: true,
@@ -203,7 +281,7 @@ function pickBestClaimUrl(existing, item) {
   )
 }
 
-export function dedupe(items = []) {
+export function dedupe(items = [], { log = false } = {}) {
   if (!Array.isArray(items)) return []
 
   const map = new Map()
@@ -212,60 +290,121 @@ export function dedupe(items = []) {
     if (!item || typeof item !== 'object') continue
     const title = cleanTitle(item.title)
     if (!title) continue
-    const key = title.toLowerCase()
 
-    if (!map.has(key)) {
-      const officialUrl = getOfficialClaimUrl(item)
-      const worthInr = Number(item.worthInr || (item._isItad ? item.regular : 0) || 0)
-      map.set(key, {
-        ...item,
-        title,
-        worthInr,
-        open_giveaway_url: officialUrl || item.open_giveaway_url || item.url || item.gamerpower_url || '',
-      })
+    const mergeKey = freeGameMergeKey(title)
+    const store = normalizeStore(item)
+    const dedupeKey = `${mergeKey}::${store}`
+
+    const officialUrl = getOfficialClaimUrl(item)
+    const worthInr = Number(
+      item.worthInr ||
+      (item._isItad ? item.regular : 0) ||
+      (item.worth?.currency === 'INR' ? item.worth.amount : 0) ||
+      0
+    )
+
+    const initialWorth = item.worth?.currency === 'INR'
+      ? item.worth
+      : (worthInr > 0 ? { amount: worthInr, currency: 'INR', source: store || 'Official' } : null)
+
+    const normalizedItem = {
+      ...item,
+      title,
+      worthInr,
+      worth: initialWorth,
+      open_giveaway_url: officialUrl || item.open_giveaway_url || item.url || item.gamerpower_url || '',
+    }
+
+    if (!map.has(dedupeKey)) {
+      map.set(dedupeKey, normalizedItem)
       continue
     }
 
-    const existing = map.get(key)
-    const isItemEpic = Boolean(item.namespace || item.slug || (item.image && item.image.includes('epicgames.com')))
-    const isExistingEpic = Boolean(existing.namespace || existing.slug || (existing.image && existing.image.includes('epicgames.com')))
+    const existing = map.get(dedupeKey)
+    const isItemOfficial = isOfficialStoreSource(normalizedItem)
+    const isExistingOfficial = isOfficialStoreSource(existing)
 
-    // Earliest non-null end time
-    const existingEnd = parseEndDate(existing.end_date || existing.endDate || existing.expiry)
-    const itemEnd = parseEndDate(item.end_date || item.endDate || item.expiry)
-    let bestEnd = existing.end_date || existing.endDate || existing.expiry || null
-    if (itemEnd != null && (existingEnd == null || itemEnd < existingEnd)) {
-      bestEnd = item.end_date || item.endDate || item.expiry
+    let chosen = existing
+    let dropped = normalizedItem
+    let reason = ''
+
+    if (isItemOfficial && !isExistingOfficial) {
+      chosen = normalizedItem
+      dropped = existing
+      reason = 'official store source'
+    } else if (isExistingOfficial && !isItemOfficial) {
+      chosen = existing
+      dropped = normalizedItem
+      reason = 'official store source'
+    } else {
+      // Both official or neither official: compare end times (earlier is safer)
+      const existingEnd = parseEndDate(existing.end_date || existing.endDate || existing.expiry)
+      const itemEnd = parseEndDate(normalizedItem.end_date || normalizedItem.endDate || normalizedItem.expiry)
+
+      if (itemEnd != null && existingEnd != null) {
+        if (itemEnd < existingEnd) {
+          chosen = normalizedItem
+          dropped = existing
+          reason = `earlier end time (${normalizedItem.end_date || normalizedItem.endDate} vs ${existing.end_date || existing.endDate})`
+        } else {
+          chosen = existing
+          dropped = normalizedItem
+          reason = `earlier end time (${existing.end_date || existing.endDate} vs ${normalizedItem.end_date || normalizedItem.endDate})`
+        }
+      } else if (itemEnd != null && existingEnd == null) {
+        chosen = normalizedItem
+        dropped = existing
+        reason = 'known earlier end time vs TBA'
+      } else if (existingEnd != null && itemEnd == null) {
+        chosen = existing
+        dropped = normalizedItem
+        reason = 'known earlier end time vs TBA'
+      } else {
+        chosen = existing
+        dropped = normalizedItem
+        reason = 'earlier entry preserved'
+      }
     }
 
-    // Best image: Epic official > ITAD/Steam > GamerPower
-    const bestImage =
-      (isItemEpic && item.image) ||
-      (isExistingEpic && existing.image) ||
-      existing.image ||
-      item.image ||
-      existing.thumbnail ||
-      item.thumbnail ||
-      ''
+    if (log) {
+      console.log(`[freeGames:dedupe] Kept "${chosen.title}" (${reason}), merged/dropped "${dropped.title}"`)
+    }
 
-    const bestUrl = pickBestClaimUrl(existing, item)
+    // Earliest non-null end time
+    const chosenEnd = parseEndDate(chosen.end_date || chosen.endDate || chosen.expiry)
+    const droppedEnd = parseEndDate(dropped.end_date || dropped.endDate || dropped.expiry)
+    let bestEnd = chosen.end_date || chosen.endDate || chosen.expiry || null
+    if (droppedEnd != null && (chosenEnd == null || droppedEnd < chosenEnd)) {
+      bestEnd = dropped.end_date || dropped.endDate || dropped.expiry
+    }
 
-    // Worth in INR ONLY from ITAD (never USD fallback)
-    const itemWorthInr = Number(item.worthInr || (item._isItad ? item.regular : 0) || 0)
-    const existingWorthInr = Number(existing.worthInr || 0)
-    const bestWorthInr = itemWorthInr > 0 ? itemWorthInr : existingWorthInr
+    // Best image: prefer chosen's assets, high-res image
+    const bestImage = chosen.image || chosen.thumbnail || dropped.image || dropped.thumbnail || ''
+    const bestThumb = chosen.thumbnail || chosen.image || dropped.thumbnail || dropped.image || ''
 
-    // Merge metadata preferring Epic details when available
-    const base = isItemEpic && !isExistingEpic ? { ...existing, ...item } : { ...item, ...existing }
+    // Pick best claim URL
+    const bestUrl = pickBestClaimUrl(chosen, dropped)
 
-    map.set(key, {
-      ...base,
-      title,
+    // Best worth in INR
+    const chosenWorthInr = Number(chosen.worthInr || (chosen.worth?.currency === 'INR' ? chosen.worth.amount : 0) || 0)
+    const droppedWorthInr = Number(dropped.worthInr || (dropped.worth?.currency === 'INR' ? dropped.worth.amount : 0) || 0)
+    const bestWorthInr = chosenWorthInr > 0 ? chosenWorthInr : droppedWorthInr
+    const bestWorth = chosen.worth?.currency === 'INR'
+      ? chosen.worth
+      : (dropped.worth?.currency === 'INR'
+        ? dropped.worth
+        : (bestWorthInr > 0 ? { amount: bestWorthInr, currency: 'INR', source: chosen.store || dropped.store || 'ITAD' } : null))
+
+    map.set(dedupeKey, {
+      ...dropped,
+      ...chosen,
+      title: chosen.title,
       image: bestImage,
-      thumbnail: bestImage,
+      thumbnail: bestThumb,
       open_giveaway_url: bestUrl,
       worthInr: bestWorthInr,
-      steamAppId: existing.steamAppId || item.steamAppId || null,
+      worth: bestWorth,
+      steamAppId: chosen.steamAppId || dropped.steamAppId || null,
       end_date: bestEnd,
       endDate: bestEnd,
     })
