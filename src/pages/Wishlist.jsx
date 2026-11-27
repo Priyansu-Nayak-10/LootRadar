@@ -203,7 +203,7 @@ function WishlistCard({
               </span>
               {(goodEval.fires || (userEval.fires && userEval.isNearLow)) && (
                 <span className="wishlist-tag wishlist-tag--low">
-                  {deal.isLowestEver ? 'ALL-TIME LOW' : 'NEAR ALL-TIME LOW'}
+                  <FlameIcon gradient={false} size={12} /> {deal.isLowestEver ? 'ALL-TIME LOW' : 'NEAR ALL-TIME LOW'}
                 </span>
               )}
             </>

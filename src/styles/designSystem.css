@@ -18,6 +18,20 @@
   --warning: #FBBF24;
   --danger: #F87171;
 
+  /* Record / Lowest Ever Badge Tokens */
+  --badge-record-bg: #FBBF24;
+  --badge-record-text: #1A1203;
+  --badge-record-border: #FFD866;
+
+  /* Discount Badge Tokens */
+  --badge-discount-bg: var(--success);
+  --badge-discount-text: #0F2A05;
+
+  /* Urgent Countdown Tokens */
+  --urgent-bg: #DC2626;
+  --urgent-text: #FFFFFF;
+  --urgent-text-on-dark: #FF6B6B;
+
   /* Semantic Color Tokens (Solid, Soft, Border) */
   --c-alert: #FBBF24;
   --c-alert-soft: rgba(251, 191, 36, 0.14);
@@ -319,9 +333,9 @@
 }
 
 .lr-badge--sale {
-  border-color: var(--c-sale);
-  color: #060B16;
-  background: var(--c-sale);
+  border-color: var(--badge-discount-bg);
+  color: var(--badge-discount-text);
+  background: var(--badge-discount-bg);
   font-weight: 850;
 }
 

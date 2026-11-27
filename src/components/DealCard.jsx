@@ -22,7 +22,6 @@ export default function DealCard({
   const discount = Math.round(Number(deal.cut || 0))
   const salePrice = Number(deal.price || 0)
   const regularPrice = Number(deal.regular || 0)
-  const historyLow = deal.historyLow != null ? Number(deal.historyLow) : null
   const expiryLabel = formatDealExpiry(deal.expiry)
 
   const actions =
@@ -68,7 +67,7 @@ export default function DealCard({
 
         {deal.isLowestEver ? (
           <span className="deal-card__flag deal-card__flag--lowest">
-            <FlameIcon /> Lowest ever
+            <FlameIcon gradient={false} /> Lowest ever
           </span>
         ) : deal.isNewLow ? (
           <span className="deal-card__flag deal-card__flag--great">
@@ -103,14 +102,6 @@ export default function DealCard({
             <del className="deal-card__old-price">
               {formatDealPrice(regularPrice)}
             </del>
-          )}
-        </div>
-
-        <div className="deal-card__lowest-line">
-          {historyLow != null && Number.isFinite(historyLow) ? (
-            <span>Lowest ever {formatDealPrice(historyLow)}</span>
-          ) : (
-            <span className="deal-card__lowest-muted">Lowest price not available</span>
           )}
         </div>
 

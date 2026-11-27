@@ -358,7 +358,7 @@ export default function GameDetailModal({
                   )}
                   {offer.isLowestEver && (
                     <span className="game-modal-lowest-pill" title="Lowest recorded price in India">
-                      <FlameIcon size={13} /> Lowest ever
+                      <FlameIcon gradient={false} size={13} /> Lowest ever
                     </span>
                   )}
                 </div>

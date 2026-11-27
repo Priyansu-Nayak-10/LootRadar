@@ -38,4 +38,15 @@
   --color-c-ok-border: var(--c-ok-border);
 
   --color-text-secondary: var(--text-secondary);
+
+  --color-badge-record-bg: var(--badge-record-bg);
+  --color-badge-record-text: var(--badge-record-text);
+  --color-badge-record-border: var(--badge-record-border);
+
+  --color-badge-discount-bg: var(--badge-discount-bg);
+  --color-badge-discount-text: var(--badge-discount-text);
+
+  --color-urgent-bg: var(--urgent-bg);
+  --color-urgent-text: var(--urgent-text);
+  --color-urgent-text-on-dark: var(--urgent-text-on-dark);
 }
