@@ -163,36 +163,40 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
     setMaxPrice(MAX_PRICE_CAP)
   }
 
+  const headerSubtitle = [
+    updatedLabel,
+    isStale ? 'Prices may be out of date.' : '',
+  ]
+    .filter(Boolean)
+    .join(' · ')
+
   return (
     <section className="deals-page-redesign" aria-label="India PC Game Deals">
       <header className="deals-header">
         <div className="deals-header__titles">
-          <span className="lr-section-heading__kicker">INDIA PC STORE DEALS</span>
+          <span className="lr-section-heading__kicker">India PC store deals</span>
           <div className="deals-header__title-row">
             <h1>
-              Game <strong>Deals</strong>
+              Game <em>Deals</em>
             </h1>
             <span className="deals-count-badge">
               {loading ? 'Loading...' : `${filteredDeals.length} deals`}
             </span>
-            {updatedLabel && (
-              <span className="deals-updated-label">{updatedLabel}</span>
-            )}
           </div>
-          {isStale && (
-            <p className="deals-stale-warning" role="status">
-              Prices may be out of date.
+          {headerSubtitle && (
+            <p className="deals-header__sub" role={isStale ? 'status' : undefined}>
+              {headerSubtitle}
             </p>
           )}
         </div>
 
         <div className="deals-search-box">
-          <SearchIcon />
+          <SearchIcon size={20} className="deals-search-icon" />
           <input
             type="search"
             value={searchQuery}
             onChange={handleSearchChange}
-            placeholder="Search deals by title..."
+            placeholder="Search deals by title…"
             className="deals-search-input"
             aria-label="Filter deals by title"
           />
@@ -213,11 +217,12 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
       </header>
 
       <div className="deals-filters-container">
-        <div className="deals-filter-row deals-filter-row--stores" role="group" aria-label="Filter by Store">
+        <div className="deals-filter-row" role="toolbar" aria-label="Deal filters">
           <button
             type="button"
-            className={`deals-chip ${!store ? 'is-active' : ''}`}
+            className={`wr-chip ${!store ? 'is-active' : ''}`}
             onClick={() => setStore('')}
+            aria-pressed={!store}
           >
             All
           </button>
@@ -225,59 +230,62 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
             <button
               key={chip.id}
               type="button"
-              className={`deals-chip ${store === chip.id ? 'is-active' : ''}`}
+              className={`wr-chip ${store === chip.id ? 'is-active' : ''}`}
               onClick={() => setStore(store === chip.id ? '' : chip.id)}
+              aria-pressed={store === chip.id}
             >
               {chip.label}
             </button>
           ))}
-        </div>
 
-        <div className="deals-filter-row deals-filter-row--controls">
-          <div className="deals-chip-group" role="group" aria-label="Minimum discount">
-            <button
-              type="button"
-              className={`deals-chip deals-chip--sm ${minDiscount === '0' ? 'is-active' : ''}`}
-              onClick={() => setMinDiscount('0')}
-            >
-              Any
-            </button>
-            <button
-              type="button"
-              className={`deals-chip deals-chip--sm ${minDiscount === '25' ? 'is-active' : ''}`}
-              onClick={() => setMinDiscount(minDiscount === '25' ? '0' : '25')}
-            >
-              25%+
-            </button>
-            <button
-              type="button"
-              className={`deals-chip deals-chip--sm ${minDiscount === '50' ? 'is-active' : ''}`}
-              onClick={() => setMinDiscount(minDiscount === '50' ? '0' : '50')}
-            >
-              50%+
-            </button>
-            <button
-              type="button"
-              className={`deals-chip deals-chip--sm ${minDiscount === '75' ? 'is-active' : ''}`}
-              onClick={() => setMinDiscount(minDiscount === '75' ? '0' : '75')}
-            >
-              75%+
-            </button>
-          </div>
+          <span className="deals-filter-spacer" aria-hidden="true" />
 
           <button
             type="button"
-            className={`deals-chip deals-chip--lowest ${lowestOnly ? 'is-active' : ''}`}
+            className={`wr-chip ${minDiscount === '0' ? 'is-active' : ''}`}
+            onClick={() => setMinDiscount('0')}
+            aria-pressed={minDiscount === '0'}
+          >
+            Any
+          </button>
+          <button
+            type="button"
+            className={`wr-chip ${minDiscount === '25' ? 'is-active' : ''}`}
+            onClick={() => setMinDiscount(minDiscount === '25' ? '0' : '25')}
+            aria-pressed={minDiscount === '25'}
+          >
+            25%+
+          </button>
+          <button
+            type="button"
+            className={`wr-chip ${minDiscount === '50' ? 'is-active' : ''}`}
+            onClick={() => setMinDiscount(minDiscount === '50' ? '0' : '50')}
+            aria-pressed={minDiscount === '50'}
+          >
+            50%+
+          </button>
+          <button
+            type="button"
+            className={`wr-chip ${minDiscount === '75' ? 'is-active' : ''}`}
+            onClick={() => setMinDiscount(minDiscount === '75' ? '0' : '75')}
+            aria-pressed={minDiscount === '75'}
+          >
+            75%+
+          </button>
+
+          <button
+            type="button"
+            className={`wr-chip deals-chip--lowest ${lowestOnly ? 'is-active' : ''}`}
             onClick={() => setLowestOnly(!lowestOnly)}
             aria-pressed={lowestOnly}
             title="Filter by games at their lowest recorded price"
           >
-            <FlameIcon /> Lowest ever
+            <FlameIcon size={14} /> Lowest ever
           </button>
 
           <div className="deals-sort-wrapper">
             <select
-              className="deals-select deals-select--sort"
+              className="wr-chip deals-sort-select"
               value={sort}
               onChange={(e) => setSort(e.target.value)}
               aria-label="Sort deals"
@@ -287,6 +295,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
               <option value="price">Lowest price</option>
               <option value="expiry">Ending soon</option>
             </select>
+            <ChevronDownIcon size={16} className="deals-sort-chevron" />
           </div>
 
           <button
@@ -294,8 +303,9 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
             className={`deals-more-btn ${moreFiltersOpen ? 'is-open' : ''}`}
             onClick={() => setMoreFiltersOpen(!moreFiltersOpen)}
             aria-expanded={moreFiltersOpen}
+            aria-controls="deals-more-filters-panel"
           >
-            More filters <ChevronDownIcon />
+            More filters <ChevronDownIcon size={16} />
           </button>
 
           {isFiltered && (
@@ -312,7 +322,12 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
         </div>
 
         {moreFiltersOpen && (
-          <div className="deals-more-panel" role="region" aria-label="Additional filters">
+          <div
+            id="deals-more-filters-panel"
+            className="deals-more-panel"
+            role="region"
+            aria-label="Additional filters"
+          >
             <div className="deals-filter-field">
               <label className="deals-range-label" htmlFor="deals-max-price">
                 Max Price:{' '}
@@ -381,7 +396,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
         <div className="deals-pagination">
           <button
             type="button"
-            className="deals-load-more-btn"
+            className="wr-cta wr-cta--secondary deals-load-more-btn"
             onClick={() => setVisibleCount((prev) => prev + 24)}
           >
             Load more deals ({Math.max(0, filteredDeals.length - visibleCount)} remaining)

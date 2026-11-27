@@ -99,7 +99,7 @@ function PopularGameCard({
 
   return (
     <article className="popular-game-card" data-testid="popular-game-card">
-      {/* 16:9 Media with SafeImage */}
+      {/* Full-bleed Media with SafeImage */}
       <div
         className="popular-game-card__art"
         role="button"
@@ -120,38 +120,36 @@ function PopularGameCard({
           className="popular-game-card__img"
           fallbackText={game.name?.slice(0, 1)}
         />
+      </div>
 
-        {/* Rank Number Badge Top-Left */}
-        <span className="popular-game-card__rank">#{rank}</span>
+      {/* Top Row: Rank, Price Badge, Wishlist Heart */}
+      <div className="popular-game-card__tags">
+        <span className="wr-badge wr-badge--rank">#{rank}</span>
 
-        {/* Green Price Badge for matched PC deals */}
         {dealMatch && Number(dealMatch.cut) > 0 && (
-          <span className="popular-game-card__price-badge">
-            -{Math.round(Number(dealMatch.cut))}%{' '}
-            <span className="popular-game-card__price-val">
-              {formatDealPrice(dealMatch.price)}
-            </span>
+          <span className="wr-badge wr-badge--discount popular-game-card__price-badge">
+            -{Math.round(Number(dealMatch.cut))}% {formatDealPrice(dealMatch.price)}
           </span>
         )}
 
-        {/* Wishlist Heart Top-Right */}
         <button
           type="button"
-          className={`popular-game-card__heart ${actions.wishlisted ? 'is-active' : ''}`}
+          className={`wr-icon-btn wr-icon-btn--sm wr-icon-btn--round ${actions.wishlisted ? 'is-on' : ''}`}
           onClick={(e) => {
             e.stopPropagation()
             actions.onToggleWishlist()
           }}
+          aria-pressed={Boolean(actions.wishlisted)}
           aria-label={actions.wishlisted ? `Remove ${game.name} from wishlist` : `Add ${game.name} to wishlist`}
           title={actions.wishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
         >
-          <HeartIcon filled={actions.wishlisted} />
+          <HeartIcon />
         </button>
       </div>
 
       {/* Body */}
       <div className="popular-game-card__body">
-        <h3 className="popular-game-card__title" title={game.name}>
+        <h3 className="wr-title" title={game.name}>
           <button
             type="button"
             className="popular-game-card__link popular-game-card__link-btn"
@@ -168,7 +166,7 @@ function PopularGameCard({
         <div className="popular-game-card__meta">
           {ratingVal && (
             <span className="popular-game-card__rating">
-              <StarIcon /> {ratingVal}
+              <StarIcon size={16} /> {ratingVal}
             </span>
           )}
           {ratingVal && <span className="popular-game-card__dot">·</span>}
@@ -304,9 +302,9 @@ export default function PopularGamesSection({
     >
       <header className="popular-games-section__header">
         <div className="popular-games-section__header-left">
-          <span className="popular-games-section__kicker">TRENDING</span>
-          <h2 id="popular-games-heading">
-            Popular <strong>Games</strong>
+          <span className="popular-games-section__kicker">Trending</span>
+          <h2 id="popular-games-heading" className="popular-games-section__title">
+            Popular <em>Games</em>
           </h2>
           <p className="popular-games-section__sub">Most added to collections</p>
         </div>
@@ -318,8 +316,9 @@ export default function PopularGamesSection({
               <button
                 key={chip.value}
                 type="button"
-                className={`popular-games-section__chip ${platform === chip.value ? 'is-active' : ''}`}
+                className={`wr-chip ${platform === chip.value ? 'is-active' : ''}`}
                 onClick={() => setPlatform(chip.value)}
+                aria-pressed={platform === chip.value}
               >
                 {chip.label}
               </button>
@@ -330,7 +329,7 @@ export default function PopularGamesSection({
           <div className="popular-games-section__arrows">
             <button
               type="button"
-              className="popular-games-section__arrow"
+              className="wr-icon-btn wr-icon-btn--round"
               onClick={() => scroll('prev')}
               aria-label="Scroll left"
             >
@@ -338,7 +337,7 @@ export default function PopularGamesSection({
             </button>
             <button
               type="button"
-              className="popular-games-section__arrow"
+              className="wr-icon-btn wr-icon-btn--round"
               onClick={() => scroll('next')}
               aria-label="Scroll right"
             >
@@ -349,10 +348,10 @@ export default function PopularGamesSection({
           {/* View All */}
           <button
             type="button"
-            className="lr-button lr-button--ghost popular-games-section__view-all"
+            className="popular-games-section__view-all"
             onClick={() => onNavigate('search')}
           >
-            View All
+            View all
           </button>
         </div>
       </header>

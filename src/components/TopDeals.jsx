@@ -7,7 +7,7 @@ import {
 
 export default function TopDeals({ getGameActions, onNavigate }) {
   const { deals, loading, error, reload } = useDeals()
-  const topDeals = useMemo(() => selectTopDeals(deals, 8), [deals])
+  const topDeals = useMemo(() => selectTopDeals(deals, 10), [deals])
 
   return (
     <section className="top-deals" aria-labelledby="top-deals-heading">
@@ -29,7 +29,7 @@ export default function TopDeals({ getGameActions, onNavigate }) {
 
       <div className="top-deals__row" aria-busy={loading}>
         {loading &&
-          Array.from({ length: 8 }, (_, index) => (
+          Array.from({ length: 10 }, (_, index) => (
             <div
               className="top-deals__skeleton lr-skeleton"
               key={index}

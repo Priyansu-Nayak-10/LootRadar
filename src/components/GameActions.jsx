@@ -10,7 +10,7 @@ export default function GameActions({
         type="button"
         onClick={onToggleOwned}
         aria-pressed={owned}
-        className={`game-action ${owned ? 'is-owned' : ''}`}
+        className={`game-action ${owned ? 'is-on' : ''}`}
       >
         {owned ? 'Owned' : 'I own this'}
       </button>
@@ -18,7 +18,7 @@ export default function GameActions({
         type="button"
         onClick={onToggleWishlist}
         aria-pressed={wishlisted}
-        className={`game-action ${wishlisted ? 'is-wishlisted' : ''}`}
+        className={`game-action ${wishlisted ? 'is-on' : ''}`}
       >
         {wishlisted ? 'Wishlisted' : 'Add to wishlist'}
       </button>

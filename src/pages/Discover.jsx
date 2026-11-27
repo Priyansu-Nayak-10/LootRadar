@@ -8,6 +8,9 @@ import {
   CheckIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  StarIcon,
+  CloseIcon,
+  ChevronDownIcon,
 } from '../components/icons'
 import { fetchRawgGames, searchGamesMulti, hasRawgKey } from '../lib/discoverApi'
 import { cleanNewsText, fetchNewsSnapshot, formatNewsRelativeTime } from '../lib/newsHelpers'
@@ -16,6 +19,7 @@ import TopDeals from '../components/TopDeals'
 import PopularGamesSection from '../components/PopularGamesSection'
 import ComingSoonSection from '../components/ComingSoonSection'
 import SafeImage from '../components/SafeImage'
+import TimeLeft from '../components/TimeLeft'
 import {
   formatStoreName,
   formatDealPrice,
@@ -24,7 +28,14 @@ import {
   selectHeroDeals,
   useDeals,
 } from '../lib/dealsData'
-import { cleanTitle, isMobile, mergeFreeSources, normalizeStore } from '../lib/freeGames'
+import {
+  cleanTitle,
+  formatTimeLeft,
+  formatWorthInr,
+  isMobile,
+  mergeFreeSources,
+  normalizeStore,
+} from '../lib/freeGames'
 import { wishRadarArt } from '../assets/art'
 
 const SKELETON_ITEMS = Array.from({ length: 12 }, (_, i) => i)
@@ -145,7 +156,6 @@ const GameTile = memo(function GameTile({ game, badge, getGameActions, onOpenGam
           }
         }}
         aria-label={`View details for ${game.name}`}
-        style={{ cursor: 'pointer' }}
       >
         <div className="search-tile__media">
           <SafeImage
@@ -159,50 +169,54 @@ const GameTile = memo(function GameTile({ game, badge, getGameActions, onOpenGam
         <div className="search-tile__content">
           <div className="search-tile__meta">
             {releaseYear && <span className="search-tile__year">{releaseYear}</span>}
-            {releaseYear && Number(game.rating) > 0 && <span className="search-tile__sep">·</span>}
+            {releaseYear && Number(game.rating) > 0 && <span className="search-tile__sep">&middot;</span>}
             {Number(game.rating) > 0 && (
               <span className="search-tile__rating">
-                <span aria-hidden="true">★</span> {Number(game.rating).toFixed(1)}
+                <StarIcon size={14} /> {Number(game.rating).toFixed(1)}
               </span>
             )}
-            <div className="search-tile__platforms" aria-label="Platforms">
-              <PlatformIcons platforms={game.platforms} />
-            </div>
           </div>
-          <h3 className="search-tile__title" title={game.name}>
+          <h3 className="wr-title" title={game.name}>
             {game.name}
           </h3>
-          <div className="search-tile__genres">
-            {(game.genres || []).slice(0, 2).map((genre) => (
-              <span key={genre.id || genre.name} className="search-tile__genre-chip">
-                {genre.name}
-              </span>
-            ))}
+          {(game.genres || []).length > 0 && (
+            <div className="search-tile__genres">
+              {(game.genres || []).slice(0, 2).map((genre) => (
+                <span key={genre.id || genre.name} className="wr-store-chip">
+                  {genre.name}
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="search-tile__platforms" aria-label="Platforms">
+            <PlatformIcons platforms={game.platforms} />
           </div>
         </div>
       </div>
       <div className="search-tile__actions">
         <button
           type="button"
-          className={`search-tile__action-btn search-tile__action-btn--wishlist ${actions.wishlisted ? 'is-active' : ''}`}
+          className={`wr-icon-btn wr-icon-btn--sm wr-icon-btn--round ${actions.wishlisted ? 'is-on' : ''}`}
           onClick={(e) => {
             e.preventDefault()
             e.stopPropagation()
             actions.onToggleWishlist()
           }}
+          aria-pressed={actions.wishlisted}
           aria-label={actions.wishlisted ? `Remove ${game.name} from wishlist` : `Add ${game.name} to wishlist`}
           title={actions.wishlisted ? 'In wishlist' : 'Add to wishlist'}
         >
-          <HeartIcon size={16} active={actions.wishlisted} />
+          <HeartIcon size={16} />
         </button>
         <button
           type="button"
-          className={`search-tile__action-btn search-tile__action-btn--owned ${actions.owned ? 'is-active' : ''}`}
+          className={`wr-icon-btn wr-icon-btn--sm wr-icon-btn--round ${actions.owned ? 'is-on' : ''}`}
           onClick={(e) => {
             e.preventDefault()
             e.stopPropagation()
             actions.onToggleOwned()
           }}
+          aria-pressed={actions.owned}
           aria-label={actions.owned ? `Remove ${game.name} from library` : `Mark ${game.name} as owned`}
           title={actions.owned ? 'In library' : 'Mark as owned'}
         >
@@ -230,23 +244,40 @@ function SearchResultsView({
   hasKey,
   onOpenGameDetail,
 }) {
+  const [sortBy, setSortBy] = useState('relevant')
+
+  const sortedResults = useMemo(() => {
+    if (sortBy === 'relevant') return searchResults
+    const copy = [...searchResults]
+    if (sortBy === 'rating') {
+      copy.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0))
+    } else if (sortBy === 'newest') {
+      copy.sort((a, b) => {
+        const ta = a.released ? Date.parse(a.released) || 0 : 0
+        const tb = b.released ? Date.parse(b.released) || 0 : 0
+        return tb - ta
+      })
+    }
+    return copy
+  }, [searchResults, sortBy])
+
   return (
     <div className="search-results-page">
       {!hasKey && <SetupHint />}
 
       <div className="search-results-header">
         <div className="search-results-heading">
-          <span className="lr-section-heading__kicker">SEARCH RESULTS</span>
+          <p className="wr-eyebrow">Search results</p>
           <div className="search-results-title-row">
-            <h1>
-              Results for <strong>&ldquo;{searchTerm}&rdquo;</strong>
+            <h1 className="wr-heading">
+              Results for <em>&ldquo;{searchTerm}&rdquo;</em>
             </h1>
             <button
               type="button"
-              className="search-clear-button"
+              className="wr-chip search-clear-button"
               onClick={onClearSearch}
             >
-              Clear search &times;
+              Clear search <CloseIcon size={16} />
             </button>
           </div>
           {!searchLoading && !searchError && (
@@ -257,19 +288,33 @@ function SearchResultsView({
           )}
         </div>
 
-        <div className="search-platform-filters" role="tablist" aria-label="Platform filters">
-          {SEARCH_PLATFORMS.map((platform) => (
-            <button
-              key={platform}
-              type="button"
-              role="tab"
-              aria-selected={activePlatform === platform}
-              className={`search-filter-pill ${activePlatform === platform ? 'is-active' : ''}`}
-              onClick={() => onSelectPlatform(platform)}
+        <div className="search-results-controls">
+          <div className="search-platform-filters" role="group" aria-label="Platform filters">
+            {SEARCH_PLATFORMS.map((platform) => (
+              <button
+                key={platform}
+                type="button"
+                aria-pressed={activePlatform === platform}
+                className={`wr-chip ${activePlatform === platform ? 'is-active' : ''}`}
+                onClick={() => onSelectPlatform(platform)}
+              >
+                {platform}
+              </button>
+            ))}
+          </div>
+          <label className="search-sort-wrap">
+            <select
+              className="wr-chip search-sort-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sort search results"
             >
-              {platform}
-            </button>
-          ))}
+              <option value="relevant">Most relevant</option>
+              <option value="rating">Top rated</option>
+              <option value="newest">Newest</option>
+            </select>
+            <ChevronDownIcon size={16} className="search-sort-chevron" aria-hidden="true" />
+          </label>
         </div>
       </div>
 
@@ -313,7 +358,7 @@ function SearchResultsView({
 
       {!searchLoading && !searchError && searchResults.length > 0 && (
         <div className="search-results-grid">
-          {searchResults.map((game) => (
+          {sortedResults.map((game) => (
             <GameTile
               key={game.id}
               game={game}
@@ -761,72 +806,78 @@ export function HomeRedesign({
                       <div className="home-hero-overlay" />
                       <div className="home-hero-copy">
                         <span
-                          className={`lr-badge ${
+                          className={`wr-badge ${
                             slide.type === 'deal'
-                              ? 'lr-badge--sale'
+                              ? 'wr-badge--discount'
                               : slide.type === 'free'
-                              ? 'lr-badge--free'
-                              : slide.type === 'soon'
-                              ? 'lr-badge--soon'
-                              : 'lr-badge--lime'
+                              ? 'wr-badge--free'
+                              : 'wr-badge--release'
                           }`}
                         >
-                          {slide.badgeText}
+                          {slide.type === 'deal'
+                            ? 'Top deal'
+                            : slide.type === 'free'
+                            ? 'Free now'
+                            : 'Upcoming'}
                         </span>
                         <h1>{slide.title}</h1>
 
                         {slide.type === 'deal' && slide.price && (
-                          <div className="home-hero-deal-info">
-                            <div className="home-hero-prices">
-                              {slide.price.savings > 0 && (
-                                <span className="home-hero-discount">
-                                  -{slide.price.savings}%
-                                </span>
-                              )}
-                              <strong className="home-hero-sale-price">
-                                {formatDealPrice(slide.price.sale)}
-                              </strong>
-                              {slide.price.regular > slide.price.sale && (
-                                <del className="home-hero-old-price">
-                                  {formatDealPrice(slide.price.regular)}
-                                </del>
-                              )}
-                              {slide.store && (
-                                <span className="home-hero-store-chip">
-                                  {slide.store}
-                                </span>
-                              )}
-                              {slide.countdownEnd && formatDealExpiry(slide.countdownEnd, now) && (
-                                <span className="home-hero-countdown">
-                                  {formatDealExpiry(slide.countdownEnd, now)}
-                                </span>
-                              )}
-                            </div>
+                          <div className="home-hero-info">
+                            {slide.price.savings > 0 && (
+                              <span className="wr-badge wr-badge--discount">
+                                -{slide.price.savings}%
+                              </span>
+                            )}
+                            <strong className="wr-price-sale home-hero-sale-price">
+                              {formatDealPrice(slide.price.sale)}
+                            </strong>
+                            {slide.price.regular > slide.price.sale && (
+                              <del className="wr-price-old">
+                                {formatDealPrice(slide.price.regular)}
+                              </del>
+                            )}
+                            {slide.store && (
+                              <span className="wr-store-chip">{slide.store}</span>
+                            )}
+                            {slide.countdownEnd && formatDealExpiry(slide.countdownEnd, now) && (
+                              <TimeLeft
+                                endDate={slide.countdownEnd}
+                                label={formatDealExpiry(slide.countdownEnd, now)}
+                                now={now}
+                              />
+                            )}
                           </div>
                         )}
 
-                        {slide.type === 'free' && (
-                          <p className="home-hero-meta">
-                            <span className="home-hero-countdown">
-                              {formatCountdown(slide.countdownEnd, now)}
-                            </span>
-                            <span className="home-hero-sep"> {'\u00b7'} </span>
-                            <span>{slide.subtitle}</span>
-                          </p>
-                        )}
+                        {slide.type === 'free' && (() => {
+                          const freeWorth = formatWorthInr(
+                            slide.rawItem?.worth || slide.rawItem?.worthInr
+                          )
+                          const freeEnd = slide.countdownEnd || null
+                          return (
+                            <div className="home-hero-info">
+                              <span className="home-hero-free-price">Free</span>
+                              {freeWorth && <del className="wr-price-old">{freeWorth}</del>}
+                              {slide.store && (
+                                <span className="wr-store-chip">{slide.store}</span>
+                              )}
+                              <TimeLeft
+                                endDate={freeEnd}
+                                label={freeEnd ? formatTimeLeft(freeEnd, now).text : 'Limited time'}
+                                now={now}
+                              />
+                            </div>
+                          )
+                        })()}
 
                         {slide.type === 'upcoming' && (
-                          <p className="home-hero-meta">
-                            <span>{slide.subtitle}</span>
+                          <div className="home-hero-info">
+                            <span className="home-hero-date">{slide.subtitle}</span>
                             {slide.store && (
-                              <>
-                                <span className="home-hero-sep"> {'\u00b7'} </span>
-                                <span className="home-hero-store-chip">
-                                  {slide.store}
-                                </span>
-                              </>
+                              <span className="wr-store-chip">{slide.store}</span>
                             )}
-                          </p>
+                          </div>
                         )}
 
                         <div className="home-hero-action-row">
@@ -835,7 +886,7 @@ export function HomeRedesign({
                               href={slide.actionUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="lr-button"
+                              className="wr-cta home-hero-cta"
                               tabIndex={isActive ? 0 : -1}
                             >
                               {slide.actionLabel}
@@ -847,7 +898,7 @@ export function HomeRedesign({
                               href={slide.actionUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="lr-button"
+                              className="wr-cta home-hero-cta"
                               tabIndex={isActive ? 0 : -1}
                             >
                               {slide.actionLabel}
@@ -858,7 +909,7 @@ export function HomeRedesign({
                             upcomingActions ? (
                               <button
                                 type="button"
-                                className={`lr-button ${upcomingActions.wishlisted ? 'is-active' : ''}`}
+                                className={`wr-cta home-hero-cta ${upcomingActions.wishlisted ? 'is-on' : ''}`}
                                 tabIndex={isActive ? 0 : -1}
                                 onClick={() => upcomingActions.onToggleWishlist()}
                               >
@@ -869,7 +920,7 @@ export function HomeRedesign({
                                 href={slide.actionUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="lr-button"
+                                className="wr-cta home-hero-cta"
                                 tabIndex={isActive ? 0 : -1}
                               >
                                 View details
@@ -886,7 +937,7 @@ export function HomeRedesign({
               <div className="home-hero-controls">
                 <button
                   type="button"
-                  className="home-hero-arrow home-hero-arrow--prev"
+                  className="wr-icon-btn wr-icon-btn--round wr-icon-btn--sm"
                   aria-label="Previous slide"
                   onClick={() => goToHero(heroIndex - 1)}
                 >
@@ -913,7 +964,7 @@ export function HomeRedesign({
 
                 <button
                   type="button"
-                  className="home-hero-arrow home-hero-arrow--next"
+                  className="wr-icon-btn wr-icon-btn--round wr-icon-btn--sm"
                   aria-label="Next slide"
                   onClick={() => goToHero(heroIndex + 1)}
                 >
@@ -933,12 +984,20 @@ export function HomeRedesign({
 
         <aside className="home-feature-side home-feature-side--free">
           <section className="home-side-card">
-            <div className="lr-section-heading">
-              <div className="lr-section-heading__copy">
-                <span className="lr-section-heading__kicker">LIMITED TIME</span>
-                <h2>Free <strong>Games</strong></h2>
+            <div className="home-side-card__header">
+              <div>
+                <p className="wr-eyebrow">Limited time</p>
+                <h2 className="wr-heading" style={{ fontSize: '22px' }}>
+                  Free <em>Games</em>
+                </h2>
               </div>
-              <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('free')}>View All</button>
+              <button
+                type="button"
+                className="home-side-card__view-all"
+                onClick={() => onNavigate('free')}
+              >
+                View all
+              </button>
             </div>
             {(freeGames?.length || 0) > 0 ? (
               <div className="home-feature-free-list">
@@ -948,6 +1007,8 @@ export function HomeRedesign({
                   .map((game, idx) => {
                     const rawTitle = game.title || game.name || 'Free Game'
                     const cleaned = cleanTitle(rawTitle) || 'Free Game'
+                    const endDate = game.end_date || game.endDate || null
+                    const timeLabel = endDate ? formatTimeLeft(endDate, now).text : 'Limited time'
                     return (
                       <a
                         key={game.id || cleaned || idx}
@@ -965,9 +1026,9 @@ export function HomeRedesign({
                         ) : (
                           <div className="lr-art-fallback">FREE GAME</div>
                         )}
-                        <span>
+                        <span className="home-feature-free__copy">
                           <strong>{cleaned}</strong>
-                          <small>{formatCountdown(game.end_date || game.endDate, now)}</small>
+                          <TimeLeft endDate={endDate} label={timeLabel} now={now} />
                         </span>
                       </a>
                     )

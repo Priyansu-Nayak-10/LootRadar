@@ -19,8 +19,10 @@ import {
   HeartIcon,
   NewspaperIcon,
   AccountIcon,
+  ChevronDownIcon,
 } from './components/icons'
 import './App.css'
+import './styles/cardSystem.css'
 
 // Route-level code-splitting: lazy load pages to minimize initial bundle size
 const Discover = lazy(() => import('./pages/Discover'))
@@ -545,7 +547,7 @@ export default function App() {
                 <RadarMarkIcon size={24} />
               </span>
               <span className="brand-copy">
-                <span className="brand-name">Wish<span>Radar</span></span>
+                <span className="brand-name">Wish<em>Radar</em></span>
                 <span className="brand-caption">YOUR GAME INTELLIGENCE</span>
               </span>
             </a>
@@ -569,6 +571,7 @@ export default function App() {
                     <option key={category} value={category}>{category}</option>
                   ))}
                 </select>
+                <ChevronDownIcon size={14} className="shell-category__chevron" />
               </label>
               <div className="shell-search-combo">
                 <input
@@ -616,14 +619,14 @@ export default function App() {
                   />
                 )}
               </div>
-              <button type="submit" aria-label="Submit game search">
-                <SearchIcon size={18} strokeWidth={2} />
+              <button type="submit" aria-label="Search">
+                <SearchIcon size={16} strokeWidth={2} />
               </button>
             </form>
             <div className="shell-actions">
               <button
                 type="button"
-                className="shell-icon-button shell-bell"
+                className="wr-icon-btn wr-icon-btn--round shell-bell"
                 aria-label="Notifications: no new alerts"
                 title="Notifications"
               >
@@ -654,7 +657,7 @@ export default function App() {
                   )}
                 </div>
               ) : (
-                <button type="button" className="shell-sign-in" onClick={() => navigateTab('account')}>
+                <button type="button" className="wr-cta shell-sign-in" onClick={() => navigateTab('account')}>
                   Sign in
                 </button>
               )}

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import SafeImage from './SafeImage.jsx'
+import TimeLeft from './TimeLeft.jsx'
 import { fetchRawgGames, hasRawgKey } from '../lib/discoverApi.js'
-import { titleKey } from '../lib/wishlistAlerts.js'
-import { cleanTitle, formatStartsIn } from '../lib/freeGames.js'
+import { cleanTitle, dedupeKey, formatStartsIn } from '../lib/freeGames.js'
 import { formatDealPrice, matchDealForGame } from '../lib/dealsData.js'
 import {
   PcIcon,
@@ -137,52 +137,33 @@ function ComingSoonCardItem({
           className="coming-game-card__img"
           fallbackText={title.slice(0, 1)}
         />
+      </div>
 
-        {/* Type Badge: FREE SOON (green) or RELEASE */}
+      {/* Top row: badge + wishlist heart */}
+      <div className="coming-game-card__tags">
         {isGiveaway ? (
-          <span className="coming-game-card__badge coming-game-card__badge--free">
-            FREE SOON
-          </span>
+          <span className="wr-badge wr-badge--free">Free soon</span>
         ) : (
-          <span className="coming-game-card__badge coming-game-card__badge--release">
-            RELEASE
-          </span>
+          <span className="wr-badge wr-badge--release">Release</span>
         )}
 
-        {/* Countdown badge for giveaways */}
-        {countdownText && (
-          <span className="coming-game-card__countdown" title={dateText}>
-            {countdownText}
-          </span>
-        )}
-
-        {/* Green Price Badge for matched pre-order / PC deals */}
-        {dealMatch && Number(dealMatch.cut) > 0 && (
-          <span className="popular-game-card__price-badge">
-            -{Math.round(Number(dealMatch.cut))}%{' '}
-            <span className="popular-game-card__price-val">
-              {formatDealPrice(dealMatch.price)}
-            </span>
-          </span>
-        )}
-
-        {/* Wishlist Heart Top-Right */}
         <button
           type="button"
-          className={`coming-game-card__heart ${actions.wishlisted ? 'is-active' : ''}`}
+          className={`wr-icon-btn wr-icon-btn--sm wr-icon-btn--round ${actions.wishlisted ? 'is-on' : ''}`}
           onClick={(e) => {
             e.stopPropagation()
             actions.onToggleWishlist()
           }}
+          aria-pressed={Boolean(actions.wishlisted)}
           aria-label={actions.wishlisted ? `Remove ${title} from wishlist` : `Add ${title} to wishlist`}
           title={actions.wishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
         >
-          <HeartIcon filled={actions.wishlisted} />
+          <HeartIcon />
         </button>
       </div>
 
       <div className="coming-game-card__body">
-        <h3 className="coming-game-card__title" title={title}>
+        <h3 className="wr-title" title={title}>
           <a
             href={openUrl}
             target="_blank"
@@ -193,12 +174,27 @@ function ComingSoonCardItem({
           </a>
         </h3>
 
-        <div className="coming-game-card__date" title={dateText}>
-          {dateText}
+        <div className="coming-game-card__date-row">
+          <div className="coming-game-card__date" title={dateText}>
+            {dateText}
+          </div>
+          {dealMatch && Number(dealMatch.cut) > 0 && (
+            <span className="wr-badge wr-badge--discount coming-game-card__price-badge">
+              -{Math.round(Number(dealMatch.cut))}% {formatDealPrice(dealMatch.price)}
+            </span>
+          )}
         </div>
 
         <div className="coming-game-card__footer">
           <ComingSoonPlatformIcons item={item} />
+          {countdownText && (
+            <TimeLeft
+              tone="calm"
+              endDate={item.startDate}
+              label={countdownText}
+              now={now}
+            />
+          )}
         </div>
       </div>
     </article>
@@ -308,7 +304,7 @@ export default function ComingSoonSection({
         const title = item.title || item.name
         const img = item.image || item.background_image
         if (!title || !img) continue
-        const k = titleKey(title)
+        const k = dedupeKey(title)
         if (seen.has(k)) continue
         seen.add(k)
         merged.push(item)
@@ -355,18 +351,18 @@ export default function ComingSoonSection({
     >
       <header className="coming-soon-section__header">
         <div className="coming-soon-section__header-left">
-          <span className="coming-soon-section__kicker">UPCOMING</span>
-          <h2 id="coming-soon-heading">
-            Coming <strong>Soon</strong>
+          <span className="coming-soon-section__kicker">Upcoming</span>
+          <h2 id="coming-soon-heading" className="coming-soon-section__title">
+            Coming <em>Soon</em>
           </h2>
-          <p className="coming-soon-section__sub">Upcoming giveaways & releases</p>
+          <p className="coming-soon-section__sub">Upcoming giveaways &amp; releases</p>
         </div>
 
         <div className="coming-soon-section__controls">
           <div className="coming-soon-section__arrows">
             <button
               type="button"
-              className="coming-soon-section__arrow"
+              className="wr-icon-btn wr-icon-btn--round"
               onClick={() => scroll('prev')}
               aria-label="Scroll left"
             >
@@ -374,7 +370,7 @@ export default function ComingSoonSection({
             </button>
             <button
               type="button"
-              className="coming-soon-section__arrow"
+              className="wr-icon-btn wr-icon-btn--round"
               onClick={() => scroll('next')}
               aria-label="Scroll right"
             >
@@ -384,10 +380,10 @@ export default function ComingSoonSection({
 
           <button
             type="button"
-            className="lr-button lr-button--ghost coming-soon-section__view-all"
+            className="coming-soon-section__view-all"
             onClick={() => onNavigate('free')}
           >
-            View All
+            View all
           </button>
         </div>
       </header>

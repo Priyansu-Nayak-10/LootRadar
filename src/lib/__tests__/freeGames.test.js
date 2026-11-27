@@ -2,12 +2,14 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   cleanTitle,
+  dedupeKey,
   freeGameMergeKey,
   isMobile,
   normalizeStore,
   parseEndDate,
   isActive,
   formatTimeLeft,
+  getTimeTone,
   formatStartsIn,
   parseWorthUsd,
   formatWorthInr,
@@ -218,6 +220,33 @@ describe('freeGames helpers', () => {
     })
   })
 
+  describe('getTimeTone', () => {
+    const now = 1700000000000
+    const H = 3600000
+
+    it('returns none for null, undefined, and invalid strings', () => {
+      assert.equal(getTimeTone(null, now), 'none')
+      assert.equal(getTimeTone(undefined, now), 'none')
+      assert.equal(getTimeTone('N/A', now), 'none')
+      assert.equal(getTimeTone('not-a-date', now), 'none')
+      assert.equal(getTimeTone(new Date('invalid'), now), 'none')
+    })
+
+    it('handles exact 48h, 6h, and 5h59m boundaries', () => {
+      assert.equal(getTimeTone(new Date(now + 48 * H + 1).toISOString(), now), 'calm')
+      assert.equal(getTimeTone(new Date(now + 48 * H).toISOString(), now), 'soon')
+      assert.equal(getTimeTone(new Date(now + 6 * H).toISOString(), now), 'soon')
+      assert.equal(getTimeTone(new Date(now + 5 * H + 59 * 60000).toISOString(), now), 'urgent')
+      assert.equal(getTimeTone(new Date(now - 1000).toISOString(), now), 'urgent')
+    })
+
+    it('accepts Date objects and ISO strings', () => {
+      assert.equal(getTimeTone(new Date(now + 72 * H), now), 'calm')
+      assert.equal(getTimeTone(new Date(now + 24 * H).toISOString(), now), 'soon')
+      assert.equal(getTimeTone(new Date(now + 3 * H), now), 'urgent')
+    })
+  })
+
   describe('formatStartsIn', () => {
     const now = 1700000000000
 
@@ -399,6 +428,105 @@ describe('freeGames helpers', () => {
       assert.equal(formatWorthInr(merged[0].worthInr), '₹899')
       assert.equal(merged[0].end_date, '2026-11-26T16:00:00.000Z')
       assert.equal(merged[0].open_giveaway_url, 'https://store.epicgames.com/p/mark-of-the-deep')
+    })
+
+    it('merges Epic and GamerPower Contractor Part II / Part 2 keeping worth and end date', () => {
+      const now = Date.parse('2026-11-25T10:00:00Z')
+      const epicItem = {
+        id: 'epic-contractor',
+        title: 'Contractor: The Clean Up Part II',
+        image: 'https://cdn1.epicgames.com/contractor.png',
+        slug: 'contractor-part-ii',
+        namespace: 'ns-contractor',
+        worth: { amount: 179, currency: 'INR', source: 'Epic Games Store' },
+      }
+      const gpItem = {
+        id: 3852,
+        title: 'Contractor: The Clean Up Part 2 (Epic Games) Giveaway',
+        platforms: 'PC, Epic Games Store',
+        thumbnail: 'https://gp.com/contractor.jpg',
+        end_date: '2026-12-02 23:59:00',
+        open_giveaway_url: 'https://gp.com/open/contractor-2',
+      }
+
+      const merged = mergeFreeSources({
+        epicItems: [epicItem],
+        gamerPowerItems: [gpItem],
+        itadFreeItems: [],
+        now,
+      })
+
+      assert.equal(merged.length, 1)
+      assert.equal(merged[0].worthInr, 179)
+      assert.equal(merged[0].end_date, '2026-12-02 23:59:00')
+    })
+
+    it('fills missing image from duplicate record', () => {
+      const noImageOfficial = {
+        id: 'epic-no-img',
+        title: 'Indie Mystery',
+        namespace: 'ns-mystery',
+        slug: 'indie-mystery',
+        endDate: '2026-12-02T16:00:00.000Z',
+      }
+      const gpWithImage = {
+        id: 5001,
+        title: 'Indie Mystery (Epic Games) Giveaway',
+        platforms: 'PC, Epic Games Store',
+        image: 'https://gp.com/mystery.jpg',
+        thumbnail: 'https://gp.com/mystery-thumb.jpg',
+        end_date: '2026-12-02 16:00:00',
+      }
+
+      const result = dedupe([noImageOfficial, gpWithImage])
+      assert.equal(result.length, 1)
+      assert.equal(result[0].image, 'https://gp.com/mystery.jpg')
+    })
+
+    it('merges titles differing only by punctuation/case like Bread & Fred vs Bread and Fred', () => {
+      const a = {
+        id: 'epic-bread',
+        title: 'Bread & Fred',
+        namespace: 'ns-bread',
+        image: 'https://cdn.example/bread.jpg',
+        endDate: '2026-12-05T16:00:00.000Z',
+      }
+      const b = {
+        id: 9001,
+        title: 'bread and fred (Epic Games) Giveaway',
+        platforms: 'PC, Epic Games Store',
+        thumbnail: 'https://gp.com/bread.jpg',
+        end_date: '2026-12-05 16:00:00',
+      }
+
+      const result = dedupe([a, b])
+      assert.equal(result.length, 1)
+    })
+  })
+
+  describe('dedupeKey', () => {
+    it('matches Part II and Part 2 for Contractor, Rocky, and Hades', () => {
+      assert.equal(
+        dedupeKey('Contractor: The Clean Up Part II'),
+        dedupeKey('Contractor: The Clean Up Part 2')
+      )
+      assert.equal(dedupeKey('Rocky II'), dedupeKey('Rocky 2'))
+      assert.equal(dedupeKey('Hades II'), dedupeKey('Hades 2'))
+    })
+
+    it('leaves ambiguous single-letter numerals I, V, X unchanged', () => {
+      assert.notEqual(dedupeKey('I Am Alive'), dedupeKey('2 Am Alive'))
+      assert.notEqual(dedupeKey('I Am Alive'), dedupeKey('1 Am Alive'))
+      assert.notEqual(dedupeKey('V Rising'), dedupeKey('5 Rising'))
+      assert.notEqual(dedupeKey('Mega Man X'), dedupeKey('Mega Man 10'))
+    })
+
+    it('does not collapse Final Fantasy and Final Fantasy II', () => {
+      assert.notEqual(dedupeKey('Final Fantasy'), dedupeKey('Final Fantasy II'))
+    })
+
+    it('merges Bread & Fred and Bread and Fred', () => {
+      assert.equal(dedupeKey('Bread & Fred'), dedupeKey('Bread and Fred'))
     })
   })
 

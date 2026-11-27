@@ -1,6 +1,20 @@
 import { useState, useMemo } from 'react'
 import SafeImage from '../components/SafeImage'
-import { SearchIcon, LibraryIcon } from '../components/icons'
+import {
+  SearchIcon,
+  LibraryIcon,
+  CheckIcon,
+  ExternalLinkIcon,
+  TrashIcon,
+  ChevronDownIcon,
+} from '../components/icons'
+
+function formatLibrarySource(source) {
+  if (!source) return 'Added manually'
+  if (source === 'deal') return 'Claimed from a deal'
+  if (source === 'gamerpower') return 'Claimed free giveaway'
+  return source
+}
 
 const PLATFORMS = ['All', 'PC', 'Steam', 'Epic Games', 'GOG', 'PlayStation', 'Xbox']
 
@@ -85,13 +99,13 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
     <div className="library-page collections-redesign">
       <header className="library-header">
         <div className="library-header__top">
-          <div className="lr-section-heading__copy">
-            <span className="lr-section-heading__kicker">YOUR COLLECTION</span>
-            <h1>
-              My <strong>Library</strong>
+          <div>
+            <p className="wr-eyebrow">Your collection</p>
+            <h1 className="wr-heading">
+              My <em>Library</em>
             </h1>
           </div>
-          <span className="library-header__count">
+          <span className="wr-count-pill">
             {games.length} {games.length === 1 ? 'game' : 'games'} owned
           </span>
         </div>
@@ -99,8 +113,8 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
 
       {games.length > 0 && (
         <div className="library-toolbar">
-          <div className="library-search">
-            <SearchIcon size={15} strokeWidth={2} />
+          <label className="wr-input library-search">
+            <SearchIcon size={16} strokeWidth={2} />
             <input
               type="text"
               placeholder="Search library..."
@@ -108,14 +122,14 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
               onChange={(e) => setSearchTerm(e.target.value)}
               aria-label="Search owned games"
             />
-          </div>
+          </label>
 
           <div className="library-filters" aria-label="Filter by platform">
             {PLATFORMS.map((platform) => (
               <button
                 key={platform}
                 type="button"
-                className={`library-filter-chip ${activePlatform === platform ? 'is-active' : ''}`}
+                className={`wr-chip ${activePlatform === platform ? 'is-active' : ''}`}
                 onClick={() => setActivePlatform(platform)}
                 aria-pressed={activePlatform === platform}
               >
@@ -128,13 +142,14 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="filter-select"
+              className="wr-chip library-sort-select"
               aria-label="Sort library"
             >
               <option value="recent">Recently Added</option>
               <option value="az">Title A-Z</option>
               <option value="za">Title Z-A</option>
             </select>
+            <ChevronDownIcon size={16} className="library-sort-chevron" />
           </div>
         </div>
       )}
@@ -227,27 +242,26 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
                   alt={game.title}
                   fallbackText={game.title}
                 />
-                <span className="library-card__badge-owned">Owned</span>
+              </div>
+
+              <div className="library-card__tags">
+                <span className="wr-badge wr-badge--accent">Owned</span>
                 {game.platform && (
-                  <span className="library-card__platform">{game.platform}</span>
+                  <span className="wr-store-chip library-card__platform-chip">
+                    {game.platform}
+                  </span>
                 )}
               </div>
+
               <div className="library-card__body">
-                <h2 className="library-card__title" title={game.title}>
+                <h2 className="wr-title" title={game.title}>
                   {game.title}
                 </h2>
                 <div className="library-card__meta">
-                  <span>{game.source || 'Claimed Game'}</span>
+                  <CheckIcon size={14} />
+                  <span>{formatLibrarySource(game.source)}</span>
                 </div>
                 <div className="library-card__actions">
-                  <button
-                    type="button"
-                    className="library-card__remove"
-                    onClick={() => onRemove?.(game.title)}
-                    title="Remove from library"
-                  >
-                    Remove
-                  </button>
                   {game.sourceId && (
                     <a
                       href={
@@ -259,12 +273,20 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="lr-button lr-button--ghost"
-                      style={{ minHeight: '30px', padding: '0 10px', fontSize: '12px' }}
+                      className="wr-cta wr-cta--secondary library-card__store-btn"
                     >
-                      Store page →
+                      Store page <ExternalLinkIcon size={16} />
                     </a>
                   )}
+                  <button
+                    type="button"
+                    className="wr-icon-btn wr-icon-btn--danger library-card__remove-btn"
+                    onClick={() => onRemove?.(game.title)}
+                    aria-label={`Remove ${game.title} from library`}
+                    title="Remove from library"
+                  >
+                    <TrashIcon />
+                  </button>
                 </div>
               </div>
             </article>

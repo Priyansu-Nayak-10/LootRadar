@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import SafeImage from '../components/SafeImage.jsx'
+import TimeLeft from '../components/TimeLeft.jsx'
 import { supabase } from '../lib/supabase.js'
 import {
   cleanTitle,
@@ -17,7 +18,7 @@ import {
 } from '../lib/freeGames.js'
 
 const GAMERPOWER_API = 'https://www.gamerpower.com/api/giveaways?type=game'
-const CACHE_KEY = 'wishradar_free_v3'
+const CACHE_KEY = 'wishradar_free_v4'
 const CACHE_MS = 10 * 60 * 1000 // 10 minutes
 
 const STORE_CHIPS = [
@@ -44,7 +45,7 @@ import {
   PcIcon as PcPlatformIcon,
   GamepadIcon as ConsolePlatformIcon,
   RotateCcwIcon,
-  StoreIcon,
+  ChevronDownIcon,
 } from '../components/icons'
 
 // ─── FreeCard (Claim Now) ────────────────────────────────────────────────────
@@ -55,6 +56,7 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
   const isConsole = /(playstation|ps4|ps5|xbox)/i.test(game.platforms || '')
 
   const timeLeft = formatTimeLeft(game.end_date || game.endDate, now)
+  const isTba = !(game.end_date || game.endDate) || timeLeft.text === 'Time TBA'
 
   const actions = getGameActions({
     title,
@@ -92,29 +94,46 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
       {/* Dark gradient fade over bottom of image */}
       <div className="free-card__fade" aria-hidden="true" />
 
-      {/* Top-left: Green FREE badge */}
-      <span className="free-card__badge-free">FREE</span>
-
-      {/* Top-right: Solid red countdown pill */}
-      <span className="free-card__countdown-chip">
-        {timeLeft.text}
-      </span>
+      {/* Top row: Free badge, countdown/TBA chip, wishlist heart */}
+      <div className="free-card__tags">
+        <span className="wr-badge wr-badge--free">Free</span>
+        <TimeLeft
+          variant="badge"
+          endDate={game.end_date || game.endDate}
+          label={timeLeft.text}
+          now={now}
+          className="free-card__time-badge"
+        />
+        <button
+          type="button"
+          className={`wr-icon-btn wr-icon-btn--sm wr-icon-btn--round ${actions.wishlisted ? 'is-on' : ''}`}
+          aria-pressed={Boolean(actions.wishlisted)}
+          aria-label={actions.wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+          title={actions.wishlisted ? 'In Wishlist' : 'Add to Wishlist'}
+          onClick={(e) => {
+            e.stopPropagation()
+            actions.onToggleWishlist()
+          }}
+        >
+          <HeartIcon />
+        </button>
+      </div>
 
       {/* Overlay content over bottom fade */}
       <div className="free-card__body">
-        <h3 className="free-card__title" title={title}>
+        <h3 className="wr-title" title={title}>
           {title}
         </h3>
 
         <div className="free-card__meta-row">
-          <div className="free-card__platform-store">
-            <span className="free-card__store-chip">
-              {isConsole ? <ConsolePlatformIcon size={13} /> : <PcPlatformIcon size={14} />}
-              {store}
-            </span>
-          </div>
+          <span className="wr-store-chip">
+            {isConsole ? <ConsolePlatformIcon size={13} /> : <PcPlatformIcon size={14} />}
+            {store}
+          </span>
           {worthFormatted ? (
-            <del className="free-card__worth">Worth {worthFormatted}</del>
+            <span className="free-card__worth">
+              Worth <strong>{worthFormatted}</strong>
+            </span>
           ) : (
             <span className="free-card__worth-empty" aria-hidden="true" />
           )}
@@ -126,19 +145,20 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
             href={claimUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="lr-button free-card__claim-btn"
+            className="wr-cta free-card__claim-btn"
           >
             Claim now <ExternalLinkIcon size={14} />
           </a>
 
           <button
             type="button"
-            className={`free-card__owned-btn ${actions.owned ? 'is-owned' : ''}`}
+            className={`wr-icon-btn ${actions.owned ? 'is-on' : ''}`}
             onClick={(e) => {
               e.preventDefault()
               actions.onToggleOwned()
             }}
-            aria-label={actions.owned ? `Marked as owned: ${title}` : `Mark ${title} as owned`}
+            aria-pressed={Boolean(actions.owned)}
+            aria-label={actions.owned ? `Remove ${title} from owned` : `Mark ${title} as owned`}
             title={actions.owned ? 'Claimed / In your library' : 'I claimed this'}
           >
             <CheckIcon />
@@ -195,34 +215,41 @@ function ComingSoonCard({ game, now, getGameActions, onGameOpen }) {
           className="free-card__img"
           fallbackText={title.slice(0, 1)}
         />
-        <span className="free-card__badge-upcoming">UPCOMING</span>
-        <span className="free-card__countdown-chip free-card__countdown-chip--starts">
-          {startsIn}
-        </span>
+        <div className="free-card__tags">
+          <span className="wr-badge wr-badge--release">Upcoming</span>
+          <TimeLeft
+            variant="badge"
+            tone="calm"
+            endDate={game.startDate}
+            label={startsIn}
+            now={now}
+          />
 
-        {/* Top-right Wishlist heart */}
-        <button
-          type="button"
-          className={`free-card__heart-btn ${actions.wishlisted ? 'is-wishlisted' : ''}`}
-          onClick={(e) => {
-            e.stopPropagation()
-            actions.onToggleWishlist()
-          }}
-          aria-label={actions.wishlisted ? `Wishlisted ${title}` : `Add ${title} to wishlist`}
-          title={actions.wishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
-        >
-          <HeartIcon filled={actions.wishlisted} />
-        </button>
+          {/* Top-right Wishlist heart */}
+          <button
+            type="button"
+            className={`wr-icon-btn wr-icon-btn--sm wr-icon-btn--round ${actions.wishlisted ? 'is-on' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              actions.onToggleWishlist()
+            }}
+            aria-pressed={Boolean(actions.wishlisted)}
+            aria-label={actions.wishlisted ? `Remove ${title} from wishlist` : `Add ${title} to wishlist`}
+            title={actions.wishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
+          >
+            <HeartIcon />
+          </button>
+        </div>
       </div>
 
       <div className="free-card__body">
-        <h3 className="free-card__title" title={title}>
+        <h3 className="wr-title" title={title}>
           {title}
         </h3>
 
         <div className="free-card__meta-row">
-          <span className="free-card__store-chip">
-            <PcPlatformIcon /> Epic Games
+          <span className="wr-store-chip">
+            <PcPlatformIcon size={14} /> Epic Games
           </span>
         </div>
 
@@ -242,9 +269,9 @@ function ComingSoonCard({ game, now, getGameActions, onGameOpen }) {
             href={epicUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="lr-button free-card__claim-btn free-card__claim-btn--secondary"
+            className="wr-cta wr-cta--secondary"
           >
-            View on Epic <ExternalLinkIcon />
+            View on Epic <ExternalLinkIcon size={14} />
           </a>
         </div>
       </div>
@@ -268,17 +295,22 @@ function AlwaysFreeCard({ game, onGameOpen }) {
           className="free-card__img"
           fallbackText={game.title?.slice(0, 1)}
         />
-        <span className="free-card__badge-always">Always free</span>
+      </div>
+
+      <div className="free-card__fade" aria-hidden="true" />
+
+      <div className="free-card__tags">
+        <span className="wr-badge wr-badge--free">Always free</span>
       </div>
 
       <div className="free-card__body">
-        <h3 className="free-card__title" title={game.title}>
+        <h3 className="wr-title" title={game.title}>
           {game.title}
         </h3>
 
         <div className="free-card__meta-row">
-          <span className="free-card__store-chip">
-            <PcPlatformIcon /> {game.platform || 'PC'}
+          <span className="wr-store-chip">
+            <PcPlatformIcon size={14} /> {game.platform || 'PC'}
           </span>
           {game.genre && <span className="free-card__genre-chip">{game.genre}</span>}
         </div>
@@ -294,9 +326,9 @@ function AlwaysFreeCard({ game, onGameOpen }) {
             href={playUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="lr-button free-card__claim-btn"
+            className="wr-cta free-card__claim-btn"
           >
-            Play now <ExternalLinkIcon />
+            Play now <ExternalLinkIcon size={14} />
           </a>
         </div>
       </div>
@@ -688,50 +720,49 @@ export default function FreeNow({
       {/* ─── Header ─── */}
       <header className="free-header">
         <div className="free-header__titles">
-          <span className="lr-section-heading__kicker">LIMITED-TIME OFFERS</span>
+          <span className="lr-section-heading__kicker">Free now</span>
           <div className="free-header__title-row">
             <h1>
-              {titleParts[0]} <strong>{titleParts.slice(1).join(' ')}</strong>
+              {titleParts[0]} <em>{titleParts.slice(1).join(' ')}</em>
             </h1>
             <span className="free-count-badge">{tabCounts[tab]} games</span>
           </div>
+          {formattedUpdatedAgo && (
+            <p className="free-header__sub">{formattedUpdatedAgo}</p>
+          )}
         </div>
 
-        {formattedUpdatedAgo && (
-          <span className="free-updated-pill">{formattedUpdatedAgo}</span>
-        )}
+        {/* ─── Navigation Tabs ─── */}
+        <div className="free-tabs" role="tablist" aria-label="Free games categories">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'claim'}
+            className={`free-tab ${tab === 'claim' ? 'is-active' : ''}`}
+            onClick={() => handleTabSelect('claim')}
+          >
+            Claim Now
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'coming'}
+            className={`free-tab ${tab === 'coming' ? 'is-active' : ''}`}
+            onClick={() => handleTabSelect('coming')}
+          >
+            Coming Soon
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'always'}
+            className={`free-tab ${tab === 'always' ? 'is-active' : ''}`}
+            onClick={() => handleTabSelect('always')}
+          >
+            Always Free
+          </button>
+        </div>
       </header>
-
-      {/* ─── Navigation Tabs ─── */}
-      <div className="free-tabs" role="tablist" aria-label="Free games categories">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'claim'}
-          className={`free-tab ${tab === 'claim' ? 'is-active' : ''}`}
-          onClick={() => handleTabSelect('claim')}
-        >
-          Claim Now
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'coming'}
-          className={`free-tab ${tab === 'coming' ? 'is-active' : ''}`}
-          onClick={() => handleTabSelect('coming')}
-        >
-          Coming Soon
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === 'always'}
-          className={`free-tab ${tab === 'always' ? 'is-active' : ''}`}
-          onClick={() => handleTabSelect('always')}
-        >
-          Always Free
-        </button>
-      </div>
 
       {/* ─── Slim Telegram Strip ─── */}
       {!telegramConnected && !telegramDismissed && (
@@ -747,14 +778,14 @@ export default function FreeNow({
           <div className="free-telegram-strip__actions">
             <button
               type="button"
-              className="free-telegram-strip__btn"
+              className="wr-cta free-telegram-strip__btn"
               onClick={() => onNavigate('account')}
             >
               Connect Telegram
             </button>
             <button
               type="button"
-              className="free-telegram-strip__close"
+              className="wr-icon-btn wr-icon-btn--sm"
               onClick={dismissTelegram}
               aria-label="Dismiss Telegram prompt"
             >
@@ -769,24 +800,21 @@ export default function FreeNow({
         <>
           {/* Toolbar: Store Chips, Sort & Owned Toggle */}
           <div className="free-toolbar">
-            <div className="free-filter-row free-filter-row--stores">
+            <div className="free-filter-row">
               {STORE_CHIPS.map((chip) => (
                 <button
                   key={chip.value}
                   type="button"
-                  className={`free-chip ${store === chip.value ? 'is-active' : ''}`}
+                  className={`wr-chip ${store === chip.value ? 'is-active' : ''}`}
                   onClick={() => handleStoreSelect(chip.value)}
                 >
                   {chip.label}
                 </button>
               ))}
-            </div>
 
-            <div className="free-filter-row free-filter-row--controls">
-              {/* Sort Menu */}
               <div className="free-sort-wrapper">
                 <select
-                  className="free-select"
+                  className="wr-chip free-sort-select"
                   value={sort}
                   onChange={(e) => handleSortSelect(e.target.value)}
                   aria-label="Sort free games"
@@ -797,40 +825,43 @@ export default function FreeNow({
                     </option>
                   ))}
                 </select>
+                <ChevronDownIcon size={16} className="free-sort-chevron" />
               </div>
+            </div>
 
-              {/* Owned Games Hidden / Show Line */}
-              {hiddenOwnedCount > 0 && (
-                <div className="free-owned-toggle-line">
-                  <span>{hiddenOwnedCount} owned {hiddenOwnedCount === 1 ? 'game' : 'games'} hidden</span>
+            {(hiddenOwnedCount > 0 || store !== 'all' || sort !== 'ending' || showOwned) && (
+              <div className="free-filter-row free-filter-row--meta">
+                {hiddenOwnedCount > 0 && (
+                  <div className="free-owned-toggle-line">
+                    <span>{hiddenOwnedCount} owned {hiddenOwnedCount === 1 ? 'game' : 'games'} hidden</span>
+                    <button
+                      type="button"
+                      className="free-owned-toggle-btn"
+                      onClick={() => setShowOwned(!showOwned)}
+                      aria-pressed={showOwned}
+                    >
+                      {showOwned ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
+                )}
+
+                {(store !== 'all' || sort !== 'ending' || showOwned) && (
                   <button
                     type="button"
-                    className="free-owned-toggle-btn"
-                    onClick={() => setShowOwned(!showOwned)}
-                    aria-pressed={showOwned}
+                    className="free-active-reset-btn"
+                    onClick={() => {
+                      handleStoreSelect('all')
+                      handleSortSelect('ending')
+                      setShowOwned(false)
+                    }}
+                    title="Reset filters to default"
                   >
-                    {showOwned ? 'Hide' : 'Show'}
+                    <RotateCcwIcon size={12} strokeWidth={2.5} />
+                    Reset filters
                   </button>
-                </div>
-              )}
-
-              {/* Reset Claim Filters Button */}
-              {(store !== 'all' || sort !== 'ending' || showOwned) && (
-                <button
-                  type="button"
-                  className="free-active-reset-btn"
-                  onClick={() => {
-                    handleStoreSelect('all')
-                    handleSortSelect('ending')
-                    setShowOwned(false)
-                  }}
-                  title="Reset filters to default"
-                >
-                  <RotateCcwIcon size={12} strokeWidth={2.5} />
-                  Reset filters
-                </button>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Error State */}

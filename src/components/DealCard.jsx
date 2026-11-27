@@ -1,4 +1,5 @@
 import SafeImage from './SafeImage'
+import TimeLeft from './TimeLeft'
 import {
   formatStoreName,
   formatDealPrice,
@@ -9,7 +10,6 @@ import {
   FlameIcon,
   HeartIcon,
   CheckIcon,
-  PcIcon,
   StoreIcon,
 } from './icons'
 
@@ -54,65 +54,67 @@ export default function DealCard({
       {/* Dark gradient fade over bottom of image */}
       <div className="deal-card__fade" aria-hidden="true" />
 
-      {/* Top-left: green discount badge */}
-      {discount > 0 && (
-        <span className="deal-card__badge-discount">-{discount}%</span>
-      )}
-
-      {/* Top-right: wishlist heart button */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          actions.onToggleWishlist()
-        }}
-        className={`deal-card__heart-btn ${actions.wishlisted ? 'is-active' : ''}`}
-        aria-label={actions.wishlisted ? `Remove ${deal.title} from wishlist` : `Add ${deal.title} to wishlist`}
-        title={actions.wishlisted ? 'In Wishlist' : 'Add to Wishlist'}
-      >
-        <HeartIcon active={actions.wishlisted} />
-      </button>
+      {/* Top row: discount badge, record/new-low badge, wishlist heart */}
+      <div className="deal-card__tags">
+        {discount > 0 && (
+          <span className="wr-badge wr-badge--discount">-{discount}%</span>
+        )}
+        {deal.isLowestEver ? (
+          <span
+            className="wr-badge wr-badge--record"
+            title="Lowest ever"
+            aria-label="Lowest ever"
+          >
+            <FlameIcon gradient={false} size={12} />
+            <span className="deal-card__flag-text">Lowest ever</span>
+          </span>
+        ) : deal.isNewLow ? (
+          <span
+            className="wr-badge wr-badge--accent"
+            title="New low"
+            aria-label="New low"
+          >
+            <span className="deal-card__flag-text">New low</span>
+          </span>
+        ) : null}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            actions.onToggleWishlist()
+          }}
+          className={`wr-icon-btn wr-icon-btn--round wr-icon-btn--sm ${actions.wishlisted ? 'is-on' : ''}`}
+          aria-pressed={Boolean(actions.wishlisted)}
+          aria-label={actions.wishlisted ? `Remove ${deal.title} from wishlist` : `Add ${deal.title} to wishlist`}
+          title={actions.wishlisted ? 'In Wishlist' : 'Add to Wishlist'}
+        >
+          <HeartIcon />
+        </button>
+      </div>
 
       {/* Overlay content over the bottom fade */}
       <div className="deal-card__body">
-        {deal.isLowestEver ? (
-          <div className="deal-card__badge-row">
-            <span className="deal-card__flag deal-card__flag--lowest">
-              <FlameIcon gradient={false} size={13} /> Lowest ever
-            </span>
-          </div>
-        ) : deal.isNewLow ? (
-          <div className="deal-card__badge-row">
-            <span className="deal-card__flag deal-card__flag--great">
-              New low
-            </span>
-          </div>
-        ) : null}
-
-        <h3 className="deal-card__title" title={deal.title}>
+        <h3 className="wr-title" title={deal.title}>
           {displayTitle}
         </h3>
 
         <div className="deal-card__meta-row">
-          <div className="deal-card__platform-store">
-            <PcIcon size={14} className="deal-card__pc-icon" />
-            <span className="deal-card__store-chip">
-              <StoreIcon store={resolvedStore} size={13} />
-              {resolvedStore}
-            </span>
-          </div>
-          {expiryLabel && (
-            <span className="deal-card__expiry">{expiryLabel}</span>
-          )}
+          <span className="wr-store-chip">
+            <StoreIcon store={resolvedStore} size={13} />
+            {resolvedStore}
+          </span>
+          {expiryLabel ? (
+            <TimeLeft endDate={deal.expiry} label={expiryLabel} />
+          ) : null}
         </div>
 
         <div className="deal-card__prices-row">
-          <strong className="deal-card__sale-price">
+          <strong className="wr-price-sale">
             {formatDealPrice(salePrice)}
           </strong>
           {regularPrice > salePrice && (
-            <del className="deal-card__old-price">
+            <del className="wr-price-old">
               {formatDealPrice(regularPrice)}
             </del>
           )}
@@ -123,7 +125,7 @@ export default function DealCard({
             href={deal.url || '#'}
             target="_blank"
             rel="noopener noreferrer"
-            className="deal-card__cta-btn"
+            className="wr-cta"
             onClick={(e) => {
               if (!deal.url || deal.url === '#') e.preventDefault()
             }}
@@ -137,11 +139,12 @@ export default function DealCard({
               e.stopPropagation()
               actions.onToggleOwned()
             }}
-            className={`deal-card__owned-btn ${actions.owned ? 'is-active' : ''}`}
-            aria-label={actions.owned ? `Mark ${deal.title} as not owned` : `Mark ${deal.title} as owned`}
+            className={`wr-icon-btn ${actions.owned ? 'is-on' : ''}`}
+            aria-pressed={Boolean(actions.owned)}
+            aria-label={actions.owned ? `Remove ${deal.title} from owned` : `Mark ${deal.title} as owned`}
             title={actions.owned ? 'Owned in Library' : 'I own this'}
           >
-            <CheckIcon active={actions.owned} />
+            <CheckIcon />
           </button>
         </div>
       </div>

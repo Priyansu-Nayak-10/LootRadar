@@ -90,6 +90,7 @@ export const SearchSuggestions = memo(function SearchSuggestions({
                 {releaseYear && <span>{releaseYear}</span>}
                 {releaseYear && rating && <span>·</span>}
                 {rating && <span className="search-suggestions__rating">★ {rating}</span>}
+                {(releaseYear || rating) && game.platforms?.length > 0 && <span>·</span>}
                 <div className="search-suggestions__platforms">
                   <PlatformIcons platforms={game.platforms} size={14} />
                 </div>
@@ -117,7 +118,7 @@ export const SearchSuggestions = memo(function SearchSuggestions({
             if (onHoverIndex) onHoverIndex(suggestions.length)
           }}
         >
-          See all results for &ldquo;{query.trim()}&rdquo;
+          Search for &ldquo;{query.trim()}&rdquo;
         </button>
       )}
     </div>

@@ -62,10 +62,27 @@ export function normalizeStore(item) {
 
 export function parseEndDate(dateStr) {
   if (!dateStr || dateStr === 'N/A') return null
+  if (dateStr instanceof Date) {
+    const t = dateStr.getTime()
+    return Number.isNaN(t) ? null : t
+  }
   if (typeof dateStr === 'number') return Number.isNaN(dateStr) ? null : dateStr
+  if (typeof dateStr !== 'string') return null
   const clean = dateStr.includes('T') ? dateStr : `${dateStr.replace(' ', 'T')}Z`
   const t = new Date(clean).getTime()
   return Number.isNaN(t) ? null : t
+}
+
+const SIX_HOURS_MS = 6 * 3600000
+const FORTY_EIGHT_HOURS_MS = 48 * 3600000
+
+export function getTimeTone(endDate, now = Date.now()) {
+  const endMs = parseEndDate(endDate)
+  if (endMs == null) return 'none'
+  const diff = endMs - now
+  if (diff > FORTY_EIGHT_HOURS_MS) return 'calm'
+  if (diff >= SIX_HOURS_MS) return 'soon'
+  return 'urgent'
 }
 
 export function isActive(item, now = Date.now()) {
@@ -142,6 +159,45 @@ const INR_PAISE_FORMATTER = new Intl.NumberFormat('en-IN', {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 })
+
+const SAFE_ROMAN_NUMERALS = [
+  [/\bviii\b/g, '8'],
+  [/\bvii\b/g, '7'],
+  [/\biii\b/g, '3'],
+  [/\biv\b/g, '4'],
+  [/\bix\b/g, '9'],
+  [/\bvi\b/g, '6'],
+  [/\bii\b/g, '2'],
+]
+
+/**
+ * Dedupe key for free-game and coming-soon titles.
+ * Preserves ambiguous single-letter numerals (i, v, x) and drops standalone
+ * "part" only when immediately followed by a digit token.
+ */
+export function dedupeKey(title) {
+  if (!title || typeof title !== 'string') return ''
+  const plainNormalized = title
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  if (!plainNormalized) return ''
+
+  let normalized = plainNormalized
+  for (const [pattern, digit] of SAFE_ROMAN_NUMERALS) {
+    normalized = normalized.replace(pattern, digit)
+  }
+  normalized = normalized
+    .replace(/\bpart\s+(?=\d+\b)/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  return normalized || plainNormalized
+}
 
 const ROMAN_NUMERALS = [
   [/\bviii\b/g, '8'],
@@ -264,21 +320,35 @@ function getOfficialClaimUrl(item) {
   return ''
 }
 
-function pickBestClaimUrl(existing, item) {
-  const officialItem = getOfficialClaimUrl(item)
-  if (officialItem) return officialItem
-  const officialExisting = getOfficialClaimUrl(existing)
-  if (officialExisting) return officialExisting
+function pickBestClaimUrl(chosen, dropped) {
+  const officialChosen = getOfficialClaimUrl(chosen)
+  if (officialChosen) return officialChosen
+  const officialDropped = getOfficialClaimUrl(dropped)
+  if (officialDropped) return officialDropped
 
   return (
-    item.open_giveaway_url ||
-    existing.open_giveaway_url ||
-    item.url ||
-    existing.url ||
-    existing.gamerpower_url ||
-    item.gamerpower_url ||
+    chosen.open_giveaway_url ||
+    chosen.url ||
+    chosen.gamerpower_url ||
+    dropped.open_giveaway_url ||
+    dropped.url ||
+    dropped.gamerpower_url ||
     ''
   )
+}
+
+function pickNicerTitle(titleA, titleB) {
+  if (!titleA) return titleB || ''
+  if (!titleB) return titleA
+  if (titleA.length !== titleB.length) {
+    return titleA.length > titleB.length ? titleA : titleB
+  }
+  const aHasDigit = /\d/.test(titleA)
+  const bHasDigit = /\d/.test(titleB)
+  if (aHasDigit !== bHasDigit) {
+    return aHasDigit ? titleA : titleB
+  }
+  return titleA
 }
 
 export function dedupe(items = [], { log = false } = {}) {
@@ -291,9 +361,9 @@ export function dedupe(items = [], { log = false } = {}) {
     const title = cleanTitle(item.title)
     if (!title) continue
 
-    const mergeKey = freeGameMergeKey(title)
+    const mergeKey = dedupeKey(title)
     const store = normalizeStore(item)
-    const dedupeKey = `${mergeKey}::${store}`
+    const compositeKey = `${mergeKey}::${store}`
 
     const officialUrl = getOfficialClaimUrl(item)
     const worthInr = Number(
@@ -315,12 +385,12 @@ export function dedupe(items = [], { log = false } = {}) {
       open_giveaway_url: officialUrl || item.open_giveaway_url || item.url || item.gamerpower_url || '',
     }
 
-    if (!map.has(dedupeKey)) {
-      map.set(dedupeKey, normalizedItem)
+    if (!map.has(compositeKey)) {
+      map.set(compositeKey, normalizedItem)
       continue
     }
 
-    const existing = map.get(dedupeKey)
+    const existing = map.get(compositeKey)
     const isItemOfficial = isOfficialStoreSource(normalizedItem)
     const isExistingOfficial = isOfficialStoreSource(existing)
 
@@ -395,16 +465,18 @@ export function dedupe(items = [], { log = false } = {}) {
         ? dropped.worth
         : (bestWorthInr > 0 ? { amount: bestWorthInr, currency: 'INR', source: chosen.store || dropped.store || 'ITAD' } : null))
 
-    map.set(dedupeKey, {
+    map.set(compositeKey, {
       ...dropped,
       ...chosen,
-      title: chosen.title,
+      title: pickNicerTitle(chosen.title, dropped.title),
       image: bestImage,
       thumbnail: bestThumb,
       open_giveaway_url: bestUrl,
       worthInr: bestWorthInr,
       worth: bestWorth,
       steamAppId: chosen.steamAppId || dropped.steamAppId || null,
+      platforms: chosen.platforms || dropped.platforms || '',
+      platform: chosen.platform || dropped.platform || '',
       end_date: bestEnd,
       endDate: bestEnd,
     })

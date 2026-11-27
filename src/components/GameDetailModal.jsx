@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import SafeImage from './SafeImage'
+import TimeLeft from './TimeLeft'
 import PlatformIcons from './PlatformIcons'
 import {
   CloseIcon,
@@ -7,7 +8,7 @@ import {
   CheckIcon,
   ExternalLinkIcon,
   FlameIcon,
-  ClockIcon,
+  StarIcon,
   AlertTriangleIcon,
 } from './icons'
 import { resolveGameOffer, fetchLiveItadPrice } from '../lib/gameOffer'
@@ -211,7 +212,13 @@ export default function GameDetailModal({
     ? `https://rawg.io/games/${game.slug}`
     : `https://rawg.io/games/${game.id}`
 
-  const hasOffer = offer.type === 'deal' || offer.type === 'free_now' || offer.type === 'always_free'
+  const hasPlatforms = Array.isArray(game.platforms) && game.platforms.length > 0
+  const isDeal = offer.type === 'deal'
+  const isFree = offer.type === 'free_now' || offer.type === 'always_free'
+  const ctaLabel =
+    offer.type === 'free_now'
+      ? 'Claim now'
+      : offer.ctaText || 'Get deal'
 
   return (
     <div
@@ -229,18 +236,7 @@ export default function GameDetailModal({
         aria-labelledby="game-detail-title"
         onKeyDown={handleKeyDown}
       >
-        {/* Close Button */}
-        <button
-          ref={closeBtnRef}
-          type="button"
-          className="game-modal-close-btn"
-          onClick={onClose}
-          aria-label="Close game details dialog"
-        >
-          <CloseIcon size={18} />
-        </button>
-
-        {/* 1. Cover Image with Top Badges */}
+        {/* 1. Header Art with Top-Right Controls */}
         <div className="game-modal-art">
           <SafeImage
             src={game.background_image || game.image}
@@ -249,68 +245,71 @@ export default function GameDetailModal({
             fallbackText={title.slice(0, 1)}
           />
 
-          {/* Top-Left: Discount Badge */}
-          {offer.badge && (
-            <span
-              className={`game-modal-badge ${
-                offer.badgeType === 'free'
-                  ? 'game-modal-badge--free'
-                  : 'game-modal-badge--sale'
-              }`}
+          <div className="game-modal-art-actions">
+            <button
+              type="button"
+              className={`wr-icon-btn wr-icon-btn--round ${actions.wishlisted ? 'is-on' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                actions.onToggleWishlist()
+              }}
+              aria-pressed={actions.wishlisted}
+              aria-label={actions.wishlisted ? `Remove ${title} from wishlist` : `Add ${title} to wishlist`}
+              title={actions.wishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
             >
-              {offer.badge}
-            </span>
-          )}
-
-          {/* Top-Right: Wishlist Heart */}
-          <button
-            type="button"
-            className={`game-modal-heart-btn ${actions.wishlisted ? 'is-active' : ''}`}
-            onClick={(e) => {
-              e.stopPropagation()
-              actions.onToggleWishlist()
-            }}
-            aria-label={actions.wishlisted ? `Remove ${title} from wishlist` : `Add ${title} to wishlist`}
-            title={actions.wishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
-          >
-            <HeartIcon filled={actions.wishlisted} active={actions.wishlisted} size={18} />
-          </button>
+              <HeartIcon size={18} />
+            </button>
+            <button
+              ref={closeBtnRef}
+              type="button"
+              className="wr-icon-btn wr-icon-btn--round"
+              onClick={onClose}
+              aria-label="Close"
+            >
+              <CloseIcon size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Modal Scrollable Body */}
         <div className="game-modal-body">
-          {/* 2. Title, Year, Platforms, Rating */}
+          {/* 2. Title, Year, Rating, Platforms */}
           <div className="game-modal-header">
-            <h2 id="game-detail-title" className="game-modal-title">
+            <h2 id="game-detail-title" className="wr-heading">
               {title}
             </h2>
 
-            <div className="game-modal-meta">
-              {releaseYear && <span className="game-modal-year">{releaseYear}</span>}
-              {releaseYear && (rating || (game.platforms && game.platforms.length > 0)) && (
-                <span className="game-modal-sep">·</span>
-              )}
-              {rating && (
-                <span className="game-modal-rating" title={`Rating: ${rating}/5`}>
-                  ★ {rating}
-                </span>
-              )}
-              {rating && game.platforms && game.platforms.length > 0 && (
-                <span className="game-modal-sep">·</span>
-              )}
-              <div className="game-modal-platforms" aria-label="Platforms">
-                <PlatformIcons platforms={game.platforms} size={16} />
+            {(releaseYear || rating || hasPlatforms) && (
+              <div className="game-modal-meta">
+                {releaseYear && <span className="game-modal-year">{releaseYear}</span>}
+                {releaseYear && (rating || hasPlatforms) && (
+                  <span className="game-modal-sep" aria-hidden="true">&middot;</span>
+                )}
+                {rating && (
+                  <span className="game-modal-rating" title={`Rating: ${rating}/5`}>
+                    <StarIcon size={14} className="game-modal-rating-star" />
+                    <span>{rating}</span>
+                  </span>
+                )}
+                {rating && hasPlatforms && (
+                  <span className="game-modal-sep" aria-hidden="true">&middot;</span>
+                )}
+                {hasPlatforms && (
+                  <div className="game-modal-platforms" aria-label="Platforms">
+                    <PlatformIcons platforms={game.platforms} size={16} />
+                  </div>
+                )}
               </div>
-            </div>
+            )}
           </div>
 
-          {/* 3. Available On Store Chips (Neutral styling) */}
+          {/* 3. Available On Store Chips */}
           {allStoreChips.length > 0 && (
             <div className="game-modal-stores" aria-label="Available on stores">
-              <span className="game-modal-stores-label">Available on:</span>
+              <span className="game-modal-stores-label">Available on</span>
               <div className="game-modal-chips-row">
                 {allStoreChips.map((storeName) => (
-                  <span key={storeName} className="game-modal-store-chip">
+                  <span key={storeName} className="wr-store-chip">
                     {storeName}
                   </span>
                 ))}
@@ -318,97 +317,110 @@ export default function GameDetailModal({
             </div>
           )}
 
-          {/* 4. Price Block */}
+          {/* 4. Price Panel */}
           <div className="game-modal-price-block">
             {livePriceLoading ? (
-              <div className="game-modal-price-skeleton" aria-busy="true">
-                <div className="game-modal-skeleton-pill lr-skeleton" />
-                <div className="game-modal-skeleton-text lr-skeleton" />
-              </div>
+              <div className="game-modal-price-skeleton" aria-busy="true" aria-label="Loading price" />
             ) : offer.type === 'console' ? (
-              <div className="game-modal-notice game-modal-notice--console">
-                <p>Price not tracked for this platform</p>
-              </div>
+              <p className="game-modal-notice-text">Price not tracked for this platform</p>
             ) : offer.type === 'error' ? (
-              <div className="game-modal-notice game-modal-notice--error">
-                <p>
-                  <AlertTriangleIcon size={14} /> Price unavailable right now
+              <>
+                <p className="game-modal-notice-text game-modal-notice-text--error">
+                  <AlertTriangleIcon size={16} />
+                  <span>Price unavailable right now</span>
                 </p>
                 <button
                   type="button"
-                  className="game-modal-retry-btn"
+                  className="wr-chip game-modal-retry-btn"
                   onClick={() => setRetryCount((c) => c + 1)}
                 >
                   Retry
                 </button>
-              </div>
-            ) : hasOffer ? (
-              <div className="game-modal-price-details">
-                <div className="game-modal-price-row">
-                  <strong className="game-modal-current-price">
-                    {offer.formattedPrice}
-                  </strong>
-                  {offer.formattedRegular && (
-                    <del className="game-modal-old-price">
-                      {offer.formattedRegular}
-                    </del>
+              </>
+            ) : isDeal ? (
+              <>
+                <div className="game-modal-price-left">
+                  {(offer.discount > 0 || offer.isLowestEver) && (
+                    <div className="game-modal-price-badges">
+                      {offer.discount > 0 && (
+                        <span className="wr-badge wr-badge--discount">
+                          -{offer.discount}%
+                        </span>
+                      )}
+                      {offer.isLowestEver && (
+                        <span className="wr-badge wr-badge--record" title="Lowest recorded price in India">
+                          <FlameIcon gradient={false} size={13} /> Lowest ever
+                        </span>
+                      )}
+                    </div>
                   )}
-                  {offer.discount > 0 && offer.discount < 100 && (
-                    <span className="game-modal-cut-pill">
-                      Save {offer.discount}%
-                    </span>
-                  )}
-                  {offer.isLowestEver && (
-                    <span className="game-modal-lowest-pill" title="Lowest recorded price in India">
-                      <FlameIcon gradient={false} size={13} /> Lowest ever
-                    </span>
-                  )}
+                  <div className="game-modal-price-values">
+                    <b className="wr-price-sale">{offer.formattedPrice}</b>
+                    {offer.formattedRegular && (
+                      <s className="wr-price-old">{offer.formattedRegular}</s>
+                    )}
+                  </div>
                 </div>
-
-                {offer.endDate && (
-                  <div className="game-modal-expiry">
-                    <ClockIcon size={13} /> {formatTimeLeft(offer.endDate)?.text || 'Ending soon'}
+                {(offer.store || offer.expiry) && (
+                  <div className="game-modal-price-right">
+                    {offer.store && <span className="wr-store-chip">{offer.store}</span>}
+                    {offer.expiry && (
+                      <TimeLeft
+                        endDate={offer.expiry}
+                        label={formatDealExpiry(offer.expiry) || 'Ending soon'}
+                      />
+                    )}
                   </div>
                 )}
-                {offer.expiry && (
-                  <div className="game-modal-expiry">
-                    <ClockIcon size={13} /> {formatDealExpiry(offer.expiry) || 'Ending soon'}
+              </>
+            ) : isFree ? (
+              <>
+                <div className="game-modal-price-left">
+                  <div className="game-modal-price-values">
+                    <span className="game-modal-free-label">Free</span>
+                    {offer.formattedRegular && (
+                      <s className="wr-price-old">{offer.formattedRegular}</s>
+                    )}
+                  </div>
+                </div>
+                {(offer.store || offer.endDate) && (
+                  <div className="game-modal-price-right">
+                    {offer.store && <span className="wr-store-chip">{offer.store}</span>}
+                    {offer.endDate && (
+                      <TimeLeft
+                        endDate={offer.endDate}
+                        label={formatTimeLeft(offer.endDate)?.text || 'Ending soon'}
+                      />
+                    )}
                   </div>
                 )}
-              </div>
+              </>
             ) : (
-              <div className="game-modal-notice game-modal-notice--untracked">
-                <p>No active deals tracked for PC right now.</p>
-              </div>
+              <p className="game-modal-notice-text">No active deals tracked for PC right now.</p>
             )}
           </div>
 
-          {/* 5. Primary CTA and Action Buttons */}
+          {/* 5. Primary CTA and Owned Toggle */}
           <div className="game-modal-actions">
             {offer.ctaUrl ? (
               <a
                 href={offer.ctaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="lr-button game-modal-primary-cta"
+                className="wr-cta"
               >
-                {offer.ctaText} <ExternalLinkIcon size={16} />
+                {ctaLabel} <ExternalLinkIcon size={16} />
               </a>
             ) : (
-              <button
-                type="button"
-                className="lr-button game-modal-primary-cta is-disabled"
-                disabled
-              >
-                No Store Link Available
-              </button>
+              <span className="wr-cta wr-cta--disabled" aria-disabled="true">
+                No store link available
+              </span>
             )}
 
-            {/* Owned toggle check button */}
             <button
               type="button"
-              className={`lr-button lr-button--secondary game-modal-owned-btn ${
-                actions.owned ? 'is-owned' : ''
+              className={`wr-cta wr-cta--secondary game-modal-owned-btn ${
+                actions.owned ? 'is-on' : ''
               }`}
               onClick={actions.onToggleOwned}
               aria-pressed={actions.owned}
@@ -417,7 +429,7 @@ export default function GameDetailModal({
             </button>
           </div>
 
-          {/* 6. RAWG Attribution (Only link to RAWG) */}
+          {/* 6. RAWG Attribution */}
           <footer className="game-modal-footer">
             <a
               href={rawgUrl}
@@ -425,7 +437,7 @@ export default function GameDetailModal({
               rel="noopener noreferrer"
               className="game-modal-rawg-link"
             >
-              Data from RAWG <ExternalLinkIcon size={12} />
+              Data from RAWG <ExternalLinkIcon size={14} />
             </a>
           </footer>
         </div>

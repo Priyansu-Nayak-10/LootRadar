@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import SafeImage from '../components/SafeImage'
+import TimeLeft from '../components/TimeLeft'
 import {
   BellIcon,
   TrashIcon,
   ExternalLinkIcon,
   CircleCheckIcon as CheckCircleIcon,
   FlameIcon,
+  ChevronDownIcon,
 } from '../components/icons'
 import {
   titleKey,
@@ -194,25 +196,25 @@ function WishlistCard({
       <div className="wishlist-card-top">
         <div className="wishlist-card-tags">
           {cardState === 'free' && (
-            <span className="wishlist-tag wishlist-tag--free">FREE NOW</span>
+            <span className="wr-badge wr-badge--free">Free now</span>
           )}
           {cardState === 'sale' && (
             <>
-              <span className="wishlist-tag wishlist-tag--sale">
-                ON SALE -{Math.round(Number(deal.cut))}%
+              <span className="wr-badge wr-badge--discount">
+                On sale -{Math.round(Number(deal.cut))}%
               </span>
               {(goodEval.fires || (userEval.fires && userEval.isNearLow)) && (
-                <span className="wishlist-tag wishlist-tag--low">
+                <span className="wr-badge wr-badge--record">
                   <FlameIcon gradient={false} size={12} /> {deal.isLowestEver ? 'ALL-TIME LOW' : 'NEAR ALL-TIME LOW'}
                 </span>
               )}
             </>
           )}
           {cardState === 'console' && (
-            <span className="wishlist-tag wishlist-tag--console">CONSOLE</span>
+            <span className="wr-badge wr-badge--neutral">CONSOLE</span>
           )}
           {cardState === 'not_on_sale' && (
-            <span className="wishlist-tag wishlist-tag--neutral">
+            <span className="wr-badge wr-badge--neutral">
               {priceLoading ? 'CHECKING PRICE' : 'NO CURRENT DEAL'}
             </span>
           )}
@@ -221,16 +223,17 @@ function WishlistCard({
         <div className="wishlist-card-actions">
           <button
             type="button"
-            className={`wishlist-action-btn ${isAlertsOn ? 'is-active' : ''}`}
+            className={`wr-icon-btn wr-icon-btn--sm wr-icon-btn--alert ${isAlertsOn ? 'is-on' : ''}`}
             onClick={() => onUpdate(game.title, { notify: !isAlertsOn })}
             aria-label={isAlertsOn ? 'Turn off price alerts' : 'Turn on price alerts'}
+            aria-pressed={isAlertsOn}
             title={isAlertsOn ? 'Price alerts ON' : 'Price alerts OFF'}
           >
             <BellIcon active={isAlertsOn} />
           </button>
           <button
             type="button"
-            className="wishlist-action-btn wishlist-action-btn--remove"
+            className="wr-icon-btn wr-icon-btn--sm wr-icon-btn--danger"
             onClick={() => onRemove(game.title)}
             aria-label={`Remove ${game.title} from wishlist`}
             title="Remove from wishlist"
@@ -241,14 +244,27 @@ function WishlistCard({
       </div>
 
       <div className="wishlist-card-bottom-overlay">
-        <h2 className="wishlist-card-title" title={game.title}>
+        <h2 className="wr-title" title={game.title}>
           {game.title}
         </h2>
 
         <div className="wishlist-card-meta">
-          <span className="wishlist-store-chip">{storeLabel}</span>
+          {cardState === 'console' ? (
+            <div className="wishlist-card-platforms">
+              {String(storeLabel)
+                .split(/\s*[,/|]+\s*/)
+                .filter(Boolean)
+                .map((plat) => (
+                  <span key={plat} className="wr-store-chip">
+                    {plat}
+                  </span>
+                ))}
+            </div>
+          ) : (
+            <span className="wr-store-chip">{storeLabel}</span>
+          )}
           {expiryLabel && cardState === 'sale' && (
-            <span className="wishlist-countdown-chip">{expiryLabel}</span>
+            <TimeLeft endDate={deal.expiry} label={expiryLabel} now={now} />
           )}
         </div>
 
@@ -256,11 +272,14 @@ function WishlistCard({
           <div className="wishlist-details-group">
             <div className="wishlist-price-row">
               <span className="wishlist-price-free">Free</span>
-              {freeWorthInr && <del className="wishlist-price-old">{freeWorthInr}</del>}
+              {freeWorthInr && <del className="wr-price-old">{freeWorthInr}</del>}
               {(freeGame?.end_date || freeGame?.endDate) && (
-                <span className="wishlist-countdown-chip">
-                  {formatCountdown(freeGame.end_date || freeGame.endDate, now)}
-                </span>
+                <TimeLeft
+                  endDate={freeGame.end_date || freeGame.endDate}
+                  label={formatCountdown(freeGame.end_date || freeGame.endDate, now)}
+                  now={now}
+                  className="wishlist-free-countdown"
+                />
               )}
             </div>
             {claimUrl && (
@@ -268,9 +287,9 @@ function WishlistCard({
                 href={claimUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="lr-button wishlist-cta-btn wishlist-cta-btn--free"
+                className="wr-cta wishlist-cta-btn"
               >
-                Claim now <ExternalLinkIcon />
+                Claim now <ExternalLinkIcon size={14} />
               </a>
             )}
           </div>
@@ -279,14 +298,9 @@ function WishlistCard({
         {cardState === 'sale' && (
           <div className="wishlist-details-group">
             <div className="wishlist-price-row">
-              <strong className="wishlist-price-sale">{formatDealPrice(deal.price)}</strong>
+              <strong className="wr-price-sale">{formatDealPrice(deal.price)}</strong>
               {Number(deal.regular) > Number(deal.price) && (
-                <del className="wishlist-price-old">{formatDealPrice(deal.regular)}</del>
-              )}
-              {historyLow != null && historyLow > 0 && (
-                <span className="wishlist-lowest-chip" title="Historical lowest price in India">
-                  <FlameIcon size={14} /> Lowest ever {formatDealPrice(historyLow)}
-                </span>
+                <del className="wr-price-old">{formatDealPrice(deal.regular)}</del>
               )}
             </div>
             {dealUrl && (
@@ -294,9 +308,9 @@ function WishlistCard({
                 href={dealUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="lr-button wishlist-cta-btn wishlist-cta-btn--deal"
+                className="wr-cta wishlist-cta-btn"
               >
-                View deal <ExternalLinkIcon />
+                View deal <ExternalLinkIcon size={14} />
               </a>
             )}
           </div>
@@ -321,17 +335,16 @@ function WishlistCard({
             <div className="wishlist-price-row">
               <span className="wishlist-console-badge">Price tracking unavailable</span>
             </div>
-            <div className="wishlist-console-links" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <div className="wishlist-console-links">
               {getConsoleLinks(game.title, game.platform).map((lnk) => (
                 <a
                   key={lnk.label}
                   href={lnk.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="lr-button lr-button--ghost"
-                  style={{ minHeight: '32px', padding: '4px 10px', fontSize: '12px' }}
+                  className="wishlist-console-link"
                 >
-                  {lnk.label} <ExternalLinkIcon />
+                  {lnk.label} <ExternalLinkIcon size={16} />
                 </a>
               ))}
             </div>
@@ -665,71 +678,81 @@ export default function Wishlist({
   return (
     <div className="wishlist-page-redesign">
       <header className="wishlist-header">
-        <div className="wishlist-header__main">
-          <h1>Wishlist</h1>
-          <div className="wishlist-tabs" role="tablist" aria-label="Collections tabs">
-            <button
-              type="button"
-              id="wishlist-tab"
-              role="tab"
-              aria-selected="true"
-              aria-controls="wishlist-tabpanel"
-              className="wishlist-tab is-active"
-            >
-              Wishlist <span className="wishlist-tab__count">{games.length}</span>
-            </button>
-            <button
-              type="button"
-              id="library-tab"
-              role="tab"
-              aria-selected="false"
-              aria-controls="wishlist-tabpanel"
-              className="wishlist-tab"
-              onClick={() => onNavigate('library')}
-            >
-              Owned <span className="wishlist-tab__count">{ownedGames.length}</span>
-            </button>
-          </div>
+        <div className="wishlist-header__titles">
+          <span className="wishlist-header__kicker">Your list</span>
+          <h1>
+            <em>Wishlist</em>
+          </h1>
         </div>
 
-        <div className="wishlist-controls">
-          <label className="wishlist-control-label">
-            <span className="wishlist-control-title">Sort</span>
+        <div className="wishlist-tabs" role="tablist" aria-label="Collections tabs">
+          <button
+            type="button"
+            id="wishlist-tab"
+            role="tab"
+            aria-selected="true"
+            aria-controls="wishlist-tabpanel"
+            className="wishlist-tab is-active"
+          >
+            Wishlist <span className="wishlist-tab__count">{games.length}</span>
+          </button>
+          <button
+            type="button"
+            id="library-tab"
+            role="tab"
+            aria-selected="false"
+            aria-controls="wishlist-tabpanel"
+            className="wishlist-tab"
+            onClick={() => onNavigate('library')}
+          >
+            Owned <span className="wishlist-tab__count">{ownedGames.length}</span>
+          </button>
+        </div>
+      </header>
+
+      <div className="wishlist-controls">
+        <label className="wishlist-control-label">
+          <span className="wishlist-control-title">Sort</span>
+          <span className="wishlist-select-wrap">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="wishlist-select"
+              className="wr-chip wishlist-select"
               aria-label="Sort wishlist"
             >
               <option value="best">Best deals first</option>
               <option value="recent">Recently added</option>
               <option value="alpha">A-Z</option>
             </select>
-          </label>
+            <ChevronDownIcon size={16} className="wishlist-select-chevron" />
+          </span>
+        </label>
 
-          <label className="wishlist-control-label">
-            <span className="wishlist-control-title">Alert sensitivity</span>
+        <label className="wishlist-control-label">
+          <span className="wishlist-control-title">Alert sensitivity</span>
+          <span className="wishlist-select-wrap">
             <select
               value={alertSensitivity}
               onChange={(e) => handleSensitivityChange(e.target.value)}
-              className="wishlist-select"
+              className="wr-chip wishlist-select"
               aria-label="Alert sensitivity"
             >
               <option value="any">Any sale (25%+)</option>
               <option value="good">Good deals (default)</option>
               <option value="great">Only great deals (50%+ or all-time low)</option>
             </select>
-          </label>
-        </div>
-      </header>
+            <ChevronDownIcon size={16} className="wishlist-select-chevron" />
+          </span>
+        </label>
+      </div>
 
       <section className="wishlist-banner" aria-label="Wishlist status summary">
         <div className="wishlist-banner__info">
           <span className="wishlist-banner__indicator" aria-hidden="true" />
-          <p>
+          <p className="wishlist-banner__copy">
             <strong>{saleOrFreeCount} of your games</strong> are on sale or free right now
             {liveUnavailable && (
-              <span className="wishlist-live-note" style={{ marginLeft: '8px', color: 'var(--muted)', fontSize: '12px' }}>
+              <span className="wishlist-live-note">
                 · Live price unavailable
               </span>
             )}
@@ -743,7 +766,7 @@ export default function Wishlist({
           ) : (
             <button
               type="button"
-              className="wishlist-telegram-btn"
+              className="wr-cta wishlist-telegram-btn"
               onClick={() => onNavigate('account')}
             >
               Connect Telegram
