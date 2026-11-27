@@ -49,7 +49,8 @@ import {
 
 // ─── FreeCard (Claim Now) ────────────────────────────────────────────────────
 function FreeCard({ game, now, getGameActions, onGameOpen }) {
-  const title = cleanTitle(game.title)
+  const rawTitle = game.title || game.name || 'Free Game'
+  const title = cleanTitle(rawTitle) || 'Free Game'
   const store = normalizeStore(game)
   const isConsole = /(playstation|ps4|ps5|xbox)/i.test(game.platforms || '')
 
@@ -69,16 +70,15 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
     game.gamerpower_url ||
     '#'
 
-  const worthFormatted = formatWorthInr(game.worthInr)
-  const worthDisplay = worthFormatted ? `Worth ${worthFormatted}` : ''
+  const worthFormatted = formatWorthInr(game.worth || game.worthInr)
 
   return (
     <article
-      className="free-card"
+      className="free-card free-card--claim"
       onClick={() => onGameOpen?.(title)}
       data-testid="free-card"
     >
-      {/* 16:9 Media */}
+      {/* Background Image covering entire card */}
       <div className="free-card__media">
         <SafeImage
           steamAppID={game.steamAppId}
@@ -87,32 +87,37 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
           className="free-card__img"
           fallbackText={title.slice(0, 1)}
         />
-
-        {/* Top-left: FREE badge */}
-        <span className="free-card__badge-free">FREE</span>
-
-        {/* Bottom-left: Countdown Chip */}
-        <span
-          className={`free-card__countdown-chip ${
-            timeLeft.urgent ? 'free-card__countdown-chip--urgent' : ''
-          } ${timeLeft.isEndsToday ? 'free-card__countdown-chip--ends-today' : ''}`}
-        >
-          {timeLeft.text}
-        </span>
       </div>
 
-      {/* Body */}
+      {/* Dark gradient fade over bottom of image */}
+      <div className="free-card__fade" aria-hidden="true" />
+
+      {/* Top-left: Green FREE badge */}
+      <span className="free-card__badge-free">FREE</span>
+
+      {/* Top-right: Solid red countdown pill */}
+      <span className="free-card__countdown-chip">
+        {timeLeft.text}
+      </span>
+
+      {/* Overlay content over bottom fade */}
       <div className="free-card__body">
         <h3 className="free-card__title" title={title}>
           {title}
         </h3>
 
         <div className="free-card__meta-row">
-          <span className="free-card__store-chip">
-            {isConsole ? <ConsolePlatformIcon /> : <PcPlatformIcon />}
-            {store}
-          </span>
-          {worthDisplay && <span className="free-card__worth">{worthDisplay}</span>}
+          <div className="free-card__platform-store">
+            <span className="free-card__store-chip">
+              {isConsole ? <ConsolePlatformIcon size={13} /> : <PcPlatformIcon size={14} />}
+              {store}
+            </span>
+          </div>
+          {worthFormatted ? (
+            <del className="free-card__worth">Worth {worthFormatted}</del>
+          ) : (
+            <span className="free-card__worth-empty" aria-hidden="true" />
+          )}
         </div>
 
         {/* Actions */}
@@ -123,7 +128,7 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
             rel="noopener noreferrer"
             className="lr-button free-card__claim-btn"
           >
-            Claim now <ExternalLinkIcon />
+            Claim now <ExternalLinkIcon size={14} />
           </a>
 
           <button

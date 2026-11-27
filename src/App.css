@@ -2978,6 +2978,235 @@ textarea:focus-visible {
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 16px rgba(22, 140, 255, 0.12);
 }
 
+/* ─── FreeCard (Claim Now) Redesign ─── */
+.free-card--claim {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  aspect-ratio: 4 / 5;
+  min-height: 380px;
+  height: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.free-card--claim:hover,
+.free-card--claim:focus-within {
+  transform: translateY(-3px);
+  border-color: rgba(22, 140, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(22, 140, 255, 0.3), 0 14px 32px rgba(0, 0, 0, 0.6);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .free-card--claim .free-card__img {
+    transition: transform 0.2s ease;
+  }
+  .free-card--claim:hover .free-card__img {
+    transform: scale(1.03);
+  }
+}
+
+.free-card--claim .free-card__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: #060B16;
+  overflow: hidden;
+}
+
+.free-card--claim .free-card__media::after {
+  display: none;
+}
+
+.free-card--claim .free-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.free-card__fade {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(6, 11, 22, 0.96) 0%, rgba(6, 11, 22, 0.88) 40%, rgba(6, 11, 22, 0) 72%);
+}
+
+.free-card--claim .free-card__badge-free {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  background: var(--badge-discount-bg);
+  color: var(--badge-discount-text);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* SOLID red pill for countdown in top-right */
+.free-card--claim .free-card__countdown-chip {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  bottom: auto;
+  left: auto;
+  z-index: 3;
+  background: var(--urgent-bg);
+  color: var(--urgent-text);
+  border: 1px solid var(--urgent-bg);
+  font-size: 12px;
+  font-weight: 850;
+  padding: 3px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.free-card--claim .free-card__body {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 8px;
+  margin-top: auto;
+  flex: initial;
+}
+
+.free-card--claim .free-card__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.5em;
+  height: auto;
+}
+
+.free-card--claim .free-card__meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 26px;
+}
+
+.free-card--claim .free-card__platform-store {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #B6C2D6;
+}
+
+.free-card--claim .free-card__store-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  color: #B6C2D6;
+}
+
+.free-card--claim .free-card__worth {
+  font-size: 13px;
+  font-weight: 700;
+  color: #B6C2D6;
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+.free-card--claim .free-card__worth-empty {
+  display: inline-block;
+  min-height: 1px;
+}
+
+.free-card--claim .free-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 0;
+}
+
+.free-card--claim .free-card__claim-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--accent-fill);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--accent-fill);
+  gap: 6px;
+}
+
+.free-card--claim .free-card__claim-btn:hover {
+  background: var(--accent-fill-hover);
+  border-color: var(--accent-fill-hover);
+  box-shadow: 0 0 14px rgba(22, 140, 255, 0.4);
+}
+
+.free-card--claim .free-card__owned-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: #B6C2D6;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.free-card--claim .free-card__owned-btn:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.free-card--claim .free-card__owned-btn.is-owned {
+  background: rgba(22, 140, 255, 0.2);
+  color: var(--accent-hover);
+  border-color: rgba(22, 140, 255, 0.5);
+}
+
 .free-card__media {
   position: relative;
   width: 100%;
@@ -3258,49 +3487,58 @@ textarea:focus-visible {
 
 /* ─── Skeletons ─── */
 .free-card-skeleton {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  min-height: 380px;
+  height: 100%;
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  padding: 16px;
+  gap: 10px;
 }
 
-.free-card-skeleton__media {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: rgba(255, 255, 255, 0.04);
+.free-card-skeleton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.03);
   animation: lrPulse 1.5s ease-in-out infinite;
 }
 
 .free-card-skeleton__body {
-  padding: 12px 14px 14px;
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  flex: 1;
+  width: 100%;
 }
 
 .free-card-skeleton__title {
-  height: 36px;
+  height: 38px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
   animation: lrPulse 1.5s ease-in-out infinite;
 }
 
 .free-card-skeleton__meta {
   height: 18px;
-  width: 55%;
+  width: 60%;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   animation: lrPulse 1.5s ease-in-out infinite;
 }
 
 .free-card-skeleton__btn {
-  height: 36px;
+  height: 38px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  margin-top: auto;
+  background: rgba(255, 255, 255, 0.08);
+  margin-top: 4px;
   animation: lrPulse 1.5s ease-in-out infinite;
 }
 
@@ -3416,6 +3654,26 @@ textarea:focus-visible {
   .free-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+  }
+  .free-card--claim {
+    min-height: 320px;
+  }
+  .free-card--claim .free-card__body {
+    padding: 10px 10px 12px;
+    gap: 6px;
+  }
+  .free-card--claim .free-card__title {
+    font-size: 13px;
+    min-height: 2.5em;
+  }
+  .free-card--claim .free-card__claim-btn {
+    font-size: 12px;
+    height: 34px;
+    padding: 0 8px;
+  }
+  .free-card--claim .free-card__owned-btn {
+    width: 34px;
+    height: 34px;
   }
   .free-card__body {
     padding: 10px 10px 12px;
