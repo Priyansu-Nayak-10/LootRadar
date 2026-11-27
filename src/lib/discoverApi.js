@@ -62,6 +62,76 @@ import {
   rankAndFilter,
 } from './searchRank'
 
+const suggestionMemoryCache = new Map()
+const gameStoresMemoryCache = new Map()
+
+/**
+ * Lightweight typeahead search for suggestions:
+ * Exactly 1 request per query, page_size: 6, session memory cache.
+ */
+export async function fetchRawgSuggestions(rawQuery, category = 'All', signal) {
+  const norm = normalizeQuery(rawQuery)
+  if (!norm || norm.length < 2) return []
+
+  if (!rawgKey) {
+    const err = new Error('RAWG_KEY_MISSING')
+    err.code = 'RAWG_KEY_MISSING'
+    throw err
+  }
+
+  const cacheKey = `${norm.toLowerCase()}__${category || 'All'}`
+  if (suggestionMemoryCache.has(cacheKey)) {
+    return suggestionMemoryCache.get(cacheKey)
+  }
+
+  const params = new URLSearchParams({
+    search: norm,
+    page_size: '6',
+    exclude_additions: 'true',
+    key: rawgKey,
+  })
+
+  const platformIds = PLATFORM_IDS[category] || ''
+  if (platformIds) params.set('platforms', platformIds)
+
+  const response = await fetch(`${RAWG_BASE}?${params}`, { signal })
+  if (!response.ok) {
+    const err = new Error(`RAWG_ERROR_${response.status}`)
+    err.status = response.status
+    throw err
+  }
+
+  const data = await response.json()
+  const rawList = Array.isArray(data.results) ? data.results : []
+  const ranked = rankAndFilter(dedupeGames(rawList), norm).slice(0, 6)
+
+  suggestionMemoryCache.set(cacheKey, ranked)
+  return ranked
+}
+
+/**
+ * Fetch available stores for a specific game if stores were omitted from list response.
+ */
+export async function fetchGameStores(gameId, signal) {
+  if (!gameId || !rawgKey) return []
+
+  const idStr = String(gameId)
+  if (gameStoresMemoryCache.has(idStr)) {
+    return gameStoresMemoryCache.get(idStr)
+  }
+
+  try {
+    const response = await fetch(`${RAWG_BASE}/${idStr}/stores?key=${rawgKey}`, { signal })
+    if (!response.ok) return []
+    const data = await response.json()
+    const stores = Array.isArray(data.results) ? data.results : []
+    gameStoresMemoryCache.set(idStr, stores)
+    return stores
+  } catch {
+    return []
+  }
+}
+
 /**
  * Run a single RAWG search with the given query string.
  * Uses the shared cache layer.  Respects AbortController signal.

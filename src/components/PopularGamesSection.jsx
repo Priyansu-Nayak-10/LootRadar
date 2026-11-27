@@ -79,6 +79,7 @@ function PopularGameCard({
   rank,
   deals,
   getGameActions,
+  onOpenGameDetail,
 }) {
   const actions = getGameActions({
     title: game.name,
@@ -96,14 +97,23 @@ function PopularGameCard({
   const genreName = game.genres?.[0]?.name || 'Action'
   const ratingVal = game.rating ? game.rating.toFixed(1) : null
 
-  const rawgUrl = game.slug
-    ? `https://rawg.io/games/${game.slug}`
-    : `https://rawg.io/games/${game.id}`
-
   return (
     <article className="popular-game-card" data-testid="popular-game-card">
       {/* 16:9 Media with SafeImage */}
-      <div className="popular-game-card__art">
+      <div
+        className="popular-game-card__art"
+        role="button"
+        tabIndex={0}
+        onClick={(e) => onOpenGameDetail?.(game, e.currentTarget)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onOpenGameDetail?.(game, e.currentTarget)
+          }
+        }}
+        style={{ cursor: 'pointer' }}
+        aria-label={`View details for ${game.name}`}
+      >
         <SafeImage
           src={game.background_image}
           alt={game.name}
@@ -142,14 +152,16 @@ function PopularGameCard({
       {/* Body */}
       <div className="popular-game-card__body">
         <h3 className="popular-game-card__title" title={game.name}>
-          <a
-            href={rawgUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="popular-game-card__link"
+          <button
+            type="button"
+            className="popular-game-card__link popular-game-card__link-btn"
+            onClick={(e) => {
+              e.stopPropagation()
+              onOpenGameDetail?.(game, e.currentTarget)
+            }}
           >
             {game.name}
-          </a>
+          </button>
         </h3>
 
         {/* Meta Line: Star Rating + Genre */}
@@ -177,6 +189,7 @@ export default function PopularGamesSection({
   deals = [],
   getGameActions = () => ({ owned: false, wishlisted: false, onToggleWishlist: () => {}, onToggleOwned: () => {} }),
   onNavigate = () => {},
+  onOpenGameDetail,
 }) {
   const [platform, setPlatform] = useState('All')
   const [gamesByPlatform, setGamesByPlatform] = useState({})
@@ -380,6 +393,7 @@ export default function PopularGamesSection({
               rank={idx + 1}
               deals={deals}
               getGameActions={getGameActions}
+              onOpenGameDetail={onOpenGameDetail}
             />
           ))}
         </div>

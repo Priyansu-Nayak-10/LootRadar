@@ -114,7 +114,7 @@ function PlatformIcons({ platforms }) {
   return <>{icons.slice(0, 3)}</>
 }
 
-const GameTile = memo(function GameTile({ game, badge, getGameActions }) {
+const GameTile = memo(function GameTile({ game, badge, getGameActions, onOpenGameDetail }) {
   const platformNames = (game.platforms || [])
     .map((item) => item.platform?.name)
     .filter(Boolean)
@@ -133,12 +133,19 @@ const GameTile = memo(function GameTile({ game, badge, getGameActions }) {
 
   return (
     <article className="search-game-card">
-      <a
+      <div
         className="search-tile__main-link"
-        href={`https://rawg.io/games/${game.slug}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`View ${game.name} on RAWG`}
+        role="button"
+        tabIndex={0}
+        onClick={(e) => onOpenGameDetail?.(game, e.currentTarget)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onOpenGameDetail?.(game, e.currentTarget)
+          }
+        }}
+        aria-label={`View details for ${game.name}`}
+        style={{ cursor: 'pointer' }}
       >
         <div className="search-tile__media">
           <SafeImage
@@ -173,7 +180,7 @@ const GameTile = memo(function GameTile({ game, badge, getGameActions }) {
             ))}
           </div>
         </div>
-      </a>
+      </div>
       <div className="search-tile__actions">
         <button
           type="button"
@@ -221,6 +228,7 @@ function SearchResultsView({
   onRetry,
   getGameActions,
   hasKey,
+  onOpenGameDetail,
 }) {
   return (
     <div className="search-results-page">
@@ -287,7 +295,7 @@ function SearchResultsView({
           <div className="lr-art-fallback" aria-hidden="true">?</div>
           <h2>No games matched.</h2>
           <p>Try the full title or check the spelling.</p>
-          <div className="search-suggestions">
+          <div className="search-popular-searches">
             <span>Popular searches:</span>
             {SUGGESTED_SEARCHES.map((query) => (
               <button
@@ -310,6 +318,7 @@ function SearchResultsView({
               key={game.id}
               game={game}
               getGameActions={getGameActions}
+              onOpenGameDetail={onOpenGameDetail}
             />
           ))}
         </div>
@@ -429,6 +438,7 @@ export function HomeRedesign({
   hasKey,
   session,
   wishlist = [],
+  onOpenGameDetail,
 }) {
   const [heroIndex, setHeroIndex] = useState(0)
   const heroCarouselRef = useRef(null)
@@ -976,6 +986,7 @@ export function HomeRedesign({
         deals={deals}
         getGameActions={getGameActions}
         onNavigate={onNavigate}
+        onOpenGameDetail={onOpenGameDetail}
       />
 
       <ComingSoonSection
@@ -1083,6 +1094,7 @@ export default function Discover({
   searchQuery = '',
   searchCategory = 'All',
   onSearchChange,
+  onOpenGameDetail,
 }) {
   const {
     deals,
@@ -1286,6 +1298,7 @@ export default function Discover({
         onRetry={() => searchGames(null, searchTerm, activePlatform)}
         getGameActions={getGameActions}
         hasKey={hasRawgKey}
+        onOpenGameDetail={onOpenGameDetail}
       />
     )
   }
@@ -1310,6 +1323,7 @@ export default function Discover({
       hasKey={hasRawgKey}
       session={session}
       wishlist={wishlist}
+      onOpenGameDetail={onOpenGameDetail}
     />
   )
 }
