@@ -61,6 +61,8 @@ describe('dealsData helpers and logic (ITAD INR)', () => {
       assert.equal(formatDealTitle('The Witcher 3: Wild Hunt'), 'The Witcher 3: Wild Hunt')
       assert.equal(formatDealTitle('Cyberpunk 2077'), 'Cyberpunk 2077')
       assert.equal(formatDealTitle('Amazing Adventures: The Lost Tomb'), 'Amazing Adventures: The Lost Tomb')
+      assert.equal(formatDealTitle('LiM Beyond One-on-One Basketball'), 'LiM Beyond One-on-One Basketball')
+      assert.equal(formatDealTitle('Suicide Squad: Kill the Justice League - Digital Deluxe Edition'), 'Suicide Squad: Kill the Justice League - Digital Deluxe Edition')
     })
 
     it('handles empty or non-string titles gracefully', () => {

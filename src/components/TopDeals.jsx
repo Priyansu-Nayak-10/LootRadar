@@ -46,7 +46,7 @@ export default function TopDeals({ getGameActions, onNavigate }) {
             />
           ))}
 
-        {!loading && (topDeals.length === 0 || error) && (
+        {!loading && topDeals.length === 0 && (
           <div className="top-deals__empty">
             <p>{error ? 'Could not load PC deals right now.' : 'No featured PC deals right now.'}</p>
             <button

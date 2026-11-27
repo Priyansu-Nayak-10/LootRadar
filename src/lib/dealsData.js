@@ -34,6 +34,13 @@ export function formatStoreName(name) {
 export function formatDealTitle(rawTitle) {
   if (!rawTitle || typeof rawTitle !== 'string') return ''
   const trimmed = rawTitle.trim()
+
+  // Only attempt bilingual separation if title contains non-Latin / Arabic script
+  const hasArabicOrNonLatin = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(trimmed)
+  if (!hasArabicOrNonLatin) {
+    return trimmed
+  }
+
   // If title has a bilingual separator like "English - Arabic" (e.g. "Umm Oyoun - ام عيون"), keep the English/Latin part
   const parts = trimmed.split(/\s*[-/|]\s*/)
   if (parts.length > 1) {

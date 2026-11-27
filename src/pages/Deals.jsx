@@ -53,7 +53,6 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
     isStale,
     loading,
     error,
-    errorType,
     errorMessage,
     reload,
   } = useDeals()

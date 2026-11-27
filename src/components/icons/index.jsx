@@ -100,11 +100,11 @@ export function TrashIcon(props) {
   return <Icon icon={Trash2} {...props} />
 }
 
-export function CheckIcon(props) {
+export function CheckIcon({ active: _active, ...props }) {
   return <Icon icon={Check} {...props} />
 }
 
-export function CircleCheckIcon(props) {
+export function CircleCheckIcon({ active: _active, ...props }) {
   return <Icon icon={CircleCheck} {...props} />
 }
 

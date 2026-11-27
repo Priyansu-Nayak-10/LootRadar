@@ -124,6 +124,9 @@ export default function DealCard({
             target="_blank"
             rel="noopener noreferrer"
             className="deal-card__cta-btn"
+            onClick={(e) => {
+              if (!deal.url || deal.url === '#') e.preventDefault()
+            }}
           >
             Get deal
           </a>

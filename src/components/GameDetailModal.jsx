@@ -13,6 +13,7 @@ import {
 import { resolveGameOffer, fetchLiveItadPrice } from '../lib/gameOffer'
 import { fetchGameStores, hasRawgKey } from '../lib/discoverApi'
 import { formatTimeLeft } from '../lib/freeGames'
+import { formatDealExpiry } from '../lib/dealsData'
 
 export default function GameDetailModal({
   game,
@@ -123,7 +124,7 @@ export default function GameDetailModal({
       set.add(offer.store)
     }
     return [...set]
-  }, [stores, offer?.store])
+  }, [stores, offer])
 
   // 5. Game actions (Wishlist and Owned state)
   const actions = useMemo(() => {
@@ -186,6 +187,7 @@ export default function GameDetailModal({
     const handlePopState = () => {
       onClose()
     }
+    const triggerNode = triggerRef?.current
     window.history.pushState({ modal: 'game-detail' }, '')
     window.addEventListener('popstate', handlePopState)
 
@@ -194,8 +196,8 @@ export default function GameDetailModal({
       window.removeEventListener('popstate', handlePopState)
 
       // Return focus to trigger
-      if (triggerRef?.current) {
-        triggerRef.current.focus()
+      if (triggerNode) {
+        triggerNode.focus()
       }
     }
   }, [onClose, triggerRef])
@@ -365,12 +367,12 @@ export default function GameDetailModal({
 
                 {offer.endDate && (
                   <div className="game-modal-expiry">
-                    <ClockIcon size={13} /> Ends {formatTimeLeft(offer.endDate)}
+                    <ClockIcon size={13} /> {formatTimeLeft(offer.endDate)?.text || 'Ending soon'}
                   </div>
                 )}
                 {offer.expiry && (
                   <div className="game-modal-expiry">
-                    <ClockIcon size={13} /> Ends {offer.expiry.slice(0, 10)}
+                    <ClockIcon size={13} /> {formatDealExpiry(offer.expiry) || 'Ending soon'}
                   </div>
                 )}
               </div>
