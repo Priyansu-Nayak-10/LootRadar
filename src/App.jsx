@@ -55,52 +55,60 @@ const TAB_ICON_COMPONENTS = {
   account: AccountIcon,
 }
 
-function titleKey(title) {
-  return title.trim().toLocaleLowerCase()
+function titleKey(title = '') {
+  return String(title || '').trim().toLocaleLowerCase()
 }
 
 function mergeSavedGames(localGames, databaseRows, listType, keepLocalOnly = true) {
   const localMap = new Map()
 
-  for (const game of localGames) {
-    localMap.set(titleKey(game.title), { ...game, notify: game.notify !== false })
+  if (Array.isArray(localGames)) {
+    for (const game of localGames) {
+      if (!game) continue
+      const title = game.title || game.name
+      if (!title) continue
+      localMap.set(titleKey(title), { ...game, title, notify: game.notify !== false })
+    }
   }
 
   const merged = keepLocalOnly ? new Map(localMap) : new Map()
 
-  for (const row of databaseRows) {
-    if (row.list_type !== listType) continue
-    const key = titleKey(row.title)
-    const existing = localMap.get(key)
-    merged.set(key, {
-      title: row.title,
-      platform: row.platform || '',
-      image: row.image || '',
-      notes: row.notes || '',
-      source: row.source || '',
-      sourceId: row.source_id || '',
-      notify: row.notify !== false,
-      lastAlertedAt: row.last_alerted_at || null,
-      lastAlertedDiscount: row.last_alerted_discount ?? null,
-      lastAlertedPrice: row.last_alerted_price ?? null,
-      addedAt: existing?.addedAt || (row.created_at ? new Date(row.created_at).getTime() : undefined),
-    })
+  if (Array.isArray(databaseRows)) {
+    for (const row of databaseRows) {
+      if (!row || row.list_type !== listType || !row.title) continue
+      const key = titleKey(row.title)
+      const existing = localMap.get(key)
+      merged.set(key, {
+        title: row.title,
+        platform: row.platform || '',
+        image: row.image || '',
+        notes: row.notes || '',
+        source: row.source || '',
+        sourceId: row.source_id || '',
+        notify: row.notify !== false,
+        lastAlertedAt: row.last_alerted_at || null,
+        lastAlertedDiscount: row.last_alerted_discount ?? null,
+        lastAlertedPrice: row.last_alerted_price ?? null,
+        addedAt: existing?.addedAt || (row.created_at ? new Date(row.created_at).getTime() : undefined),
+      })
+    }
   }
 
   return [...merged.values()]
 }
 
 function toDatabaseRow(game, listType, userId) {
+  const title = game?.title || game?.name || ''
   return {
     user_id: userId,
     list_type: listType,
-    title: game.title,
-    platform: game.platform || '',
-    image: game.image || '',
-    notes: game.notes || '',
-    source: game.source || '',
-    source_id: game.sourceId || '',
-    notify: game.notify !== false,
+    title,
+    platform: game?.platform || '',
+    image: game?.image || game?.background_image || game?.thumbnail || '',
+    notes: game?.notes || '',
+    source: game?.source || '',
+    source_id: game?.sourceId || game?.source_id || '',
+    notify: game?.notify !== false,
   }
 }
 
@@ -420,13 +428,17 @@ export default function App() {
   }
 
   function gameIsSaved(games, title) {
-    return games.some((game) => titleKey(game.title) === titleKey(title))
+    if (!Array.isArray(games) || !title) return false
+    const targetKey = titleKey(title)
+    if (!targetKey) return false
+    return games.some((game) => game && titleKey(game.title || game.name) === targetKey)
   }
 
   const saveActions = useCallback((game) => {
+    const rawTitle = game?.title || game?.name || ''
     return {
-      owned: gameIsSaved(ownedGames, game.title),
-      wishlisted: gameIsSaved(wishlist, game.title),
+      owned: gameIsSaved(ownedGames, rawTitle),
+      wishlisted: gameIsSaved(wishlist, rawTitle),
       onToggleOwned: () => toggleSavedGame('library', ownedGames, setOwnedGames, game),
       onToggleWishlist: () => toggleSavedGame('wishlist', wishlist, setWishlist, game),
     }
@@ -684,9 +696,9 @@ export default function App() {
             justifyContent: 'space-between',
             gap: '12px',
             padding: '10px 18px',
-            background: 'var(--lr-panel, #10161b)',
-            borderBottom: '1px solid var(--border-strong, #26406B)',
-            color: 'var(--lr-text, #eff8f1)',
+            background: 'var(--surface)',
+            borderBottom: '1px solid var(--border-strong)',
+            color: 'var(--text)',
             fontSize: '13px',
             width: '100%',
             maxWidth: '1200px',

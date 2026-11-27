@@ -11,9 +11,9 @@ export default class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    if (import.meta.env.DEV) {
-      console.error('Uncaught error caught by ErrorBoundary:', error)
-      console.error('Component stack:', errorInfo?.componentStack)
+    console.error('Uncaught error caught by ErrorBoundary:', error)
+    if (errorInfo?.componentStack) {
+      console.error('Component stack:', errorInfo.componentStack)
     }
   }
 
@@ -31,8 +31,8 @@ export default class ErrorBoundary extends Component {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'var(--bg, #060B16)',
-            color: 'var(--text, #E8EEF8)',
+            background: 'var(--bg)',
+            color: 'var(--text)',
             padding: '24px',
             textAlign: 'center',
             fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
@@ -44,9 +44,9 @@ export default class ErrorBoundary extends Component {
               width: '100%',
               padding: '36px 28px',
               borderRadius: '16px',
-              background: 'var(--surface, #0E1626)',
-              border: '1px solid var(--border, #1B2A44)',
-              boxShadow: '0 18px 45px rgba(0, 0, 0, 0.4)',
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              boxShadow: 'var(--shadow-card, 0 18px 45px rgba(0, 0, 0, 0.4))',
             }}
           >
             <div
@@ -54,9 +54,9 @@ export default class ErrorBoundary extends Component {
                 width: '48px',
                 height: '48px',
                 borderRadius: '12px',
-                background: 'var(--accent-soft, rgba(22, 140, 255, 0.14))',
-                border: '1px solid var(--border-strong, #26406B)',
-                color: 'var(--accent, #168CFF)',
+                background: 'var(--accent-soft)',
+                border: '1px solid var(--border-strong)',
+                color: 'var(--accent)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -73,7 +73,7 @@ export default class ErrorBoundary extends Component {
                 fontSize: '24px',
                 fontWeight: 800,
                 letterSpacing: '-0.03em',
-                color: 'var(--text, #E8EEF8)',
+                color: 'var(--text)',
               }}
             >
               Something went wrong
@@ -82,7 +82,7 @@ export default class ErrorBoundary extends Component {
               style={{
                 margin: '0 0 24px',
                 fontSize: '14px',
-                color: 'var(--text-muted, #8A97AD)',
+                color: 'var(--text-muted)',
                 lineHeight: 1.5,
               }}
             >
@@ -96,7 +96,7 @@ export default class ErrorBoundary extends Component {
                 minHeight: '44px',
                 padding: '10px 24px',
                 borderRadius: '999px',
-                background: 'var(--accent-fill, #0B6FD6)',
+                background: 'var(--accent-fill)',
                 color: '#ffffff',
                 border: 'none',
                 fontWeight: 800,
@@ -106,6 +106,16 @@ export default class ErrorBoundary extends Component {
             >
               Reload
             </button>
+            {import.meta.env.DEV && this.state.error && (
+              <details style={{ marginTop: '16px', textAlign: 'left', fontSize: '12px', color: 'var(--danger)' }}>
+                <summary style={{ cursor: 'pointer' }}>Error details</summary>
+                <pre style={{ whiteSpace: 'pre-wrap', marginTop: '8px' }}>
+                  {this.state.error.toString()}
+                  {'\n'}
+                  {this.state.error.stack}
+                </pre>
+              </details>
+            )}
           </div>
         </div>
       )

@@ -11,12 +11,55 @@
   --accent: #168CFF;        /* links, icons, borders, active states, focus ring */
   --accent-hover: #3AA0FF;
   --accent-fill: #0B6FD6;   /* FILLED buttons with white text (contrast 4.9:1) */
-  --accent-fill-hover: #1280F0;
+  --accent-fill-hover: #0E77E4;
   --accent-soft: rgba(22, 140, 255, 0.14);   /* tinted backgrounds */
   --accent-glow: 0 0 0 1px rgba(22, 140, 255, 0.55), 0 0 18px rgba(22, 140, 255, 0.30);
   --success: #86EF4A;       /* discount/sale badges, free, with DARK text */
   --warning: #FBBF24;
   --danger: #F87171;
+
+  /* Semantic Color Tokens (Solid, Soft, Border) */
+  --c-alert: #FBBF24;
+  --c-alert-soft: rgba(251, 191, 36, 0.14);
+  --c-alert-border: rgba(251, 191, 36, 0.35);
+
+  --c-timer: #F87171;
+  --c-timer-soft: rgba(248, 113, 113, 0.14);
+  --c-timer-border: rgba(248, 113, 113, 0.35);
+
+  --c-fire-a: #FF4D2E;
+  --c-fire-a-soft: rgba(255, 77, 46, 0.14);
+  --c-fire-a-border: rgba(255, 77, 46, 0.35);
+
+  --c-fire-b: #FFB020;
+  --c-fire-b-soft: rgba(255, 176, 32, 0.14);
+  --c-fire-b-border: rgba(255, 176, 32, 0.35);
+
+  --c-free: #86EF4A;
+  --c-free-soft: rgba(134, 239, 74, 0.14);
+  --c-free-border: rgba(134, 239, 74, 0.35);
+
+  --c-sale: #FF8A3D;
+  --c-sale-soft: rgba(255, 138, 61, 0.14);
+  --c-sale-border: rgba(255, 138, 61, 0.35);
+
+  --c-wish: #FF5C93;
+  --c-wish-soft: rgba(255, 92, 147, 0.14);
+  --c-wish-border: rgba(255, 92, 147, 0.35);
+
+  --c-soon: #9A7DFF;
+  --c-soon-soft: rgba(154, 125, 255, 0.14);
+  --c-soon-border: rgba(154, 125, 255, 0.35);
+
+  --c-ok: #2DD4BF;
+  --c-ok-soft: rgba(45, 212, 191, 0.14);
+  --c-ok-border: rgba(45, 212, 191, 0.35);
+
+  /* Legacy-Cleanup & Utility Tokens */
+  --text-secondary: rgba(232, 238, 248, 0.7);
+  --shadow-card: 0 18px 45px rgba(0, 0, 0, 0.36);
+  --shadow-hover: 0 22px 50px rgba(0, 0, 0, 0.45);
+  --overlay: rgba(6, 11, 22, 0.92);
 
   /* Backward Compatibility Aliases */
   --ink: var(--bg);
@@ -273,6 +316,27 @@
   border-color: var(--accent-fill);
   color: #ffffff;
   background: var(--accent-fill);
+}
+
+.lr-badge--sale {
+  border-color: var(--c-sale);
+  color: #060B16;
+  background: var(--c-sale);
+  font-weight: 850;
+}
+
+.lr-badge--free {
+  border-color: var(--c-free);
+  color: #060B16;
+  background: var(--c-free);
+  font-weight: 850;
+}
+
+.lr-badge--soon {
+  border-color: var(--c-soon-border);
+  color: var(--c-soon);
+  background: var(--c-soon-soft);
+  font-weight: 850;
 }
 
 .lr-badge--success {

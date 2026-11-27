@@ -1,44 +1,149 @@
 {
-  "generatedAt": "2026-11-26T08:11:06.857Z",
+  "generatedAt": "2026-11-27T02:03:45.397Z",
   "sources": [
     "GameSpot",
     "Eurogamer",
     "Rock Paper Shotgun",
-    "PC Gamer",
-    "GamesRadar+",
     "VGC",
     "Push Square",
     "Pure Xbox",
-    "GameBeeper",
     "IGN",
-    "Polygon",
-    "Kotaku"
+    "GameBeeper",
+    "PC Gamer",
+    "Kotaku",
+    "GamesRadar+",
+    "Polygon"
   ],
   "articles": [
     {
-      "id": "606be52209e5df59",
-      "title": "All Missing Persons locations in GTA 6",
-      "link": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-missing-persons-locations/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-26T05:24:13.000Z",
-      "image": "https://cdn.mos.cms.futurecdn.net/g9bnGJtDpK5Zh73wQtSzBe-1920-80.jpg",
-      "summary": "Catch Port Gellhorn's creepy serial killer and end the 20-year mystery.",
+      "id": "4e971f5cc28d6dd4",
+      "title": "GTA 6's Car Physics Were Tuned by a Gran Turismo Pro",
+      "link": "https://www.pushsquare.com/news/2026/11/gta-6s-car-physics-were-tuned-by-a-gran-turismo-pro",
+      "source": "Push Square",
+      "publishedAt": "2026-11-27T01:00:00.000Z",
+      "image": "https://images.pushsquare.com/524278a29ff9c/large.jpg",
+      "summary": "From GT to GTA. Rockstar hired a former Gran Turismo pro to help master the car handling in GTA 6 . Lewis Bentley, a 2018 GT World Series Finalist , says he…",
       "platforms": [],
-      "topicKey": "6s-added-consequences-explains-gta-rockstar",
-      "coverageCount": 11,
+      "topicKey": "actress-first-issues-lucia-manni-perez",
+      "coverageCount": 10,
       "stale": false
     },
     {
-      "id": "b361bdfd741bdf81",
-      "title": "GTA 6's Map Has a Useful Feature I've Only Just Noticed",
-      "link": "https://www.pushsquare.com/news/2026/11/gta-6s-map-has-a-useful-feature-ive-only-just-noticed",
-      "source": "Push Square",
-      "publishedAt": "2026-11-26T01:00:00.000Z",
-      "image": "https://images.pushsquare.com/28170b445230c/large.jpg",
-      "summary": "You learn something new every day. I’ve tallied over 300 hours in GTA 6 so far, and today I learned something new. Forgive me if you already knew it, but I…",
+      "id": "7e2c1cae6969f282",
+      "title": "GTA 6 All Kitty Litter lab locations: Where to find all drug labs & North Balsero code",
+      "link": "https://www.videogameschronicle.com/guide/gta-6-kitty-litter-lab-locations/",
+      "source": "VGC",
+      "publishedAt": "2026-11-26T23:21:53.000Z",
+      "image": "https://www.videogameschronicle.com/files/2026/11/all-kitty-litter-labs-gta-6-1.jpg",
+      "summary": "Find all 20 Kitty Litter lab locations in GTA 6 with our complete guide. Discover every drug lab, the Balsero keypad code and how to unlock Spin On This",
       "platforms": [],
-      "topicKey": "6s-added-consequences-explains-gta-rockstar",
-      "coverageCount": 11,
+      "topicKey": "actress-first-issues-lucia-manni-perez",
+      "coverageCount": 10,
+      "stale": false
+    },
+    {
+      "id": "1b19d4403e88c325",
+      "title": "Fable boss says The Witcher 3 and Assassin's Creed \"reset player expectations\" of RPGs",
+      "link": "https://www.gamesradar.com/games/rpg/fable-boss-says-the-witcher-3-and-assassins-creed-reset-player-expectations-of-rpgs-so-only-taking-inspiration-from-lionheads-og-trilogy-would-leave-us-lacking/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-26T19:00:00.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/J8yHhJbZcpEnktYjCi79s4-1920-80.jpg",
+      "summary": "\"You'd be nuts to take on all of that in the first project, and yet here we are\"",
+      "platforms": [
+        "PC",
+        "PlayStation",
+        "Xbox"
+      ],
+      "topicKey": "beyond-fable-lionheads-look-reboot-rpg",
+      "coverageCount": 3,
+      "stale": false
+    },
+    {
+      "id": "3f9e3163172db7c0",
+      "title": "Fable 4 has \"over 150,000 lines of dialogue,\" more than Skyrim and Mass Effect 3 combined",
+      "link": "https://www.gamesradar.com/games/rpg/fable-4-has-over-150-000-lines-of-dialogue-more-than-skyrim-and-mass-effect-3-combined/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-26T15:03:34.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/R2UMiWAN9Bi8eXjkMFBRM7-1920-80.jpg",
+      "summary": "The accents will be from all over Britain as well",
+      "platforms": [
+        "PC",
+        "Xbox"
+      ],
+      "topicKey": "beyond-fable-lionheads-look-reboot-rpg",
+      "coverageCount": 3,
+      "stale": false
+    },
+    {
+      "id": "78162054685e5665",
+      "title": "Microsoft's Github posts message celebrating efforts to port PlayStation 5 version of Grand Theft Auto 6 to PC, then quickly deletes it",
+      "link": "https://www.pcgamer.com/games/microsofts-github-posts-message-celebrating-efforts-to-port-playstation-5-version-of-grand-theft-auto-6-to-pc-then-quickly-deletes-it/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-26T22:29:06.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/fcoJMA24BgZGj8SXahRBLF-1920-80.jpg",
+      "summary": "Guess who just got yelled at?",
+      "platforms": [
+        "PC",
+        "PlayStation"
+      ],
+      "topicKey": "celebrating-efforts-github-message-microsofts-posts",
+      "coverageCount": 2,
+      "stale": false
+    },
+    {
+      "id": "6a24d1aeca1fe89f",
+      "title": "Dev team who delayed their game a year to avoid Silksong says they won't do it again for whatever Team Cherry announces tomorrow: 'This time we're staying put'",
+      "link": "https://www.pcgamer.com/games/action/dev-team-who-delayed-their-game-a-year-to-avoid-silksong-says-they-wont-do-it-again-for-whatever-team-cherry-announces-tomorrow-this-time-were-staying-put/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-26T18:31:22.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/SK9qm2fZ6UsQLxkoi24YSG-1920-80.jpg",
+      "summary": "Aeternum Game Studios does have a question, though: \"Is it just us, or does the universe have it in for us?\"",
+      "platforms": [],
+      "topicKey": "avoid-delayed-dev-silksong-team-year",
+      "coverageCount": 2,
+      "stale": false
+    },
+    {
+      "id": "e56d1a82618a3fce",
+      "title": "Blizzard steps in as World of Warcraft: Forever fans exploit Alterac Valley for reputation",
+      "link": "https://www.gamesradar.com/games/world-of-warcraft/blizzard-steps-in-as-world-of-warcraft-forever-fans-exploit-alterac-valley-for-reputation-but-pvp-players-think-its-a-little-too-late/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-26T16:58:20.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/N52gqVJnxH3QTsG6jxGdsf-1920-80.jpg",
+      "summary": "\"Grats to everyone who got Exalted already\"",
+      "platforms": [
+        "PC"
+      ],
+      "topicKey": "adjusts-blizzard-forever-popular-warcraft-world",
+      "coverageCount": 2,
+      "stale": false
+    },
+    {
+      "id": "f8295cb146225045",
+      "title": "Spider-Man: Brand New Day Rerelease Includes a Scene Cut From Avengers: Doomsday",
+      "link": "https://www.ign.com/articles/spider-man-brand-new-day-rerelease-includes-a-scene-cut-from-avengers-doomsday",
+      "source": "IGN",
+      "publishedAt": "2026-11-26T15:44:17.000Z",
+      "image": "https://assets-prd.ignimgs.com/2026/08/03/peter-spidey-deck-blogroll-1785792270027.jpg",
+      "summary": "Spider-Man: Brand New Day rerelease includes a scene cut from Avengers: Doomsday, according to a new report.",
+      "platforms": [],
+      "topicKey": "brand-day-includes-man-rerelease-spider",
+      "coverageCount": 2,
+      "stale": false
+    },
+    {
+      "id": "ff3d95817d032550",
+      "title": "Blizzard adjusts popular World of Warcraft: Forever Battleground to stop players power-grinding rewards",
+      "link": "https://www.eurogamer.net/world-of-warcraft-forever-alterac-valley-battleground-patched",
+      "source": "Eurogamer",
+      "publishedAt": "2026-11-26T10:46:10.000Z",
+      "image": "https://assetsio.gnwcdn.com/world-of-warcraft-alterac-valley.jpg?width=690&quality=85&format=jpg&auto=webp",
+      "summary": "Many World of Warcraft: Forever players are currently in the midst of a substantial PvP reputation grind. However, this process has been disrupted due to a…",
+      "platforms": [
+        "PC"
+      ],
+      "topicKey": "adjusts-blizzard-forever-popular-warcraft-world",
+      "coverageCount": 2,
       "stale": false
     },
     {
@@ -52,24 +157,21 @@
       "platforms": [
         "PlayStation"
       ],
-      "topicKey": "cd-marketing-partnership-projekt-red-signs",
-      "coverageCount": 5,
+      "topicKey": "cdpr-clarifies-exclusive-ps5-sony-witcher",
+      "coverageCount": 2,
       "stale": false
     },
     {
-      "id": "1c19b47cbdd1eb8e",
-      "title": "‘No one gets left behind’: CDPR says The Witcher 4 will launch on Xbox day one, despite Sony agreement",
-      "link": "https://www.videogameschronicle.com/news/no-one-gets-left-behind-cdpr-says-the-witcher-4-will-launch-on-xbox-day-one-despite-sony-agreement/",
-      "source": "VGC",
-      "publishedAt": "2026-11-25T20:35:31.000Z",
-      "image": "https://www.videogameschronicle.com/files/2026/11/The-Witcher-4.jpg",
-      "summary": "CDPR reassures Xbox fans after signing a marketing agreement with Sony",
-      "platforms": [
-        "PlayStation",
-        "Xbox"
-      ],
-      "topicKey": "cd-marketing-partnership-projekt-red-signs",
-      "coverageCount": 5,
+      "id": "79727e77fceb9f12",
+      "title": "With Grand Theft Auto 6, The Series Has Outgrown Some Of Its Joke Brand Names",
+      "link": "https://kotaku.com/with-grand-theft-auto-6-the-series-has-outgrown-some-of-its-joke-brand-names-2001000507",
+      "source": "Kotaku",
+      "publishedAt": "2026-11-25T22:54:04.000Z",
+      "image": "https://kotaku.com/app/uploads/2026/11/gta-6-brands-1280x720.jpg",
+      "summary": "The mature storytelling is at odds with dumb product names like Zombix",
+      "platforms": [],
+      "topicKey": "celebrating-efforts-github-message-microsofts-posts",
+      "coverageCount": 2,
       "stale": false
     },
     {
@@ -81,98 +183,7 @@
       "image": "https://images.pushsquare.com/e183b92595c01/large.jpg",
       "summary": "Tune in this Friday. Team Cherry will provide an update on the Sea of Sorrow expansion it has in the works for Hollow Knight: Silksong this week, alongside a…",
       "platforms": [],
-      "topicKey": "announce-devs-hollow-knight-livestream-silksong",
-      "coverageCount": 4,
-      "stale": false
-    },
-    {
-      "id": "0fd1cf01212a1f13",
-      "title": "Team Cherry will share an ‘update’ on Silksong’s DLC on November 27",
-      "link": "https://www.videogameschronicle.com/news/team-cherry-will-share-an-update-on-silksongs-dlc-on-november-27/",
-      "source": "VGC",
-      "publishedAt": "2026-11-25T17:58:18.000Z",
-      "image": "https://www.videogameschronicle.com/files/2025/12/hollow-knight-silksong-sea-of-sorrow.jpg",
-      "summary": "Silksong's DLC could get a release date this week",
-      "platforms": [],
-      "topicKey": "announce-devs-hollow-knight-livestream-silksong",
-      "coverageCount": 4,
-      "stale": false
-    },
-    {
-      "id": "3648fa0d4dcd0abd",
-      "title": "Diablo 4’s Most Nostalgic Season Is Becoming (Mostly) Permanent",
-      "link": "https://www.gamespot.com/articles/diablo-4s-most-nostalgic-season-is-becoming-mostly-permanent/",
-      "source": "GameSpot",
-      "publishedAt": "2026-11-25T18:29:11.000Z",
-      "image": "https://www.gamespot.com/wp-content/uploads/2026/11/Diablo-4-Hells-Legacy-Season-Becoming-Permanent.jpg?w=300",
-      "summary": "Diablo 4 is gearing up for the arrival of Season 16, but it won't be leaving its popular previous season behind entirely. As detailed by Blizzard in a…",
-      "platforms": [],
-      "topicKey": "4s-becoming-diablo-mostly-nostalgic-season",
-      "coverageCount": 2,
-      "stale": false
-    },
-    {
-      "id": "4eaacfab51924fb0",
-      "title": "The era of Switch 2 piracy is here as new hack allows jailbroken consoles to play dumped games",
-      "link": "https://www.gamesradar.com/games/the-era-of-switch-2-piracy-is-here-as-new-hack-allows-jailbroken-consoles-to-play-dumped-games-in-a-nightmare-scenario-for-nintendo/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-25T18:17:15.000Z",
-      "image": "https://cdn.mos.cms.futurecdn.net/HeKahFgtEdEDNPF8tadfx7-1920-80.jpg",
-      "summary": "nx2-relink is upon us",
-      "platforms": [
-        "Switch"
-      ],
-      "topicKey": "getting-impossible-lair-laylee-switch-yooka",
-      "coverageCount": 2,
-      "stale": false
-    },
-    {
-      "id": "ed794acb364fcdc2",
-      "title": "Warren Spector: \"I don't think you can look at Zelda: Breath of the Wild and not see Deus Ex\"",
-      "link": "https://www.gamesradar.com/games/the-legend-of-zelda/quote-of-the-day-by-legendary-dev-warren-spector-i-dont-think-you-can-look-at-zelda-breath-of-the-wild-and-not-see-a-little-bit-of-deus-ex/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-25T18:00:00.000Z",
-      "image": "https://cdn.mos.cms.futurecdn.net/wHHgxnWwvCfDKHYmDJFct7-1920-80.jpg",
-      "summary": "\"I've always wanted to try, even if I fail, to change things\"",
-      "platforms": [
-        "PC",
-        "PlayStation",
-        "Xbox",
-        "Switch"
-      ],
-      "topicKey": "adds-nintendo-ocarina-online-switch-zelda",
-      "coverageCount": 2,
-      "stale": false
-    },
-    {
-      "id": "63ebf5f69daf16ce",
-      "title": "Final Fantasy Resonance lead \"expected\" divided reviews, so the positive reception left devs stunned",
-      "link": "https://www.gamesradar.com/games/final-fantasy/final-fantasy-resonance-director-expected-opinions-on-it-might-be-divided-so-the-jrpgs-overwhelmingly-positive-reception-left-square-enix-devs-stunned/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-25T17:43:03.000Z",
-      "image": "https://cdn.mos.cms.futurecdn.net/KXouDAgfbzjXpowZ2ruZvM-1920-80.jpg",
-      "summary": "The redux of Exvius has proven popular",
-      "platforms": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ],
-      "topicKey": "divided-expected-fantasy-final-lead-resonance",
-      "coverageCount": 2,
-      "stale": false
-    },
-    {
-      "id": "8af3ccb98515e2fc",
-      "title": "Nintendo Switch Online adds Zelda: Ocarina of Time remake icons",
-      "link": "https://nintendoeverything.com/nintendo-switch-online-adds-zelda-ocarina-of-time-remake-icons/",
-      "source": "Nintendo Everything",
-      "publishedAt": "2026-11-26T02:44:50.000Z",
-      "image": null,
-      "summary": "November 4: Nintendo is celebrating its latest game release with icons on Switch Online, and now members can pick up designs based on the Zelda: Ocarina of…",
-      "platforms": [
-        "Switch"
-      ],
-      "topicKey": "adds-nintendo-ocarina-online-switch-zelda",
+      "topicKey": "avoid-delayed-dev-silksong-team-year",
       "coverageCount": 2,
       "stale": false
     },
@@ -195,47 +206,30 @@
       "stale": false
     },
     {
-      "id": "e0d7368255a832b0",
-      "title": "Yooka-Laylee and the Impossible Lair is getting a Switch 2 Definitive Edition",
-      "link": "https://www.videogameschronicle.com/news/yooka-laylee-and-the-impossible-lair-is-getting-a-switch-2-definitive-edition/",
-      "source": "VGC",
-      "publishedAt": "2026-11-25T17:09:21.000Z",
-      "image": "https://www.videogameschronicle.com/files/2026/11/Yooka-Laylee-and-the-Impossible-Lair.jpg",
-      "summary": "Yooka-Laylee and the Impossible Lair will boast better visuals and 120FPS on Switch 2",
+      "id": "a8b0b98c30912578",
+      "title": "Microsoft announces it's deprecating the Telnet client in Windows, giving me a sudden flashback to when I used to use Telnet",
+      "link": "https://www.pcgamer.com/software/windows/microsoft-announces-its-deprecating-the-telnet-client-in-windows-giving-me-a-sudden-flashback-to-when-i-used-to-use-telnet/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-27T01:39:07.000Z",
+      "image": "https://cdn.mos.cms.futurecdn.net/JGWhX4ciZicn3CD8dUR8g-1920-80.jpg",
+      "summary": "Just think what you'll be able to do with those extra 156 KB they're freeing up.",
       "platforms": [
-        "Switch"
+        "PC"
       ],
-      "topicKey": "getting-impossible-lair-laylee-switch-yooka",
-      "coverageCount": 2,
+      "topicKey": "client-deprecating-giving-microsoft-telnet-windows",
+      "coverageCount": 1,
       "stale": false
     },
     {
-      "id": "386ed7e9ef76d5f6",
-      "title": "Blizzard is making a lot of the Diablo 4's event-specific Diablo 2 anniversary content permanent because everyone loved it in Season 15",
-      "link": "https://www.eurogamer.net/diablo-4-season-16-keeping-season-15-diablo-2-anniversary",
-      "source": "Eurogamer",
-      "publishedAt": "2026-11-25T13:51:10.000Z",
-      "image": "https://assetsio.gnwcdn.com/diablo-4-season-of-hells-legacy-keyart-1.jpeg?width=690&quality=85&format=jpg&auto=webp",
-      "summary": "Blizzard has officially unveiled Diablo 4 's next live-service season: Season of Tyrael's Gambit. This is the ARPG's 16th season, and it follows on from the…",
-      "platforms": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ],
-      "topicKey": "4s-becoming-diablo-mostly-nostalgic-season",
-      "coverageCount": 2,
-      "stale": false
-    },
-    {
-      "id": "3732f65f4bd89a25",
-      "title": "Our Life: Now and Forever release countdown — Exact date and time",
-      "link": "https://www.destructoid.com/our-life-now-and-forever-release-countdown-exact-date-and-time/",
-      "source": "Destructoid",
-      "publishedAt": "2026-11-26T06:10:04.000Z",
-      "image": "https://www.destructoid.com/wp-content/uploads/2026/11/ss_a6df0856ef15c90a276427340095e4c865e3874d.1920x1080-e1795673283528.jpg",
-      "summary": "Our Life: Now and Forever is a cozy story coming soon to gamers worldwide, and you won’t need to wait long to try it out. Developed by GB Patch Games, Our…",
+      "id": "7988b127b86b3690",
+      "title": "Nintendo Music – list of all games included",
+      "link": "https://nintendoeverything.com/nintendo-music-list-of-all-games-included/",
+      "source": "Nintendo Everything",
+      "publishedAt": "2026-11-27T01:00:55.000Z",
+      "image": "https://nintendoeverything.com/wp-content/uploads/Nintendo-Music-list-of-all-games.jpg",
+      "summary": "For those looking for a complete list of all games included and supported in Nintendo Music, that’s where this post comes in. Nintendo Music only came with a…",
       "platforms": [],
-      "topicKey": "countdown-date-exact-forever-life-release",
+      "topicKey": "included-list-music-nintendo",
       "coverageCount": 1,
       "stale": false
     }

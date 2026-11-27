@@ -1,1 +1,41 @@
 @import "tailwindcss";
+
+@theme {
+  --color-c-alert: var(--c-alert);
+  --color-c-alert-soft: var(--c-alert-soft);
+  --color-c-alert-border: var(--c-alert-border);
+
+  --color-c-timer: var(--c-timer);
+  --color-c-timer-soft: var(--c-timer-soft);
+  --color-c-timer-border: var(--c-timer-border);
+
+  --color-c-fire-a: var(--c-fire-a);
+  --color-c-fire-a-soft: var(--c-fire-a-soft);
+  --color-c-fire-a-border: var(--c-fire-a-border);
+
+  --color-c-fire-b: var(--c-fire-b);
+  --color-c-fire-b-soft: var(--c-fire-b-soft);
+  --color-c-fire-b-border: var(--c-fire-b-border);
+
+  --color-c-free: var(--c-free);
+  --color-c-free-soft: var(--c-free-soft);
+  --color-c-free-border: var(--c-free-border);
+
+  --color-c-sale: var(--c-sale);
+  --color-c-sale-soft: var(--c-sale-soft);
+  --color-c-sale-border: var(--c-sale-border);
+
+  --color-c-wish: var(--c-wish);
+  --color-c-wish-soft: var(--c-wish-soft);
+  --color-c-wish-border: var(--c-wish-border);
+
+  --color-c-soon: var(--c-soon);
+  --color-c-soon-soft: var(--c-soon-soft);
+  --color-c-soon-border: var(--c-soon-border);
+
+  --color-c-ok: var(--c-ok);
+  --color-c-ok-soft: var(--c-ok-soft);
+  --color-c-ok-border: var(--c-ok-border);
+
+  --color-text-secondary: var(--text-secondary);
+}

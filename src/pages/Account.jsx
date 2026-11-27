@@ -277,7 +277,7 @@ export default function Account({ session, onSignOut }) {
           <span className="lr-badge">{session.user.email}</span>
         </header>
         {loadError && (
-          <div className="form-message" role="alert" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', color: '#ff6b6b' }}>
+          <div className="form-message" role="alert" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', color: 'var(--danger)' }}>
             <span>{loadError}</span>
             <button
               type="button"
@@ -306,8 +306,15 @@ export default function Account({ session, onSignOut }) {
             </div>
           ) : telegramConnection ? (
             <>
-              <p>Connected{telegramConnection.username ? ` to @${telegramConnection.username}` : ''}.</p>
-              <button type="button" className="form-submit" onClick={disconnectTelegram} disabled={telegramLoading}>
+              <p className="telegram-status telegram-status--connected">
+                Connected{telegramConnection.username ? ` to @${telegramConnection.username}` : ''}.
+              </p>
+              <button
+                type="button"
+                className="form-submit account-disconnect-btn"
+                onClick={disconnectTelegram}
+                disabled={telegramLoading}
+              >
                 {telegramLoading ? 'Removing...' : 'Disconnect Telegram'}
               </button>
             </>
@@ -367,7 +374,7 @@ export default function Account({ session, onSignOut }) {
             </div>
           )}
           {alertMode === 'platform' && alertPlatforms.length === 0 && (
-            <p className="form-message" style={{ color: '#ff6b6b', margin: '6px 0 0', fontSize: '13px' }}>
+            <p className="form-message" style={{ color: 'var(--danger)', margin: '6px 0 0', fontSize: '13px' }}>
               Pick at least one platform.
             </p>
           )}

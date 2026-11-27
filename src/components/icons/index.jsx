@@ -60,8 +60,9 @@ export function HeartIcon({ active, filled, fill, className = '', ...props }) {
   return (
     <Icon
       icon={Heart}
-      fill={isFilled ? fill || 'currentColor' : 'none'}
-      className={`icon-heart ${isFilled ? 'is-active text-red-500' : ''} ${className}`.trim()}
+      fill={isFilled ? fill || 'var(--c-wish)' : 'none'}
+      color={isFilled ? 'var(--c-wish)' : undefined}
+      className={`icon-heart ${isFilled ? 'is-active' : ''} ${className}`.trim()}
       {...props}
     />
   )
@@ -123,8 +124,21 @@ export function ChevronDownIcon(props) {
   return <Icon icon={ChevronDown} {...props} />
 }
 
-export function FlameIcon(props) {
-  return <Icon icon={Flame} fill="currentColor" {...props} />
+export function FlameIcon({ gradient = true, className = '', ...props }) {
+  if (!gradient) {
+    return <Icon icon={Flame} fill="currentColor" className={className} {...props} />
+  }
+  return (
+    <span className={`flame-icon-wrap ${className}`.trim()} style={{ display: 'inline-flex', verticalAlign: 'middle', alignItems: 'center' }}>
+      <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true" focusable="false">
+        <linearGradient id="fire-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="var(--c-fire-a)" />
+          <stop offset="100%" stopColor="var(--c-fire-b)" />
+        </linearGradient>
+      </svg>
+      <Icon icon={Flame} fill="url(#fire-gradient)" color="var(--c-fire-b)" {...props} />
+    </span>
+  )
 }
 
 export function StarIcon(props) {

@@ -6,6 +6,7 @@ import {
   TrashIcon,
   ExternalLinkIcon,
   CircleCheckIcon as CheckCircleIcon,
+  FlameIcon,
 } from '../components/icons'
 import {
   titleKey,
@@ -284,7 +285,7 @@ function WishlistCard({
               )}
               {historyLow != null && historyLow > 0 && (
                 <span className="wishlist-lowest-chip" title="Historical lowest price in India">
-                  Lowest ever {formatDealPrice(historyLow)}
+                  <FlameIcon size={14} /> Lowest ever {formatDealPrice(historyLow)}
                 </span>
               )}
             </div>

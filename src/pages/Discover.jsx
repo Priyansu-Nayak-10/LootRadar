@@ -608,10 +608,14 @@ export function HomeRedesign({
     const safeIndex = (index + heroSlides.length) % heroSlides.length
     heroIndexRef.current = safeIndex
     setHeroIndex(safeIndex)
-    carousel.scrollTo({
-      left: safeIndex * carousel.clientWidth,
-      behavior: 'smooth',
-    })
+    if (typeof carousel.scrollTo === 'function') {
+      carousel.scrollTo({
+        left: safeIndex * carousel.clientWidth,
+        behavior: 'smooth',
+      })
+    } else {
+      carousel.scrollLeft = safeIndex * carousel.clientWidth
+    }
   }
 
   // Autoplay every 6s, loops back to 0 smoothly
@@ -746,7 +750,17 @@ export function HomeRedesign({
                       />
                       <div className="home-hero-overlay" />
                       <div className="home-hero-copy">
-                        <span className="lr-badge lr-badge--lime">
+                        <span
+                          className={`lr-badge ${
+                            slide.type === 'deal'
+                              ? 'lr-badge--sale'
+                              : slide.type === 'free'
+                              ? 'lr-badge--free'
+                              : slide.type === 'soon'
+                              ? 'lr-badge--soon'
+                              : 'lr-badge--lime'
+                          }`}
+                        >
                           {slide.badgeText}
                         </span>
                         <h1>{slide.title}</h1>
@@ -918,14 +932,15 @@ export function HomeRedesign({
             </div>
             {(freeGames?.length || 0) > 0 ? (
               <div className="home-feature-free-list">
-                {freeGames
-                  .filter((game) => !isMobile(game))
+                {(Array.isArray(freeGames) ? freeGames : [])
+                  .filter((game) => game && !isMobile(game))
                   .slice(0, 5)
-                  .map((game) => {
-                    const cleaned = cleanTitle(game.title)
+                  .map((game, idx) => {
+                    const rawTitle = game.title || game.name || 'Free Game'
+                    const cleaned = cleanTitle(rawTitle) || 'Free Game'
                     return (
                       <a
-                        key={game.id || cleaned}
+                        key={game.id || cleaned || idx}
                         href={game.open_giveaway_url || game.gamerpower_url || '#'}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -1033,17 +1048,20 @@ export function HomeRedesign({
             <button type="button" className="lr-button lr-button--ghost" onClick={() => onNavigate('wishlist')}>View All</button>
           </div>
           <div>
-            {wishlist.slice(0, 5).map((game) => (
-              <button
-                type="button"
-                className="home-wishlist-item"
-                key={game.title}
-                onClick={() => onNavigate('wishlist')}
-              >
-                {game.image ? <img src={game.image} alt="" loading="lazy" /> : <div className="lr-art-fallback">{game.title.slice(0, 1).toUpperCase()}</div>}
-                <span>{game.title}</span>
-              </button>
-            ))}
+            {(Array.isArray(wishlist) ? wishlist : []).slice(0, 5).map((game, idx) => {
+              const gameTitle = game?.title || game?.name || 'Saved Game'
+              return (
+                <button
+                  type="button"
+                  className="home-wishlist-item"
+                  key={game?.id || gameTitle || idx}
+                  onClick={() => onNavigate('wishlist')}
+                >
+                  {game?.image ? <img src={game.image} alt="" loading="lazy" /> : <div className="lr-art-fallback">{gameTitle.slice(0, 1).toUpperCase()}</div>}
+                  <span>{gameTitle}</span>
+                </button>
+              )
+            })}
           </div>
         </section>
       )}
