@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import SafeImage from './SafeImage.jsx'
 import TimeLeft from './TimeLeft.jsx'
+import PlatformIcons from './PlatformIcons.jsx'
 import { fetchRawgGames, hasRawgKey } from '../lib/discoverApi.js'
 import { cleanTitle, dedupeKey, formatStartsIn } from '../lib/freeGames.js'
 import { formatDealPrice, matchDealForGame } from '../lib/dealsData.js'
 import {
-  PcIcon,
-  PlayStationIcon as PsIcon,
-  XboxIcon,
   HeartIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -16,42 +14,14 @@ import {
 // ─── Platform Icons Component ────────────────────────────────────────────────
 function ComingSoonPlatformIcons({ item }) {
   const isGiveaway = item.type === 'giveaway'
-
-  const haystack = useMemo(() => {
-    if (isGiveaway) return ''
-    const list = []
-    if (Array.isArray(item.parent_platforms)) {
-      for (const p of item.parent_platforms) {
-        if (p?.platform?.slug) list.push(p.platform.slug.toLowerCase())
-        if (p?.platform?.name) list.push(p.platform.name.toLowerCase())
-      }
-    }
-    if (Array.isArray(item.platforms)) {
-      for (const p of item.platforms) {
-        if (p?.platform?.slug) list.push(p.platform.slug.toLowerCase())
-        if (p?.platform?.name) list.push(p.platform.name.toLowerCase())
-      }
-    }
-    return list.join(' ')
-  }, [item, isGiveaway])
-
-  if (isGiveaway) {
-    return (
-      <div className="coming-game-card__platform-icons" aria-label="Available platforms">
-        <PcIcon />
-      </div>
-    )
-  }
-
-  const hasPc = haystack.includes('pc') || haystack.includes('windows')
-  const hasPs = haystack.includes('playstation') || haystack.includes('ps')
-  const hasXbox = haystack.includes('xbox')
+  const platforms = useMemo(
+    () => (isGiveaway ? ['pc'] : [...(item.parent_platforms || []), ...(item.platforms || [])]),
+    [isGiveaway, item.parent_platforms, item.platforms]
+  )
 
   return (
     <div className="coming-game-card__platform-icons" aria-label="Available platforms">
-      {hasPc && <PcIcon />}
-      {hasPs && <PsIcon />}
-      {hasXbox && <XboxIcon />}
+      <PlatformIcons platforms={platforms} size={16} />
     </div>
   )
 }

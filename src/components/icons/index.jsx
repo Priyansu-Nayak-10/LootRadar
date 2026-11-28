@@ -24,13 +24,12 @@ import {
   Flame,
   Star,
   Send,
-  Monitor,
-  Gamepad2,
   Clock,
   Info,
   AlertTriangle,
   RotateCcw,
 } from 'lucide-react'
+import { WindowsIcon, GamepadBrandIcon } from './BrandIcons'
 
 export { default as Icon } from './Icon'
 
@@ -100,8 +99,8 @@ export function TrashIcon(props) {
   return <Icon icon={Trash2} {...props} />
 }
 
-export function CheckIcon({ active: _active, ...props }) {
-  return <Icon icon={Check} {...props} />
+export function CheckIcon({ active: _active, className = '', ...props }) {
+  return <Icon icon={Check} className={`icon-check ${className}`.trim()} {...props} />
 }
 
 export function CircleCheckIcon({ active: _active, ...props }) {
@@ -150,11 +149,11 @@ export function SendIcon(props) {
 }
 
 export function PcIcon(props) {
-  return <Icon icon={Monitor} {...props} />
+  return <WindowsIcon {...props} />
 }
 
 export function GamepadIcon(props) {
-  return <Icon icon={Gamepad2} {...props} />
+  return <GamepadBrandIcon {...props} />
 }
 
 export function ClockIcon(props) {
@@ -175,6 +174,7 @@ export function AlertTriangleIcon(props) {
 
 // ─── BRAND LOGOS ─────────────────────────────────────────────────────────────
 export {
+  WindowsIcon,
   PlayStationIcon,
   XboxIcon,
   SwitchIcon,
@@ -182,7 +182,11 @@ export {
   EpicGamesIcon,
   GogIcon,
   EaIcon,
+  UbisoftIcon,
+  ItchIcon,
   HumbleIcon,
+  AmazonIcon,
+  GamepadBrandIcon,
   StoreIcon,
   DiscordIcon,
   GithubIcon,

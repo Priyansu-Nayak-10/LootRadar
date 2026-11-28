@@ -227,6 +227,7 @@ export default function Footer({ onNavigate, onNavigateFreeTab }) {
           </span>
           <p className="footer-disclaimer">
             Not affiliated with Steam, Epic Games, Sony or Microsoft. Prices and offers can change, so check the store before buying.
+            {' '}Icons: Simple Icons via react-icons/si (CC0 1.0), Font Awesome Free via react-icons/fa6 (CC BY 4.0), Bootstrap Icons via react-icons/bs (MIT).
           </p>
         </div>
       </div>

@@ -17,9 +17,23 @@ import {
   serializeFreeParams,
 } from '../lib/freeGames.js'
 
-const GAMERPOWER_API = 'https://www.gamerpower.com/api/giveaways?type=game'
-const CACHE_KEY = 'wishradar_free_v4'
+const GAMERPOWER_API = 'https://www.gamerpower.com/api/giveaways'
+const CACHE_KEY = 'wishradar_free_v5'
 const CACHE_MS = 10 * 60 * 1000 // 10 minutes
+const DEFAULT_USD_TO_INR = 93
+
+const CLAIM_TYPE_TABS = [
+  { label: 'Games', value: 'games' },
+  { label: 'DLC & Loot', value: 'dlc' },
+  { label: 'Early Access', value: 'early' },
+]
+
+function getClaimTypeBucket(game) {
+  const t = String(game?.type || 'Game').toLowerCase()
+  if (t.includes('early') || t.includes('beta')) return 'early'
+  if (t.includes('dlc') || t.includes('loot') || t === 'other') return 'dlc'
+  return 'games'
+}
 
 const STORE_CHIPS = [
   { label: 'All', value: 'all' },
@@ -28,7 +42,9 @@ const STORE_CHIPS = [
   { label: 'EA Store', value: 'ea store' },
   { label: 'GOG', value: 'gog' },
   { label: 'itch.io', value: 'itch.io' },
-  { label: 'Prime/Amazon', value: 'prime/amazon' },
+  { label: 'IndieGala', value: 'indiegala' },
+  { label: 'STOVE', value: 'stove' },
+  { label: 'Meta Quest', value: 'meta quest' },
 ]
 
 const SORT_OPTIONS = [
@@ -43,13 +59,13 @@ import {
   HeartIcon,
   SendIcon as TelegramIcon,
   PcIcon as PcPlatformIcon,
-  GamepadIcon as ConsolePlatformIcon,
+  StoreIcon,
   RotateCcwIcon,
   ChevronDownIcon,
 } from '../components/icons'
 
 // ─── FreeCard (Claim Now) ────────────────────────────────────────────────────
-function FreeCard({ game, now, getGameActions, onGameOpen }) {
+function FreeCard({ game, now, fxRate, getGameActions, onGameOpen }) {
   const rawTitle = game.title || game.name || 'Free Game'
   const title = cleanTitle(rawTitle) || 'Free Game'
   const store = normalizeStore(game)
@@ -72,7 +88,7 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
     game.gamerpower_url ||
     '#'
 
-  const worthFormatted = formatWorthInr(game.worth || game.worthInr)
+  const worthFormatted = formatWorthInr(game.worth || game.worthInr, fxRate)
 
   return (
     <article
@@ -127,7 +143,7 @@ function FreeCard({ game, now, getGameActions, onGameOpen }) {
 
         <div className="free-card__meta-row">
           <span className="wr-store-chip">
-            {isConsole ? <ConsolePlatformIcon size={13} /> : <PcPlatformIcon size={14} />}
+            <StoreIcon store={store} size={14} />
             {store}
           </span>
           {worthFormatted ? (
@@ -249,7 +265,7 @@ function ComingSoonCard({ game, now, getGameActions, onGameOpen }) {
 
         <div className="free-card__meta-row">
           <span className="wr-store-chip">
-            <PcPlatformIcon size={14} /> Epic Games
+            <StoreIcon store="Epic Games" size={14} /> Epic Games
           </span>
         </div>
 
@@ -281,7 +297,8 @@ function ComingSoonCard({ game, now, getGameActions, onGameOpen }) {
 
 // ─── Always Free Card ────────────────────────────────────────────────────────
 function AlwaysFreeCard({ game, onGameOpen }) {
-  const playUrl = game.gameUrl || game.profileUrl || '#'
+  const playUrl = game.game_url || game.gameUrl || game.profileUrl || '#'
+  const description = game.short_description || game.description || ''
 
   return (
     <article
@@ -315,9 +332,9 @@ function AlwaysFreeCard({ game, onGameOpen }) {
           {game.genre && <span className="free-card__genre-chip">{game.genre}</span>}
         </div>
 
-        {game.description && (
-          <p className="free-card__desc" title={game.description}>
-            {game.description}
+        {description && (
+          <p className="free-card__desc" title={description}>
+            {description}
           </p>
         )}
 
@@ -368,8 +385,10 @@ export default function FreeNow({
   // Sync URL query state
   const initialParams = useMemo(() => parseFreeParams(window.location.search), [])
   const [tab, setTab] = useState(activeTab || initialParams.tab)
+  const [claimType, setClaimType] = useState('games')
   const [store, setStore] = useState(initialParams.store)
   const [sort, setSort] = useState(initialParams.sort)
+  const [fxRate, setFxRate] = useState(DEFAULT_USD_TO_INR)
 
   const [games, setGames] = useState([])
   const [comingGames, setComingGames] = useState([])
@@ -385,6 +404,7 @@ export default function FreeNow({
   const [alwaysPage, setAlwaysPage] = useState(1)
   const [alwaysSearch, setAlwaysSearch] = useState('')
   const [alwaysGenre, setAlwaysGenre] = useState('all')
+  const [alwaysPlatform, setAlwaysPlatform] = useState('all')
 
   // Telegram strip state
   const [telegramConnected, setTelegramConnected] = useState(false)
@@ -480,12 +500,19 @@ export default function FreeNow({
 
     // 1. Instant render from local snapshots
     try {
-      const [gpSnapshotRes, epicSnapshotRes, itadSnapshotRes, alwaysRes] = await Promise.allSettled([
+      const [gpSnapshotRes, epicSnapshotRes, itadSnapshotRes, alwaysRes, fxRes] = await Promise.allSettled([
         fetch('/data/gamerpower-free-games.json'),
         fetch('/data/epic-free-games.json'),
         fetch('/data/itad-deals.json'),
         fetch('/data/always-free-games.json'),
+        fetch('/data/fx-rates.json'),
       ])
+
+      if (fxRes.status === 'fulfilled' && fxRes.value.ok) {
+        const fxData = await fxRes.value.json()
+        const rate = Number(fxData?.rates?.INR)
+        if (Number.isFinite(rate) && rate > 0) setFxRate(rate)
+      }
 
       if (gpSnapshotRes.status === 'fulfilled' && gpSnapshotRes.value.ok) {
         const gpData = await gpSnapshotRes.value.json()
@@ -589,7 +616,10 @@ export default function FreeNow({
           // ignore cache writing error
         }
       }
-    } catch {
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.warn('[FreeNow] Live GamerPower refresh failed:', err?.message || err)
+      }
       // If we don't even have snapshot data, display error state
       if (initialList.length === 0 && games.length === 0) {
         setError('Could not load free games right now. Check your internet connection.')
@@ -616,8 +646,39 @@ export default function FreeNow({
     return games.filter((game) => isActive(game, now) && !isMobile(game))
   }, [games, now])
 
+  const typeCounts = useMemo(() => {
+    const counts = { games: 0, dlc: 0, early: 0 }
+    for (const g of activeClaimGames) {
+      counts[getClaimTypeBucket(g)]++
+    }
+    return counts
+  }, [activeClaimGames])
+
+  const claimTabGames = useMemo(() => {
+    return activeClaimGames.filter((g) => getClaimTypeBucket(g) === claimType)
+  }, [activeClaimGames, claimType])
+
+  const visibleStoreChips = useMemo(() => {
+    const counts = {}
+    for (const g of claimTabGames) {
+      const s = normalizeStore(g).toLowerCase()
+      counts[s] = (counts[s] || 0) + 1
+    }
+    return STORE_CHIPS.filter((chip) => chip.value === 'all' || (counts[chip.value] || 0) > 0)
+  }, [claimTabGames])
+
+  useEffect(() => {
+    if (!import.meta.env.DEV || activeClaimGames.length === 0) return
+    const unmapped = activeClaimGames
+      .filter((g) => normalizeStore(g) === 'Other')
+      .map((g) => ({ title: g.title, platforms: g.platforms || '' }))
+    if (unmapped.length > 0) {
+      console.warn('[FreeNow] Titles resolving to store "Other":', unmapped)
+    }
+  }, [activeClaimGames])
+
   const filteredClaimGames = useMemo(() => {
-    let result = activeClaimGames
+    let result = claimTabGames
 
     // Store filter
     if (store !== 'all') {
@@ -644,11 +705,11 @@ export default function FreeNow({
 
     // Sort
     return sortFreeGames(result, sort, now)
-  }, [activeClaimGames, store, showOwned, sort, now, library.length, ownedTitles, getGameActions])
+  }, [claimTabGames, store, showOwned, sort, now, library.length, ownedTitles, getGameActions])
 
   // Count owned games that are hidden
   const hiddenOwnedCount = useMemo(() => {
-    return activeClaimGames.filter((g) => {
+    return claimTabGames.filter((g) => {
       const title = cleanTitle(g.title)
       if (library.length > 0) {
         return ownedTitles.has(titleKey(title))
@@ -662,7 +723,7 @@ export default function FreeNow({
       })
       return act.owned
     }).length
-  }, [activeClaimGames, library.length, ownedTitles, getGameActions])
+  }, [claimTabGames, library.length, ownedTitles, getGameActions])
 
   // ─── Always Free Filter & Pagination ────────────────────────────────────────
   const alwaysGenresList = useMemo(() => {
@@ -675,6 +736,12 @@ export default function FreeNow({
 
   const filteredAlwaysGames = useMemo(() => {
     let list = alwaysGames
+    if (alwaysPlatform !== 'all') {
+      list = list.filter((g) => {
+        const p = String(g.platform || '').toLowerCase()
+        return alwaysPlatform === 'browser' ? p.includes('web browser') : p.includes('pc')
+      })
+    }
     if (alwaysSearch.trim()) {
       const q = alwaysSearch.toLowerCase().trim()
       list = list.filter((g) => g.title?.toLowerCase().includes(q))
@@ -683,7 +750,7 @@ export default function FreeNow({
       list = list.filter((g) => g.genre?.toLowerCase() === alwaysGenre.toLowerCase())
     }
     return list
-  }, [alwaysGames, alwaysSearch, alwaysGenre])
+  }, [alwaysGames, alwaysPlatform, alwaysSearch, alwaysGenre])
 
   const visibleAlwaysGames = useMemo(() => {
     return filteredAlwaysGames.slice(0, alwaysPage * 24)
@@ -699,7 +766,7 @@ export default function FreeNow({
   const titleParts = currentTitle.split(' ')
 
   const tabCounts = {
-    claim: filteredClaimGames.length,
+    claim: typeCounts[claimType],
     coming: comingGames.length,
     always: filteredAlwaysGames.length,
   }
@@ -798,10 +865,29 @@ export default function FreeNow({
       {/* ─── TAB 1: CLAIM NOW ─── */}
       {tab === 'claim' && (
         <>
-          {/* Toolbar: Store Chips, Sort & Owned Toggle */}
+          {/* Type Switch + Toolbar: Store Chips, Sort & Owned Toggle */}
           <div className="free-toolbar">
+            <div className="free-tabs free-type-tabs" role="tablist" aria-label="Offer type">
+              {CLAIM_TYPE_TABS.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  role="tab"
+                  aria-selected={claimType === t.value}
+                  className={`free-tab ${claimType === t.value ? 'is-active' : ''}`}
+                  onClick={() => {
+                    setClaimType(t.value)
+                    handleStoreSelect('all')
+                  }}
+                >
+                  {t.label}
+                  <span className="free-tab__count">{typeCounts[t.value]}</span>
+                </button>
+              ))}
+            </div>
+
             <div className="free-filter-row">
-              {STORE_CHIPS.map((chip) => (
+              {visibleStoreChips.map((chip) => (
                 <button
                   key={chip.value}
                   type="button"
@@ -888,6 +974,7 @@ export default function FreeNow({
                   key={game.id || game.title}
                   game={game}
                   now={now}
+                  fxRate={fxRate}
                   getGameActions={getGameActions}
                   onGameOpen={onGameOpen}
                 />
@@ -971,6 +1058,27 @@ export default function FreeNow({
               )}
             </div>
 
+            <div className="free-always-platforms" role="group" aria-label="Filter by platform">
+              {[
+                { label: 'All', value: 'all' },
+                { label: 'PC', value: 'pc' },
+                { label: 'Browser', value: 'browser' },
+              ].map((p) => (
+                <button
+                  key={p.value}
+                  type="button"
+                  className={`wr-chip ${alwaysPlatform === p.value ? 'is-active' : ''}`}
+                  aria-pressed={alwaysPlatform === p.value}
+                  onClick={() => {
+                    setAlwaysPlatform(p.value)
+                    setAlwaysPage(1)
+                  }}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+
             <div className="free-genre-wrapper">
               <select
                 className="free-select"
@@ -989,13 +1097,14 @@ export default function FreeNow({
               </select>
             </div>
 
-            {Boolean(alwaysSearch.trim() || alwaysGenre !== 'all') && (
+            {Boolean(alwaysSearch.trim() || alwaysGenre !== 'all' || alwaysPlatform !== 'all') && (
               <button
                 type="button"
                 className="free-active-reset-btn"
                 onClick={() => {
                   setAlwaysSearch('')
                   setAlwaysGenre('all')
+                  setAlwaysPlatform('all')
                   setAlwaysPage(1)
                 }}
                 title="Reset filters"
@@ -1039,6 +1148,17 @@ export default function FreeNow({
           )}
         </>
       )}
+
+      <footer className="free-attribution">
+        Data:{' '}
+        <a href="https://www.gamerpower.com/api-read" target="_blank" rel="noopener noreferrer">
+          GamerPower
+        </a>{' '}
+        &middot;{' '}
+        <a href="https://www.freetogame.com/api-doc" target="_blank" rel="noopener noreferrer">
+          FreeToGame
+        </a>
+      </footer>
     </section>
   )
 }

@@ -1,36 +1,53 @@
 import { titleKey, isConsoleGame } from './wishlistAlerts.js'
 import { matchDealForGame, formatDealPrice, formatStoreName } from './dealsData.js'
+import { normalizeRawgStore, sortStoresByPriority } from './rawgStores.js'
 
 const ITAD_PRICE_CACHE_KEY = 'wishradar_itad_price_'
 const ITAD_CACHE_TTL_MS = 30 * 60 * 1000 // 30 minutes
 
+function pickRawgFallback(rawgStores = [], preferredStoreName = null) {
+  const normalized = (Array.isArray(rawgStores) ? rawgStores : [])
+    .map((s) => (s && s.name && 'url' in s ? s : normalizeRawgStore(s)))
+    .filter((s) => s && s.url)
+  if (normalized.length === 0) return null
+  return sortStoresByPriority(normalized, preferredStoreName)[0] || null
+}
+
 /**
- * Resolves the price, deal, or free status for a given game across multiple sources in strict priority order:
- * 1. Currently free (free-now snapshot: e.g. Epic giveaway) -> FREE NOW, end date, Claim button
- * 2. Always-free list -> Free, store link
- * 3. Existing deals snapshot (itad-deals.json via matchDealForGame) -> price, regular, discount, store, lowest ever, deal URL
- * 4. Live ITAD price (via /api/itad-prices) -> price, regular, discount, store, lowest ever, deal URL
- * 5. No price data (console games, unknown titles, failures) -> untracked/console/error message
- *
- * @param {Object} game - RAWG game object or game info
- * @param {Object} sources - { currentFreeGames, alwaysFreeGames, deals, livePrice, fetchError }
- * @returns {Object} offer object
+ * Resolves the price, deal, free, no_deal, console, or error state for a game.
+ * Priority:
+ * 1. Console-only games -> console (with RAWG store fallback CTA if available)
+ * 2. Currently free (free-now snapshot) -> free_now
+ * 3. Always-free list -> always_free
+ * 4. Existing deals snapshot -> deal / price
+ * 5. Live ITAD price -> deal (cut > 0) / price (cut === 0) / no_deal
+ * 6. Fetch error -> error (with RAWG store fallback CTA if available)
+ * 7. Untracked -> untracked (with RAWG store fallback CTA if available)
  */
 export function resolveGameOffer(game, sources = {}) {
   if (!game) {
-    return { type: 'none', message: 'No game information' }
+    return { type: 'none', message: 'No game information', ctaUrl: null, ctaText: null }
   }
 
   const rawTitle = game.name || game.title || ''
   const tKey = titleKey(rawTitle)
 
-  // 0. Console games: no price lookup and no price alerts
+  const rawgStores = Array.isArray(sources.rawgStores)
+    ? sources.rawgStores
+    : Array.isArray(game.stores)
+      ? game.stores.map(normalizeRawgStore).filter(Boolean)
+      : []
+
+  // 0. Console games: no price lookup, but still provide RAWG store link if available
   if (isConsoleGame(game)) {
+    const fallback = pickRawgFallback(rawgStores)
     return {
       type: 'console',
       isConsole: true,
-      message: 'Price not tracked for this platform',
+      message: 'Price not tracked for consoles',
       canFetchLive: false,
+      ctaUrl: fallback?.url || null,
+      ctaText: fallback ? `View on ${fallback.name}` : null,
     }
   }
 
@@ -92,6 +109,7 @@ export function resolveGameOffer(game, sources = {}) {
         matchedAlways.profileUrl ||
         matchedAlways.url ||
         null
+      const fallback = !playUrl ? pickRawgFallback(rawgStores) : null
 
       return {
         type: 'always_free',
@@ -100,8 +118,8 @@ export function resolveGameOffer(game, sources = {}) {
         price: 0,
         formattedPrice: 'Free',
         store: matchedAlways.publisher || matchedAlways.platform || 'PC',
-        ctaText: 'Play free',
-        ctaUrl: playUrl,
+        ctaText: playUrl ? 'Play free' : (fallback ? `View on ${fallback.name}` : 'Play free'),
+        ctaUrl: playUrl || fallback?.url || null,
       }
     }
   }
@@ -111,10 +129,13 @@ export function resolveGameOffer(game, sources = {}) {
     const matchedDeal = matchDealForGame(game, deals)
     if (matchedDeal && typeof matchedDeal.price === 'number') {
       const discount = Math.round(Number(matchedDeal.cut || 0))
+      const storeName = formatStoreName(matchedDeal.shop?.name || matchedDeal.shop || 'Store')
+      const fallback = pickRawgFallback(rawgStores, storeName)
+      const ctaUrl = matchedDeal.url || fallback?.url || null
       return {
-        type: 'deal',
+        type: discount > 0 ? 'deal' : 'price',
         badge: discount > 0 ? `-${discount}%` : null,
-        badgeType: 'sale',
+        badgeType: discount > 0 ? 'sale' : null,
         price: matchedDeal.price,
         formattedPrice: formatDealPrice(matchedDeal.price),
         regular: matchedDeal.regular,
@@ -122,11 +143,11 @@ export function resolveGameOffer(game, sources = {}) {
           ? formatDealPrice(matchedDeal.regular)
           : null,
         discount,
-        store: formatStoreName(matchedDeal.shop?.name || matchedDeal.shop || 'Store'),
+        store: storeName,
         isLowestEver: Boolean(matchedDeal.isLowestEver),
         expiry: matchedDeal.expiry || null,
-        ctaText: 'Get deal',
-        ctaUrl: matchedDeal.url || null,
+        ctaText: matchedDeal.url ? 'Get deal' : (fallback ? `View on ${fallback.name}` : 'Get deal'),
+        ctaUrl,
       }
     }
   }
@@ -136,53 +157,70 @@ export function resolveGameOffer(game, sources = {}) {
     const deal = livePrice.deal || (typeof livePrice.price === 'number' ? livePrice : null)
     if (deal && typeof deal.price === 'number') {
       const discount = Math.round(Number(deal.cut || 0))
+      const storeName = formatStoreName(deal.shop?.name || deal.shop || 'Store')
+      const fallback = pickRawgFallback(rawgStores, storeName)
+      const ctaUrl = deal.url || fallback?.url || null
       return {
-        type: 'deal',
+        type: discount > 0 ? 'deal' : 'price',
         badge: discount > 0 ? `-${discount}%` : null,
-        badgeType: 'sale',
+        badgeType: discount > 0 ? 'sale' : null,
         price: deal.price,
         formattedPrice: formatDealPrice(deal.price),
         regular: deal.regular,
         formattedRegular: deal.regular ? formatDealPrice(deal.regular) : null,
         discount,
-        store: formatStoreName(deal.shop?.name || deal.shop || 'Store'),
+        store: storeName,
         isLowestEver: Boolean(deal.isLowestEver),
         expiry: deal.expiry || null,
-        ctaText: 'Get deal',
-        ctaUrl: deal.url || null,
+        ctaText: deal.url ? 'Get deal' : (fallback ? `View on ${fallback.name}` : 'Get deal'),
+        ctaUrl,
+      }
+    }
+
+    if (livePrice.status === 'no_deal') {
+      const fallback = pickRawgFallback(rawgStores)
+      return {
+        type: 'no_deal',
+        message: 'No current price from tracked stores',
+        canFetchLive: false,
+        ctaUrl: fallback?.url || null,
+        ctaText: fallback ? `View on ${fallback.name}` : null,
       }
     }
   }
 
-  // 5. Failed request or no price data
+  // 5. Failed request
   if (fetchError) {
+    const fallback = pickRawgFallback(rawgStores)
     return {
       type: 'error',
-      message: 'Price unavailable right now',
+      message: "Couldn't load price",
       canRetry: true,
       error: fetchError,
+      ctaUrl: fallback?.url || null,
+      ctaText: fallback ? `View on ${fallback.name}` : null,
     }
   }
 
+  // 6. Untracked / not yet queried
+  const fallback = pickRawgFallback(rawgStores)
   return {
     type: 'untracked',
     message: 'No current deal found for PC',
     canFetchLive: true,
+    ctaUrl: fallback?.url || null,
+    ctaText: fallback ? `View on ${fallback.name}` : null,
   }
 }
 
 /**
  * Fetch a single game price from /api/itad-prices, cached in sessionStorage for 30 minutes.
- * Respects AbortController signal.
- *
- * @param {string} rawTitle - Game title
- * @param {AbortSignal} signal - Optional abort signal
- * @returns {Promise<Object|null>} deal object or null
+ * Returns { status: 'found' | 'no_deal', deal: Object|null, itadId: string|null }.
  */
 export async function fetchLiveItadPrice(rawTitle, signal) {
-  if (!rawTitle || typeof rawTitle !== 'string') return null
+  if (!rawTitle || typeof rawTitle !== 'string') return { status: 'no_deal', deal: null, itadId: null }
   const tKey = titleKey(rawTitle)
-  if (!tKey) return null
+  if (!tKey) return { status: 'no_deal', deal: null, itadId: null }
 
   const cacheKey = `${ITAD_PRICE_CACHE_KEY}${tKey}`
 
@@ -191,7 +229,7 @@ export async function fetchLiveItadPrice(rawTitle, signal) {
     const cached = sessionStorage.getItem(cacheKey)
     if (cached) {
       const { time, data } = JSON.parse(cached)
-      if (Date.now() - time < ITAD_CACHE_TTL_MS) {
+      if (Date.now() - time < ITAD_CACHE_TTL_MS && data && typeof data === 'object' && 'status' in data) {
         return data
       }
     }
@@ -200,32 +238,57 @@ export async function fetchLiveItadPrice(rawTitle, signal) {
   }
 
   // 2. Query /api/itad-prices
-  const response = await fetch(
-    `/api/itad-prices?titles=${encodeURIComponent(rawTitle.trim())}`,
-    { signal }
-  )
+  let response
+  try {
+    response = await fetch(
+      `/api/itad-prices?titles=${encodeURIComponent(rawTitle.trim())}`,
+      { signal }
+    )
+  } catch (err) {
+    if (err?.name === 'AbortError') throw err
+    const netErr = new Error(err?.message || 'Network error while fetching price')
+    netErr.code = 'NETWORK_ERROR'
+    throw netErr
+  }
 
   if (response.status === 429) {
-    throw new Error('Price lookup rate limit reached. Please try again shortly.')
+    const rateErr = new Error('Price lookup rate limit reached. Please try again shortly.')
+    rateErr.code = 'RATE_LIMIT'
+    throw rateErr
   }
   if (!response.ok) {
-    throw new Error(`Failed to fetch price (${response.status})`)
+    const httpErr = new Error(`Failed to fetch price (${response.status})`)
+    httpErr.code = 'HTTP_ERROR'
+    httpErr.status = response.status
+    throw httpErr
+  }
+
+  const contentType = response.headers?.get?.('content-type') || ''
+  if (!contentType.toLowerCase().includes('application/json')) {
+    const nonJsonErr = new Error('Price service returned a non-JSON response')
+    nonJsonErr.code = 'NON_JSON'
+    throw nonJsonErr
   }
 
   const result = await response.json()
   const priceEntry = result?.prices?.[rawTitle.trim()] || Object.values(result?.prices || {})[0] || null
-
   const dealData = priceEntry?.deal || null
+
+  const payload = {
+    status: dealData ? 'found' : 'no_deal',
+    deal: dealData,
+    itadId: priceEntry?.itadId || null,
+  }
 
   // 3. Cache valid response
   try {
     sessionStorage.setItem(
       cacheKey,
-      JSON.stringify({ time: Date.now(), data: dealData })
+      JSON.stringify({ time: Date.now(), data: payload })
     )
   } catch {
     // Continue if storage quota exceeded
   }
 
-  return dealData
+  return payload
 }

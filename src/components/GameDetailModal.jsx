@@ -9,10 +9,12 @@ import {
   ExternalLinkIcon,
   FlameIcon,
   StarIcon,
+  InfoIcon,
   AlertTriangleIcon,
 } from './icons'
 import { resolveGameOffer, fetchLiveItadPrice } from '../lib/gameOffer'
 import { fetchGameStores, hasRawgKey } from '../lib/discoverApi'
+import { canonicalStoreName, normalizeRawgStore, sortStoresByPriority } from '../lib/rawgStores'
 import { formatTimeLeft } from '../lib/freeGames'
 import { formatDealExpiry } from '../lib/dealsData'
 
@@ -28,7 +30,7 @@ export default function GameDetailModal({
 
   const [stores, setStores] = useState(() => {
     if (Array.isArray(game?.stores) && game.stores.length > 0) {
-      return game.stores.map((s) => s.store?.name || s.name).filter(Boolean)
+      return game.stores.map(normalizeRawgStore).filter(Boolean)
     }
     return []
   })
@@ -38,14 +40,15 @@ export default function GameDetailModal({
   const [livePriceError, setLivePriceError] = useState(null)
   const [retryCount, setRetryCount] = useState(0)
 
-  // 1. Resolve offer with available synchronous sources
+  // 1. Resolve offer with available synchronous sources + RAWG stores
   const offer = useMemo(() => {
     return resolveGameOffer(game, {
       ...sources,
+      rawgStores: stores,
       livePrice,
       fetchError: livePriceError,
     })
-  }, [game, sources, livePrice, livePriceError])
+  }, [game, sources, stores, livePrice, livePriceError])
 
   // 2. Lazy fetch live ITAD price only if game is not console and not resolved in static sources
   useEffect(() => {
@@ -93,10 +96,11 @@ export default function GameDetailModal({
     }
   }, [game, sources, retryCount])
 
-  // 3. Lazy fetch RAWG stores if missing from list response
+  // 3. Lazy fetch RAWG stores if URLs are missing from list response
   useEffect(() => {
     if (!game?.id) return
-    if (Array.isArray(game.stores) && game.stores.length > 0) return
+    const hasUrls = Array.isArray(game.stores) && game.stores.some((s) => Boolean(s?.url))
+    if (hasUrls) return
 
     let cancelled = false
     const controller = new AbortController()
@@ -104,7 +108,7 @@ export default function GameDetailModal({
     async function loadStores() {
       const results = await fetchGameStores(game.id, controller.signal)
       if (!cancelled && Array.isArray(results) && results.length > 0) {
-        setStores(results.map((s) => s.store?.name || s.name).filter(Boolean))
+        setStores(results)
       }
     }
 
@@ -118,13 +122,24 @@ export default function GameDetailModal({
     }
   }, [game?.id, game?.stores])
 
-  // 4. Combine stores from RAWG and resolved offer store
+  // 4. Combine stores from RAWG and resolved offer store, keeping URLs and priority
   const allStoreChips = useMemo(() => {
-    const set = new Set(stores)
-    if (offer?.store && offer.store !== 'Store') {
-      set.add(offer.store)
+    const byName = new Map()
+    for (const s of stores) {
+      const item = typeof s === 'string' ? { storeId: null, name: canonicalStoreName(s) || s, url: null, key: `name:${s.toLowerCase()}` } : s
+      if (!item?.name) continue
+      const existing = byName.get(item.name)
+      if (!existing || (!existing.url && item.url)) {
+        byName.set(item.name, item)
+      }
     }
-    return [...set]
+    if (offer?.store && offer.store !== 'Store') {
+      const canon = canonicalStoreName(offer.store) || offer.store
+      if (!byName.has(canon)) {
+        byName.set(canon, { storeId: null, name: offer.store, url: null, key: `offer:${canon.toLowerCase()}` })
+      }
+    }
+    return sortStoresByPriority([...byName.values()], offer?.store)
   }, [stores, offer])
 
   // 5. Game actions (Wishlist and Owned state)
@@ -213,7 +228,7 @@ export default function GameDetailModal({
     : `https://rawg.io/games/${game.id}`
 
   const hasPlatforms = Array.isArray(game.platforms) && game.platforms.length > 0
-  const isDeal = offer.type === 'deal'
+  const isDealOrPrice = offer.type === 'deal' || offer.type === 'price'
   const isFree = offer.type === 'free_now' || offer.type === 'always_free'
   const ctaLabel =
     offer.type === 'free_now'
@@ -308,11 +323,23 @@ export default function GameDetailModal({
             <div className="game-modal-stores" aria-label="Available on stores">
               <span className="game-modal-stores-label">Available on</span>
               <div className="game-modal-chips-row">
-                {allStoreChips.map((storeName) => (
-                  <span key={storeName} className="wr-store-chip">
-                    {storeName}
-                  </span>
-                ))}
+                {allStoreChips.map((chip) =>
+                  chip.url ? (
+                    <a
+                      key={chip.key || chip.name}
+                      href={chip.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="wr-store-chip wr-store-chip--link"
+                    >
+                      {chip.name} <ExternalLinkIcon size={12} />
+                    </a>
+                  ) : (
+                    <span key={chip.key || chip.name} className="wr-store-chip">
+                      {chip.name}
+                    </span>
+                  )
+                )}
               </div>
             </div>
           )}
@@ -322,12 +349,15 @@ export default function GameDetailModal({
             {livePriceLoading ? (
               <div className="game-modal-price-skeleton" aria-busy="true" aria-label="Loading price" />
             ) : offer.type === 'console' ? (
-              <p className="game-modal-notice-text">Price not tracked for this platform</p>
+              <p className="game-modal-notice-text">
+                <InfoIcon size={16} />
+                <span>{offer.message}</span>
+              </p>
             ) : offer.type === 'error' ? (
               <>
                 <p className="game-modal-notice-text game-modal-notice-text--error">
                   <AlertTriangleIcon size={16} />
-                  <span>Price unavailable right now</span>
+                  <span>{offer.message}</span>
                 </p>
                 <button
                   type="button"
@@ -337,7 +367,7 @@ export default function GameDetailModal({
                   Retry
                 </button>
               </>
-            ) : isDeal ? (
+            ) : isDealOrPrice ? (
               <>
                 <div className="game-modal-price-left">
                   {(offer.discount > 0 || offer.isLowestEver) && (
@@ -356,7 +386,7 @@ export default function GameDetailModal({
                   )}
                   <div className="game-modal-price-values">
                     <b className="wr-price-sale">{offer.formattedPrice}</b>
-                    {offer.formattedRegular && (
+                    {offer.formattedRegular && offer.discount > 0 && (
                       <s className="wr-price-old">{offer.formattedRegular}</s>
                     )}
                   </div>
@@ -396,7 +426,10 @@ export default function GameDetailModal({
                 )}
               </>
             ) : (
-              <p className="game-modal-notice-text">No active deals tracked for PC right now.</p>
+              <p className="game-modal-notice-text">
+                <InfoIcon size={16} />
+                <span>No current price from tracked stores</span>
+              </p>
             )}
           </div>
 

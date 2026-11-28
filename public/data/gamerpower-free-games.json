@@ -1,35 +1,142 @@
 {
-  "generatedAt": "2026-11-25T02:40:32.432Z",
+  "generatedAt": "2026-11-28T03:20:08.358Z",
   "source": "GamerPower",
   "sourceUrl": "https://www.gamerpower.com",
   "games": [
     {
-      "id": 3854,
-      "title": "Lonesome Village (Mobile) Giveaway",
-      "platforms": "Android, iOS",
-      "thumbnail": "https://www.gamerpower.com/offers/1/6aff20a09cb65.jpg",
-      "worth": null,
-      "end_date": "2026-11-26 23:59:00",
-      "open_giveaway_url": "https://www.gamerpower.com/open/lonesome-village-mobile-giveaway",
-      "gamerpower_url": "https://www.gamerpower.com/lonesome-village-mobile-giveaway"
+      "id": 3863,
+      "title": "Lonely in the Winter (itch.io) Giveaway",
+      "type": "Game",
+      "platforms": "PC, Itch.io, DRM-Free",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6b0a113ba497d.jpg",
+      "worth": {
+        "amount": 159,
+        "currency": "INR",
+        "source": "ITAD"
+      },
+      "end_date": "2026-12-06 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/lonely-in-the-winter-itch-io-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/lonely-in-the-winter-itch-io-giveaway"
     },
     {
-      "id": 3853,
-      "title": "Mark of the Deep (Epic Games) Giveaway",
-      "platforms": "PC, Epic Games Store",
-      "thumbnail": "https://www.gamerpower.com/offers/1/6aff1d0e4942d.jpg",
+      "id": 3862,
+      "title": "Ba Bị (itch.io) Giveaway",
+      "type": "Game",
+      "platforms": "PC, Itch.io",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6b0a1024d09c7.jpg",
       "worth": {
-        "amount": 880,
+        "amount": 250,
         "currency": "INR",
-        "source": "Epic Game Store"
+        "source": "ITAD"
       },
-      "end_date": "2026-11-26 23:59:00",
-      "open_giveaway_url": "https://www.gamerpower.com/open/mark-of-the-deep-epic-games-giveaway",
-      "gamerpower_url": "https://www.gamerpower.com/mark-of-the-deep-epic-games-giveaway"
+      "end_date": "2026-12-04 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/n-a",
+      "gamerpower_url": "https://www.gamerpower.com/n-a"
+    },
+    {
+      "id": 3861,
+      "title": "Rulebound (itch.io) Giveaway",
+      "type": "Game",
+      "platforms": "PC, Itch.io",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6b0a0de4276dc.jpg",
+      "worth": {
+        "amount": 369,
+        "currency": "INR",
+        "source": "ITAD"
+      },
+      "end_date": "2026-12-31 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/rulebound-itch-io-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/rulebound-itch-io-giveaway"
+    },
+    {
+      "id": 3334,
+      "title": "Mysterious House (IndieGala) Giveaway",
+      "type": "Game",
+      "platforms": "PC, DRM-Free",
+      "thumbnail": "https://www.gamerpower.com/offers/1/68fcca241e9d0.jpg",
+      "worth": {
+        "amount": 260,
+        "currency": "INR",
+        "source": "ITAD"
+      },
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/mysterious-house-pc-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/mysterious-house-pc-giveaway"
+    },
+    {
+      "id": 3860,
+      "title": "Dead Age 2 (GOG) Giveaway",
+      "type": "Game",
+      "platforms": "PC, GOG, DRM-Free",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6b0969de22e37.jpg",
+      "worth": "$17.99",
+      "end_date": "2026-11-30 14:40:09",
+      "open_giveaway_url": "https://www.gamerpower.com/open/dead-age-2-gog-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/dead-age-2-gog-giveaway"
+    },
+    {
+      "id": 3859,
+      "title": "Vertical Drop Heroes HD Steam Key Giveaway",
+      "type": "Game",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6b0967296e680.jpg",
+      "worth": {
+        "amount": 319,
+        "currency": "INR",
+        "source": "ITAD"
+      },
+      "end_date": "2026-11-28 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/vertical-drop-heroes-hd-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/vertical-drop-heroes-hd-steam-key-giveaway"
+    },
+    {
+      "id": 3858,
+      "title": "A Tiny Sticker Tale (Mobile) Giveaway",
+      "type": "Game",
+      "platforms": "Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6b085c2f77be3.jpg",
+      "worth": "$3.99",
+      "end_date": "2026-12-03 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/a-tiny-sticker-tale-mobile-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/a-tiny-sticker-tale-mobile-giveaway"
+    },
+    {
+      "id": 3857,
+      "title": "Bread and Fred (Epic Games) Giveaway",
+      "type": "Game",
+      "platforms": "PC, Epic Games Store",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6b0857f437cbd.jpg",
+      "worth": "$14.99",
+      "end_date": "2026-12-03 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/bread-and-fred-epic-games-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/bread-and-fred-epic-games-giveaway"
+    },
+    {
+      "id": 3856,
+      "title": "Firestone: Free $100 Welcome Gift",
+      "type": "DLC",
+      "platforms": "PC, Android, iOS, Epic Games Store",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6b08579a35b70.jpg",
+      "worth": "$100.00",
+      "end_date": "2026-12-03 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/firestone-free-100-welcome-gift",
+      "gamerpower_url": "https://www.gamerpower.com/firestone-free-100-welcome-gift"
+    },
+    {
+      "id": 3855,
+      "title": "World of Warships: Black Friday Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6aff32359a14c.jpg",
+      "worth": null,
+      "end_date": "2026-12-04 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/world-of-warships-black-friday-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/world-of-warships-black-friday-giveaway"
     },
     {
       "id": 3852,
       "title": "Contractor: The Clean Up Part 2 (Epic Games) Giveaway",
+      "type": "Game",
       "platforms": "PC, Epic Games Store",
       "thumbnail": "https://www.gamerpower.com/offers/1/6afc554f06761.jpg",
       "worth": {
@@ -42,11 +149,38 @@
       "gamerpower_url": "https://www.gamerpower.com/contractor-the-clean-up-part-2-epic-games-giveaway"
     },
     {
+      "id": 3849,
+      "title": "Kettlebell: Inferno Hotel Afterimage Effect Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6af362798d714.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/kettlebell-inferno-hotel-afterimage-effect-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/kettlebell-inferno-hotel-afterimage-effect-key-giveaway"
+    },
+    {
+      "id": 1546,
+      "title": "Dead by Daylight 100k Bloodpoints Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/62ab8480b0e8f.jpg",
+      "worth": null,
+      "end_date": "2026-12-31 23:59:59",
+      "open_giveaway_url": "https://www.gamerpower.com/open/dead-by-daylight-100k-bloodpoints-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/dead-by-daylight-100k-bloodpoints-key-giveaway"
+    },
+    {
       "id": 3346,
       "title": "My Darkest Witch (IndieGala) Giveaway",
+      "type": "Game",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/69061997da81d.jpg",
-      "worth": null,
+      "worth": {
+        "amount": 260,
+        "currency": "INR",
+        "source": "ITAD"
+      },
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/my-darkest-witch-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/my-darkest-witch-pc-giveaway"
@@ -54,9 +188,14 @@
     {
       "id": 3340,
       "title": "ANCIENT EVIL (IndieGala) Giveaway",
+      "type": "Game",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/69024dade7c16.jpg",
-      "worth": null,
+      "worth": {
+        "amount": 260,
+        "currency": "INR",
+        "source": "ITAD"
+      },
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/ancient-evil-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/ancient-evil-pc-giveaway"
@@ -64,39 +203,121 @@
     {
       "id": 3331,
       "title": "Last Room (IndieGala) Giveaway",
+      "type": "Game",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/68f91bd81c328.jpg",
-      "worth": null,
+      "worth": {
+        "amount": 1349,
+        "currency": "INR",
+        "source": "ITAD"
+      },
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/last-room-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/last-room-pc-giveaway"
     },
     {
+      "id": 3819,
+      "title": "Fathom Reach Playtest Steam Key Giveaway",
+      "type": "Early Access",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6ad23bbd018d3.jpg",
+      "worth": null,
+      "end_date": "2026-11-03 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/fathom-reach-playtest-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/fathom-reach-playtest-steam-key-giveaway"
+    },
+    {
+      "id": 3803,
+      "title": "Everwind AW-51 Pack Steam Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6ac50956b23c1.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/everwind-aw-51-pack-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/everwind-aw-51-pack-steam-key-giveaway"
+    },
+    {
+      "id": 3802,
+      "title": "Scallywags Playtest Steam Key Giveaway",
+      "type": "Early Access",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6ac3f2b80d4cd.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/scallywags-playtest-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/scallywags-playtest-steam-key-giveaway"
+    },
+    {
+      "id": 3793,
+      "title": "The Witcher 3: Wild Hunt Remastered - Scarlet Crest Armor Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Xbox Series X|S, Nintendo Switch",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6abbad285fc81.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/the-witcher-3-wild-hunt-remastered-scarlet-crest-armor-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/the-witcher-3-wild-hunt-remastered-scarlet-crest-armor-giveaway"
+    },
+    {
       "id": 3328,
       "title": "Best Plumber (IndieGala) Giveaway",
+      "type": "Game",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/68f40b259de93.jpg",
-      "worth": null,
+      "worth": {
+        "amount": 1300,
+        "currency": "INR",
+        "source": "ITAD"
+      },
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/best-plumber-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/best-plumber-pc-giveaway"
     },
     {
-      "id": 3322,
-      "title": "Sausage Hunter (Indiegala) Giveaway",
-      "platforms": "PC, DRM-Free",
-      "thumbnail": "https://www.gamerpower.com/offers/1/68eadb2d6f0c4.jpg",
+      "id": 3789,
+      "title": "Warframe Igaro Syandana and Ice Colour Picker Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Xbox Series X|S, Playstation 4, Xbox One, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6ab4108cdb221.jpg",
       "worth": null,
       "end_date": "N/A",
-      "open_giveaway_url": "https://www.gamerpower.com/open/sausage-hunter-pc-giveaway",
-      "gamerpower_url": "https://www.gamerpower.com/sausage-hunter-pc-giveaway"
+      "open_giveaway_url": "https://www.gamerpower.com/open/warframe-igaro-syandana-and-ice-colour-picker-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/warframe-igaro-syandana-and-ice-colour-picker-pack-key-giveaway"
+    },
+    {
+      "id": 3785,
+      "title": "RIDE 6 Welcome Bikes Pack Steam Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6ab15f524c039.jpg",
+      "worth": "$2.99",
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/ride-6-welcome-bikes-pack-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/ride-6-welcome-bikes-pack-steam-key-giveaway"
+    },
+    {
+      "id": 3783,
+      "title": "Aniimo Gift Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Xbox Series X|S, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/aniimo.jpg",
+      "worth": null,
+      "end_date": "2026-10-30 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/aniimo-gift-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/aniimo-gift-pack-key-giveaway"
     },
     {
       "id": 3324,
       "title": "Battle Ram (IndieGala) Giveaway",
+      "type": "Game",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/68efabd65f913.jpg",
-      "worth": null,
+      "worth": {
+        "amount": 1300,
+        "currency": "INR",
+        "source": "ITAD"
+      },
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/battle-ram-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/battle-ram-pc-giveaway"
@@ -104,52 +325,957 @@
     {
       "id": 3316,
       "title": "Leaper (IndieGala) Giveaway",
+      "type": "Game",
       "platforms": "PC, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/68e6513c31514.jpg",
-      "worth": null,
+      "worth": {
+        "amount": 260,
+        "currency": "INR",
+        "source": "ITAD"
+      },
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/leaper-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/leaper-pc-giveaway"
     },
     {
+      "id": 3728,
+      "title": "Reverse: 1999 Bonus Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6a70992bcc6d9.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/reverse-1999-bonus-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/reverse-1999-bonus-pack-key-giveaway"
+    },
+    {
+      "id": 2478,
+      "title": "Boots Quest DX (itch.io) Giveaway",
+      "type": "Game",
+      "platforms": "PC, Itch.io",
+      "thumbnail": "https://www.gamerpower.com/offers/1/64cd77c7ac5fe.jpg",
+      "worth": {
+        "amount": 480,
+        "currency": "INR",
+        "source": "ITAD"
+      },
+      "end_date": "2026-11-30 23:59:59",
+      "open_giveaway_url": "https://www.gamerpower.com/open/boots-quest-dx-itch-io-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/boots-quest-dx-itch-io-giveaway"
+    },
+    {
+      "id": 3719,
+      "title": "Fantasy Grounds Dragons NPC Dice Pack Volume 1 Steam Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6a5a2df1cbecc.jpg",
+      "worth": "$4.99",
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/fantasy-grounds-dragons-npc-dice-pack-volume-1-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/fantasy-grounds-dragons-npc-dice-pack-volume-1-steam-key-giveaway"
+    },
+    {
+      "id": 3718,
+      "title": "Deadswitch Combat Vehicle Bundle Steam Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6a5a2cda80145.jpg",
+      "worth": "$4.99",
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/deadswitch-combat-vehicle-bundle-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/deadswitch-combat-vehicle-bundle-steam-key-giveaway"
+    },
+    {
       "id": 3716,
       "title": "Dwarven Realms (Steam) Key Giveaway",
+      "type": "Game",
       "platforms": "PC, Steam",
       "thumbnail": "https://www.gamerpower.com/offers/1/6a59119a8eb8d.jpg",
-      "worth": null,
+      "worth": {
+        "amount": 480,
+        "currency": "INR",
+        "source": "ITAD"
+      },
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/dwarven-realms-steam-key-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/dwarven-realms-steam-key-giveaway"
     },
     {
+      "id": 3704,
+      "title": "GOALS: AMD Kit Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6a4becdd3a999.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/goals-amd-kit-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/goals-amd-kit-steam-key-giveaway"
+    },
+    {
+      "id": 2109,
+      "title": "Tim-Tim 2: The Almighty Gnome (itch.io) Giveaway",
+      "type": "Game",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/63a7d58806279.jpg",
+      "worth": {
+        "amount": 109,
+        "currency": "INR",
+        "source": "ITAD"
+      },
+      "end_date": "2026-12-02 23:59:01",
+      "open_giveaway_url": "https://www.gamerpower.com/open/tim-tim-2-the-almighty-gnome-itch-io-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/tim-tim-2-the-almighty-gnome-itch-io-giveaway"
+    },
+    {
+      "id": 3691,
+      "title": "Crystal Saga Nova: Free Gift Pack Keys",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6a3ab4213e0cd.jpg",
+      "worth": null,
+      "end_date": "2028-01-01 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/crystal-saga-nova-free-gift-pack-keys",
+      "gamerpower_url": "https://www.gamerpower.com/crystal-saga-nova-free-gift-pack-keys"
+    },
+    {
+      "id": 3675,
+      "title": "Neverwinter: Cape of the Noble North Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6a2717e22a61f.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/neverwinter-cape-of-the-noble-north-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/neverwinter-cape-of-the-noble-north-key-giveaway"
+    },
+    {
+      "id": 3656,
+      "title": "007 First Light: Ops Radiant Outfit Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Xbox Series X|S, Nintendo Switch",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6a171b5b30add.jpg",
+      "worth": null,
+      "end_date": "2027-05-27 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/007-first-light-ops-radiant-outfit-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/007-first-light-ops-radiant-outfit-key-giveaway"
+    },
+    {
+      "id": 3632,
+      "title": "World of Tanks Blitz - Welcome Bundle (Steam) Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6a0076b2a84f1.jpg",
+      "worth": null,
+      "end_date": "2026-05-15 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/world-of-tanks-blitz-welcome-bundle-steam-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/world-of-tanks-blitz-welcome-bundle-steam-giveaway"
+    },
+    {
+      "id": 3624,
+      "title": "Without a Hitch UFO Hat Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/69fa23daacfcb.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/without-a-hitch-ufo-hat-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/without-a-hitch-ufo-hat-key-giveaway"
+    },
+    {
+      "id": 1920,
+      "title": "Genshin Impact: New Primogems Codes",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Playstation 4",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6324b499e18df.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/genshin-impact-new-primogems-codes",
+      "gamerpower_url": "https://www.gamerpower.com/genshin-impact-new-primogems-codes"
+    },
+    {
+      "id": 3592,
+      "title": "Arknights: Endfield Gift Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/69e2571643f8d.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/arknights-endfield-gift-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/arknights-endfield-gift-pack-key-giveaway"
+    },
+    {
+      "id": 3584,
+      "title": "Super Animal Royale Bundle Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/69e110ed9597c.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/super-animal-royale-bundle-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/super-animal-royale-bundle-key-giveaway"
+    },
+    {
+      "id": 3582,
+      "title": "Idle Champions Lae'zel Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Xbox Series X|S, Playstation 4, Xbox One, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/69e10f2ba97f6.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/idle-champions-lae-zel-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/idle-champions-lae-zel-key-giveaway"
+    },
+    {
+      "id": 3568,
+      "title": "Deadswitch Combat: Soldier Bundle (Steam) Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/69d44cc9b09a2.jpg",
+      "worth": "$9.99",
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/deadswitch-combat-soldier-bundle-steam-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/deadswitch-combat-soldier-bundle-steam-giveaway"
+    },
+    {
+      "id": 3513,
+      "title": "Star Trek Online: Corruption Gift Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/69a718ba231fc.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/star-trek-online-corruption-gift-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/star-trek-online-corruption-gift-pack-key-giveaway"
+    },
+    {
+      "id": 3508,
+      "title": "Blade and Soul NEO Anniversary Weapon Skin Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/699f2c7ebf7f6.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/blade-and-soul-neo-anniversary-weapon-skin-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/blade-and-soul-neo-anniversary-weapon-skin-key-giveaway"
+    },
+    {
+      "id": 3488,
+      "title": "Deadswitch Combat: Weapons Skins Steam Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/698b912713a1b.jpg",
+      "worth": "$9.99",
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/deadswitch-combat-weapons-skins-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/deadswitch-combat-weapons-skins-steam-key-giveaway"
+    },
+    {
+      "id": 3489,
+      "title": "KARDS Special Bundle Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/698b92396a0fc.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/kards-special-bundle-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/kards-special-bundle-key-giveaway"
+    },
+    {
+      "id": 3486,
+      "title": "Chop Shop Playtest (Steam) Key Giveaway",
+      "type": "Early Access",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/698625be7e6bf.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/chop-shop-playtest-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/chop-shop-playtest-steam-key-giveaway"
+    },
+    {
+      "id": 3482,
+      "title": "Endless Space 2 - Untold Tales DLC (Steam) Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/69822af34149c.jpg",
+      "worth": "$2.99",
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/endless-space-2-untold-tales-dlc-steam-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/endless-space-2-untold-tales-dlc-steam-giveaway"
+    },
+    {
+      "id": 3475,
+      "title": "Untrusted 10K Credits Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/697b961f06e74.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/untrusted-10k-credits-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/untrusted-10k-credits-key-giveaway"
+    },
+    {
       "id": 3446,
       "title": "GigaBash (Stove) Giveaway",
+      "type": "Game",
       "platforms": "PC",
       "thumbnail": "https://www.gamerpower.com/offers/1/69567c4ee0fa3.jpg",
-      "worth": null,
+      "worth": {
+        "amount": 899,
+        "currency": "INR",
+        "source": "ITAD"
+      },
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/gigabash-pc-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/gigabash-pc-giveaway"
     },
     {
+      "id": 3408,
+      "title": "Tomb Raider Legacy of Atlantis: Lara Croft Wetsuit Skin Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Xbox One",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6940b8f5a5ee0.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/tomb-raider-legacy-of-atlantis-lara-croft-wetsuit-skin-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/tomb-raider-legacy-of-atlantis-lara-croft-wetsuit-skin-giveaway"
+    },
+    {
+      "id": 3398,
+      "title": "Bethesda Bundle Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6938dcde2d35c.jpg",
+      "worth": null,
+      "end_date": "2026-12-09 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/bethesda-bundle-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/bethesda-bundle-giveaway"
+    },
+    {
+      "id": 3373,
+      "title": "Dominion Synergy Gift Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Epic Games Store",
+      "thumbnail": "https://www.gamerpower.com/offers/1/691cb27e81a55.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/dominion-synergy-gift-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/dominion-synergy-gift-pack-key-giveaway"
+    },
+    {
+      "id": 3321,
+      "title": "Vampire Master Gift Pack Codes Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/68e900dc9d6b8.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/vampire-master-gift-pack-codes-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/vampire-master-gift-pack-codes-giveaway"
+    },
+    {
+      "id": 3145,
+      "title": "Arena Breakout: Infinite Koen Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/681af68aed3e9.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/arena-breakout-infinite-koen-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/arena-breakout-infinite-koen-pack-key-giveaway"
+    },
+    {
+      "id": 3293,
+      "title": "DungeonLoot: Open Beta Has Arrived!",
+      "type": "Early Access",
+      "platforms": "PC, Steam, Epic Games Store, Playstation 5, Xbox Series X|S, Nintendo Switch, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/68d2ea0b968f7.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/dungeonloot-open-beta-has-arrived",
+      "gamerpower_url": "https://www.gamerpower.com/dungeonloot-open-beta-has-arrived"
+    },
+    {
       "id": 3251,
       "title": "Sharknado VR (Rift) Giveaway",
+      "type": "Game",
       "platforms": "VR",
       "thumbnail": "https://www.gamerpower.com/offers/1/689aece93310e.jpg",
-      "worth": null,
+      "worth": "$1.99",
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/sharknado-vr-rift-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/sharknado-vr-rift-giveaway"
     },
     {
+      "id": 2856,
+      "title": "DAVE THE DIVER - Godzilla Content Pack (Steam) Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/664f58a123dcd.jpg",
+      "worth": null,
+      "end_date": "2026-12-31 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/dave-the-diver-godzilla-content-pack-steam-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/dave-the-diver-godzilla-content-pack-steam-giveaway"
+    },
+    {
+      "id": 3144,
+      "title": "Magic: The Gathering Arena Sliver Overlord Sleeve Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6813a905cd788.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/magic-the-gathering-arena-sliver-overlord-sleeve-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/magic-the-gathering-arena-sliver-overlord-sleeve-key-giveaway"
+    },
+    {
+      "id": 3112,
+      "title": "ScreenPlay CCG: Box Office Bundle Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/67dda98862fad.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/screenplay-ccg-box-office-bundle-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/screenplay-ccg-box-office-bundle-key-giveaway"
+    },
+    {
+      "id": 3086,
+      "title": "3on3 FreeStyle: Beginner's Starter Kit (Steam) Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/67b5dc10c00d3.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/3on3-freestyle-beginner-s-starter-kit-steam-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/3on3-freestyle-beginner-s-starter-kit-steam-giveaway"
+    },
+    {
+      "id": 2965,
+      "title": "World of Tanks - Invite/Bonus Code Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/670e6cc612e0c.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/world-of-tanks-invite-bonus-code-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/world-of-tanks-invite-bonus-code-giveaway"
+    },
+    {
+      "id": 2823,
+      "title": "The Elder Scrolls Online: Experience Scroll Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Xbox Series X|S, Playstation 4, Xbox One",
+      "thumbnail": "https://www.gamerpower.com/offers/1/660c622448a45.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/the-elder-scrolls-online-experience-scroll-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/the-elder-scrolls-online-experience-scroll-key-giveaway"
+    },
+    {
+      "id": 2875,
+      "title": "Homeworld 3 Emblem Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/66705e4f5649b.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/homeworld-3-emblem-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/homeworld-3-emblem-key-giveaway"
+    },
+    {
+      "id": 2871,
+      "title": "The Elder Scrolls Online: Pyromancer's Quandary Emote Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 5, Xbox Series X|S, Playstation 4, Xbox One",
+      "thumbnail": "https://www.gamerpower.com/offers/1/66672d014b21f.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/the-elder-scrolls-online-pyromancer-s-quandary-emote-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/the-elder-scrolls-online-pyromancer-s-quandary-emote-key-giveaway"
+    },
+    {
+      "id": 2835,
+      "title": "EVERSPACE 2 Decal DLC Steam Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/662fe7544661a.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/everspace-2-decal-dlc-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/everspace-2-decal-dlc-steam-key-giveaway"
+    },
+    {
+      "id": 2817,
+      "title": "Zero King (Beta) Steam Key Giveaway",
+      "type": "Early Access",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6601b1f21bec2.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/zero-king-beta-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/zero-king-beta-steam-key-giveaway"
+    },
+    {
+      "id": 2734,
+      "title": "Metaball Jersey Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/659c3bffc6043.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/metaball-jersey-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/metaball-jersey-key-giveaway"
+    },
+    {
+      "id": 2733,
+      "title": "Death or Glory Beginner's Champion Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/659c39e844aec.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/death-or-glory-beginner-s-champion-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/death-or-glory-beginner-s-champion-pack-key-giveaway"
+    },
+    {
+      "id": 2394,
+      "title": "World of Tanks: Starter Pack Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/647e2752b0837.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/world-of-tanks-starter-pack-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/world-of-tanks-starter-pack-giveaway"
+    },
+    {
+      "id": 2646,
+      "title": "Neverwinter Xaryxian Aristrocrat's Drapery Cape Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/654de7a4ebc50.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/neverwinter-xaryxian-aristrocrat-s-drapery-cape-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/neverwinter-xaryxian-aristrocrat-s-drapery-cape-key-giveaway"
+    },
+    {
+      "id": 2527,
+      "title": "Pirate Souls In-Game Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/64f3afac2e247.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/pirate-souls-in-game-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/pirate-souls-in-game-pack-key-giveaway"
+    },
+    {
+      "id": 2509,
+      "title": "Destiny 2 Emblem Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Playstation 4, Xbox One",
+      "thumbnail": "https://www.gamerpower.com/offers/1/64e88514df1df.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/destiny-2-emblem-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/destiny-2-emblem-key-giveaway"
+    },
+    {
+      "id": 2485,
+      "title": "Exoprimal: Alienware Decal Steam Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/64dd14e5c0a92.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/exoprimal-alienware-decal-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/exoprimal-alienware-decal-steam-key-giveaway"
+    },
+    {
+      "id": 2456,
+      "title": "Neverwinter Frayed Silken Cloak Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/64b961e16f061.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/neverwinter-frayed-silken-cloak-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/neverwinter-frayed-silken-cloak-key-giveaway"
+    },
+    {
+      "id": 2447,
+      "title": "Deadswitch 3: Delta Force Supply Cache Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/64b6bccd9bc0f.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/deadswitch-3-delta-force-supply-cache-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/deadswitch-3-delta-force-supply-cache-key-giveaway"
+    },
+    {
+      "id": 2409,
+      "title": "Giveaway Alerts Chrome Extension",
+      "type": "Other",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6488c99a3ceee.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/giveaway-alerts-chrome-extension",
+      "gamerpower_url": "https://www.gamerpower.com/giveaway-alerts-chrome-extension"
+    },
+    {
+      "id": 2341,
+      "title": "Age of Wonders 4: Special Godir Helmet Steam Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6452677147a74.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/age-of-wonders-4-special-godir-helmet-steam-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/age-of-wonders-4-special-godir-helmet-steam-key-giveaway"
+    },
+    {
+      "id": 2318,
+      "title": "Dinogen Online Survival Bundle Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/643082d312595.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/dinogen-online-survival-bundle-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/dinogen-online-survival-bundle-key-giveaway"
+    },
+    {
       "id": 2204,
       "title": "Dual Chroma: Academy Carols (itch.io) Giveaway",
+      "type": "Game",
       "platforms": "PC, Itch.io, DRM-Free",
       "thumbnail": "https://www.gamerpower.com/offers/1/63c6f67bb9c8b.jpg",
-      "worth": null,
+      "worth": "$2.00",
       "end_date": "N/A",
       "open_giveaway_url": "https://www.gamerpower.com/open/dual-chroma-academy-carols-itch-io-giveaway",
       "gamerpower_url": "https://www.gamerpower.com/dual-chroma-academy-carols-itch-io-giveaway"
+    },
+    {
+      "id": 1890,
+      "title": "Minecraft: Peace Builders (DLC)",
+      "type": "DLC",
+      "platforms": "PC, Playstation 4, Xbox One, Nintendo Switch, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6314ca8c5a9d0.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/minecraft-peace-builders-dlc",
+      "gamerpower_url": "https://www.gamerpower.com/minecraft-peace-builders-dlc"
+    },
+    {
+      "id": 1812,
+      "title": "Untrusted Starter Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/62fa8b140e8dd.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/untrusted-starter-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/untrusted-starter-pack-key-giveaway"
+    },
+    {
+      "id": 1599,
+      "title": "DarkStory Online Gift Box Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/62db06d91290e.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/darkstory-online-gift-box-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/darkstory-online-gift-box-key-giveaway"
+    },
+    {
+      "id": 1531,
+      "title": "GamerPower Mobile App",
+      "type": "Early Access",
+      "platforms": "Android",
+      "thumbnail": "https://www.gamerpower.com/offers/1/62a1e473e31f0.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/gamerpower-mobile-app",
+      "gamerpower_url": "https://www.gamerpower.com/gamerpower-mobile-app"
+    },
+    {
+      "id": 1498,
+      "title": "Thunder League Online: Free Points Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/627e959acefc2.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/thunder-league-online-free-points-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/thunder-league-online-free-points-key-giveaway"
+    },
+    {
+      "id": 1268,
+      "title": "Doomtrooper CCG Card Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/619d5bea3be7a.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/doomtrooper-ccg-card-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/doomtrooper-ccg-card-pack-key-giveaway"
+    },
+    {
+      "id": 1266,
+      "title": "Dead Frontier 2 Survivor Starter Pack Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/619d548d39a69.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/dead-frontier-2-survivor-starter-pack-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/dead-frontier-2-survivor-starter-pack-key-giveaway"
+    },
+    {
+      "id": 1262,
+      "title": "SMITE 3 Day Account Booster Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6196c5f06a1a9.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/smite-3-day-account-booster-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/smite-3-day-account-booster-key-giveaway"
+    },
+    {
+      "id": 1231,
+      "title": "Destiny 2: Be True Emblem Code",
+      "type": "DLC",
+      "platforms": "PC, Steam, Playstation 5, Xbox Series X|S, Playstation 4, Xbox One",
+      "thumbnail": "https://www.gamerpower.com/offers/1/618d609d2ebbc.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/destiny-2-be-true-emblem-code",
+      "gamerpower_url": "https://www.gamerpower.com/destiny-2-be-true-emblem-code"
+    },
+    {
+      "id": 1130,
+      "title": "Minecraft: Seaside Story (DLC)",
+      "type": "DLC",
+      "platforms": "PC, Playstation 4, Xbox One, Nintendo Switch, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/614a17f235f9b.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/minecraft-seaside-story-dlc",
+      "gamerpower_url": "https://www.gamerpower.com/minecraft-seaside-story-dlc"
+    },
+    {
+      "id": 1106,
+      "title": "Minecraft: Vibrant Adventurers Volume 1, 2 and 3",
+      "type": "DLC",
+      "platforms": "PC, Playstation 4, Nintendo Switch, Xbox 360, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/613f603d68c91.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/minecraft-vibrant-adventurers-volume-1-2-and-3",
+      "gamerpower_url": "https://www.gamerpower.com/minecraft-vibrant-adventurers-volume-1-2-and-3"
+    },
+    {
+      "id": 988,
+      "title": "Crown: Neon Rox Skin Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/60e88365929b5.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/crown-neon-rox-skin-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/crown-neon-rox-skin-key-giveaway"
+    },
+    {
+      "id": 868,
+      "title": "World Of Warships Godzilla vs. Kong Supply Drop Key",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/60995c9cecca6.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/world-of-warships-godzilla-vs-kong-supply-drop-key",
+      "gamerpower_url": "https://www.gamerpower.com/world-of-warships-godzilla-vs-kong-supply-drop-key"
+    },
+    {
+      "id": 785,
+      "title": "Magic: The Gathering Arena - 5 Card Sleeves",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/6060897e655b5.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/magic-the-gathering-arena-5-card-sleeves",
+      "gamerpower_url": "https://www.gamerpower.com/magic-the-gathering-arena-5-card-sleeves"
+    },
+    {
+      "id": 14,
+      "title": "Free MTG: Arena Codes",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ec55592ed50b.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/free-mtg-arena-codes",
+      "gamerpower_url": "https://www.gamerpower.com/free-mtg-arena-codes"
+    },
+    {
+      "id": 555,
+      "title": "DRAG: Special Event Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5fbd3eba5a5f4.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/drag-special-event-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/drag-special-event-key-giveaway"
+    },
+    {
+      "id": 502,
+      "title": "World of Tanks: 600 Gold + Tank Invite Code",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5f9ffbb77abe0.jpg",
+      "worth": null,
+      "end_date": "2020-12-30 00:00:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/world-of-tanks-tank-600-gold-invite-code",
+      "gamerpower_url": "https://www.gamerpower.com/world-of-tanks-tank-600-gold-invite-code"
+    },
+    {
+      "id": 457,
+      "title": "Two Point Hospital: SEGA 60th Items DLC",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5f8d3e01b5dab.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/two-point-hospital-sega-60th-items-dlc",
+      "gamerpower_url": "https://www.gamerpower.com/two-point-hospital-sega-60th-items-dlc"
+    },
+    {
+      "id": 383,
+      "title": "Causa, Voices of the Dusk Game Packs Bundle Keys",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5f68ee0a0c433.jpg",
+      "worth": "$14.00",
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/causa-voices-of-the-dusk-game-packs-bundle-keys",
+      "gamerpower_url": "https://www.gamerpower.com/causa-voices-of-the-dusk-game-packs-bundle-keys"
+    },
+    {
+      "id": 157,
+      "title": "Free Bomb Bots Arena Gift Pack Keys",
+      "type": "DLC",
+      "platforms": "PC, Steam, Android, iOS",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ef306bae0876.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/free-bomb-bots-arena-gift-pack-keys",
+      "gamerpower_url": "https://www.gamerpower.com/free-bomb-bots-arena-gift-pack-keys"
+    },
+    {
+      "id": 27,
+      "title": "SUPER CIRCUIT BREAKERS - PAYNE",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ec629da21645.jpg",
+      "worth": null,
+      "end_date": "2020-05-31 23:59:00",
+      "open_giveaway_url": "https://www.gamerpower.com/open/super-circuit-breakers-payne",
+      "gamerpower_url": "https://www.gamerpower.com/super-circuit-breakers-payne"
+    },
+    {
+      "id": 40,
+      "title": "Payday 2: Free In-game Items Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ec63e61562a0.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/payday-2-free-in-game-items-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/payday-2-free-in-game-items-giveaway"
+    },
+    {
+      "id": 16,
+      "title": "Collective Free Hero Skin Key",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ec614b0bde18.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/collective-free-hero-skin-key",
+      "gamerpower_url": "https://www.gamerpower.com/collective-free-hero-skin-key"
+    },
+    {
+      "id": 152,
+      "title": "Dream of Mirror Online Summer Fun DLC Pack Steam Keys",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5iia55fd841fb.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/domo-summer-fun-dlc-steam-keys",
+      "gamerpower_url": "https://www.gamerpower.com/domo-summer-fun-dlc-steam-keys"
+    },
+    {
+      "id": 42,
+      "title": "Overstep Skin Key Giveaway",
+      "type": "DLC",
+      "platforms": "PC, Steam",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ec643f9947fe.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/overstep-skin-key-giveaway",
+      "gamerpower_url": "https://www.gamerpower.com/overstep-skin-key-giveaway"
+    },
+    {
+      "id": 9,
+      "title": "Free Rocket League Codes",
+      "type": "DLC",
+      "platforms": "PC, Playstation 4, Xbox One",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ec53f97228a6.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/free-rocket-league-codes",
+      "gamerpower_url": "https://www.gamerpower.com/free-rocket-league-codes"
+    },
+    {
+      "id": 7,
+      "title": "Destiny 2: Free Emblem Codes",
+      "type": "DLC",
+      "platforms": "PC, Playstation 4, Xbox One",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ec5099cc1698.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/destiny-2-free-emblem-codes",
+      "gamerpower_url": "https://www.gamerpower.com/destiny-2-free-emblem-codes"
+    },
+    {
+      "id": 6,
+      "title": "Warframe Free Promo Codes",
+      "type": "DLC",
+      "platforms": "PC, Playstation 4, Xbox One, Nintendo Switch",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ec503da36629.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/warframe-free-promo-codes",
+      "gamerpower_url": "https://www.gamerpower.com/warframe-free-promo-codes"
+    },
+    {
+      "id": 5,
+      "title": "Farming Simulator 2017: Free Horsch Agrovation DLC",
+      "type": "DLC",
+      "platforms": "PC",
+      "thumbnail": "https://www.gamerpower.com/offers/1/5ec4ffd09f016.jpg",
+      "worth": null,
+      "end_date": "N/A",
+      "open_giveaway_url": "https://www.gamerpower.com/open/farming-simulator-2017-free-horsch-agrovation-dlc",
+      "gamerpower_url": "https://www.gamerpower.com/farming-simulator-2017-free-horsch-agrovation-dlc"
     }
   ]
 }

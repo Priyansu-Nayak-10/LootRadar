@@ -1,0 +1,8 @@
+{
+  "base": "USD",
+  "rates": {
+    "INR": 93
+  },
+  "updatedAt": "2026-11-27",
+  "source": "Frankfurter (ECB)"
+}

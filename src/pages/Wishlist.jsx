@@ -201,11 +201,18 @@ function WishlistCard({
           {cardState === 'sale' && (
             <>
               <span className="wr-badge wr-badge--discount">
-                On sale -{Math.round(Number(deal.cut))}%
+                -{Math.round(Number(deal.cut))}%
               </span>
               {(goodEval.fires || (userEval.fires && userEval.isNearLow)) && (
-                <span className="wr-badge wr-badge--record">
-                  <FlameIcon gradient={false} size={12} /> {deal.isLowestEver ? 'ALL-TIME LOW' : 'NEAR ALL-TIME LOW'}
+                <span
+                  className="wr-badge wr-badge--record"
+                  title={deal.isLowestEver ? 'All-time low' : 'Near low'}
+                  aria-label={deal.isLowestEver ? 'All-time low' : 'Near low'}
+                >
+                  <FlameIcon gradient={false} size={12} />{' '}
+                  <span className="badge-text">
+                    {deal.isLowestEver ? 'All-time low' : 'Near low'}
+                  </span>
                 </span>
               )}
             </>
@@ -229,7 +236,7 @@ function WishlistCard({
             aria-pressed={isAlertsOn}
             title={isAlertsOn ? 'Price alerts ON' : 'Price alerts OFF'}
           >
-            <BellIcon active={isAlertsOn} />
+            <BellIcon active={isAlertsOn} size={18} />
           </button>
           <button
             type="button"
@@ -238,7 +245,7 @@ function WishlistCard({
             aria-label={`Remove ${game.title} from wishlist`}
             title="Remove from wishlist"
           >
-            <TrashIcon />
+            <TrashIcon size={18} />
           </button>
         </div>
       </div>
@@ -287,7 +294,7 @@ function WishlistCard({
                 href={claimUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="wr-cta wishlist-cta-btn"
+                className="wr-cta wr-cta--block wishlist-cta-btn"
               >
                 Claim now <ExternalLinkIcon size={14} />
               </a>
@@ -308,7 +315,7 @@ function WishlistCard({
                 href={dealUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="wr-cta wishlist-cta-btn"
+                className="wr-cta wr-cta--block wishlist-cta-btn"
               >
                 View deal <ExternalLinkIcon size={14} />
               </a>
@@ -734,7 +741,7 @@ export default function Wishlist({
             <select
               value={alertSensitivity}
               onChange={(e) => handleSensitivityChange(e.target.value)}
-              className="wr-chip wishlist-select"
+              className="wr-chip wishlist-select wishlist-select--sensitivity"
               aria-label="Alert sensitivity"
             >
               <option value="any">Any sale (25%+)</option>

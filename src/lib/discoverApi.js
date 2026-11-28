@@ -61,6 +61,7 @@ import {
   dedupeGames,
   rankAndFilter,
 } from './searchRank'
+import { normalizeRawgStore } from './rawgStores'
 
 const suggestionMemoryCache = new Map()
 const gameStoresMemoryCache = new Map()
@@ -110,7 +111,7 @@ export async function fetchRawgSuggestions(rawQuery, category = 'All', signal) {
 }
 
 /**
- * Fetch available stores for a specific game if stores were omitted from list response.
+ * Fetch available stores for a specific game, normalized with store names & URLs.
  */
 export async function fetchGameStores(gameId, signal) {
   if (!gameId || !rawgKey) return []
@@ -124,9 +125,10 @@ export async function fetchGameStores(gameId, signal) {
     const response = await fetch(`${RAWG_BASE}/${idStr}/stores?key=${rawgKey}`, { signal })
     if (!response.ok) return []
     const data = await response.json()
-    const stores = Array.isArray(data.results) ? data.results : []
-    gameStoresMemoryCache.set(idStr, stores)
-    return stores
+    const rawStores = Array.isArray(data.results) ? data.results : []
+    const normalized = rawStores.map(normalizeRawgStore).filter(Boolean)
+    gameStoresMemoryCache.set(idStr, normalized)
+    return normalized
   } catch {
     return []
   }

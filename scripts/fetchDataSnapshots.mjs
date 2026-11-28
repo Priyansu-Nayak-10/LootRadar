@@ -1,8 +1,14 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { collectNewsSnapshot } from './lib/news.mjs'
-import { collectItadSnapshot } from './lib/itad.mjs'
-import { freeGameMergeKey } from '../src/lib/freeGames.js'
+import {
+  bestDeal,
+  collectItadSnapshot,
+  createItadClient,
+  fetchPrices,
+  resolveItadId,
+} from './lib/itad.mjs'
+import { cleanTitle, freeGameMergeKey, isMobile, normalizeStore, parseWorthUsd } from '../src/lib/freeGames.js'
 
 const USER_AGENT = 'WishRadar/1.0 (free portfolio project)'
 const DATA_DIR = new URL('../public/data/', import.meta.url)
@@ -83,19 +89,89 @@ export async function runItadSnapshot({ outDir = DATA_DIR } = {}) {
   }
 }
 
+export async function runFxSnapshot({ outDir = DATA_DIR } = {}) {
+  await mkdir(outDir, { recursive: true })
+  try {
+    const data = await fetchJson('https://api.frankfurter.dev/v1/latest?base=USD&symbols=INR')
+    const inr = Number(data?.rates?.INR)
+    if (!Number.isFinite(inr) || inr <= 0) {
+      throw new Error('Invalid INR rate in Frankfurter response')
+    }
+    const payload = {
+      base: 'USD',
+      rates: { INR: inr },
+      updatedAt: data?.date || new Date().toISOString().slice(0, 10),
+      source: 'Frankfurter (ECB)',
+    }
+    await saveJson('fx-rates.json', payload, outDir)
+    return payload
+  } catch (error) {
+    console.warn('FX snapshot failed (keeping previous fx-rates.json):', error?.message || 'unknown error')
+    return null
+  }
+}
+
+async function enrichGamerPowerWorthWithItad(activeGames, itadWorthMap) {
+  const apiKey = process.env.ITAD_API_KEY?.trim()
+  if (!apiKey) return
+
+  const candidates = []
+  const seenKeys = new Set()
+  for (const game of activeGames) {
+    if (isMobile(game)) continue
+    if (String(game.type || 'Game').toLowerCase() !== 'game') continue
+    const cleaned = cleanTitle(game.title)
+    const mergeKey = freeGameMergeKey(cleaned)
+    if (!mergeKey || itadWorthMap.has(mergeKey) || seenKeys.has(mergeKey)) continue
+    seenKeys.add(mergeKey)
+    candidates.push({ title: cleaned, mergeKey })
+  }
+
+  if (candidates.length === 0) return
+
+  try {
+    const client = createItadClient({ apiKey, maxRequests: 40, delayMs: 150 })
+    const resolved = []
+    for (const item of candidates.slice(0, 25)) {
+      const itadId = await resolveItadId(client, item.title)
+      if (itadId) resolved.push({ ...item, itadId })
+    }
+    if (resolved.length === 0) return
+
+    const priceEntries = await fetchPrices(client, resolved.map((r) => r.itadId))
+    const byId = new Map(priceEntries.map((p) => [p.id, p]))
+    for (const item of resolved) {
+      const entry = byId.get(item.itadId)
+      const deal = entry ? bestDeal(entry) : null
+      const regular = Number(deal?.regular || entry?.deals?.[0]?.regular?.amount || 0)
+      if (regular > 0) {
+        itadWorthMap.set(item.mergeKey, {
+          amount: regular,
+          currency: 'INR',
+          source: deal?.shop || 'ITAD',
+        })
+      }
+    }
+  } catch (error) {
+    console.warn('ITAD worth enrichment warning:', error?.message || 'unknown error')
+  }
+}
+
 async function main() {
   await mkdir(DATA_DIR, { recursive: true })
 
   const skipNews = process.argv.includes('--skip-news')
-  const [itadRes, newsRes, freeGamesRes, alwaysFreeRes] = await Promise.allSettled([
+  const [itadRes, newsRes, fxRes, freeGamesRes, alwaysFreeRes] = await Promise.allSettled([
     runItadSnapshot(),
     skipNews ? Promise.resolve({ articles: [] }) : runNewsSnapshot(),
-    fetchJson('https://www.gamerpower.com/api/giveaways?type=game'),
+    runFxSnapshot(),
+    fetchJson('https://www.gamerpower.com/api/giveaways'),
     fetchJson('https://www.freetogame.com/api/games'),
   ])
 
   const itadSnapshot = itadRes.status === 'fulfilled' ? itadRes.value : { deals: [], free: [] }
   const newsSnapshot = newsRes.status === 'fulfilled' ? newsRes.value : { articles: [] }
+  const fxSnapshot = fxRes.status === 'fulfilled' ? fxRes.value : null
 
   // Build lookup map for ITAD INR worth
   const itadWorthMap = new Map()
@@ -114,25 +190,27 @@ async function main() {
 
   let cleanFreeGames = []
   if (freeGamesRes.status === 'fulfilled' && Array.isArray(freeGamesRes.value)) {
-    cleanFreeGames = freeGamesRes.value
-      .filter((game) => game.status === 'Active')
-      .map((game) => {
-        const mergeKey = freeGameMergeKey(game.title)
-        const matchedWorth = itadWorthMap.get(mergeKey) || null
-        // Never store USD worth (e.g. "$4.99") as INR
-        const worth = matchedWorth || (game.worth?.currency === 'INR' ? game.worth : null)
+    const activeGp = freeGamesRes.value.filter((game) => game.status === 'Active')
+    await enrichGamerPowerWorthWithItad(activeGp, itadWorthMap)
 
-        return {
-          id: game.id,
-          title: game.title,
-          platforms: game.platforms,
-          thumbnail: game.thumbnail,
-          worth,
-          end_date: game.end_date,
-          open_giveaway_url: game.open_giveaway_url,
-          gamerpower_url: game.gamerpower_url,
-        }
-      })
+    cleanFreeGames = activeGp.map((game) => {
+      const mergeKey = freeGameMergeKey(cleanTitle(game.title))
+      const matchedWorth = itadWorthMap.get(mergeKey) || null
+      const worth = matchedWorth || (parseWorthUsd(game.worth) > 0 ? game.worth : null)
+
+      return {
+        id: game.id,
+        title: game.title,
+        type: game.type || 'Game',
+        store: normalizeStore(game),
+        platforms: game.platforms,
+        thumbnail: game.thumbnail,
+        worth,
+        end_date: game.end_date,
+        open_giveaway_url: game.open_giveaway_url,
+        gamerpower_url: game.gamerpower_url,
+      }
+    })
 
     await saveJson('gamerpower-free-games.json', {
       generatedAt: new Date().toISOString(),
@@ -146,21 +224,16 @@ async function main() {
 
   let cleanAlwaysFreeGames = []
   if (alwaysFreeRes.status === 'fulfilled' && Array.isArray(alwaysFreeRes.value)) {
-    cleanAlwaysFreeGames = alwaysFreeRes.value
-      .slice(0, 120)
-      .map((game) => ({
-        id: game.id,
-        title: game.title,
-        description: game.short_description,
-        genre: game.genre,
-        platform: game.platform,
-        publisher: game.publisher,
-        developer: game.developer,
-        releaseDate: game.release_date,
-        thumbnail: game.thumbnail,
-        gameUrl: game.game_url,
-        profileUrl: game.freetogame_profile_url,
-      }))
+    cleanAlwaysFreeGames = alwaysFreeRes.value.map((game) => ({
+      id: game.id,
+      title: game.title,
+      thumbnail: game.thumbnail,
+      genre: game.genre,
+      platform: game.platform,
+      publisher: game.publisher,
+      game_url: game.game_url,
+      short_description: String(game.short_description || '').trim().slice(0, 140),
+    }))
 
     await saveJson('always-free-games.json', {
       generatedAt: new Date().toISOString(),
@@ -173,7 +246,7 @@ async function main() {
   }
 
   console.log(
-    `Saved ${cleanFreeGames.length} free games, ${cleanAlwaysFreeGames.length} always-free games, ${itadSnapshot.deals?.length || 0} ITAD deals, and ${newsSnapshot.articles.length} news stories`
+    `Saved ${cleanFreeGames.length} free giveaways, ${cleanAlwaysFreeGames.length} always-free games, ${itadSnapshot.deals?.length || 0} ITAD deals, FX=${fxSnapshot?.rates?.INR || 'kept'}, and ${newsSnapshot.articles.length} news stories`
   )
 }
 

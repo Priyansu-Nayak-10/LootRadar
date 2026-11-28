@@ -26,6 +26,7 @@ export function cleanTitle(title) {
 
 export function isMobile(item) {
   if (!item || typeof item !== 'object') return false
+  if (item.isMobile) return true
   const platforms = String(item.platforms || item.platform || '').toLowerCase()
   const title = String(item.title || '').toLowerCase()
   return /(android|ios|mobile|iphone|ipad)/i.test(`${platforms} ${title}`)
@@ -54,6 +55,9 @@ export function normalizeStore(item) {
   if (haystack.includes('ea store') || haystack.includes('origin')) return 'EA Store'
   if (haystack.includes('gog')) return 'GOG'
   if (haystack.includes('itch')) return 'itch.io'
+  if (haystack.includes('indiegala')) return 'IndieGala'
+  if (haystack.includes('stove')) return 'STOVE'
+  if (/\b(rift|oculus|meta|quest)\b/.test(haystack)) return 'Meta Quest'
   if (haystack.includes('amazon') || haystack.includes('prime')) return 'Prime/Amazon'
   if (haystack.includes('ubisoft') || haystack.includes('uplay')) return 'Ubisoft'
 
@@ -255,24 +259,51 @@ export function isOfficialStoreSource(item) {
   return false
 }
 
-export function formatWorthInr(worth) {
+export function formatWorthInr(worth, usdToInrRate = null) {
   if (worth == null) return null
-  let amount = null
-  let currency = 'INR'
 
   if (typeof worth === 'object') {
-    amount = worth.amount
-    currency = worth.currency || 'INR'
-  } else if (typeof worth === 'number' || typeof worth === 'string') {
-    amount = worth
+    const currency = worth.currency || 'INR'
+    if (currency === 'INR') {
+      const val = Number(worth.amount)
+      if (!Number.isFinite(val) || val <= 0) return null
+      const hasPaise = Math.abs(val - Math.trunc(val)) > 0.001
+      return hasPaise ? INR_PAISE_FORMATTER.format(val) : INR_WHOLE_FORMATTER.format(val)
+    }
+    if (currency === 'USD') {
+      const usd = parseWorthUsd(worth.amount)
+      if (usd <= 0 || !Number.isFinite(Number(usdToInrRate)) || Number(usdToInrRate) <= 0) return null
+      const rawInr = usd * Number(usdToInrRate)
+      const rounded = rawInr < 1000 ? Math.round(rawInr) : Math.round(rawInr / 5) * 5
+      return rounded > 0 ? `≈ ${INR_WHOLE_FORMATTER.format(rounded)}` : null
+    }
+    return null
   }
 
-  if (currency !== 'INR') return null
-  const val = Number(amount)
-  if (!Number.isFinite(val) || val <= 0) return null
+  if (typeof worth === 'string') {
+    const trimmed = worth.trim()
+    if (!trimmed || /^n\/a$/i.test(trimmed)) return null
+    const isUsdString = trimmed.includes('$') || /\busd\b/i.test(trimmed)
+    if (!isUsdString) {
+      const val = parseWorthUsd(trimmed)
+      if (!Number.isFinite(val) || val <= 0) return null
+      const hasPaise = Math.abs(val - Math.trunc(val)) > 0.001
+      return hasPaise ? INR_PAISE_FORMATTER.format(val) : INR_WHOLE_FORMATTER.format(val)
+    }
+    const usd = parseWorthUsd(trimmed)
+    if (usd <= 0 || !Number.isFinite(Number(usdToInrRate)) || Number(usdToInrRate) <= 0) return null
+    const rawInr = usd * Number(usdToInrRate)
+    const rounded = rawInr < 1000 ? Math.round(rawInr) : Math.round(rawInr / 5) * 5
+    return rounded > 0 ? `≈ ${INR_WHOLE_FORMATTER.format(rounded)}` : null
+  }
 
-  const hasPaise = Math.abs(val - Math.trunc(val)) > 0.001
-  return hasPaise ? INR_PAISE_FORMATTER.format(val) : INR_WHOLE_FORMATTER.format(val)
+  if (typeof worth === 'number') {
+    if (!Number.isFinite(worth) || worth <= 0) return null
+    const hasPaise = Math.abs(worth - Math.trunc(worth)) > 0.001
+    return hasPaise ? INR_PAISE_FORMATTER.format(worth) : INR_WHOLE_FORMATTER.format(worth)
+  }
+
+  return null
 }
 
 export function normalizeItadFreeItem(item) {
@@ -305,6 +336,7 @@ export function normalizeItadFreeItem(item) {
     worth,
     open_giveaway_url: steamUrl || item.url || '',
     url: item.url || '',
+    type: item.type || 'Game',
     _isItad: true,
   }
 }
@@ -375,11 +407,15 @@ export function dedupe(items = [], { log = false } = {}) {
 
     const initialWorth = item.worth?.currency === 'INR'
       ? item.worth
-      : (worthInr > 0 ? { amount: worthInr, currency: 'INR', source: store || 'Official' } : null)
+      : (worthInr > 0
+        ? { amount: worthInr, currency: 'INR', source: store || 'Official' }
+        : (parseWorthUsd(item.worth) > 0 ? item.worth : null))
 
     const normalizedItem = {
       ...item,
       title,
+      store: item.store || store,
+      isMobile: isMobile(item),
       worthInr,
       worth: initialWorth,
       open_giveaway_url: officialUrl || item.open_giveaway_url || item.url || item.gamerpower_url || '',
@@ -463,12 +499,17 @@ export function dedupe(items = [], { log = false } = {}) {
       ? chosen.worth
       : (dropped.worth?.currency === 'INR'
         ? dropped.worth
-        : (bestWorthInr > 0 ? { amount: bestWorthInr, currency: 'INR', source: chosen.store || dropped.store || 'ITAD' } : null))
+        : (bestWorthInr > 0
+          ? { amount: bestWorthInr, currency: 'INR', source: chosen.store || dropped.store || 'ITAD' }
+          : (parseWorthUsd(chosen.worth) > 0 ? chosen.worth : (parseWorthUsd(dropped.worth) > 0 ? dropped.worth : null))))
 
     map.set(compositeKey, {
       ...dropped,
       ...chosen,
       title: pickNicerTitle(chosen.title, dropped.title),
+      store: chosen.store || dropped.store || store,
+      isMobile: Boolean(chosen.isMobile || dropped.isMobile),
+      type: chosen.type || dropped.type || 'Game',
       image: bestImage,
       thumbnail: bestThumb,
       open_giveaway_url: bestUrl,

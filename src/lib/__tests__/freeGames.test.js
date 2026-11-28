@@ -154,9 +154,58 @@ describe('freeGames helpers', () => {
       assert.equal(normalizeStore({ platforms: 'Ubisoft Connect' }), 'Ubisoft')
     })
 
+    it('identifies IndieGala, STOVE, and Meta Quest correctly', () => {
+      assert.equal(normalizeStore({ title: 'Last Room (IndieGala) Giveaway', platforms: 'PC, DRM-Free' }), 'IndieGala')
+      assert.equal(normalizeStore({ title: 'Sausage Hunter (Indiegala) Giveaway', platforms: 'PC, DRM-Free' }), 'IndieGala')
+      assert.equal(normalizeStore({ title: 'ANCIENT EVIL (IndieGala) Giveaway', platforms: 'PC, DRM-Free' }), 'IndieGala')
+      assert.equal(normalizeStore({ title: 'GigaBash (Stove) Giveaway', platforms: 'PC' }), 'STOVE')
+      assert.equal(normalizeStore({ title: 'Sharknado VR (Rift) Giveaway', platforms: 'VR' }), 'Meta Quest')
+      assert.equal(normalizeStore({ platforms: 'Oculus Quest 2' }), 'Meta Quest')
+    })
+
+    it('preserves store after dedupe strips title tags and still excludes (Mobile)', () => {
+      const merged = mergeFreeSources({
+        gamerPowerItems: [
+          { id: 1, title: 'Last Room (IndieGala) Giveaway', platforms: 'PC, DRM-Free', end_date: 'N/A' },
+          { id: 2, title: 'Sausage Hunter (Indiegala) Giveaway', platforms: 'PC, DRM-Free', end_date: 'N/A' },
+          { id: 3, title: 'GigaBash (Stove) Giveaway', platforms: 'PC', end_date: 'N/A' },
+          { id: 4, title: 'Sharknado VR (Rift) Giveaway', platforms: 'VR', end_date: 'N/A' },
+          { id: 5, title: 'Lonesome Village (Mobile) Giveaway', platforms: 'Android, iOS', end_date: 'N/A' },
+        ],
+      })
+      assert.equal(merged.length, 4)
+      assert.deepEqual(
+        merged.map((g) => normalizeStore(g)),
+        ['IndieGala', 'IndieGala', 'STOVE', 'Meta Quest']
+      )
+      assert.equal(merged[0].title, 'Last Room')
+      assert.equal(merged[1].title, 'Sausage Hunter')
+    })
+
     it('falls back to Other', () => {
       assert.equal(normalizeStore({ platforms: 'DRM-Free' }), 'Other')
       assert.equal(normalizeStore(null), 'Other')
+    })
+  })
+
+  describe('formatWorthInr', () => {
+    it('passes through exact INR worth objects unchanged', () => {
+      assert.equal(formatWorthInr({ amount: 179, currency: 'INR' }, 93), '₹179')
+      assert.equal(formatWorthInr({ amount: 539, currency: 'INR' }, 93), '₹539')
+    })
+
+    it('converts USD worth strings using FX rate and rounds to nearest ₹1 below ₹1000 and nearest ₹5 at/above ₹1000', () => {
+      assert.equal(formatWorthInr('$4.99', 83.17), '≈ ₹415')
+      assert.equal(formatWorthInr('$29.99', 93), '≈ ₹2,790')
+      assert.equal(formatWorthInr({ amount: 15, currency: 'USD' }, 93), '≈ ₹1,395')
+    })
+
+    it('returns null for N/A, 0, null, or free-to-play', () => {
+      assert.equal(formatWorthInr('N/A', 93), null)
+      assert.equal(formatWorthInr('$0.00', 93), null)
+      assert.equal(formatWorthInr(0, 93), null)
+      assert.equal(formatWorthInr(null, 93), null)
+      assert.equal(formatWorthInr({ amount: 0, currency: 'INR' }, 93), null)
     })
   })
 

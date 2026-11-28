@@ -101,7 +101,7 @@ export default function DealCard({
 
         <div className="deal-card__meta-row">
           <span className="wr-store-chip">
-            <StoreIcon store={resolvedStore} size={13} />
+            <StoreIcon store={resolvedStore} size={14} />
             {resolvedStore}
           </span>
           {expiryLabel ? (

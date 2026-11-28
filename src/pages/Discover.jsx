@@ -1,9 +1,5 @@
 import { Component, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  PcIcon,
-  PlayStationIcon,
-  XboxIcon,
-  SwitchIcon,
   HeartIcon,
   CheckIcon,
   ChevronLeftIcon,
@@ -12,6 +8,7 @@ import {
   CloseIcon,
   ChevronDownIcon,
 } from '../components/icons'
+import PlatformIcons from '../components/PlatformIcons'
 import { fetchRawgGames, searchGamesMulti, hasRawgKey } from '../lib/discoverApi'
 import { cleanNewsText, fetchNewsSnapshot, formatNewsRelativeTime } from '../lib/newsHelpers'
 import GameActions from '../components/GameActions'
@@ -91,40 +88,6 @@ function formatCountdown(endDate, now) {
   return `${mins}m left`
 }
 
-function PlatformIcons({ platforms }) {
-  if (!Array.isArray(platforms)) return null
-  const slugs = platforms.map((p) => (p.platform?.slug || p.platform?.name || '').toLowerCase())
-
-  const icons = []
-  const hasPC = slugs.some((s) => s.includes('pc') || s.includes('windows') || s.includes('linux') || s.includes('mac'))
-  const hasPS = slugs.some((s) => s.includes('playstation') || s.includes('ps'))
-  const hasXbox = slugs.some((s) => s.includes('xbox'))
-  const hasNintendo = slugs.some((s) => s.includes('nintendo') || s.includes('switch') || s.includes('wii'))
-
-  if (hasPC) {
-    icons.push(
-      <PcIcon key="pc" size={16} strokeWidth={1.8} className="platform-icon" title="PC" aria-label="PC" />
-    )
-  }
-  if (hasPS) {
-    icons.push(
-      <PlayStationIcon key="ps" size={16} className="platform-icon" title="PlayStation" aria-label="PlayStation" />
-    )
-  }
-  if (hasXbox) {
-    icons.push(
-      <XboxIcon key="xbox" size={16} className="platform-icon" title="Xbox" aria-label="Xbox" />
-    )
-  }
-  if (hasNintendo) {
-    icons.push(
-      <SwitchIcon key="nintendo" size={16} className="platform-icon" title="Nintendo" aria-label="Nintendo" />
-    )
-  }
-
-  return <>{icons.slice(0, 3)}</>
-}
-
 const GameTile = memo(function GameTile({ game, badge, getGameActions, onOpenGameDetail }) {
   const platformNames = (game.platforms || [])
     .map((item) => item.platform?.name)
@@ -189,7 +152,7 @@ const GameTile = memo(function GameTile({ game, badge, getGameActions, onOpenGam
             </div>
           )}
           <div className="search-tile__platforms" aria-label="Platforms">
-            <PlatformIcons platforms={game.platforms} />
+            <PlatformIcons platforms={game.platforms} size={16} maxIcons={3} />
           </div>
         </div>
       </div>

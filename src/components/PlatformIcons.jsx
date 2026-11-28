@@ -1,8 +1,19 @@
+/*
+ * Platform icon sources and licenses:
+ * - Simple Icons via react-icons/si (CC0 1.0)
+ * - Font Awesome Free via react-icons/fa6 (CC BY 4.0)
+ * - Bootstrap Icons via react-icons/bs (MIT)
+ * Brand marks belong to their respective owners and are used only to identify platforms.
+ */
 import { memo } from 'react'
-import { PcIcon } from './icons'
-import { PlayStationIcon, XboxIcon, SwitchIcon } from './icons/BrandIcons'
+import { WindowsIcon, PlayStationIcon, XboxIcon, SwitchIcon } from './icons/BrandIcons'
 
-export const PlatformIcons = memo(function PlatformIcons({ platforms, size = 16, className = 'platform-icon' }) {
+export const PlatformIcons = memo(function PlatformIcons({
+  platforms,
+  size = 18,
+  className = 'platform-icon',
+  maxIcons,
+}) {
   if (!Array.isArray(platforms) || platforms.length === 0) return null
 
   const slugs = platforms.map((p) => {
@@ -18,7 +29,7 @@ export const PlatformIcons = memo(function PlatformIcons({ platforms, size = 16,
 
   if (hasPC) {
     icons.push(
-      <PcIcon key="pc" size={size} strokeWidth={1.8} className={className} title="PC" aria-label="PC" />
+      <WindowsIcon key="pc" size={size} className={className} title="PC" aria-label="PC" />
     )
   }
   if (hasPS) {
@@ -33,13 +44,21 @@ export const PlatformIcons = memo(function PlatformIcons({ platforms, size = 16,
   }
   if (hasNintendo) {
     icons.push(
-      <SwitchIcon key="nintendo" size={size} className={className} title="Nintendo" aria-label="Nintendo" />
+      <SwitchIcon key="nintendo" size={size} className={className} title="Nintendo Switch" aria-label="Nintendo Switch" />
     )
   }
 
   if (icons.length === 0) return null
 
-  return <>{icons}</>
+  const visible = typeof maxIcons === 'number' ? icons.slice(0, maxIcons) : icons
+  return (
+    <span
+      className="wr-platform-icons"
+      style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+    >
+      {visible}
+    </span>
+  )
 })
 
 export default PlatformIcons

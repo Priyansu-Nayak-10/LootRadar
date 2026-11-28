@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import SafeImage from './SafeImage.jsx'
+import PlatformIcons from './PlatformIcons.jsx'
 import { fetchRawgGames, hasRawgKey } from '../lib/discoverApi.js'
 import { titleKey } from '../lib/wishlistAlerts.js'
 import { formatDealPrice, matchDealForGame } from '../lib/dealsData.js'
 import {
-  PcIcon,
-  PlayStationIcon as PsIcon,
-  XboxIcon,
   HeartIcon,
   StarIcon,
   ChevronLeftIcon,
@@ -43,32 +41,14 @@ function SetupHint() {
 
 // ─── Platform Icons Component ────────────────────────────────────────────────
 function GamePlatformIcons({ game }) {
-  const haystack = useMemo(() => {
-    const list = []
-    if (Array.isArray(game.parent_platforms)) {
-      for (const p of game.parent_platforms) {
-        if (p?.platform?.slug) list.push(p.platform.slug.toLowerCase())
-        if (p?.platform?.name) list.push(p.platform.name.toLowerCase())
-      }
-    }
-    if (Array.isArray(game.platforms)) {
-      for (const p of game.platforms) {
-        if (p?.platform?.slug) list.push(p.platform.slug.toLowerCase())
-        if (p?.platform?.name) list.push(p.platform.name.toLowerCase())
-      }
-    }
-    return list.join(' ')
-  }, [game])
-
-  const hasPc = haystack.includes('pc') || haystack.includes('windows')
-  const hasPs = haystack.includes('playstation') || haystack.includes('ps')
-  const hasXbox = haystack.includes('xbox')
+  const combined = useMemo(
+    () => [...(game.parent_platforms || []), ...(game.platforms || [])],
+    [game.parent_platforms, game.platforms]
+  )
 
   return (
     <div className="popular-game-card__platform-icons" aria-label="Available platforms">
-      {hasPc && <PcIcon />}
-      {hasPs && <PsIcon />}
-      {hasXbox && <XboxIcon />}
+      <PlatformIcons platforms={combined} size={16} />
     </div>
   )
 }
