@@ -45,7 +45,7 @@ const POPULAR_STARTER_GAMES = [
   },
 ]
 
-export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
+export default function Library({ games = [], syncing = false, onAdd, onRemove, onNavigate }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [activePlatform, setActivePlatform] = useState('All')
   const [sortBy, setSortBy] = useState('recent') // 'recent' | 'az' | 'za'
@@ -154,7 +154,12 @@ export default function Library({ games = [], onAdd, onRemove, onNavigate }) {
         </div>
       )}
 
-      {games.length === 0 ? (
+      {games.length === 0 && syncing ? (
+        <div className="list-sync-state" role="status" aria-busy="true">
+          <div className="lr-skeleton list-sync-state__bar" />
+          <p className="list-sync-state__label">Syncing your lists…</p>
+        </div>
+      ) : games.length === 0 ? (
         <div className="library-empty">
           <div className="library-empty__icon" aria-hidden="true">
             <LibraryIcon size={28} strokeWidth={1.75} />

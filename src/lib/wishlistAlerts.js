@@ -187,16 +187,24 @@ export function shouldSendWishlistAlert(arg1, arg2, arg3, arg4, arg5) {
   // 2. Anti-spam / re-alert conditions
   if (gameRecord.last_alerted_at) {
     const lastDiscount = Number(gameRecord.last_alerted_discount || 0)
-    const lastPrice = Number(gameRecord.last_alerted_price || 0)
+    const lastPrice = Number(gameRecord.last_alerted_price ?? 0)
+    const hasLastPrice =
+      gameRecord.last_alerted_price !== null &&
+      gameRecord.last_alerted_price !== undefined &&
+      Number.isFinite(Number(gameRecord.last_alerted_price))
 
     const is15PointsDeeper = discount >= lastDiscount + 15
-    const isNewAllTimeLow = lowest != null && salePrice < lowest
-    const isNewPriceDrop = lastPrice > 0 && salePrice < lastPrice
+    const isNewAllTimeLow =
+      lowest != null &&
+      salePrice < lowest &&
+      (!hasLastPrice || salePrice < lastPrice)
+    const wasLastFree = lastDiscount >= 100 || (hasLastPrice && lastPrice === 0)
+    const isNewlyFree = Boolean(evalResult.isFree) && !wasLastFree
 
-    if (!is15PointsDeeper && !isNewAllTimeLow && !isNewPriceDrop && !evalResult.isFree) {
+    if (!is15PointsDeeper && !isNewAllTimeLow && !isNewlyFree) {
       return {
         shouldAlert: false,
-        reason: 'Already alerted for this sale (must be 15% deeper or new low)',
+        reason: 'Already alerted for this sale (must be 15% deeper, new all-time low, or newly free)',
       }
     }
   }

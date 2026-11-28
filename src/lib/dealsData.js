@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState, useMemo } from 'react'
+import { loadSnapshot } from './snapshots.js'
+import { useNow } from './nowStore.js'
 
 export const ITAD_DEALS_URL = '/data/itad-deals.json'
 const DEALS_CACHE_KEY = 'wishradar_itad_deals_v2'
@@ -386,39 +388,7 @@ export async function fetchDealsData(forceRefresh = false) {
 
   inFlightPromise = (async () => {
     try {
-      let response
-      try {
-        response = await fetch(ITAD_DEALS_URL, { cache: 'no-cache' })
-      } catch (netErr) {
-        const err = new Error('NETWORK_ERROR: Network connection failed while fetching deals')
-        err.cause = netErr
-        throw err
-      }
-
-      if (response.status === 404) {
-        throw new Error('NOT_FOUND: Deals snapshot file /data/itad-deals.json not found (404)')
-      }
-
-      const contentType = response.headers.get('content-type') || ''
-      if (
-        contentType.includes('text/html') ||
-        (!contentType.includes('json') && !contentType.includes('text/plain'))
-      ) {
-        throw new Error('NOT_FOUND: Server returned HTML index fallback instead of JSON deals snapshot')
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP_ERROR: Server returned HTTP ${response.status}`)
-      }
-
-      let snapshot
-      try {
-        snapshot = await response.json()
-      } catch (parseErr) {
-        const err = new Error('INVALID_DATA: Deals snapshot is not valid JSON')
-        err.cause = parseErr
-        throw err
-      }
+      const snapshot = await loadSnapshot('itad-deals', { refresh: forceRefresh })
 
       if (!snapshot || typeof snapshot !== 'object') {
         throw new Error('INVALID_DATA: Deals snapshot root is not an object')
@@ -461,7 +431,7 @@ export async function fetchDealsData(forceRefresh = false) {
   return inFlightPromise
 }
 
-export function useDeals() {
+export function useDealsData() {
   const initial = memoryCache || readSessionCache()
   const [state, setState] = useState(() => ({
     deals: initial?.deals || [],
@@ -474,15 +444,6 @@ export function useDeals() {
     errorMessage: '',
   }))
   const [reloadKey, setReloadKey] = useState(0)
-  const [now, setNow] = useState(() => Date.now())
-
-  // Shared 60-second timer to re-evaluate active deals and expire countdowns dynamically
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setNow(Date.now())
-    }, 60000)
-    return () => clearInterval(timer)
-  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -548,20 +509,31 @@ export function useDeals() {
     setReloadKey((k) => k + 1)
   }, [])
 
-  const ageMs = state.generatedAt ? Math.max(0, now - Date.parse(state.generatedAt)) : 0
-  const isStale = Boolean(state.generatedAt) && Number.isFinite(ageMs) && ageMs > STALE_THRESHOLD_MS
-
-  const activeDeals = useMemo(() => {
-    return (state.deals || []).filter((deal) => isDealActive(deal, now))
-  }, [state.deals, now])
-
   return {
     ...state,
-    deals: activeDeals,
-    allDeals: state.deals,
-    now,
-    updatedLabel: formatUpdatedAgo(state.generatedAt, now),
-    isStale,
     reload,
+  }
+}
+
+export function useDeals({ subscribeToTime = false } = {}) {
+  const data = useDealsData()
+  const staticNow = useMemo(() => Date.now(), [])
+  const liveNow = subscribeToTime ? useNow() : staticNow
+  const now = subscribeToTime ? liveNow : staticNow
+
+  const ageMs = data.generatedAt ? Math.max(0, now - Date.parse(data.generatedAt)) : 0
+  const isStale = Boolean(data.generatedAt) && Number.isFinite(ageMs) && ageMs > STALE_THRESHOLD_MS
+
+  const activeDeals = useMemo(() => {
+    return (data.deals || []).filter((deal) => isDealActive(deal, now))
+  }, [data.deals, now])
+
+  return {
+    ...data,
+    deals: activeDeals,
+    allDeals: data.deals,
+    now,
+    updatedLabel: formatUpdatedAgo(data.generatedAt, now),
+    isStale,
   }
 }

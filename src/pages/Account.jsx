@@ -18,6 +18,8 @@ export default function Account({ session, onSignOut }) {
   const [preferencesLoading, setPreferencesLoading] = useState(false)
   const [loadError, setLoadError] = useState('')
   const [telegramError, setTelegramError] = useState(false)
+  const [settingsLoading, setSettingsLoading] = useState(Boolean(session && supabase))
+  const [telegramStatusLoading, setTelegramStatusLoading] = useState(Boolean(session && supabase))
   const [reloadTrigger, setReloadTrigger] = useState(0)
 
   const retryLoadData = () => {
@@ -27,8 +29,12 @@ export default function Account({ session, onSignOut }) {
   }
 
   useEffect(() => {
-    if (!session || !supabase) return
+    if (!session || !supabase) {
+      setSettingsLoading(false)
+      return
+    }
     let cancelled = false
+    setSettingsLoading(true)
 
     supabase
       .from('notification_settings')
@@ -37,6 +43,7 @@ export default function Account({ session, onSignOut }) {
       .maybeSingle()
       .then(({ data, error }) => {
         if (cancelled) return
+        setSettingsLoading(false)
         if (error) {
           setLoadError("Couldn't load your Telegram/alert settings.")
           return
@@ -55,8 +62,12 @@ export default function Account({ session, onSignOut }) {
   }, [session, reloadTrigger])
 
   useEffect(() => {
-    if (!session || !supabase) return
+    if (!session || !supabase) {
+      setTelegramStatusLoading(false)
+      return
+    }
     let cancelled = false
+    setTelegramStatusLoading(true)
 
     supabase
       .from('telegram_connections')
@@ -65,6 +76,7 @@ export default function Account({ session, onSignOut }) {
       .maybeSingle()
       .then(({ data, error }) => {
         if (cancelled) return
+        setTelegramStatusLoading(false)
         if (error) {
           setTelegramError(true)
           setLoadError("Couldn't load your Telegram/alert settings.")
@@ -292,7 +304,12 @@ export default function Account({ session, onSignOut }) {
         {message && <p className="form-message" role="status">{message}</p>}
         <div className="telegram-account-card" id="telegram-settings">
           <h3>Telegram alerts</h3>
-          {telegramError ? (
+          {telegramStatusLoading ? (
+            <div className="account-skeleton-stack" aria-busy="true" aria-label="Loading Telegram status">
+              <div className="lr-skeleton" style={{ width: '62%', height: 16 }} />
+              <div className="lr-skeleton" style={{ width: '160px', height: 38, borderRadius: 10 }} />
+            </div>
+          ) : telegramError ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
               <p style={{ margin: 0 }}>Couldn&apos;t load Telegram status.</p>
               <button
@@ -339,6 +356,10 @@ export default function Account({ session, onSignOut }) {
         </div>
         <div className="alert-settings-card">
           <h3>Alert preferences</h3>
+          <fieldset
+            disabled={settingsLoading || preferencesLoading}
+            style={{ border: 0, padding: 0, margin: 0, display: 'contents' }}
+          >
           <label className="settings-toggle">
             <input
               type="checkbox"
@@ -393,10 +414,11 @@ export default function Account({ session, onSignOut }) {
             type="button"
             className="form-submit"
             onClick={saveAlertPreferences}
-            disabled={preferencesLoading || (alertMode === 'platform' && alertPlatforms.length === 0)}
+            disabled={settingsLoading || preferencesLoading || (alertMode === 'platform' && alertPlatforms.length === 0)}
           >
-            {preferencesLoading ? 'Saving...' : 'Save alert preferences'}
+            {settingsLoading ? 'Loading preferences...' : preferencesLoading ? 'Saving...' : 'Save alert preferences'}
           </button>
+          </fieldset>
         </div>
         <button type="button" className="form-submit" onClick={signOut} disabled={loading}>
           {loading ? 'Signing out...' : 'Sign out'}

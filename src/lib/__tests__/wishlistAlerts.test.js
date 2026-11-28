@@ -202,6 +202,62 @@ describe('wishlistAlerts pure functions', () => {
       const decision = shouldSendWishlistAlert(savedGame, allTimeLowDeal, 'any');
       assert.equal(decision.shouldAlert, true);
     });
+
+    it('blocks re-alert on a plain 1-rupee price drop that is not 15% deeper or a new all-time low', () => {
+      const savedGame = {
+        notify: true,
+        last_alerted_at: new Date().toISOString(),
+        last_alerted_discount: 50,
+        last_alerted_price: 500,
+      };
+      const oneRupeeDrop = {
+        isFree: false,
+        savings: 50,
+        price: 499,
+        lowestPrice: 300,
+      };
+      const decision = shouldSendWishlistAlert(savedGame, oneRupeeDrop, 'any');
+      assert.equal(decision.shouldAlert, false);
+    });
+
+    it('allows re-alert when game becomes free after a discount alert', () => {
+      const savedGame = {
+        notify: true,
+        last_alerted_at: new Date().toISOString(),
+        last_alerted_discount: 50,
+        last_alerted_price: 250,
+      };
+      const freeDeal = { isFree: true, savings: 100, price: 0, lowestPrice: 250 };
+      const decision = shouldSendWishlistAlert(savedGame, freeDeal, 'great');
+      assert.equal(decision.shouldAlert, true);
+    });
+
+    it('blocks re-alert when game is free and last alert was already for free', () => {
+      const savedGame = {
+        notify: true,
+        last_alerted_at: new Date().toISOString(),
+        last_alerted_discount: 100,
+        last_alerted_price: 0,
+      };
+      const freeDeal = { isFree: true, savings: 100, price: 0, lowestPrice: 0 };
+      const decision = shouldSendWishlistAlert(savedGame, freeDeal, 'great');
+      assert.equal(decision.shouldAlert, false);
+    });
+
+    it('still enforces the 3-per-week cap even when +15% deeper or free', () => {
+      const savedGame = {
+        notify: true,
+        last_alerted_at: new Date().toISOString(),
+        last_alerted_discount: 20,
+        last_alerted_price: 800,
+        alert_count_this_week: 3,
+        alert_week_start: new Date().toISOString(),
+      };
+      const freeDeal = { isFree: true, savings: 100, price: 0, lowestPrice: 0 };
+      const decision = shouldSendWishlistAlert(savedGame, freeDeal, 'any');
+      assert.equal(decision.shouldAlert, false);
+      assert.equal(decision.reason, 'Weekly limit of 3 alerts reached');
+    });
   });
 
   describe('isAlertDue pure function', () => {

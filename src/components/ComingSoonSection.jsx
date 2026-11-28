@@ -1,8 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import SafeImage from './SafeImage.jsx'
+import { rawgImage } from '../lib/rawgImage.js'
+import { useNow } from '../lib/nowStore.js'
 import TimeLeft from './TimeLeft.jsx'
 import PlatformIcons from './PlatformIcons.jsx'
 import { fetchRawgGames, hasRawgKey } from '../lib/discoverApi.js'
+import { loadSnapshot } from '../lib/snapshots.js'
 import { cleanTitle, dedupeKey, formatStartsIn } from '../lib/freeGames.js'
 import { formatDealPrice, matchDealForGame } from '../lib/dealsData.js'
 import {
@@ -27,7 +30,7 @@ function ComingSoonPlatformIcons({ item }) {
 }
 
 // ─── Coming Soon Card ────────────────────────────────────────────────────────
-function ComingSoonCardItem({
+const ComingSoonCardItem = memo(function ComingSoonCardItem({
   item,
   deals = [],
   now,
@@ -102,7 +105,7 @@ function ComingSoonCardItem({
     <article className="coming-game-card" data-testid="coming-soon-card">
       <div className="coming-game-card__art">
         <SafeImage
-          src={item.image || item.background_image}
+          src={rawgImage(item.image || item.background_image, 420)}
           alt={title}
           className="coming-game-card__img"
           fallbackText={title.slice(0, 1)}
@@ -169,7 +172,7 @@ function ComingSoonCardItem({
       </div>
     </article>
   )
-}
+})
 
 // ─── Main Section Component ──────────────────────────────────────────────────
 export default function ComingSoonSection({
@@ -180,16 +183,10 @@ export default function ComingSoonSection({
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
-  const [now, setNow] = useState(Date.now())
+  const now = useNow()
 
   const sectionRef = useRef(null)
   const scrollRowRef = useRef(null)
-
-  // Update clock every minute
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 60000)
-    return () => clearInterval(id)
-  }, [])
 
   // Lazy loading observer
   useEffect(() => {
@@ -218,51 +215,46 @@ export default function ComingSoonSection({
       let epicUpcoming = []
       let rawgUpcoming = []
 
-      // 1. Fetch Epic upcoming snapshot
-      try {
-        const epicRes = await fetch('/data/epic-free-games.json')
-        if (epicRes.ok) {
-          const data = await epicRes.json()
-          if (Array.isArray(data?.upcoming)) {
-            epicUpcoming = data.upcoming.map((item) => ({
-              ...item,
-              type: 'giveaway',
-              sortTime: item.startDate ? new Date(item.startDate).getTime() : Infinity,
-            }))
-          }
-        }
-      } catch {
-        // ignore
+      // 1 & 2. Fetch Epic snapshot and RAWG upcoming releases (+90 days) in parallel
+      const today = new Date()
+      const in90Days = new Date(today.getTime() + 90 * 86400000)
+      const dateStr = `${today.toISOString().slice(0, 10)},${in90Days.toISOString().slice(0, 10)}`
+
+      const rawgPromise = hasRawgKey
+        ? fetchRawgGames(
+            {
+              dates: dateStr,
+              ordering: '-added',
+              platforms: '4,187,186,1,18',
+              page_size: '12',
+              exclude_additions: 'true',
+            },
+            'upcoming_releases_v2',
+            12 * 3600 * 1000
+          )
+        : Promise.resolve(null)
+
+      const [epicRes, rawgRes] = await Promise.allSettled([
+        loadSnapshot('epic-free-games'),
+        rawgPromise,
+      ])
+
+      if (epicRes.status === 'fulfilled' && Array.isArray(epicRes.value?.upcoming)) {
+        epicUpcoming = epicRes.value.upcoming.map((item) => ({
+          ...item,
+          type: 'giveaway',
+          sortTime: item.startDate ? new Date(item.startDate).getTime() : Infinity,
+        }))
       }
 
-      // 2. Fetch RAWG upcoming games (+90 days) if RAWG key exists
-      if (hasRawgKey) {
-        try {
-          const today = new Date()
-          const in90Days = new Date(today.getTime() + 90 * 86400000)
-          const dateStr = `${today.toISOString().slice(0, 10)},${in90Days.toISOString().slice(0, 10)}`
-
-          const params = {
-            dates: dateStr,
-            ordering: '-added',
-            platforms: '4,187,186,1,18',
-            page_size: '12',
-            exclude_additions: 'true',
-          }
-
-          const res = await fetchRawgGames(params, 'upcoming_releases_v2', 12 * 3600 * 1000)
-          const rawList = Array.isArray(res?.results) ? res.results : []
-
-          rawgUpcoming = rawList.map((item) => ({
-            ...item,
-            type: 'release',
-            title: item.name,
-            image: item.background_image,
-            sortTime: item.released ? new Date(`${item.released}T00:00:00`).getTime() : Infinity,
-          }))
-        } catch {
-          // ignore RAWG upcoming error
-        }
+      if (rawgRes.status === 'fulfilled' && Array.isArray(rawgRes.value?.results)) {
+        rawgUpcoming = rawgRes.value.results.map((item) => ({
+          ...item,
+          type: 'release',
+          title: item.name,
+          image: item.background_image,
+          sortTime: item.released ? new Date(`${item.released}T00:00:00`).getTime() : Infinity,
+        }))
       }
 
       // 3. Merge, dedupe by titleKey, drop items without image, sort ascending by date
@@ -358,8 +350,8 @@ export default function ComingSoonSection({
         </div>
       </header>
 
-      {/* Skeletons while loading */}
-      {loading && items.length === 0 && (
+      {/* Skeletons on mount and while loading */}
+      {(loading || !isVisible) && items.length === 0 && (
         <div className="coming-soon-section__row" aria-busy="true">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="popular-game-card-skeleton lr-skeleton" />

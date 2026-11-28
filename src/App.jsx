@@ -5,12 +5,10 @@ import { hasSupabaseConfig, supabase } from './lib/supabase'
 import SafeImage from './components/SafeImage'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useDeals } from './lib/dealsData'
-import { useGameSuggestions } from './hooks/useGameSuggestions'
-import SearchSuggestions from './components/SearchSuggestions'
-import GameDetailModal from './components/GameDetailModal'
+import { loadSnapshot } from './lib/snapshots'
+import HeaderSearch from './components/HeaderSearch'
 import {
   RadarMarkIcon,
-  SearchIcon,
   BellIcon,
   CompassIcon,
   GiftIcon,
@@ -19,12 +17,13 @@ import {
   HeartIcon,
   NewspaperIcon,
   AccountIcon,
-  ChevronDownIcon,
 } from './components/icons'
 import './App.css'
 import './styles/cardSystem.css'
 
-// Route-level code-splitting: lazy load pages to minimize initial bundle size
+// Route-level code-splitting: lazy load pages and heavy overlays
+const loadGameDetailModal = () => import('./components/GameDetailModal')
+const GameDetailModal = lazy(loadGameDetailModal)
 const Discover = lazy(() => import('./pages/Discover'))
 const FreeNow = lazy(() => import('./pages/FreeNow'))
 const Deals = lazy(() => import('./pages/Deals'))
@@ -34,12 +33,19 @@ const Account = lazy(() => import('./pages/Account'))
 const Library = lazy(() => import('./pages/Library'))
 
 function RouteFallback() {
+  const [showSpinner, setShowSpinner] = useState(false)
+  useEffect(() => {
+    const id = window.setTimeout(() => setShowSpinner(true), 150)
+    return () => window.clearTimeout(id)
+  }, [])
   return (
     <div className="lr-page-loader" role="status" aria-label="Loading page">
-      <div className="lr-page-loader__spinner" />
+      {showSpinner && <div className="lr-page-loader__spinner" />}
     </div>
   )
 }
+
+const NOOP = () => {}
 
 const TABS = [
   { id: 'discover', label: 'Home' },
@@ -122,14 +128,13 @@ export default function App() {
   const [wishlist, setWishlist] = useLocalStorage('wishradar_wishlist', [])
   const [availableFreeGames, setAvailableFreeGames] = useState([])
   const [session, setSession] = useState(null)
-  const [shellSearch, setShellSearch] = useState('')
-  const [shellCategory, setShellCategory] = useState('All')
+  const [submittedSearch, setSubmittedSearch] = useState('')
+  const [submittedCategory, setSubmittedCategory] = useState('All')
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
   const [syncError, setSyncError] = useState(false)
+  const [syncingLists, setSyncingLists] = useState(false)
 
-  // Search references & Game detail modal state
-  const searchFormRef = useRef(null)
-  const searchInputRef = useRef(null)
+  // Game detail modal state
   const [selectedGameForModal, setSelectedGameForModal] = useState(null)
   const gameModalTriggerRef = useRef(null)
 
@@ -144,6 +149,48 @@ export default function App() {
     setSelectedGameForModal(null)
   }, [])
 
+  // Preload GameDetailModal chunk on idle or on first hover/focus of a game card
+  useEffect(() => {
+    let preloaded = false
+    const preload = () => {
+      if (preloaded) return
+      preloaded = true
+      loadGameDetailModal()
+      document.removeEventListener('pointerover', onCardInteract, true)
+      document.removeEventListener('focusin', onCardInteract, true)
+    }
+    const onCardInteract = (event) => {
+      if (
+        event.target?.closest?.(
+          '.wr-card, .deal-card-redesign, .popular-game-card, .coming-game-card, .search-game-card, .free-card, .wishlist-card, .library-card'
+        )
+      ) {
+        preload()
+      }
+    }
+    document.addEventListener('pointerover', onCardInteract, true)
+    document.addEventListener('focusin', onCardInteract, true)
+
+    let idleId
+    let timerId
+    if (typeof window.requestIdleCallback === 'function') {
+      idleId = window.requestIdleCallback(preload, { timeout: 2500 })
+    } else {
+      timerId = window.setTimeout(preload, 2000)
+    }
+
+    return () => {
+      document.removeEventListener('pointerover', onCardInteract, true)
+      document.removeEventListener('focusin', onCardInteract, true)
+      if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(idleId)
+      }
+      if (timerId !== undefined) {
+        window.clearTimeout(timerId)
+      }
+    }
+  }, [])
+
   // Static snapshot sources for offer resolution
   const { deals } = useDeals()
   const [staticFreeGames, setStaticFreeGames] = useState({ freeGames: [], alwaysFree: [] })
@@ -153,18 +200,16 @@ export default function App() {
     async function loadSnapshots() {
       try {
         const [epicRes, alwaysRes] = await Promise.allSettled([
-          fetch('/data/epic-free-games.json'),
-          fetch('/data/always-free-games.json'),
+          loadSnapshot('epic-free-games'),
+          loadSnapshot('always-free-games'),
         ])
         let freeList = []
         let alwaysList = []
-        if (epicRes.status === 'fulfilled' && epicRes.value.ok) {
-          const epicData = await epicRes.value.json()
-          if (Array.isArray(epicData.current)) freeList = epicData.current
+        if (epicRes.status === 'fulfilled' && epicRes.value) {
+          if (Array.isArray(epicRes.value.current)) freeList = epicRes.value.current
         }
-        if (alwaysRes.status === 'fulfilled' && alwaysRes.value.ok) {
-          const alwaysData = await alwaysRes.value.json()
-          if (Array.isArray(alwaysData.games)) alwaysList = alwaysData.games
+        if (alwaysRes.status === 'fulfilled' && alwaysRes.value) {
+          if (Array.isArray(alwaysRes.value.games)) alwaysList = alwaysRes.value.games
         }
         if (!cancelled) {
           setStaticFreeGames({ freeGames: freeList, alwaysFree: alwaysList })
@@ -204,6 +249,7 @@ export default function App() {
     let cancelled = false
 
     async function syncSavedGames() {
+      if (!cancelled) setSyncingLists(true)
       try {
         const { data: rows, error } = await supabase
           .from('saved_games')
@@ -264,6 +310,8 @@ export default function App() {
         }
       } catch (error) {
         console.error('Could not sync saved games:', error.message)
+      } finally {
+        if (!cancelled) setSyncingLists(false)
       }
     }
 
@@ -311,14 +359,14 @@ export default function App() {
         const q = params.get('q') || ''
         const platform = params.get('platform') || 'All'
         if (q.trim()) {
-          setShellSearch(q)
-          setShellCategory(platform)
+          setSubmittedSearch(q)
+          setSubmittedCategory(platform)
           setTab('search')
           document.title = `Search: ${q} | WishRadar`
           return
         }
       } else {
-        setShellSearch('')
+        setSubmittedSearch('')
       }
       setTab(knownTabs.includes(route) ? route : 'not-found')
 
@@ -347,8 +395,12 @@ export default function App() {
   function navigateTab(nextTab) {
     setAccountMenuOpen(false)
     if (nextTab === 'free') setFreeTab('claim')
-    if (nextTab === 'discover') setShellSearch('')
+    if (nextTab === 'discover') setSubmittedSearch('')
+    const isTabChange = nextTab !== tab
     setTab(nextTab)
+    if (isTabChange && typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+      window.scrollTo({ top: 0, behavior: 'auto' })
+    }
     const titles = {
       discover: 'WishRadar | Your Game Intelligence',
       free: 'Free Games | WishRadar',
@@ -370,47 +422,22 @@ export default function App() {
     window.history.pushState({}, '', nextFreeTab === 'claim' ? '/free' : `/free?tab=${nextFreeTab}`)
   }
 
-  const executeShellSearch = useCallback((queryToUse) => {
-    const query = (queryToUse !== undefined ? queryToUse : shellSearch).trim()
+  const executeShellSearch = useCallback((queryToUse, categoryToUse = submittedCategory) => {
+    const query = (queryToUse !== undefined ? queryToUse : submittedSearch).trim()
+    const category = categoryToUse || 'All'
     if (query) {
-      setShellSearch(query)
+      setSubmittedSearch(query)
+      setSubmittedCategory(category)
       setTab('search')
       document.title = `Search: ${query} | WishRadar`
-      window.history.pushState({}, '', `/search?q=${encodeURIComponent(query)}&platform=${encodeURIComponent(shellCategory)}`)
+      window.history.pushState({}, '', `/search?q=${encodeURIComponent(query)}&platform=${encodeURIComponent(category)}`)
       window.dispatchEvent(new CustomEvent('wishradar-shell-search', {
-        detail: { query, category: shellCategory },
+        detail: { query, category },
       }))
     } else {
       navigateTab('discover')
     }
-  }, [shellSearch, shellCategory])
-
-  const headerSuggestions = useGameSuggestions({
-    category: shellCategory,
-    onSelectGame: (game) => {
-      handleOpenGameDetail(game, searchInputRef.current)
-    },
-    onSubmitSearch: (query) => {
-      executeShellSearch(query)
-    },
-  })
-
-  function submitShellSearch(event) {
-    if (event?.preventDefault) event.preventDefault()
-    headerSuggestions.close()
-    executeShellSearch()
-  }
-
-  // Close suggestions on outside click
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (searchFormRef.current && !searchFormRef.current.contains(event.target)) {
-        headerSuggestions.close()
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [headerSuggestions])
+  }, [submittedSearch, submittedCategory])
 
   async function signOut() {
     try {
@@ -551,78 +578,12 @@ export default function App() {
                 <span className="brand-caption">YOUR GAME INTELLIGENCE</span>
               </span>
             </a>
-            <form
-              className="shell-search"
-              onSubmit={submitShellSearch}
-              role="search"
-              ref={searchFormRef}
-            >
-              <label className="shell-category">
-                <span className="sr-only">Search category</span>
-                <select
-                  value={shellCategory}
-                  onChange={(event) => {
-                    setShellCategory(event.target.value)
-                    headerSuggestions.close()
-                  }}
-                  aria-label="Search category"
-                >
-                  {['All', 'PC', 'PlayStation', 'Xbox'].map((category) => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-                <ChevronDownIcon size={14} className="shell-category__chevron" />
-              </label>
-              <div className="shell-search-combo">
-                <input
-                  ref={searchInputRef}
-                  value={shellSearch}
-                  onChange={(event) => {
-                    setShellSearch(event.target.value)
-                    headerSuggestions.handleInputChange(event.target.value)
-                  }}
-                  onKeyDown={headerSuggestions.handleKeyDown}
-                  onFocus={() => {
-                    if (headerSuggestions.suggestions.length > 0 || shellSearch.trim().length >= 2) {
-                      headerSuggestions.setIsOpen(true)
-                    }
-                  }}
-                  placeholder="Search games"
-                  aria-label="Search all games across PC and consoles"
-                  role="combobox"
-                  aria-expanded={headerSuggestions.isOpen}
-                  aria-controls="shell-suggestions-list"
-                  aria-activedescendant={
-                    headerSuggestions.highlightedIndex >= 0
-                      ? `shell-suggestions-list-opt-${headerSuggestions.highlightedIndex}`
-                      : undefined
-                  }
-                  autoComplete="off"
-                />
-                {headerSuggestions.isOpen && (
-                  <SearchSuggestions
-                    suggestions={headerSuggestions.suggestions}
-                    loading={headerSuggestions.loading}
-                    error={headerSuggestions.error}
-                    query={shellSearch}
-                    highlightedIndex={headerSuggestions.highlightedIndex}
-                    listId="shell-suggestions-list"
-                    onSelectGame={(game) => {
-                      handleOpenGameDetail(game, searchInputRef.current)
-                      headerSuggestions.close()
-                    }}
-                    onSubmitSearch={(q) => {
-                      executeShellSearch(q)
-                      headerSuggestions.close()
-                    }}
-                    onHoverIndex={headerSuggestions.setHighlightedIndex}
-                  />
-                )}
-              </div>
-              <button type="submit" aria-label="Search">
-                <SearchIcon size={16} strokeWidth={2} />
-              </button>
-            </form>
+            <HeaderSearch
+              submittedQuery={submittedSearch}
+              submittedCategory={submittedCategory}
+              onSearchSubmit={executeShellSearch}
+              onSelectGame={handleOpenGameDetail}
+            />
             <div className="shell-actions">
               <button
                 type="button"
@@ -672,18 +633,22 @@ export default function App() {
           className="sync-error-banner"
           role="status"
           style={{
+            position: 'fixed',
+            top: '88px',
+            right: '20px',
+            zIndex: 60,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '12px',
-            padding: '10px 18px',
+            padding: '10px 14px',
             background: 'var(--surface)',
-            borderBottom: '1px solid var(--border-strong)',
+            border: '1px solid var(--border-strong)',
+            borderRadius: '14px',
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.45)',
             color: 'var(--text)',
             fontSize: '13px',
-            width: '100%',
-            maxWidth: '1200px',
-            margin: '0 auto',
+            maxWidth: 'min(420px, calc(100vw - 32px))',
             boxSizing: 'border-box',
           }}
         >
@@ -702,7 +667,8 @@ export default function App() {
 
       <main className="main-content">
         <ErrorBoundary key={tab}>
-          <Suspense fallback={<RouteFallback />}>
+          <div key={tab} className="lr-page-enter">
+            <Suspense fallback={<RouteFallback />}>
             {tab === 'free' && (
               <FreeNow
                 library={ownedGames}
@@ -710,7 +676,7 @@ export default function App() {
                 onAvailabilityChange={setAvailableFreeGames}
                 activeTab={freeTab}
                 onTabChange={navigateFreeTab}
-                onGameOpen={() => {}}
+                onGameOpen={NOOP}
                 session={session}
                 onNavigate={navigateTab}
               />
@@ -723,12 +689,11 @@ export default function App() {
                 getGameActions={saveActions}
                 onNavigate={navigateTab}
                 isSearchPage={tab === 'search'}
-                searchQuery={shellSearch}
-                searchCategory={shellCategory}
+                searchQuery={submittedSearch}
+                searchCategory={submittedCategory}
                 onSearchChange={(q, cat) => {
-                  setShellSearch(q)
-                  headerSuggestions.setQuery(q)
-                  if (cat) setShellCategory(cat)
+                  setSubmittedSearch(q)
+                  if (cat) setSubmittedCategory(cat)
                 }}
                 onOpenGameDetail={handleOpenGameDetail}
               />
@@ -739,6 +704,7 @@ export default function App() {
             {tab === 'library' && (
               <Library
                 games={ownedGames}
+                syncing={syncingLists}
                 onAdd={(game) => toggleSavedGame('library', ownedGames, setOwnedGames, game)}
                 onRemove={(title) => toggleSavedGame('library', ownedGames, setOwnedGames, { title })}
                 onNavigate={navigateTab}
@@ -747,6 +713,7 @@ export default function App() {
             {tab === 'wishlist' && (
               <Wishlist
                 games={wishlist}
+                syncing={syncingLists}
                 setGames={syncedSetter('wishlist', setWishlist)}
                 ownedGames={ownedGames}
                 freeGames={availableFreeGames}
@@ -772,7 +739,8 @@ export default function App() {
                 </button>
               </section>
             )}
-          </Suspense>
+            </Suspense>
+          </div>
         </ErrorBoundary>
       </main>
 
@@ -806,13 +774,15 @@ export default function App() {
       </nav>}
 
       {selectedGameForModal && (
-        <GameDetailModal
-          game={selectedGameForModal}
-          onClose={handleCloseGameDetail}
-          triggerRef={gameModalTriggerRef}
-          getGameActions={saveActions}
-          sources={modalSources}
-        />
+        <Suspense fallback={null}>
+          <GameDetailModal
+            game={selectedGameForModal}
+            onClose={handleCloseGameDetail}
+            triggerRef={gameModalTriggerRef}
+            getGameActions={saveActions}
+            sources={modalSources}
+          />
+        </Suspense>
       )}
     </div>
   )

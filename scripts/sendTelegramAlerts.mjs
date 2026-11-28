@@ -10,6 +10,19 @@ import {
   resolveItadId,
   shouldAlert,
 } from './lib/itad.mjs'
+import {
+  buildSentAlertKeySet,
+  buildWindowsFromSnapshots,
+  createRateLimiter,
+  formatFreeGameMessage,
+  formatWishlistDealMessage,
+  hasAlreadySentAlert,
+  maskUserId,
+  normalizeTitle,
+  resolveWindowStart,
+  sendWithRetries,
+  shouldSkipMidWindowForRecentLateDayBefore,
+} from './lib/telegramAlertHelpers.mjs'
 
 const DRY_RUN = process.env.DRY_RUN === '1' || process.argv.includes('--dry-run')
 const SUPABASE_URL = process.env.SUPABASE_URL
@@ -38,15 +51,6 @@ if (!DRY_RUN) {
   requireEnv('SUPABASE_URL', SUPABASE_URL)
   requireEnv('SUPABASE_SERVICE_ROLE_KEY', SUPABASE_KEY)
   requireEnv('TELEGRAM_BOT_TOKEN', TELEGRAM_BOT_TOKEN)
-}
-
-function normalizeTitle(value = '') {
-  return String(value)
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '')
-    .trim()
 }
 
 function formatInr(amount) {
@@ -95,56 +99,98 @@ async function loadJson(path) {
   return JSON.parse(await fs.readFile(path, 'utf8'))
 }
 
-function istLabel(value) {
-  if (!value) return 'time TBA'
-  return new Intl.DateTimeFormat('en-IN', {
-    timeZone: 'Asia/Kolkata',
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(value))
-}
+const rateLimiter = createRateLimiter({ perChatMs: 1100, minGlobalGapMs: 50 })
 
-function parseUtc(value) {
-  if (!value || value === 'N/A') return null
-  const date = new Date(String(value).replace(' ', 'T') + (String(value).includes('T') ? '' : 'Z'))
-  return Number.isNaN(date.getTime()) ? null : date.toISOString()
-}
-
-async function telegramSend(chatId, text) {
-  if (DRY_RUN) {
-    console.log(`[DRY_RUN] Would send to chat ${chatId}:\n${text}\n---`)
-    return { status: 200 }
+async function rawTelegramPost(chatId, payload) {
+  await rateLimiter.wait(chatId)
+  const body = {
+    chat_id: chatId,
+    text: payload.text,
+    disable_web_page_preview: true,
+    ...(payload.replyMarkup ? { reply_markup: payload.replyMarkup } : {}),
   }
-
   const response = await fetch(
     `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: false }),
+      body: JSON.stringify(body),
     }
   )
 
   if (response.status === 429) {
-    const data = await response.json()
-    return { status: 429, retryAfter: Number(data.parameters?.retry_after || 30) }
+    let data = null
+    try {
+      data = await response.json()
+    } catch {
+      data = null
+    }
+    const headerRetry = response.headers?.get?.('Retry-After')
+    const retryAfter = Number(data?.parameters?.retry_after ?? headerRetry ?? 2)
+    return {
+      status: 429,
+      ok: false,
+      retryAfter: Number.isFinite(retryAfter) && retryAfter >= 0 ? retryAfter : 2,
+    }
   }
 
   if (response.status === 403) {
-    await supabase(
-      'PATCH',
-      `telegram_connections?chat_id=eq.${encodeURIComponent(chatId)}`,
-      { active: false, inactive_reason: 'Telegram 403: user blocked or deactivated bot' },
-      'return=minimal'
-    )
-    return { status: 403 }
+    return { status: 403, ok: false }
   }
 
   if (!response.ok) {
-    const detail = await response.text()
-    throw new Error(`Telegram send failed (${response.status}): ${detail}`)
+    return { status: response.status, ok: false }
   }
-  return { status: 200 }
+
+  let data = null
+  try {
+    data = await response.json()
+  } catch {
+    data = { ok: true }
+  }
+  return { status: 200, ok: data?.ok !== false }
+}
+
+async function markConnectionInactive(chatId) {
+  if (DRY_RUN) return
+  await supabase(
+    'PATCH',
+    `telegram_connections?chat_id=eq.${encodeURIComponent(chatId)}`,
+    { active: false, inactive_reason: 'Telegram 403: user blocked or deactivated bot' },
+    'return=minimal'
+  )
+}
+
+async function deliverTelegramMessage({ chatId, userId, kind, payload, dryRunLog, stats }) {
+  if (DRY_RUN) {
+    const maskedUser = maskUserId(userId)
+    console.log(
+      `[DRY_RUN] user=${maskedUser} kind=${kind} button=${payload.buttonLabel || 'none'} host=${payload.urlHost || 'none'}\n${payload.text}\n---`
+    )
+    dryRunLog.push({
+      user: maskedUser,
+      kind,
+      button: payload.buttonLabel || '-',
+      host: payload.urlHost || '-',
+      preview: payload.text.split('\n')[0],
+    })
+    return { ok: true }
+  }
+
+  const res = await sendWithRetries({
+    sendFn: rawTelegramPost,
+    chatId,
+    payload,
+    on403: markConnectionInactive,
+  })
+  if (res.retried) stats.retried++
+  if (res.givenUp) {
+    stats.givenUp++
+    console.warn(
+      `[WARN] Gave up sending alert kind=${kind} user=${maskUserId(userId)}: ${res.reason || `status=${res.status}`}`
+    )
+  }
+  return res
 }
 
 async function loadPriceIdCache() {
@@ -260,9 +306,44 @@ async function main() {
   // Standalone DRY_RUN mode when Supabase env vars are not provided
   if (DRY_RUN && (!SUPABASE_URL || !SUPABASE_KEY)) {
     console.log('SENDER_PHASE=dry_run_standalone')
+    const epic = await loadJson(new URL('../public/data/epic-free-games.json', import.meta.url))
+    const gamerPower = await loadJson(
+      new URL('../public/data/gamerpower-free-games.json', import.meta.url)
+    )
+    const windows = buildWindowsFromSnapshots({ epic, gamerPower, now })
+    const dryRunLog = []
+    const stats = { sent: 0, retried: 0, givenUp: 0 }
+    const mockUserId = 'dry-run-user-0001'
+    for (const window of windows) {
+      const start = window.start_at ? new Date(window.start_at) : null
+      const end = window.end_at ? new Date(window.end_at) : null
+      const candidates = []
+      if (start) {
+        candidates.push({ kind: 'day_before', target: new Date(start.getTime() - 24 * 60 * 60 * 1000) })
+        if (end) candidates.push({ kind: 'mid_window', target: new Date(start.getTime() + (end.getTime() - start.getTime()) / 2) })
+      }
+      if (end) {
+        candidates.push({ kind: 'ending_soon', target: new Date(end.getTime() - 6 * 60 * 60 * 1000) })
+      }
+      for (const candidate of candidates) {
+        if (!isAlertDue({ kind: candidate.kind, target: candidate.target, end, candidates, now })) continue
+        const payload = formatFreeGameMessage({ kind: candidate.kind, window, now })
+        await deliverTelegramMessage({
+          chatId: 'dry-run-chat',
+          userId: mockUserId,
+          kind: candidate.kind,
+          payload,
+          dryRunLog,
+          stats,
+        })
+        stats.sent++
+      }
+    }
+    if (dryRunLog.length > 0) console.table(dryRunLog)
+    console.log(`DRY_RUN_SUMMARY windows=${windows.length} wouldSend=${stats.sent} retried=${stats.retried} givenUp=${stats.givenUp}`)
     const idCache = new Map()
     const { summary } = await evaluateItadForTitles(SAMPLE_DRY_RUN_TITLES, idCache, now)
-    console.table(summary)
+    if (summary.length > 0) console.table(summary)
     return
   }
 
@@ -272,60 +353,32 @@ async function main() {
     new URL('../public/data/gamerpower-free-games.json', import.meta.url)
   )
 
-  const windows = []
-  for (const game of epic.current || []) {
-    windows.push({
-      game_key: `epic:${game.id}:${game.startDate}:${game.endDate}`,
-      title: game.title,
-      normalized_title: normalizeTitle(game.title),
-      platform: 'Epic',
-      source: 'Epic Games Store',
-      start_at: game.startDate,
-      end_at: game.endDate,
-      link: `https://store.epicgames.com/en-US/p/${game.slug}`,
-      image: game.image || '',
-      updated_at: now.toISOString(),
-    })
-  }
-  for (const game of epic.upcoming || []) {
-    windows.push({
-      game_key: `epic:${game.id}:${game.startDate}:${game.endDate}`,
-      title: game.title,
-      normalized_title: normalizeTitle(game.title),
-      platform: 'Epic',
-      source: 'Epic Games Store',
-      start_at: game.startDate,
-      end_at: game.endDate,
-      link: `https://store.epicgames.com/en-US/p/${game.slug}`,
-      image: game.image || '',
-      updated_at: now.toISOString(),
-    })
-  }
-  for (const game of gamerPower.games || []) {
-    const end = parseUtc(game.end_date)
-    windows.push({
-      game_key: `gamerpower:${game.id}:${end || 'unknown'}`,
-      title: game.title,
-      normalized_title: normalizeTitle(game.title),
-      platform: game.platforms || 'PC',
-      source: 'GamerPower',
-      start_at: null,
-      end_at: end,
-      link: game.open_giveaway_url || game.gamerpower_url || 'https://www.gamerpower.com',
-      image: game.thumbnail || '',
-      updated_at: now.toISOString(),
-    })
-  }
+  const windows = buildWindowsFromSnapshots({ epic, gamerPower, now })
+  const dbWindows = windows.map((w) => ({
+    game_key: w.game_key,
+    title: w.title,
+    normalized_title: w.normalized_title,
+    platform: w.platform,
+    source: w.source,
+    start_at: w.start_at,
+    end_at: w.end_at,
+    link: w.link,
+    image: w.image,
+    updated_at: w.updated_at,
+  }))
 
-  if (!DRY_RUN && windows.length > 0) {
+  if (!DRY_RUN && dbWindows.length > 0) {
     console.log('SENDER_PHASE=upserting_free_game_windows')
     await supabase(
       'POST',
       'free_game_windows?on_conflict=game_key',
-      windows,
+      dbWindows,
       'resolution=merge-duplicates,return=minimal'
     )
   }
+
+  const dryRunLog = []
+  const deliveryStats = { sent: 0, retried: 0, givenUp: 0 }
 
   const [settings, connections, library, wishlistRows, sentAlerts, idCacheMap] = await Promise.all([
     supabase('GET', 'notification_settings?select=*'),
@@ -359,11 +412,9 @@ async function main() {
       .add(normalizeTitle(game.normalized_title || game.title))
     wishlistGamesByUser.get(game.user_id).push(game)
   }
-  const sentKeys = new Set(
-    sentAlerts.map((alert) =>
-      `${alert.user_id}|${alert.game_key}|${alert.window_start}|${alert.alert_kind}`
-    )
-  )
+  const sentKeys = buildSentAlertKeySet(sentAlerts)
+
+  const sentInRun = new Set()
 
   for (const setting of settings) {
     if (!setting.enabled) continue
@@ -421,38 +472,77 @@ async function main() {
           candidates: candidateAlerts,
           now,
         })) continue
-        const windowStart = start ? start.toISOString() : end ? end.toISOString() : null
-        const sentKey = `${setting.user_id}|${window.game_key}|${windowStart}|${candidate.kind}`
-        if (sentKeys.has(sentKey)) continue
 
-        const text = [
-          `Free game: ${window.title}`,
-          `Platform: ${window.platform || 'PC'}`,
-          `Ends: ${istLabel(window.end_at)}`,
-          window.link,
-        ].join('\n')
+        const runKey = `${setting.user_id}|${window.dedupe_key}|${candidate.kind}`
+        if (sentInRun.has(runKey)) continue
 
-        const result = await telegramSend(connection.chat_id, text)
-        if (result.status === 429) {
-          await new Promise((resolve) => setTimeout(resolve, (result.retryAfter + 1) * 1000))
+        const windowStart = resolveWindowStart(window)
+        if (hasAlreadySentAlert({
+          sentKeys,
+          userId: setting.user_id,
+          window,
+          windowStart,
+          alertKind: candidate.kind,
+        })) continue
+
+        if (
+          candidate.kind === 'mid_window' &&
+          shouldSkipMidWindowForRecentLateDayBefore({
+            sentAlerts,
+            userId: setting.user_id,
+            window,
+            windowStart,
+            now,
+          })
+        ) {
           continue
         }
-        if (result.status !== 200) continue
 
+        const payload = formatFreeGameMessage({ kind: candidate.kind, window, now })
+        const result = await deliverTelegramMessage({
+          chatId: connection.chat_id,
+          userId: setting.user_id,
+          kind: candidate.kind,
+          payload,
+          dryRunLog,
+          stats: deliveryStats,
+        })
+        if (!result.ok) continue
+
+        deliveryStats.sent++
+        sentInRun.add(runKey)
+        const sentKey = `${setting.user_id}|${window.game_key}|${windowStart}|${candidate.kind}`
         if (!DRY_RUN) {
-          await supabase(
-            'POST',
-            'sent_alerts?on_conflict=user_id,game_key,window_start,alert_kind',
-            [{
-              user_id: setting.user_id,
-              game_key: window.game_key,
-              window_start: windowStart,
-              alert_kind: candidate.kind,
-            }],
-            'resolution=ignore-duplicates,return=minimal'
-          )
+          try {
+            await supabase(
+              'POST',
+              'sent_alerts?on_conflict=user_id,game_key,window_start,alert_kind',
+              [{
+                user_id: setting.user_id,
+                game_key: window.game_key,
+                window_start: windowStart,
+                alert_kind: candidate.kind,
+              }],
+              'resolution=ignore-duplicates,return=minimal'
+            )
+          } catch (err) {
+            if (String(err?.message || '').includes('23505')) {
+              console.warn(
+                `[WARN] Duplicate sent_alerts row skipped (23505) user=${maskUserId(setting.user_id)} kind=${candidate.kind}`
+              )
+            } else {
+              throw err
+            }
+          }
         }
         sentKeys.add(sentKey)
+        sentAlerts.push({
+          user_id: setting.user_id,
+          game_key: window.game_key,
+          window_start: windowStart,
+          alert_kind: candidate.kind,
+          sent_at: now.toISOString(),
+        })
       }
     }
   }
@@ -527,27 +617,23 @@ async function main() {
 
         if (decision.shouldAlert) {
           const discountPercent = Math.round(Number(deal.cut))
-          const lines = [
-            `🎯 Wishlist Deal Alert: ${game.title}`,
-            `Store: ${deal.store || 'PC Store'}`,
-            `Price: ${formatInr(deal.price)} (was ${formatInr(deal.regular)}, -${discountPercent}%)`,
-          ]
-          if (deal.historyLow != null) {
-            lines.push(`Lowest ever: ${formatInr(deal.historyLow)}`)
-          }
-          if (deal.expiry) {
-            lines.push(`Ends: ${istLabel(deal.expiry)}`)
-          }
-          if (deal.url) {
-            lines.push(deal.url)
-          }
+          const payload = formatWishlistDealMessage({
+            title: game.title,
+            deal,
+            discountPercent,
+            formatInr,
+          })
 
-          const result = await telegramSend(connection.chat_id, lines.join('\n'))
-          if (result.status === 429) {
-            await new Promise((resolve) => setTimeout(resolve, (result.retryAfter + 1) * 1000))
-            continue
-          }
-          if (result.status === 200) {
+          const result = await deliverTelegramMessage({
+            chatId: connection.chat_id,
+            userId: setting.user_id,
+            kind: 'wishlist_deal',
+            payload,
+            dryRunLog,
+            stats: deliveryStats,
+          })
+          if (result.ok) {
+            deliveryStats.sent++
             wishlistAlertsSent++
             if (!DRY_RUN) {
               await supabase(
@@ -579,7 +665,12 @@ async function main() {
     }
   }
 
-  console.log(`Processed wishlist deals, sent ${wishlistAlertsSent} wishlist alerts`)
+  if (DRY_RUN && dryRunLog.length > 0) {
+    console.table(dryRunLog)
+  }
+  console.log(
+    `Processed wishlist deals, sent=${deliveryStats.sent} wishlistAlerts=${wishlistAlertsSent} retried=${deliveryStats.retried} givenUp=${deliveryStats.givenUp}`
+  )
 }
 
 main().catch((error) => {

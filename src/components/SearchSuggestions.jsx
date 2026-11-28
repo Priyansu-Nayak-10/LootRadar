@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import SafeImage from './SafeImage'
 import PlatformIcons from './PlatformIcons'
+import { rawgImage } from '../lib/rawgImage'
 
 export const SearchSuggestions = memo(function SearchSuggestions({
   suggestions = [],
@@ -79,10 +80,12 @@ export const SearchSuggestions = memo(function SearchSuggestions({
             }}
           >
             <SafeImage
-              src={game.background_image}
+              src={rawgImage(game.background_image, 200)}
               alt=""
               className="search-suggestions__thumb"
               loading="eager"
+              width={64}
+              height={40}
             />
             <div className="search-suggestions__info">
               <strong className="search-suggestions__title">{game.name}</strong>

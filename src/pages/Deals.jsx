@@ -55,7 +55,7 @@ export default function Deals({ getGameActions, onAvailabilityChange }) {
     error,
     errorMessage,
     reload,
-  } = useDeals()
+  } = useDeals({ subscribeToTime: true })
 
   const searchTimerRef = useRef(null)
   useEffect(() => () => clearTimeout(searchTimerRef.current), [])

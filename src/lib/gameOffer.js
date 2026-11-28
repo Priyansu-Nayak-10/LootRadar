@@ -1,6 +1,7 @@
 import { titleKey, isConsoleGame } from './wishlistAlerts.js'
 import { matchDealForGame, formatDealPrice, formatStoreName } from './dealsData.js'
 import { normalizeRawgStore, sortStoresByPriority } from './rawgStores.js'
+import { fetchWithTimeout } from './snapshots.js'
 
 const ITAD_PRICE_CACHE_KEY = 'wishradar_itad_price_'
 const ITAD_CACHE_TTL_MS = 30 * 60 * 1000 // 30 minutes
@@ -240,13 +241,17 @@ export async function fetchLiveItadPrice(rawTitle, signal) {
   // 2. Query /api/itad-prices
   let response
   try {
-    response = await fetch(
+    response = await fetchWithTimeout(
       `/api/itad-prices?titles=${encodeURIComponent(rawTitle.trim())}`,
       { signal }
     )
   } catch (err) {
     if (err?.name === 'AbortError') throw err
-    const netErr = new Error(err?.message || 'Network error while fetching price')
+    const netErr = new Error(
+      err?.name === 'TimeoutError'
+        ? 'Price lookup timed out. Please try again.'
+        : (err?.message || 'Network error while fetching price')
+    )
     netErr.code = 'NETWORK_ERROR'
     throw netErr
   }

@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import SafeImage from './SafeImage.jsx'
+import { rawgImage } from '../lib/rawgImage.js'
 import PlatformIcons from './PlatformIcons.jsx'
 import { fetchRawgGames, hasRawgKey } from '../lib/discoverApi.js'
 import { titleKey } from '../lib/wishlistAlerts.js'
@@ -54,7 +55,7 @@ function GamePlatformIcons({ game }) {
 }
 
 // ─── Popular Game Card ────────────────────────────────────────────────────────
-function PopularGameCard({
+const PopularGameCard = memo(function PopularGameCard({
   game,
   rank,
   deals,
@@ -95,7 +96,7 @@ function PopularGameCard({
         aria-label={`View details for ${game.name}`}
       >
         <SafeImage
-          src={game.background_image}
+          src={rawgImage(game.background_image, 420)}
           alt={game.name}
           className="popular-game-card__img"
           fallbackText={game.name?.slice(0, 1)}
@@ -160,7 +161,7 @@ function PopularGameCard({
       </div>
     </article>
   )
-}
+})
 
 // ─── Main Section Component ──────────────────────────────────────────────────
 export default function PopularGamesSection({

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import SafeImage from './SafeImage'
 import TimeLeft from './TimeLeft'
 import {
@@ -13,7 +14,7 @@ import {
   StoreIcon,
 } from './icons'
 
-export default function DealCard({
+const DealCard = memo(function DealCard({
   deal,
   getGameActions,
 }) {
@@ -150,4 +151,6 @@ export default function DealCard({
       </div>
     </article>
   )
-}
+})
+
+export default DealCard

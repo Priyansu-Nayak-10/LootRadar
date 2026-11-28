@@ -23,6 +23,8 @@ import {
   matchDealForGame,
   useDeals,
 } from '../lib/dealsData'
+import { fetchWithTimeout, loadSnapshot } from '../lib/snapshots'
+import { useNow } from '../lib/nowStore'
 import { formatWorthInr, mergeFreeSources } from '../lib/freeGames'
 
 const ITAD_CACHE_KEY = 'wishradar_wishlist_itad_v1'
@@ -366,6 +368,7 @@ function WishlistCard({
 export default function Wishlist({
   games = [],
   setGames,
+  syncing = false,
   ownedGames = [],
   freeGames = [],
   session,
@@ -377,7 +380,7 @@ export default function Wishlist({
   const [livePrices, setLivePrices] = useState(() => readLocalItadCache())
   const [pricesLoading, setPricesLoading] = useState(false)
   const [liveUnavailable, setLiveUnavailable] = useState(false)
-  const [now, setNow] = useState(Date.now())
+  const now = useNow()
 
   const { deals: itadDeals, free: itadFree } = useDeals()
 
@@ -390,30 +393,24 @@ export default function Wishlist({
     }
   })
 
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 60000)
-    return () => clearInterval(timer)
-  }, [])
-
   // Load free game snapshots for free-giveaway priority
   useEffect(() => {
     let cancelled = false
     Promise.allSettled([
-      fetch('/data/epic-free-games.json'),
-      fetch('/data/gamerpower-free-games.json'),
-    ]).then(async ([epicRes, gpRes]) => {
+      loadSnapshot('epic-free-games'),
+      loadSnapshot('gamerpower-free-games'),
+    ]).then(([epicRes, gpRes]) => {
       if (cancelled) return
-      if (epicRes.status === 'fulfilled' && epicRes.value.ok) {
-        const data = await epicRes.value.json().catch(() => null)
-        if (!cancelled && Array.isArray(data?.current)) setEpicCurrent(data.current)
+      if (epicRes.status === 'fulfilled' && Array.isArray(epicRes.value?.current)) {
+        setEpicCurrent(epicRes.value.current)
       }
-      if (gpRes.status === 'fulfilled' && gpRes.value.ok) {
-        const data = await gpRes.value.json().catch(() => null)
-        if (!cancelled && Array.isArray(data?.games)) setGpFree(data.games)
+      if (gpRes.status === 'fulfilled' && Array.isArray(gpRes.value?.games)) {
+        setGpFree(gpRes.value.games)
       }
     })
     return () => {
       cancelled = true
+      controller.abort()
     }
   }, [])
 
@@ -454,6 +451,7 @@ export default function Wishlist({
 
     return () => {
       cancelled = true
+      controller.abort()
     }
   }, [session])
 
@@ -533,6 +531,7 @@ export default function Wishlist({
 
     if (needed.length === 0) return undefined
 
+    const controller = new AbortController()
     async function fetchBatch() {
       setPricesLoading(true)
       try {
@@ -540,10 +539,11 @@ export default function Wishlist({
         const ids = chunk.filter((x) => x.itadId).map((x) => x.itadId)
         const titles = chunk.filter((x) => !x.itadId).map((x) => x.title)
 
-        const res = await fetch('/api/itad-prices', {
+        const res = await fetchWithTimeout('/api/itad-prices', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ids, titles }),
+          signal: controller.signal,
         })
 
         if (!res.ok) {
@@ -584,6 +584,7 @@ export default function Wishlist({
     fetchBatch()
     return () => {
       cancelled = true
+      controller.abort()
     }
   }, [games])
 
@@ -783,7 +784,12 @@ export default function Wishlist({
       </section>
 
       <div id="wishlist-tabpanel" role="tabpanel" aria-labelledby="wishlist-tab">
-        {games.length === 0 ? (
+        {games.length === 0 && syncing ? (
+          <div className="list-sync-state" role="status" aria-busy="true">
+            <div className="lr-skeleton list-sync-state__bar" />
+            <p className="list-sync-state__label">Syncing your lists…</p>
+          </div>
+        ) : games.length === 0 ? (
           <div className="wishlist-empty-redesign">
             <div className="lr-art-fallback" aria-hidden="true">★</div>
             <h2>Your Wishlist is waiting for its next great game.</h2>
@@ -843,7 +849,7 @@ export default function Wishlist({
               const freeGame = findFreeGame(game.title)
               return (
                 <WishlistCard
-                  key={`${key}-${index}`}
+                  key={key || game.sourceId || game.title}
                   game={game}
                   deal={deal}
                   freeGame={freeGame}

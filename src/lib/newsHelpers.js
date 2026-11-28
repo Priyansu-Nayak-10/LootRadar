@@ -1,3 +1,5 @@
+import { loadSnapshot } from './snapshots.js'
+
 const NEWS_CACHE_KEY = 'wishradar_gaming_news_v2'
 const NEWS_CACHE_TTL_MS = 10 * 60 * 1000
 
@@ -65,11 +67,7 @@ export async function fetchNewsSnapshot({ forceRefresh = false } = {}) {
     }
   }
 
-  const response = await fetch('/data/gaming-news.json', { cache: 'no-cache' })
-  if (!response.ok) {
-    throw new Error(`News snapshot unavailable (${response.status})`)
-  }
-  const data = await response.json()
+  const data = await loadSnapshot('gaming-news')
   if (!data || !Array.isArray(data.articles) || data.articles.length === 0) {
     throw new Error('News snapshot is empty or invalid')
   }

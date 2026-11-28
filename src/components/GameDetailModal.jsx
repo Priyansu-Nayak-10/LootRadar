@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import SafeImage from './SafeImage'
+import { rawgImage } from '../lib/rawgImage'
 import TimeLeft from './TimeLeft'
 import PlatformIcons from './PlatformIcons'
 import {
@@ -34,11 +35,36 @@ export default function GameDetailModal({
     }
     return []
   })
+  const [storesLoading, setStoresLoading] = useState(false)
+  const [storesError, setStoresError] = useState(false)
 
   const [livePrice, setLivePrice] = useState(null)
   const [livePriceLoading, setLivePriceLoading] = useState(false)
   const [livePriceError, setLivePriceError] = useState(null)
   const [retryCount, setRetryCount] = useState(0)
+  const [closing, setClosing] = useState(false)
+  const closeTimerRef = useRef(null)
+
+  const requestClose = useCallback(() => {
+    if (closing) return
+    const reduced = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (reduced) {
+      onClose()
+      return
+    }
+    setClosing(true)
+    closeTimerRef.current = window.setTimeout(() => {
+      onClose()
+    }, 140)
+  }, [closing, onClose])
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current !== null) {
+        window.clearTimeout(closeTimerRef.current)
+      }
+    }
+  }, [])
 
   // 1. Resolve offer with available synchronous sources + RAWG stores
   const offer = useMemo(() => {
@@ -100,20 +126,38 @@ export default function GameDetailModal({
   useEffect(() => {
     if (!game?.id) return
     const hasUrls = Array.isArray(game.stores) && game.stores.some((s) => Boolean(s?.url))
-    if (hasUrls) return
+    if (hasUrls) {
+      setStoresLoading(false)
+      setStoresError(false)
+      return
+    }
 
     let cancelled = false
     const controller = new AbortController()
 
     async function loadStores() {
-      const results = await fetchGameStores(game.id, controller.signal)
-      if (!cancelled && Array.isArray(results) && results.length > 0) {
-        setStores(results)
+      setStoresLoading(true)
+      setStoresError(false)
+      try {
+        const results = await fetchGameStores(game.id, controller.signal)
+        if (!cancelled) {
+          if (Array.isArray(results) && results.length > 0) {
+            setStores(results)
+          }
+          setStoresLoading(false)
+        }
+      } catch (err) {
+        if (!cancelled && err?.name !== 'AbortError') {
+          setStoresError(true)
+          setStoresLoading(false)
+        }
       }
     }
 
     if (hasRawgKey) {
       loadStores()
+    } else {
+      setStoresLoading(false)
     }
 
     return () => {
@@ -160,7 +204,7 @@ export default function GameDetailModal({
     (e) => {
       if (e.key === 'Escape') {
         e.preventDefault()
-        onClose()
+        requestClose()
         return
       }
 
@@ -186,7 +230,7 @@ export default function GameDetailModal({
         }
       }
     },
-    [onClose]
+    [requestClose]
   )
 
   // 7. Body scroll lock and focus management on mount/unmount
@@ -201,7 +245,7 @@ export default function GameDetailModal({
 
     // Browser back button close integration
     const handlePopState = () => {
-      onClose()
+      requestClose()
     }
     const triggerNode = triggerRef?.current
     window.history.pushState({ modal: 'game-detail' }, '')
@@ -237,15 +281,15 @@ export default function GameDetailModal({
 
   return (
     <div
-      className="game-modal-backdrop"
+      className={`game-modal-backdrop ${closing ? 'is-closing' : ''}`}
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose()
+        if (e.target === e.currentTarget) requestClose()
       }}
       role="presentation"
     >
       <div
         ref={dialogRef}
-        className="game-modal-dialog"
+        className={`game-modal-dialog ${closing ? 'is-closing' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="game-detail-title"
@@ -254,7 +298,7 @@ export default function GameDetailModal({
         {/* 1. Header Art with Top-Right Controls */}
         <div className="game-modal-art">
           <SafeImage
-            src={game.background_image || game.image}
+            src={rawgImage(game.background_image || game.image, 640)}
             alt={title}
             className="game-modal-art__img"
             fallbackText={title.slice(0, 1)}
@@ -278,7 +322,7 @@ export default function GameDetailModal({
               ref={closeBtnRef}
               type="button"
               className="wr-icon-btn wr-icon-btn--round"
-              onClick={onClose}
+              onClick={requestClose}
               aria-label="Close"
             >
               <CloseIcon size={18} />
@@ -319,28 +363,42 @@ export default function GameDetailModal({
           </div>
 
           {/* 3. Available On Store Chips */}
-          {allStoreChips.length > 0 && (
+          {(storesLoading || storesError || allStoreChips.length > 0) && (
             <div className="game-modal-stores" aria-label="Available on stores">
               <span className="game-modal-stores-label">Available on</span>
-              <div className="game-modal-chips-row">
-                {allStoreChips.map((chip) =>
-                  chip.url ? (
-                    <a
-                      key={chip.key || chip.name}
-                      href={chip.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="wr-store-chip wr-store-chip--link"
-                    >
-                      {chip.name} <ExternalLinkIcon size={12} />
-                    </a>
-                  ) : (
-                    <span key={chip.key || chip.name} className="wr-store-chip">
-                      {chip.name}
-                    </span>
-                  )
-                )}
-              </div>
+              {storesLoading && allStoreChips.length === 0 ? (
+                <div className="game-modal-chips-row" aria-busy="true">
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className="lr-skeleton"
+                      style={{ width: 78, height: 28, borderRadius: 999, display: 'inline-block' }}
+                    />
+                  ))}
+                </div>
+              ) : allStoreChips.length > 0 ? (
+                <div className="game-modal-chips-row">
+                  {allStoreChips.map((chip) =>
+                    chip.url ? (
+                      <a
+                        key={chip.key || chip.name}
+                        href={chip.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="wr-store-chip wr-store-chip--link"
+                      >
+                        {chip.name} <ExternalLinkIcon size={12} />
+                      </a>
+                    ) : (
+                      <span key={chip.key || chip.name} className="wr-store-chip">
+                        {chip.name}
+                      </span>
+                    )
+                  )}
+                </div>
+              ) : (
+                <p className="game-modal-stores-muted">Store list unavailable</p>
+              )}
             </div>
           )}
 

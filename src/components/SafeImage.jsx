@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { wishRadarArt } from '../assets/art'
+import { getOriginalRawgUrl } from '../lib/rawgImage'
 
 /**
  * SafeImage displays image candidates in specified priority order:
  * 1. Steam library_hero.jpg (if steamAppID is present)
  * 2. Steam header.jpg (if steamAppID is present)
- * 3. Source imageUrl / src
+ * 3. Source imageUrl / src (plus original RAWG URL once if src was resized)
  * 4. wishRadarArt.hero.src (only as last-resort image fallback)
  * 5. .lr-art-fallback text block
  */
@@ -16,6 +17,9 @@ export default function SafeImage({
   className = '',
   loading = 'lazy',
   decoding = 'async',
+  fetchPriority,
+  width,
+  height,
   fallbackText = 'WISHRADAR',
 }) {
   const [candidateIndex, setCandidateIndex] = useState(0)
@@ -27,7 +31,12 @@ export default function SafeImage({
     candidates.push(`https://cdn.cloudflare.steamstatic.com/steam/apps/${steamAppID}/header.jpg`)
   }
   if (src && typeof src === 'string' && src.trim()) {
-    candidates.push(src.trim())
+    const trimmed = src.trim()
+    candidates.push(trimmed)
+    const originalRawg = getOriginalRawgUrl(trimmed)
+    if (originalRawg && originalRawg !== trimmed) {
+      candidates.push(originalRawg)
+    }
   }
   if (wishRadarArt.hero?.src && typeof wishRadarArt.hero.src === 'string' && wishRadarArt.hero.src.trim()) {
     candidates.push(wishRadarArt.hero.src.trim())
@@ -55,6 +64,9 @@ export default function SafeImage({
       alt={alt}
       loading={loading}
       decoding={decoding}
+      fetchPriority={fetchPriority}
+      width={width}
+      height={height}
       onError={() => setCandidateIndex((prev) => prev + 1)}
       className={className}
     />

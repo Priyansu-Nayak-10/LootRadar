@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import SafeImage from '../components/SafeImage.jsx'
 import TimeLeft from '../components/TimeLeft.jsx'
 import { supabase } from '../lib/supabase.js'
+import { fetchWithTimeout, loadSnapshot } from '../lib/snapshots.js'
+import { useNow } from '../lib/nowStore.js'
 import {
   cleanTitle,
   isMobile,
@@ -65,7 +67,7 @@ import {
 } from '../components/icons'
 
 // ─── FreeCard (Claim Now) ────────────────────────────────────────────────────
-function FreeCard({ game, now, fxRate, getGameActions, onGameOpen }) {
+const FreeCard = memo(function FreeCard({ game, now, fxRate, getGameActions, onGameOpen }) {
   const rawTitle = game.title || game.name || 'Free Game'
   const title = cleanTitle(rawTitle) || 'Free Game'
   const store = normalizeStore(game)
@@ -183,7 +185,7 @@ function FreeCard({ game, now, fxRate, getGameActions, onGameOpen }) {
       </div>
     </article>
   )
-}
+})
 
 // ─── Coming Soon Card ────────────────────────────────────────────────────────
 function ComingSoonCard({ game, now, getGameActions, onGameOpen }) {
@@ -296,7 +298,7 @@ function ComingSoonCard({ game, now, getGameActions, onGameOpen }) {
 }
 
 // ─── Always Free Card ────────────────────────────────────────────────────────
-function AlwaysFreeCard({ game, onGameOpen }) {
+const AlwaysFreeCard = memo(function AlwaysFreeCard({ game, onGameOpen }) {
   const playUrl = game.game_url || game.gameUrl || game.profileUrl || '#'
   const description = game.short_description || game.description || ''
 
@@ -351,7 +353,7 @@ function AlwaysFreeCard({ game, onGameOpen }) {
       </div>
     </article>
   )
-}
+})
 
 // ─── Skeleton ────────────────────────────────────────────────────────────────
 function FreeCardSkeleton() {
@@ -397,7 +399,6 @@ export default function FreeNow({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showOwned, setShowOwned] = useState(false)
-  const [now, setNow] = useState(Date.now())
   const [lastUpdated, setLastUpdated] = useState(null)
 
   // Always Free pagination & filter
@@ -423,11 +424,7 @@ export default function FreeNow({
     }
   }, [activeTab])
 
-  // Update countdown clock every 60 seconds
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 60000)
-    return () => clearInterval(id)
-  }, [])
+  const now = useNow()
 
   // Sync URL search params
   const updateUrlParams = (newTab, newStore, newSort) => {
@@ -491,37 +488,67 @@ export default function FreeNow({
     setLoading(true)
     setError('')
 
+    // 1. Check 10-min sessionStorage cache BEFORE starting snapshot requests
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY)
+      if (cached) {
+        const { time, data, epicUpcoming: cachedUpcoming, alwaysList: cachedAlways, fxRate: cachedFx } = JSON.parse(cached)
+        if (
+          time &&
+          Date.now() - time < CACHE_MS &&
+          Array.isArray(data) &&
+          data.length > 0 &&
+          Array.isArray(cachedUpcoming) &&
+          Array.isArray(cachedAlways)
+        ) {
+          if (Number.isFinite(cachedFx) && cachedFx > 0) setFxRate(cachedFx)
+          setGames(data)
+          onAvailabilityChange(data)
+          setLastUpdated(time)
+          setComingGames(cachedUpcoming)
+          setAlwaysGames(cachedAlways)
+          setLoading(false)
+          return
+        }
+      }
+    } catch {
+      // ignore cache parse issues
+    }
+
     let initialList = []
     let epicList = []
     let epicUpcoming = []
     let alwaysList = []
     let itadFreeList = []
+    let resolvedFx = DEFAULT_USD_TO_INR
     let snapshotTimestamp = null
 
-    // 1. Instant render from local snapshots
+    // 2. Instant render from shared cached snapshots
     try {
       const [gpSnapshotRes, epicSnapshotRes, itadSnapshotRes, alwaysRes, fxRes] = await Promise.allSettled([
-        fetch('/data/gamerpower-free-games.json'),
-        fetch('/data/epic-free-games.json'),
-        fetch('/data/itad-deals.json'),
-        fetch('/data/always-free-games.json'),
-        fetch('/data/fx-rates.json'),
+        loadSnapshot('gamerpower-free-games'),
+        loadSnapshot('epic-free-games'),
+        loadSnapshot('itad-deals'),
+        loadSnapshot('always-free-games'),
+        loadSnapshot('fx-rates'),
       ])
 
-      if (fxRes.status === 'fulfilled' && fxRes.value.ok) {
-        const fxData = await fxRes.value.json()
-        const rate = Number(fxData?.rates?.INR)
-        if (Number.isFinite(rate) && rate > 0) setFxRate(rate)
+      if (fxRes.status === 'fulfilled' && fxRes.value) {
+        const rate = Number(fxRes.value?.rates?.INR)
+        if (Number.isFinite(rate) && rate > 0) {
+          resolvedFx = rate
+          setFxRate(rate)
+        }
       }
 
-      if (gpSnapshotRes.status === 'fulfilled' && gpSnapshotRes.value.ok) {
-        const gpData = await gpSnapshotRes.value.json()
+      if (gpSnapshotRes.status === 'fulfilled' && gpSnapshotRes.value) {
+        const gpData = gpSnapshotRes.value
         if (Array.isArray(gpData.games)) initialList = gpData.games
         if (gpData.generatedAt) snapshotTimestamp = new Date(gpData.generatedAt).getTime()
       }
 
-      if (epicSnapshotRes.status === 'fulfilled' && epicSnapshotRes.value.ok) {
-        const epicData = await epicSnapshotRes.value.json()
+      if (epicSnapshotRes.status === 'fulfilled' && epicSnapshotRes.value) {
+        const epicData = epicSnapshotRes.value
         if (Array.isArray(epicData.current)) epicList = epicData.current
         if (Array.isArray(epicData.upcoming)) {
           epicUpcoming = epicData.upcoming
@@ -529,13 +556,13 @@ export default function FreeNow({
         }
       }
 
-      if (itadSnapshotRes.status === 'fulfilled' && itadSnapshotRes.value.ok) {
-        const itadData = await itadSnapshotRes.value.json()
+      if (itadSnapshotRes.status === 'fulfilled' && itadSnapshotRes.value) {
+        const itadData = itadSnapshotRes.value
         if (Array.isArray(itadData.free)) itadFreeList = itadData.free
       }
 
-      if (alwaysRes.status === 'fulfilled' && alwaysRes.value.ok) {
-        const alwaysData = await alwaysRes.value.json()
+      if (alwaysRes.status === 'fulfilled' && alwaysRes.value) {
+        const alwaysData = alwaysRes.value
         if (Array.isArray(alwaysData.games)) {
           alwaysList = alwaysData.games
           setAlwaysGames(alwaysList)
@@ -555,38 +582,12 @@ export default function FreeNow({
         setLoading(false)
       }
     } catch {
-      // ignore snapshot error, fallback to cache / live fetch
+      // ignore snapshot error, fallback to live fetch
     }
 
-    // 2. Check 10-min sessionStorage cache
+    // 3. Background / live refresh from GamerPower API (12s timeout)
     try {
-      const cached = sessionStorage.getItem(CACHE_KEY)
-      if (cached) {
-        const { time, data, epicUpcoming: cachedUpcoming, alwaysList: cachedAlways } = JSON.parse(cached)
-        if (
-          time &&
-          Date.now() - time < CACHE_MS &&
-          Array.isArray(data) &&
-          data.length > 0 &&
-          Array.isArray(cachedUpcoming) &&
-          Array.isArray(cachedAlways)
-        ) {
-          setGames(data)
-          onAvailabilityChange(data)
-          setLastUpdated(time)
-          setComingGames(cachedUpcoming)
-          setAlwaysGames(cachedAlways)
-          setLoading(false)
-          return
-        }
-      }
-    } catch {
-      // ignore cache parse issues
-    }
-
-    // 3. Background / live refresh from GamerPower API
-    try {
-      const res = await fetch(GAMERPOWER_API)
+      const res = await fetchWithTimeout(GAMERPOWER_API)
       if (!res.ok) throw new Error(`Live API error: ${res.status}`)
       const liveData = await res.json()
       const liveList = Array.isArray(liveData) ? liveData : []
@@ -610,6 +611,7 @@ export default function FreeNow({
               data: combined,
               epicUpcoming,
               alwaysList,
+              fxRate: resolvedFx,
             })
           )
         } catch {
@@ -686,44 +688,19 @@ export default function FreeNow({
     }
 
     // Hide owned unless showOwned is toggled
-    if (!showOwned) {
-      result = result.filter((g) => {
-        const title = cleanTitle(g.title)
-        if (library.length > 0) {
-          return !ownedTitles.has(titleKey(title))
-        }
-        const act = getGameActions({
-          title,
-          platform: g.platforms || 'PC',
-          image: g.thumbnail || g.image,
-          source: 'free',
-          sourceId: g.id,
-        })
-        return !act.owned
-      })
+    if (!showOwned && ownedTitles.size > 0) {
+      result = result.filter((g) => !ownedTitles.has(titleKey(cleanTitle(g.title))))
     }
 
     // Sort
     return sortFreeGames(result, sort, now)
-  }, [claimTabGames, store, showOwned, sort, now, library.length, ownedTitles, getGameActions])
+  }, [claimTabGames, store, showOwned, sort, now, ownedTitles])
 
   // Count owned games that are hidden
   const hiddenOwnedCount = useMemo(() => {
-    return claimTabGames.filter((g) => {
-      const title = cleanTitle(g.title)
-      if (library.length > 0) {
-        return ownedTitles.has(titleKey(title))
-      }
-      const act = getGameActions({
-        title,
-        platform: g.platforms || 'PC',
-        image: g.thumbnail || g.image,
-        source: 'free',
-        sourceId: g.id,
-      })
-      return act.owned
-    }).length
-  }, [claimTabGames, library.length, ownedTitles, getGameActions])
+    if (ownedTitles.size === 0) return 0
+    return claimTabGames.filter((g) => ownedTitles.has(titleKey(cleanTitle(g.title)))).length
+  }, [claimTabGames, ownedTitles])
 
   // ─── Always Free Filter & Pagination ────────────────────────────────────────
   const alwaysGenresList = useMemo(() => {
@@ -792,7 +769,11 @@ export default function FreeNow({
             <h1>
               {titleParts[0]} <em>{titleParts.slice(1).join(' ')}</em>
             </h1>
-            <span className="free-count-badge">{tabCounts[tab]} games</span>
+            {loading && tabCounts[tab] === 0 ? (
+              <span className="lr-skeleton free-count-skeleton" aria-label="Loading count" />
+            ) : (
+              <span className="free-count-badge">{tabCounts[tab]} games</span>
+            )}
           </div>
           {formattedUpdatedAgo && (
             <p className="free-header__sub">{formattedUpdatedAgo}</p>
@@ -881,7 +862,11 @@ export default function FreeNow({
                   }}
                 >
                   {t.label}
-                  <span className="free-tab__count">{typeCounts[t.value]}</span>
+                  {loading && typeCounts[t.value] === 0 ? (
+                    <span className="lr-skeleton free-tab-count-skeleton" aria-hidden="true" />
+                  ) : (
+                    <span className="free-tab__count">{typeCounts[t.value]}</span>
+                  )}
                 </button>
               ))}
             </div>
@@ -1007,7 +992,20 @@ export default function FreeNow({
       {/* ─── TAB 2: COMING SOON ─── */}
       {tab === 'coming' && (
         <>
-          {comingGames.length > 0 ? (
+          {loading && comingGames.length === 0 ? (
+            <div className="free-grid free-grid--coming" aria-busy="true">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="free-card-skeleton free-card-skeleton--coming" aria-hidden="true">
+                  <div className="free-card-skeleton__media" />
+                  <div className="free-card-skeleton__body">
+                    <div className="free-card-skeleton__title" />
+                    <div className="free-card-skeleton__meta" />
+                    <div className="free-card-skeleton__btn" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : comingGames.length > 0 ? (
             <div className="free-grid free-grid--coming">
               {comingGames.map((game) => (
                 <ComingSoonCard
@@ -1114,7 +1112,13 @@ export default function FreeNow({
             )}
           </div>
 
-          {visibleAlwaysGames.length > 0 ? (
+          {loading && alwaysGames.length === 0 ? (
+            <div className="free-grid free-grid--always" aria-busy="true">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <FreeCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : visibleAlwaysGames.length > 0 ? (
             <>
               <div className="free-grid free-grid--always">
                 {visibleAlwaysGames.map((game) => (

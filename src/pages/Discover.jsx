@@ -10,6 +10,9 @@ import {
 } from '../components/icons'
 import PlatformIcons from '../components/PlatformIcons'
 import { fetchRawgGames, searchGamesMulti, hasRawgKey } from '../lib/discoverApi'
+import { loadSnapshot } from '../lib/snapshots'
+import { rawgImage } from '../lib/rawgImage'
+import { useNow } from '../lib/nowStore'
 import { cleanNewsText, fetchNewsSnapshot, formatNewsRelativeTime } from '../lib/newsHelpers'
 import GameActions from '../components/GameActions'
 import TopDeals from '../components/TopDeals'
@@ -122,7 +125,7 @@ const GameTile = memo(function GameTile({ game, badge, getGameActions, onOpenGam
       >
         <div className="search-tile__media">
           <SafeImage
-            src={game.background_image}
+            src={rawgImage(game.background_image, 420)}
             alt={game.name}
             loading="lazy"
             className="search-tile__image"
@@ -456,16 +459,10 @@ export function HomeRedesign({
   const [isTouching, setIsTouching] = useState(false)
   const [isTabHidden, setIsTabHidden] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
-  const [now, setNow] = useState(Date.now())
+  const now = useNow()
 
   const newsPanelRef = useRef(null)
   const [newsPanelHeight, setNewsPanelHeight] = useState(null)
-
-  // Live countdown ticker every 60s
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 60000)
-    return () => clearInterval(id)
-  }, [])
 
   // Listen to prefers-reduced-motion and tab visibility changes
   useEffect(() => {
@@ -723,11 +720,11 @@ export function HomeRedesign({
           onTouchStart={() => setIsTouching(true)}
           onTouchEnd={() => setIsTouching(false)}
         >
-          {dealsError && !heroSlides.length && (
-            <p className="discover-error" role="alert">Could not load featured deals right now.</p>
-          )}
-
-          {dealsLoading && !heroSlides.length ? (
+          {dealsError && !heroSlides.length ? (
+            <div className="home-hero-error">
+              <p className="discover-error" role="alert">Could not load featured deals right now.</p>
+            </div>
+          ) : dealsLoading && !heroSlides.length ? (
             <div className="lr-skeleton home-hero-skeleton" />
           ) : heroSlides.length > 0 ? (
             <>
@@ -760,10 +757,12 @@ export function HomeRedesign({
                       aria-hidden={!isActive}
                     >
                       <SafeImage
-                        src={slide.imageUrl}
+                        src={rawgImage(slide.imageUrl, 640)}
                         steamAppID={slide.steamAppID}
                         alt={slide.title}
                         loading={index === 0 ? 'eager' : 'lazy'}
+                        fetchPriority={index === 0 ? 'high' : undefined}
+                        decoding={index === 0 ? 'sync' : 'async'}
                         className="home-hero-bg"
                       />
                       <div className="home-hero-overlay" />
@@ -962,12 +961,9 @@ export function HomeRedesign({
                 View all
               </button>
             </div>
-            {(freeGames?.length || 0) > 0 ? (
+            {featuredFreeGames.length > 0 ? (
               <div className="home-feature-free-list">
-                {(Array.isArray(freeGames) ? freeGames : [])
-                  .filter((game) => game && !isMobile(game))
-                  .slice(0, 5)
-                  .map((game, idx) => {
+                {featuredFreeGames.map((game, idx) => {
                     const rawTitle = game.title || game.name || 'Free Game'
                     const cleaned = cleanTitle(rawTitle) || 'Free Game'
                     const endDate = game.end_date || game.endDate || null
@@ -984,6 +980,8 @@ export function HomeRedesign({
                           <SafeImage
                             src={game.thumbnail || game.image}
                             alt={cleaned}
+                            width={72}
+                            height={54}
                             fallbackText={cleaned.slice(0, 1)}
                           />
                         ) : (
@@ -997,8 +995,21 @@ export function HomeRedesign({
                     )
                   })}
               </div>
-            ) : (
+            ) : freeGamesLoading ? (
               <div className="lr-skeleton" />
+            ) : freeGamesError ? (
+              <div className="home-side-card__status" role="alert">
+                <p>Could not load free games right now.</p>
+                <button
+                  type="button"
+                  className="lr-button lr-button--ghost"
+                  onClick={() => loadSectionCounts({ refresh: true })}
+                >
+                  Retry
+                </button>
+              </div>
+            ) : (
+              <p className="home-side-card__status">No free games right now</p>
             )}
           </section>
         </aside>
@@ -1149,6 +1160,8 @@ export default function Discover({
   const [gamerPowerGames, setGamerPowerGames] = useState([])
   const [epicCurrentGames, setEpicCurrentGames] = useState([])
   const [upcomingGames, setUpcomingGames] = useState([])
+  const [freeGamesLoading, setFreeGamesLoading] = useState(true)
+  const [freeGamesError, setFreeGamesError] = useState(false)
 
   const freeGames = useMemo(() => {
     return mergeFreeSources({
@@ -1157,6 +1170,12 @@ export default function Discover({
       itadFreeItems: itadFreeGames,
     })
   }, [epicCurrentGames, gamerPowerGames, itadFreeGames])
+
+  const featuredFreeGames = useMemo(() => {
+    return (Array.isArray(freeGames) ? freeGames : [])
+      .filter((game) => game && !isMobile(game))
+      .slice(0, 5)
+  }, [freeGames])
 
   async function loadNews() {
     setNewsLoading(true)
@@ -1234,48 +1253,50 @@ export default function Discover({
   }, [searchGames])
 
   useEffect(() => {
-    let cancelled = false
-
-    async function loadSectionCounts() {
-      const requests = [
-        ['free', '/data/gamerpower-free-games.json', 'games'],
-        ['always', '/data/always-free-games.json', 'games'],
-        ['coming', '/data/epic-free-games.json', 'upcoming'],
-      ]
-
-      const counts = { deals: deals.length }
-      let gpGames = []
-      let epicCurrent = []
-      let epicUpcoming = []
-      await Promise.all(requests.map(async ([key, url, field]) => {
-        try {
-          const response = await fetch(url)
-          if (!response.ok) return
-          const data = await response.json()
-          counts[key] = Array.isArray(data[field]) ? data[field].length : 0
-          if (key === 'free') gpGames = Array.isArray(data.games) ? data.games : []
-          if (key === 'coming') {
-            epicCurrent = Array.isArray(data.current) ? data.current : []
-            epicUpcoming = Array.isArray(data.upcoming) ? data.upcoming : []
-          }
-        } catch {
-          counts[key] = 0
-        }
-      }))
-
-      if (!cancelled) {
-        setSectionCounts((current) => ({ ...current, ...counts, deals: deals.length }))
-        setGamerPowerGames(gpGames)
-        setEpicCurrentGames(epicCurrent)
-        setUpcomingGames(epicUpcoming)
-      }
-    }
-
-    loadSectionCounts()
-    return () => {
-      cancelled = true
-    }
+    setSectionCounts((current) => ({ ...current, deals: deals.length }))
   }, [deals.length])
+
+  const loadSectionCounts = useCallback(async ({ refresh = false } = {}) => {
+    setFreeGamesLoading(true)
+    setFreeGamesError(false)
+    const requests = [
+      ['free', 'gamerpower-free-games', 'games'],
+      ['always', 'always-free-games', 'games'],
+      ['coming', 'epic-free-games', 'upcoming'],
+    ]
+
+    const counts = {}
+    let gpGames = []
+    let epicCurrent = []
+    let epicUpcoming = []
+    let freeFailures = 0
+
+    await Promise.all(requests.map(async ([key, name, field]) => {
+      try {
+        const data = await loadSnapshot(name, { refresh })
+        counts[key] = Array.isArray(data?.[field]) ? data[field].length : 0
+        if (key === 'free') gpGames = Array.isArray(data?.games) ? data.games : []
+        if (key === 'coming') {
+          epicCurrent = Array.isArray(data?.current) ? data.current : []
+          epicUpcoming = Array.isArray(data?.upcoming) ? data.upcoming : []
+        }
+      } catch {
+        counts[key] = 0
+        if (key === 'free' || key === 'coming') freeFailures++
+      }
+    }))
+
+    setSectionCounts((current) => ({ ...current, ...counts }))
+    setGamerPowerGames(gpGames)
+    setEpicCurrentGames(epicCurrent)
+    setUpcomingGames(epicUpcoming)
+    setFreeGamesError(freeFailures === 2 && gpGames.length === 0 && epicCurrent.length === 0)
+    setFreeGamesLoading(false)
+  }, [])
+
+  useEffect(() => {
+    loadSectionCounts()
+  }, [loadSectionCounts])
 
   function handleSelectPlatform(platform) {
     setActivePlatform(platform)

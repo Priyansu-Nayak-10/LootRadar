@@ -1,3 +1,5 @@
+import { fetchWithTimeout, loadSnapshot } from './snapshots.js'
+
 const RAWG_BASE = 'https://api.rawg.io/api/games'
 const RAWG_CACHE_MS = 12 * 60 * 60 * 1000
 
@@ -27,7 +29,7 @@ async function fetchCachedJson(url, cacheKey, cacheMs) {
   }
 
   try {
-    const response = await fetch(url)
+    const response = await fetchWithTimeout(url)
     if (!response.ok) throw new Error(`Request failed (${response.status})`)
     const data = await response.json()
     try {
@@ -95,7 +97,7 @@ export async function fetchRawgSuggestions(rawQuery, category = 'All', signal) {
   const platformIds = PLATFORM_IDS[category] || ''
   if (platformIds) params.set('platforms', platformIds)
 
-  const response = await fetch(`${RAWG_BASE}?${params}`, { signal })
+  const response = await fetchWithTimeout(`${RAWG_BASE}?${params}`, { signal })
   if (!response.ok) {
     const err = new Error(`RAWG_ERROR_${response.status}`)
     err.status = response.status
@@ -122,7 +124,7 @@ export async function fetchGameStores(gameId, signal) {
   }
 
   try {
-    const response = await fetch(`${RAWG_BASE}/${idStr}/stores?key=${rawgKey}`, { signal })
+    const response = await fetchWithTimeout(`${RAWG_BASE}/${idStr}/stores?key=${rawgKey}`, { signal })
     if (!response.ok) return []
     const data = await response.json()
     const rawStores = Array.isArray(data.results) ? data.results : []
@@ -166,7 +168,7 @@ async function rawgSearch(query, category, signal, isVariant = false) {
     }
   } catch { /* continue to fetch */ }
 
-  const response = await fetch(`${RAWG_BASE}?${params}`, { signal })
+  const response = await fetchWithTimeout(`${RAWG_BASE}?${params}`, { signal })
   if (!response.ok) throw new Error(`Request failed (${response.status})`)
   const data = await response.json()
   const results = Array.isArray(data.results) ? data.results : []
@@ -237,9 +239,7 @@ export async function searchGamesMulti(rawQuery, category = 'All', signal) {
 
 export async function fetchGamingNews() {
   try {
-    const response = await fetch('/data/gaming-news.json')
-    if (!response.ok) throw new Error(`Request failed (${response.status})`)
-    const data = await response.json()
+    const data = await loadSnapshot('gaming-news')
     if (!Array.isArray(data.articles)) throw new Error('News snapshot is invalid')
     try {
       sessionStorage.setItem(
